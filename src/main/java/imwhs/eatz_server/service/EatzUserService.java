@@ -62,4 +62,13 @@ public class EatzUserService {
         user.update(dto.getUsername(), dto.getEmail(), dto.getPassword());
     }
 
+    /**
+     * 사용자 삭제.
+     */
+    @Transactional(readOnly = false)
+    public void deleteUser(Long id) {
+        EatzUser user = userRepository.findById(id).orElseThrow(() -> new EatzUserNotFoundException("id가 " + id + "인 사용자를 찾을 수 없습니다."));
+        userRepository.delete(user);
+    }
+
 }
