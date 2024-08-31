@@ -1,7 +1,7 @@
 package imwhs.eatz_server.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,10 @@ import java.util.List;
 @Entity
 @Table(name = "eatz_user")
 @Getter
+@Builder
+@EqualsAndHashCode(of = "id")
+@AllArgsConstructor
+@NoArgsConstructor
 public class EatzUser {
 
     @Id @GeneratedValue
