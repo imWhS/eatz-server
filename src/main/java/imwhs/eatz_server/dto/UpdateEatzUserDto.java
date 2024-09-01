@@ -3,7 +3,7 @@ package imwhs.eatz_server.dto;
 import lombok.Data;
 
 @Data
-public class UpdateEatzUserDTO {
+public class UpdateEatzUserDto {
 
     private String username;
 
