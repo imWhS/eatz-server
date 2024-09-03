@@ -1,5 +1,6 @@
 package imwhs.eatz_server.domain;
 
+import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.dto.UpdateRecipeDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @Entity
-public class Recipe {
+public class Recipe extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;
@@ -45,16 +46,13 @@ public class Recipe {
      */
     private String imageUrl;
 
-
     /**
      * 레시피 설명.<br/>
-     *
      */
     private String description;
 
     /**
      * Recipe, EatzUser의 양방향 연관 관계 설정 메서드.
-     *
      * @param user 레시피를 등록한 사용자
      */
     public void setUser(EatzUser user) {
@@ -64,7 +62,6 @@ public class Recipe {
 
     /**
      * Recipe 생성 메서드.
-     *
      * @param user 레시피를 등록하려는 사용자
      * @param title 레시피 제목
      * @param url 레시피 URL
@@ -75,20 +72,21 @@ public class Recipe {
             EatzUser user,
             String title,
             String url,
-            String imageUrl
+            String imageUrl,
+            String description
     ) {
         Recipe recipe = new Recipe();
         recipe.user = user;
         recipe.title = title;
         recipe.url = url;
         recipe.imageUrl = imageUrl;
+        recipe.description = description;
 
         return recipe;
     }
 
     /**
      * Recipe 수정 메서드.
-     *
      * @param dto
      */
     public void update(UpdateRecipeDto dto) {
@@ -101,4 +99,5 @@ public class Recipe {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

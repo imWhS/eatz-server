@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@EntityListeners(AuditingEntityListener.class) // JPA Auditing 기능을 활성화합니다.
+@EntityListeners(AuditingEntityListener.class) // 리스너 클래스를 통해 JPA Auditing 기능을 활성화합니다.
 @Getter
 @MappedSuperclass
 public class BaseEntity {
