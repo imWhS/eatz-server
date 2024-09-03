@@ -47,7 +47,7 @@ public class RecipeService {
         EatzUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
 
-        Recipe recipe = Recipe.create(user, dto.getTitle(), dto.getUrl(), dto.getImageUrl());
+        Recipe recipe = Recipe.create(user, dto.getTitle(), dto.getUrl(), dto.getImageUrl(), dto.getDescription());
         recipeRepository.save(recipe);
 
         return new RecipeResponseDto(recipe);
@@ -60,7 +60,7 @@ public class RecipeService {
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
      */
     public RecipeResponseDto findRecipeById(Long id) {
-        Recipe recipe = recipeRepository.findById(id)
+        Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피가 존재하지 않습니다."));
 
         return new RecipeResponseDto(recipe);
@@ -77,7 +77,7 @@ public class RecipeService {
         int limit = (pageLimit == null || pageLimit < 0) ? DEFAULT_PAGE_SIZE : pageLimit;
 
         PageRequest pageRequest = PageRequest.of(index, limit);
-        Page<Recipe> recipes = recipeRepository.findAll(pageRequest);
+        Page<Recipe> recipes = recipeRepository.findAllByDeletedAtIsNull(pageRequest);
         Page<RecipeResponseDto> dtoPage = recipes.map(RecipeResponseDto::new);
 
         return PagedResponseDto.of(dtoPage);
@@ -99,7 +99,7 @@ public class RecipeService {
                 new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
 
         PageRequest pageRequest = PageRequest.of(index, limit);
-        Page<Recipe> recipes = recipeRepository.findByUser(user, pageRequest);
+        Page<Recipe> recipes = recipeRepository.findByUserAndDeletedAtIsNull(user, pageRequest);
         Page<RecipeResponseDto> dtoPage = recipes.map(RecipeResponseDto::new);
 
         return PagedResponseDto.of(dtoPage);
@@ -121,6 +121,19 @@ public class RecipeService {
         recipe.update(dto);
 
         return new RecipeResponseDto(recipe);
+    }
+
+    @Transactional
+    public void deleteRecipe(Long id, Long userId) {
+        Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피가 존재하지 않습니다."));
+
+        if (!recipe.getUser().getId().equals(userId)) {
+            throw new RuntimeException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 삭제할 권한이 없습니다.");
+        }
+
+        System.out.println("레시피 삭제 처리 시작");
+        recipe.markAsDeleted();
     }
 
 }

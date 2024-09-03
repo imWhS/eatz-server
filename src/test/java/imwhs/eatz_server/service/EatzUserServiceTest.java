@@ -20,7 +20,7 @@ class EatzUserServiceTest {
     private EatzUserService userService;
 
     @Test
-    @DisplayName("새 사용자를 등록했을 때, id로 해당 사용자가 정상적으로 조회되는지 테스트합니다.")
+    @DisplayName("새 사용자를 등록했을 때, ID로 해당 사용자가 정상적으로 조회되는지 테스트합니다.")
     void userRegisterAndFindByIdTest() {
         // given
         String userEmail = "heextory@icloud.com";
