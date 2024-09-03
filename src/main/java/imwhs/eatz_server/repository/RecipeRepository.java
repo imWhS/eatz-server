@@ -7,6 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * RecipeRepository 리포지토리.<br/>
  * <p>
@@ -15,6 +17,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-    Page<Recipe> findByUser(EatzUser user, PageRequest pageRequest);
+    Optional<Recipe> findByIdAndDeletedAtIsNull(Long id);
+
+    Page<Recipe> findAllByDeletedAtIsNull(PageRequest pageRequest);
+
+    Page<Recipe> findByUserAndDeletedAtIsNull(EatzUser user, PageRequest pageRequest);
 
 }

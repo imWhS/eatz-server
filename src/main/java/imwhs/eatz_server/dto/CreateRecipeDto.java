@@ -1,5 +1,7 @@
 package imwhs.eatz_server.dto;
 
+import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.Recipe;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -17,4 +19,10 @@ public class CreateRecipeDto {
 
     private String description;
 
+    public CreateRecipeDto(String title, String url, String imageUrl, String description) {
+        this.title = title;
+        this.url = url;
+        this.imageUrl = imageUrl;
+        this.description = description;
+    }
 }
