@@ -8,17 +8,15 @@ import imwhs.eatz_server.dto.PagedResponseDto;
 import imwhs.eatz_server.dto.RecipeResponseDto;
 import imwhs.eatz_server.dto.UpdateRecipeDto;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
+import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
-import org.apache.catalina.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -138,7 +136,7 @@ class RecipeServiceTest {
     }
 
     @Test
-    @DisplayName("레시피 정보를 정상적으로 수정할 수 있는지 테스트합니다.")
+    @DisplayName("레시피를 정상적으로 수정할 수 있는지 테스트합니다.")
     void updateRecipeTest() {
         // given
         EatzUser user = EatzUser.builder()
@@ -170,6 +168,33 @@ class RecipeServiceTest {
     }
 
     @Test
+    @DisplayName("권한 없는 사용자가 레시피를 수정하려고 할 때, 권한 예외가 발생하는지 테스트합니다.")
+    void unauthorizedUserUpdateRecipeTest() {
+        // given
+        EatzUser user = EatzUser.builder()
+                .username("heextoryA")
+                .role(Role.MEMBER)
+                .email("heextoryA@gmail.com")
+                .password("1q2w3e4r!")
+                .build();
+        userRepository.save(user);
+
+        CreateRecipeDto createRecipeDto = new CreateRecipeDto(
+                "차돌 된장찌개",
+                "https://blog.naver.com/cow",
+                "https://www.koreanfood.com",
+                "된장찌개 국물이 예술이에요!");
+        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(user.getId(), createRecipeDto);
+
+        UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto("불닭 차돌 된장찌개", "https://blog.daum.net/cow", "https://www.kfoodworld.com", "된장찌개 국물이 화끈하게 매워요!");
+
+        // then
+        Assertions.assertThatThrownBy(() ->
+                recipeService.updateRecipe(registeredRecipe.getId(), updateRecipeDto, 99999L))
+                .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
+    @Test
     @DisplayName("레시피가 정상적으로 삭제되는지 테스트합니다.")
     void deleteRecipeTest() {
         // given
@@ -196,6 +221,31 @@ class RecipeServiceTest {
         if (deletedRecipe != null) {
             Assertions.assertThat(deletedRecipe.getDeletedAt()).isNotNull();
         }
+    }
+
+    @Test
+    @DisplayName("권한 없는 사용자가 레시피를 삭제하려고 할 때, 예외가 발생하는지 테스트합니다.")
+    void unauthorizedUserDeleteRecipeTest() {
+        // given
+        EatzUser user = EatzUser.builder()
+                .username("heextoryA")
+                .role(Role.MEMBER)
+                .email("heextoryA@gmail.com")
+                .password("1q2w3e4r!")
+                .build();
+        userRepository.save(user);
+
+        CreateRecipeDto createRecipeDto = new CreateRecipeDto(
+                "차돌 된장찌개",
+                "https://blog.naver.com/cow",
+                "https://www.koreanfood.com",
+                "된장찌개 국물이 예술이에요!");
+        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(user.getId(), createRecipeDto);
+
+        // then
+        Assertions.assertThatThrownBy(() -> recipeService.deleteRecipe(registeredRecipe.getId(), 9999L))
+                .isInstanceOf(UnauthorizedAccessException.class);
+
     }
 
 }
