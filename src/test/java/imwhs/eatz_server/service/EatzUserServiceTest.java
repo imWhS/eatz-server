@@ -2,7 +2,7 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.UpdateEatzUserDTO;
+import imwhs.eatz_server.dto.UpdateEatzUserDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class EatzUserServiceTest {
@@ -22,7 +20,7 @@ class EatzUserServiceTest {
     private EatzUserService userService;
 
     @Test
-    @DisplayName("새 사용자를 등록했을 때, id로 해당 사용자가 정상적으로 조회되는지 테스트합니다.")
+    @DisplayName("새 사용자를 등록했을 때, ID로 해당 사용자가 정상적으로 조회되는지 테스트합니다.")
     void userRegisterAndFindByIdTest() {
         // given
         String userEmail = "heextory@icloud.com";
@@ -119,7 +117,7 @@ class EatzUserServiceTest {
         userService.registerUser(user);
 
         // then
-        UpdateEatzUserDTO updateEatzUserDTO = new UpdateEatzUserDTO();
+        UpdateEatzUserDto updateEatzUserDTO = new UpdateEatzUserDto();
         updateEatzUserDTO.setUsername(updatedUsername);
         updateEatzUserDTO.setEmail(updatedEmail);
         updateEatzUserDTO.setPassword(updatedPassword);
