@@ -64,7 +64,7 @@ public class EatzUser {
     private List<Recipe> recipeList = new ArrayList<>();
 
     /**
-     * 사용자 정보 수정.
+     * 사용자 수정.
      * <p>
      * 사용자 정보 중 사용자 이름, 이메일, 비밀 번호를 수정합니다.
      */
