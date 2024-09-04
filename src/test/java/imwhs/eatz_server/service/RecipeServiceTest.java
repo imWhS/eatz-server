@@ -159,7 +159,7 @@ class RecipeServiceTest {
         UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto("불닭 차돌 된장찌개", "https://blog.daum.net/cow", "https://www.kfoodworld.com", "된장찌개 국물이 화끈하게 매워요!");
 
         // when
-        RecipeResponseDto updatedRecipe = recipeService.updateRecipe(registeredRecipe.getId(), updateRecipeDto);
+        RecipeResponseDto updatedRecipe = recipeService.updateRecipe(registeredRecipe.getId(), updateRecipeDto, user.getId());
 
         // then
         Assertions.assertThat(updatedRecipe).isNotNull();
