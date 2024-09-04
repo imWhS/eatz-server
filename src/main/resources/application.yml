@@ -11,6 +11,9 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Seoul
 
 logging.level:
   org.hibernate.SQL: debug
