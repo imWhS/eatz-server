@@ -1,20 +1,20 @@
 package imwhs.eatz_server.exception;
 
-public class EatzUserNotFoundException extends RuntimeException {
+public class UnauthorizedAccessException extends RuntimeException {
 
-    public EatzUserNotFoundException() {
+    public UnauthorizedAccessException() {
         super();
     }
 
-    public EatzUserNotFoundException(String message) {
+    public UnauthorizedAccessException(String message) {
         super(message);
     }
 
-    public EatzUserNotFoundException(String message, Throwable cause) {
+    public UnauthorizedAccessException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public EatzUserNotFoundException(Throwable cause) {
+    public UnauthorizedAccessException(Throwable cause) {
         super(cause);
     }
 

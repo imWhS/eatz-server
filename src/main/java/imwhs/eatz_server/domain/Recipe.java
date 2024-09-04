@@ -87,7 +87,7 @@ public class Recipe extends BaseEntity {
 
     /**
      * Recipe 수정 메서드.
-     * @param dto
+     * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto
      */
     public void update(UpdateRecipeDto dto) {
         this.title = dto.getTitle();
