@@ -8,6 +8,7 @@ import imwhs.eatz_server.dto.RecipeResponseDto;
 import imwhs.eatz_server.dto.UpdateRecipeDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
+import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -103,11 +104,13 @@ public class RecipeService {
     }
 
     /**
-     * 레시피 정보 수정.
-     * @param id 수정할 레시피 레시피 ID
+     * 레시피 수정.
+     * @param id 수정할 레시피 ID
      * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto
+     * @param userId 레시피 수정을 요청한 사용자 ID
      * @return 수정 완료된 레시피 정보를 담고 있는 RecipeResponseDto
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
+     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 ID와 레시피를 등록한 사용자 ID가 다른 경우
      */
     @Transactional
     public RecipeResponseDto updateRecipe(Long id, UpdateRecipeDto dto, Long userId) {
@@ -116,7 +119,7 @@ public class RecipeService {
                         new RecipeNotFoundException("id가 " + id + "인 레시피가 존재하지 않습니다."));
 
         if (!recipe.getUser().getId().equals(userId)) {
-            throw new RuntimeException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 수정할 권한이 없습니다.");
+            throw new UnauthorizedAccessException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 수정할 권한이 없습니다.");
         }
 
         recipe.update(dto);
@@ -124,16 +127,23 @@ public class RecipeService {
         return new RecipeResponseDto(recipe);
     }
 
+    /**
+     * 레시피 삭제 처리.
+     * @param id 삭제 처리할 레시피 ID
+     * @param userId 레시피 삭제 처리를 요청한 사용자 ID
+     * @return 수정 완료된 레시피 정보를 담고 있는 RecipeResponseDto
+     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
+     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 ID와 레시피를 등록한 사용자 ID가 다른 경우
+     */
     @Transactional
     public void deleteRecipe(Long id, Long userId) {
         Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피가 존재하지 않습니다."));
 
         if (!recipe.getUser().getId().equals(userId)) {
-            throw new RuntimeException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 삭제할 권한이 없습니다.");
+            throw new UnauthorizedAccessException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 삭제할 권한이 없습니다.");
         }
 
-        System.out.println("레시피 삭제 처리 시작");
         recipe.markAsDeleted();
     }
 
