@@ -1,6 +1,7 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.dto.CreateEatzUserDto;
 import imwhs.eatz_server.dto.UpdateEatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.EatzUserRepository;
@@ -21,6 +22,7 @@ public class EatzUserService {
      * 새 사용자 등록.<br/>
      * TODO: 비밀번호 암호화 처리
      */
+    @Transactional
     public EatzUser registerUser(EatzUser user) {
         return userRepository.save(user);
     }
@@ -54,9 +56,9 @@ public class EatzUserService {
     }
 
     /**
-     * 사용자 정보 수정.
+     * 사용자 수정.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public void updateUser(Long id, UpdateEatzUserDto dto) {
         EatzUser user = userRepository.findById(id).orElseThrow(() -> new EatzUserNotFoundException("id가 " + id + "인 사용자를 찾을 수 없습니다."));
         user.update(dto.getUsername(), dto.getEmail(), dto.getPassword());
@@ -65,7 +67,7 @@ public class EatzUserService {
     /**
      * 사용자 삭제.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public void deleteUser(Long id) {
         EatzUser user = userRepository.findById(id).orElseThrow(() -> new EatzUserNotFoundException("id가 " + id + "인 사용자를 찾을 수 없습니다."));
         userRepository.delete(user);
