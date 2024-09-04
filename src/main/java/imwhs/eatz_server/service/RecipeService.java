@@ -35,13 +35,14 @@ public class RecipeService {
 
     /**
      * 새 레시피 등록.
+     *
+     * @param dto    등록할 레시피 정보를 담고 있는 CreateRecipeDto
      * @param userId 새 레시피를 등록하려는 사용자의 ID
-     * @param dto 등록할 레시피 정보를 담고 있는 CreateRecipeDto
      * @return 등록 완료된 레시피 정보를 담고 있는 RecipeResponseDto
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우
      */
     @Transactional
-    public RecipeResponseDto registerRecipe(Long userId, CreateRecipeDto dto) {
+    public RecipeResponseDto registerRecipe(CreateRecipeDto dto, Long userId) {
         EatzUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
 

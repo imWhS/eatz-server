@@ -42,7 +42,7 @@ class RecipeServiceTest {
         CreateRecipeDto createRecipeDto = new CreateRecipeDto("Kimchi pasta", "https://blog.naver.com/heextory", "https://www.image.com", "맛있는 파스타 레시피를 준비해보았어요~");
 
         // when
-        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(user.getId(), createRecipeDto);
+        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(createRecipeDto, user.getId());
         RecipeResponseDto foundRecipe = recipeService.findRecipeById(registeredRecipe.getId());
 
         // then
@@ -68,7 +68,7 @@ class RecipeServiceTest {
         userRepository.save(user);
 
         CreateRecipeDto createRecipeDto = new CreateRecipeDto("Kimchi pasta", "https://blog.naver.com/heextory", "https://www.image.com", "맛있는 파스타 레시피를 준비해보았어요~");
-        recipeService.registerRecipe(user.getId(), createRecipeDto);
+        recipeService.registerRecipe(createRecipeDto, user.getId());
 
         // when, then
         Assertions.assertThatThrownBy(() -> recipeService.findRecipeById(99999L))
@@ -104,8 +104,8 @@ class RecipeServiceTest {
                 "https://blog.naver.com/samyang",
                 "https://www.buldak.com",
                 "매콤한 맛이 매력적인 소스를 밥과 즐겨보세요!");
-        recipeService.registerRecipe(userA.getId(), createRecipeDto1ByA);
-        recipeService.registerRecipe(userA.getId(), createRecipeDto2ByA);
+        recipeService.registerRecipe(createRecipeDto1ByA, userA.getId());
+        recipeService.registerRecipe(createRecipeDto2ByA, userA.getId());
 
         CreateRecipeDto createRecipeDto1ByB = new CreateRecipeDto(
                 "차돌 된장찌개",
@@ -117,8 +117,8 @@ class RecipeServiceTest {
                 "https://blog.naver.com/kimchi",
                 "https://www.awesomekfood.com",
                 "해장 필수 메뉴로 추천드려요!");
-        recipeService.registerRecipe(userB.getId(), createRecipeDto1ByB);
-        recipeService.registerRecipe(userB.getId(), createRecipeDto2ByB);
+        recipeService.registerRecipe(createRecipeDto1ByB, userB.getId());
+        recipeService.registerRecipe(createRecipeDto2ByB, userB.getId());
 
         // when
         PagedResponseDto<RecipeResponseDto> allRecipesRegisteredByUserA = recipeService.findAllRecipesByUserId(
@@ -152,7 +152,7 @@ class RecipeServiceTest {
                 "https://blog.naver.com/cow",
                 "https://www.koreanfood.com",
                 "된장찌개 국물이 예술이에요!");
-        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(user.getId(), createRecipeDto);
+        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(createRecipeDto, user.getId());
 
         UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto("불닭 차돌 된장찌개", "https://blog.daum.net/cow", "https://www.kfoodworld.com", "된장찌개 국물이 화끈하게 매워요!");
 
@@ -184,7 +184,7 @@ class RecipeServiceTest {
                 "https://blog.naver.com/cow",
                 "https://www.koreanfood.com",
                 "된장찌개 국물이 예술이에요!");
-        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(user.getId(), createRecipeDto);
+        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(createRecipeDto, user.getId());
 
         UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto("불닭 차돌 된장찌개", "https://blog.daum.net/cow", "https://www.kfoodworld.com", "된장찌개 국물이 화끈하게 매워요!");
 
@@ -211,7 +211,7 @@ class RecipeServiceTest {
                 "https://blog.naver.com/cow",
                 "https://www.koreanfood.com",
                 "된장찌개 국물이 예술이에요!");
-        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(user.getId(), createRecipeDto);
+        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(createRecipeDto, user.getId());
 
         // when
         recipeService.deleteRecipe(registeredRecipe.getId(), user.getId());
@@ -240,7 +240,7 @@ class RecipeServiceTest {
                 "https://blog.naver.com/cow",
                 "https://www.koreanfood.com",
                 "된장찌개 국물이 예술이에요!");
-        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(user.getId(), createRecipeDto);
+        RecipeResponseDto registeredRecipe = recipeService.registerRecipe(createRecipeDto, user.getId());
 
         // then
         Assertions.assertThatThrownBy(() -> recipeService.deleteRecipe(registeredRecipe.getId(), 9999L))
