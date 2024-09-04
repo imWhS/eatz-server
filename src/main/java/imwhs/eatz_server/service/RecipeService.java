@@ -40,10 +40,7 @@ public class RecipeService {
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우
      */
     @Transactional
-    public RecipeResponseDto registerRecipe(
-            Long userId,
-            CreateRecipeDto dto
-    ) {
+    public RecipeResponseDto registerRecipe(Long userId, CreateRecipeDto dto) {
         EatzUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
 
@@ -113,10 +110,14 @@ public class RecipeService {
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
      */
     @Transactional
-    public RecipeResponseDto updateRecipe(Long id, UpdateRecipeDto dto) {
+    public RecipeResponseDto updateRecipe(Long id, UpdateRecipeDto dto, Long userId) {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() ->
                         new RecipeNotFoundException("id가 " + id + "인 레시피가 존재하지 않습니다."));
+
+        if (!recipe.getUser().getId().equals(userId)) {
+            throw new RuntimeException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 수정할 권한이 없습니다.");
+        }
 
         recipe.update(dto);
 
