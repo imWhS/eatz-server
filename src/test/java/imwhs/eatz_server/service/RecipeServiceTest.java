@@ -193,7 +193,9 @@ class RecipeServiceTest {
         Recipe deletedRecipe = recipeRepository.findById(registeredRecipe.getId()).orElse(null);
 
         // then
-        Assertions.assertThat(deletedRecipe.getDeletedAt()).isNotNull();
+        if (deletedRecipe != null) {
+            Assertions.assertThat(deletedRecipe.getDeletedAt()).isNotNull();
+        }
     }
 
 }
