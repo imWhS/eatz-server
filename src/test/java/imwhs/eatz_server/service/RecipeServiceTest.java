@@ -3,10 +3,7 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.CreateRecipeDto;
-import imwhs.eatz_server.dto.PagedResponseDto;
-import imwhs.eatz_server.dto.RecipeResponseDto;
-import imwhs.eatz_server.dto.UpdateRecipeDto;
+import imwhs.eatz_server.dto.*;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.EatzUserRepository;
@@ -32,12 +29,11 @@ class RecipeServiceTest {
     @DisplayName("새 레시피를 등록했을 때, ID로 해당 레시피가 정상적으로 조회되는지 테스트합니다.")
     void recipeRegisterAndFindRecipeByIdTest() {
         // given
-        EatzUser user = EatzUser.builder()
-                .username("heextory")
-                .role(Role.MEMBER)
-                .email("heextory@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
+        EatzUser user = EatzUser.create(
+                "heextory",
+                "heextory@icloud.com",
+                "1q2w3e4r!",
+                Role.MEMBER);
         userRepository.save(user);
         CreateRecipeDto createRecipeDto = new CreateRecipeDto("Kimchi pasta", "https://blog.naver.com/heextory", "https://www.image.com", "맛있는 파스타 레시피를 준비해보았어요~");
 
@@ -59,12 +55,11 @@ class RecipeServiceTest {
     @DisplayName("유효하지 않은 ID로 레시피를 조회하려고 할 때, 예외가 발생하는지 테스트합니다.")
     void recipeValidationTest() {
         // given
-        EatzUser user = EatzUser.builder()
-                .username("heextory")
-                .role(Role.MEMBER)
-                .email("heextory@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
+        EatzUser user = EatzUser.create(
+                "heextory",
+                "heextory@icloud.com",
+                "1q2w3e4r!",
+                Role.MEMBER);
         userRepository.save(user);
 
         CreateRecipeDto createRecipeDto = new CreateRecipeDto("Kimchi pasta", "https://blog.naver.com/heextory", "https://www.image.com", "맛있는 파스타 레시피를 준비해보았어요~");
@@ -79,18 +74,18 @@ class RecipeServiceTest {
     @DisplayName("특정 사용자가 등록한 모든 레시피가 정상적으로 조회되는지 테스트합니다.")
     void findAllRecipesTest() {
         // given
-        EatzUser userA = EatzUser.builder()
-                .username("heextoryA")
-                .role(Role.MEMBER)
-                .email("heextoryA@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
-        EatzUser userB = EatzUser.builder()
-                .username("heextoryB")
-                .role(Role.MEMBER)
-                .email("heextoryB@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
+        EatzUser userA = EatzUser.create(
+                "heextoryA",
+                "heextoryA@gmail.com",
+                "1q2w3e4r!",
+                Role.MEMBER
+        );
+        EatzUser userB = EatzUser.create(
+                "heextoryB",
+                "heextoryB@gmail.com",
+                "1q2w3e4r!",
+                Role.MEMBER
+        );
         userRepository.save(userA);
         userRepository.save(userB);
 
@@ -139,12 +134,12 @@ class RecipeServiceTest {
     @DisplayName("레시피를 정상적으로 수정할 수 있는지 테스트합니다.")
     void updateRecipeTest() {
         // given
-        EatzUser user = EatzUser.builder()
-                .username("heextoryA")
-                .role(Role.MEMBER)
-                .email("heextoryA@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
+        EatzUser user = EatzUser.create(
+                "heextoryA",
+                "heextoryA@gmail.com",
+                "1q2w3e4r!",
+                Role.MEMBER
+        );
         userRepository.save(user);
 
         CreateRecipeDto createRecipeDto = new CreateRecipeDto(
@@ -171,12 +166,12 @@ class RecipeServiceTest {
     @DisplayName("권한 없는 사용자가 레시피를 수정하려고 할 때, 권한 예외가 발생하는지 테스트합니다.")
     void unauthorizedUserUpdateRecipeTest() {
         // given
-        EatzUser user = EatzUser.builder()
-                .username("heextoryA")
-                .role(Role.MEMBER)
-                .email("heextoryA@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
+        EatzUser user = EatzUser.create(
+                "heextoryA",
+                "heextoryA@gmail.com",
+                "1q2w3e4r!",
+                Role.MEMBER
+        );
         userRepository.save(user);
 
         CreateRecipeDto createRecipeDto = new CreateRecipeDto(
@@ -198,12 +193,12 @@ class RecipeServiceTest {
     @DisplayName("레시피가 정상적으로 삭제되는지 테스트합니다.")
     void deleteRecipeTest() {
         // given
-        EatzUser user = EatzUser.builder()
-                .username("heextoryA")
-                .role(Role.MEMBER)
-                .email("heextoryA@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
+        EatzUser user = EatzUser.create(
+                "heextoryA",
+                "heextoryA@gmail.com",
+                "1q2w3e4r!",
+                Role.MEMBER
+        );
         userRepository.save(user);
 
         CreateRecipeDto createRecipeDto = new CreateRecipeDto(
@@ -227,12 +222,12 @@ class RecipeServiceTest {
     @DisplayName("권한 없는 사용자가 레시피를 삭제하려고 할 때, 예외가 발생하는지 테스트합니다.")
     void unauthorizedUserDeleteRecipeTest() {
         // given
-        EatzUser user = EatzUser.builder()
-                .username("heextoryA")
-                .role(Role.MEMBER)
-                .email("heextoryA@gmail.com")
-                .password("1q2w3e4r!")
-                .build();
+        EatzUser user = EatzUser.create(
+                "heextoryA",
+                "heextoryA@gmail.com",
+                "1q2w3e4r!",
+                Role.MEMBER
+        );
         userRepository.save(user);
 
         CreateRecipeDto createRecipeDto = new CreateRecipeDto(
