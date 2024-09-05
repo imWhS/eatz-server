@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,6 +34,8 @@ public class EatzUserService {
      */
     @Transactional
     public EatzUserResponseDto registerUser(CreateEatzUserDto dto) {
+        validateDuplicates(dto.getUsername());
+
         EatzUser user = EatzUser.create(dto.getUsername(), dto.getEmail(), dto.getPassword(), dto.getRole());
         userRepository.save(user);
 
@@ -93,6 +97,12 @@ public class EatzUserService {
     public void deleteUser(Long id) {
         EatzUser user = userRepository.findById(id).orElseThrow(() -> new EatzUserNotFoundException("id가 " + id + "인 사용자를 찾을 수 없습니다."));
         userRepository.delete(user);
+    }
+
+    private void validateDuplicates(String username) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new IllegalStateException("이미 같은 이름인 사용자(" + username + ")가 존재합니다.");
+        }
     }
 
 }
