@@ -43,6 +43,21 @@ class EatzUserServiceTest {
     }
 
     @Test
+    @DisplayName("중복된 사용자 이름으로 새 사용자를 등록하려고 할 때, 예외가 발생하는지 테스트합니다.")
+    void usernameDuplicatesTest() {
+        // given
+        CreateEatzUserDto createEatzUserDtoA = createEatzUserDto("test", "heextoryA@icloud.com");
+        CreateEatzUserDto createEatzUserDtoB = createEatzUserDto("test", "heextoryB@icloud.com");
+
+        // when
+        userService.registerUser(createEatzUserDtoA);
+
+        // then
+        Assertions.assertThatThrownBy(() -> userService.registerUser(createEatzUserDtoB))
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
     @DisplayName("새 사용자를 등록했을 때, 사용자 이름으로 해당 사용자가 정상적으로 조회되는지 테스트합니다.")
     void userRegisterAndFindByUsernameTest() {
         // given
