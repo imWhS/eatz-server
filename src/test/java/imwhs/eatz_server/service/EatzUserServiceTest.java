@@ -2,12 +2,17 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.dto.CreateEatzUserDto;
+import imwhs.eatz_server.dto.EatzUserResponseDto;
 import imwhs.eatz_server.dto.UpdateEatzUserDto;
+import imwhs.eatz_server.exception.EatzUserNotFoundException;
+import imwhs.eatz_server.repository.EatzUserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,19 +29,17 @@ class EatzUserServiceTest {
     void userRegisterAndFindByIdTest() {
         // given
         String userEmail = "heextory@icloud.com";
-        EatzUser user = EatzUser.builder()
-                .email(userEmail)
-                .password("1q2w3e4r!")
-                .role(Role.MEMBER)
-                .build();
+        CreateEatzUserDto createEatzUserDto = createEatzUserDto("test", userEmail);
 
         // when
-        userService.registerUser(user);
+        EatzUserResponseDto eatzUserResponseDto = userService.registerUser(createEatzUserDto);
 
         // then
-        EatzUser registeredUser = userService.findUserById(user.getId());
-        Assertions.assertThat(registeredUser).isEqualTo(user);
-        Assertions.assertThat(userEmail).isEqualTo(registeredUser.getEmail());
+        EatzUserResponseDto registeredUserResponseDto = userService.findUserById(eatzUserResponseDto.getId());
+        Assertions.assertThat(createEatzUserDto.getUsername()).isEqualTo(registeredUserResponseDto.getUsername());
+        Assertions.assertThat(createEatzUserDto.getEmail()).isEqualTo(registeredUserResponseDto.getEmail());
+        Assertions.assertThat(registeredUserResponseDto).isEqualTo(eatzUserResponseDto);
+        Assertions.assertThat(userEmail).isEqualTo(registeredUserResponseDto.getEmail());
     }
 
     @Test
@@ -44,55 +47,34 @@ class EatzUserServiceTest {
     void userRegisterAndFindByUsernameTest() {
         // given
         String username = "john";
-        EatzUser user = EatzUser.builder()
-                .username(username)
-                .email("heextory@icloud.com")
-                .password("1q2w3e4r!")
-                .role(Role.MEMBER)
-                .build();
+        CreateEatzUserDto createEatzUserDto = createEatzUserDto(username, "heextory@icloud.com");
 
         // when
-        userService.registerUser(user);
+        EatzUserResponseDto registeredEatzUserResponseDto = userService.registerUser(createEatzUserDto);
 
         // then
-        EatzUser registeredUser = userService.findUserByUsername(username);
-        Assertions.assertThat(registeredUser).isEqualTo(user);
-        Assertions.assertThat(user.getEmail()).isEqualTo(registeredUser.getEmail());
+        EatzUserResponseDto foundEatzUserResponseDto = userService.findUserByUsername(username);
+        Assertions.assertThat(userService.findUserById(foundEatzUserResponseDto.getId())).isNotNull();
+        Assertions.assertThat(foundEatzUserResponseDto).isEqualTo(registeredEatzUserResponseDto);
+        Assertions.assertThat(registeredEatzUserResponseDto.getEmail()).isEqualTo(foundEatzUserResponseDto.getEmail());
     }
 
     @Test
     @DisplayName("등록한 여러 명의 사용자 모두를 정상적으로 조회할 수 있는지 테스트합니다.")
     void findAllTest() {
         // given
-        EatzUser userA = EatzUser.builder()
-                .username("userA")
-                .email("userA@email.com")
-                .password("1q2w3e4r!")
-                .role(Role.MEMBER)
-                .build();
-
-        EatzUser userB = EatzUser.builder()
-                .username("userB")
-                .email("userB@email.com")
-                .password("1q2w3e4r!")
-                .role(Role.MEMBER)
-                .build();
-
-        EatzUser userC = EatzUser.builder()
-                .username("userC")
-                .email("userC@email.com")
-                .password("1q2w3e4r!")
-                .role(Role.MEMBER)
-                .build();
+        CreateEatzUserDto createEatzUserDtoA = createEatzUserDto("heextoryA", "heextoryA@gmail.com");
+        CreateEatzUserDto createEatzUserDtoB = createEatzUserDto("heextoryB", "heextoryB@gmail.com");
+        CreateEatzUserDto createEatzUserDtoC = createEatzUserDto("heextoryC", "heextoryC@gmail.com");
 
         // when
-        userService.registerUser(userA);
-        userService.registerUser(userB);
-        userService.registerUser(userC);
+        userService.registerUser(createEatzUserDtoA);
+        userService.registerUser(createEatzUserDtoB);
+        userService.registerUser(createEatzUserDtoC);
 
         // then
-        List<EatzUser> allUsers = userService.findAllUsers();
-        Assertions.assertThat(allUsers.size()).isEqualTo(3);
+        Page<EatzUserResponseDto> allUsers = userService.findAllUsers(null, null);
+        Assertions.assertThat(allUsers.getContent().size()).isEqualTo(3);
     }
 
     @Test
@@ -106,48 +88,61 @@ class EatzUserServiceTest {
         String password = "1q2w3e4r!";
         String updatedPassword = "9876";
 
-
-        EatzUser user = EatzUser.builder()
+        CreateEatzUserDto dto = CreateEatzUserDto.builder()
                 .username(username)
                 .email(email)
                 .password(password)
+                .role(Role.MEMBER)
                 .build();
 
         // when
-        userService.registerUser(user);
+        EatzUserResponseDto eatzUserResponseDto = userService.registerUser(dto);
 
         // then
-        UpdateEatzUserDto updateEatzUserDTO = new UpdateEatzUserDto();
-        updateEatzUserDTO.setUsername(updatedUsername);
-        updateEatzUserDTO.setEmail(updatedEmail);
-        updateEatzUserDTO.setPassword(updatedPassword);
-        userService.updateUser(user.getId(), updateEatzUserDTO);
+        UpdateEatzUserDto updateEatzUserDto = new UpdateEatzUserDto();
+        updateEatzUserDto.setUsername(updatedUsername);
+        updateEatzUserDto.setEmail(updatedEmail);
+        updateEatzUserDto.setPassword(updatedPassword);
+        userService.updateUser(eatzUserResponseDto.getId(), updateEatzUserDto);
 
         // then
-        EatzUser updatedUser = userService.findUserById(user.getId());
+        EatzUserResponseDto updatedUser = userService.findUserById(eatzUserResponseDto.getId());
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(updatedUsername);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(updatedEmail);
-        Assertions.assertThat(updatedUser.getPassword()).isEqualTo(updatedPassword);
     }
 
     @Test
     @DisplayName("사용자가 정상적으로 삭제되는지 테스트합니다.")
     void deleteUserTest() {
         // given
-        EatzUser user = EatzUser.builder()
-                .username("userA")
-                .email("userA@email.com")
+        CreateEatzUserDto dto = CreateEatzUserDto.builder()
+                .username("test")
+                .email("heextory@icloud.com")
                 .password("1q2w3e4r!")
                 .role(Role.MEMBER)
                 .build();
 
         // when
-        userService.registerUser(user);
-        List<EatzUser> allUsersInitial = userService.findAllUsers();
+        EatzUserResponseDto registeredUser = userService.registerUser(dto);
+        Page<EatzUserResponseDto> allUsersInitial = userService.findAllUsers(null, null);
 
         // then
-        userService.deleteUser(user.getId());
-        List<EatzUser> allUsers = userService.findAllUsers();
-        Assertions.assertThat(allUsers.size()).isEqualTo(allUsersInitial.size() - 1);
+        userService.deleteUser(registeredUser.getId());
+        Page<EatzUserResponseDto> allUsers = userService.findAllUsers(null, null);
+        Assertions.assertThat(allUsers.getContent().size()).isEqualTo(allUsersInitial.getContent().size() - 1);
+        Assertions.assertThatThrownBy(() -> userService.findUserById(registeredUser.getId()))
+                .isInstanceOf(EatzUserNotFoundException.class);
     }
+
+    private CreateEatzUserDto createEatzUserDto(
+            String username,
+            String email) {
+        return CreateEatzUserDto.builder()
+                .username(username)
+                .email(email)
+                .password("1q2w3e4r!")
+                .role(Role.MEMBER)
+                .build();
+    }
+
 }

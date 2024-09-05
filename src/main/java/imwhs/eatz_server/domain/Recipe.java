@@ -3,6 +3,7 @@ package imwhs.eatz_server.domain;
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.dto.UpdateRecipeDto;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
@@ -11,6 +12,7 @@ import lombok.Getter;
  * 레시피 정보를 저장, 관리하기 위한 클래스입니다.
  */
 @Getter
+@EqualsAndHashCode(of = "id")
 @Entity
 public class Recipe extends BaseEntity {
 

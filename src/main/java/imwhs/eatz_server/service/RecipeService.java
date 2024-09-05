@@ -67,41 +67,41 @@ public class RecipeService {
 
     /**
      * 모든 레시피 조회.
-     * @param pageIndex 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
-     * @param pageLimit 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
+     * @param pageNumber 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
+     * @param pageSize 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto
      */
-    public PagedResponseDto<RecipeResponseDto> findAllRecipes(Integer pageIndex, Integer pageLimit) {
-        int index = (pageIndex == null || pageIndex < 0) ? DEFAULT_PAGE_NUMBER : pageIndex;
-        int limit = (pageLimit == null || pageLimit < 0) ? DEFAULT_PAGE_SIZE : pageLimit;
+    public PagedResponseDto<RecipeResponseDto> findAllRecipes(Integer pageNumber, Integer pageSize) {
+        int index = (pageNumber == null || pageNumber < 0) ? DEFAULT_PAGE_NUMBER : pageNumber;
+        int limit = (pageSize == null || pageSize < 0) ? DEFAULT_PAGE_SIZE : pageSize;
 
         PageRequest pageRequest = PageRequest.of(index, limit);
-        Page<Recipe> recipes = recipeRepository.findAllByDeletedAtIsNull(pageRequest);
-        Page<RecipeResponseDto> dtoPage = recipes.map(RecipeResponseDto::new);
+        Page<Recipe> pagedRecipes = recipeRepository.findAllByDeletedAtIsNull(pageRequest);
+        Page<RecipeResponseDto> pagedUserResponseDtos = pagedRecipes.map(RecipeResponseDto::new);
 
-        return PagedResponseDto.of(dtoPage);
+        return PagedResponseDto.of(pagedUserResponseDtos);
     }
 
     /**
      * 특정 사용자가 등록한 모든 레시피 조회.
      * @param userId 레시피를 등록한 사용자 ID
-     * @param pageIndex 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
-     * @param pageLimit 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
+     * @param pageNumber 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
+     * @param pageSize 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우
      */
-    public PagedResponseDto<RecipeResponseDto> findAllRecipesByUserId(Long userId, Integer pageIndex, Integer pageLimit) {
-        int index = (pageIndex == null || pageIndex < 0) ? DEFAULT_PAGE_NUMBER : pageIndex;
-        int limit = (pageLimit == null || pageLimit < 0) ? DEFAULT_PAGE_SIZE : pageLimit;
+    public PagedResponseDto<RecipeResponseDto> findAllRecipesByUserId(Long userId, Integer pageNumber, Integer pageSize) {
+        int number = (pageNumber == null || pageNumber < 0) ? DEFAULT_PAGE_NUMBER : pageNumber;
+        int size = (pageSize == null || pageSize < 0) ? DEFAULT_PAGE_SIZE : pageSize;
 
         EatzUser user = userRepository.findById(userId).orElseThrow(() ->
                 new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
 
-        PageRequest pageRequest = PageRequest.of(index, limit);
-        Page<Recipe> recipes = recipeRepository.findByUserAndDeletedAtIsNull(user, pageRequest);
-        Page<RecipeResponseDto> dtoPage = recipes.map(RecipeResponseDto::new);
+        PageRequest pageRequest = PageRequest.of(number, size);
+        Page<Recipe> pagedRecipes = recipeRepository.findByUserAndDeletedAtIsNull(user, pageRequest);
+        Page<RecipeResponseDto> pagedRecipeResponseDtos = pagedRecipes.map(RecipeResponseDto::new);
 
-        return PagedResponseDto.of(dtoPage);
+        return PagedResponseDto.of(pagedRecipeResponseDtos);
     }
 
     /**
