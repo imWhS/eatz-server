@@ -1,5 +1,6 @@
 package imwhs.eatz_server.domain;
 
+import imwhs.eatz_server.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,14 +12,13 @@ import java.util.List;
  * <p>
  * 사용자 정보를 저장, 관리하기 위한 클래스입니다.
  */
-@Entity
 @Table(name = "eatz_user")
 @Getter
-@Builder
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
-public class EatzUser {
+@Entity
+public class EatzUser extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "eatz_user_id")
@@ -62,6 +62,24 @@ public class EatzUser {
      */
     @OneToMany(mappedBy = "user")
     private List<Recipe> recipeList = new ArrayList<>();
+
+    /**
+     * EatzUser 생성 메서드
+     */
+    public static EatzUser create(
+            String username,
+            String email,
+            String password,
+            Role role
+    ) {
+        EatzUser user = new EatzUser();
+        user.username = username;
+        user.email = email;
+        user.password = password;
+        user.role = role;
+
+        return user;
+    }
 
     /**
      * 사용자 수정.
