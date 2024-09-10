@@ -21,14 +21,13 @@ public class Recipe extends BaseEntity {
 
     /**
      * 레시피를 등록한 사용자.<br/>
-     *
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "eatz_user_id")
     private EatzUser user;
 
     /**
-     * 레시피 제목.<br/>
+     * 제목.<br/>
      * <p>
      * 최대 100자 길이의 문장까지 저장할 수 있습니다.
      */
@@ -36,7 +35,7 @@ public class Recipe extends BaseEntity {
     private String title;
 
     /**
-     * 레시피 URL.<br/>
+     * URL.<br/>
      * <p>
      * 최대 1000자 길이의 문장까지 저장할 수 있습니다.
      */
@@ -44,12 +43,12 @@ public class Recipe extends BaseEntity {
     private String url;
 
     /**
-     * 레시피 이미지 URL.
+     * 대표 이미지 URL.
      */
     private String imageUrl;
 
     /**
-     * 레시피 설명.<br/>
+     * 설명.<br/>
      */
     private String description;
 
@@ -61,6 +60,8 @@ public class Recipe extends BaseEntity {
         this.user = user;
         user.getRecipeList().add(this);
     }
+
+    protected Recipe() {}
 
     /**
      * Recipe 생성 메서드.
@@ -78,7 +79,7 @@ public class Recipe extends BaseEntity {
             String description
     ) {
         Recipe recipe = new Recipe();
-        recipe.user = user;
+        recipe.setUser(user);
         recipe.title = title;
         recipe.url = url;
         recipe.imageUrl = imageUrl;
