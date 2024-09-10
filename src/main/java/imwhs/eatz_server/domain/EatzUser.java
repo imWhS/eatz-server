@@ -10,13 +10,11 @@ import java.util.List;
 /**
  * EatzUser 엔티티.<br/>
  * <p>
- * 사용자 정보를 저장, 관리하기 위한 클래스입니다.
+ * 사용자 정보를 저장 및 관리하기 위한 클래스입니다.
  */
 @Table(name = "eatz_user")
 @Getter
 @EqualsAndHashCode(of = "id")
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 public class EatzUser extends BaseEntity {
 
@@ -63,6 +61,8 @@ public class EatzUser extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<Recipe> recipeList = new ArrayList<>();
 
+    protected EatzUser() {}
+
     /**
      * EatzUser 생성 메서드
      */
@@ -70,8 +70,7 @@ public class EatzUser extends BaseEntity {
             String username,
             String email,
             String password,
-            Role role
-    ) {
+            Role role) {
         EatzUser user = new EatzUser();
         user.username = username;
         user.email = email;
