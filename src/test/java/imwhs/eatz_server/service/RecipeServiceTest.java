@@ -6,8 +6,11 @@ import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.dto.*;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
+import imwhs.eatz_server.queryservice.RecipeQueryService;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 class RecipeServiceTest {
 
     @Autowired private RecipeService recipeService;
+
+    @Autowired private RecipeQueryService recipeQueryService;
 
     @Autowired private EatzUserRepository userRepository;
 
@@ -35,11 +40,15 @@ class RecipeServiceTest {
                 "1q2w3e4r!",
                 Role.MEMBER);
         userRepository.save(user);
-        CreateRecipeDto createRecipeDto = new CreateRecipeDto("Kimchi pasta", "https://blog.naver.com/heextory", "https://www.image.com", "맛있는 파스타 레시피를 준비해보았어요~");
+        CreateRecipeDto createRecipeDto = new CreateRecipeDto(
+                "Kimchi pasta",
+                "https://blog.naver.com/heextory",
+                "https://www.image.com",
+                "맛있는 파스타 레시피를 준비해보았어요~");
 
         // when
         RecipeResponseDto registeredRecipe = recipeService.registerRecipe(createRecipeDto, user.getId());
-        RecipeResponseDto foundRecipe = recipeService.findRecipeById(registeredRecipe.getId());
+        RecipeResponseDto foundRecipe = recipeQueryService.findRecipeById(registeredRecipe.getId());
 
         // then
         Assertions.assertThat(foundRecipe).isNotNull();
@@ -66,7 +75,7 @@ class RecipeServiceTest {
         recipeService.registerRecipe(createRecipeDto, user.getId());
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeService.findRecipeById(99999L))
+        Assertions.assertThatThrownBy(() -> recipeQueryService.findRecipeById(99999L))
                 .isInstanceOf(RecipeNotFoundException.class);
     }
 
@@ -116,7 +125,7 @@ class RecipeServiceTest {
         recipeService.registerRecipe(createRecipeDto2ByB, userB.getId());
 
         // when
-        PagedResponseDto<RecipeResponseDto> allRecipesRegisteredByUserA = recipeService.findAllRecipesByUserId(
+        PagedResponseDto<RecipeResponseDto> allRecipesRegisteredByUserA = recipeQueryService.findAllRecipesByUserId(
                 userA.getId(),
                 null,
                 null);
@@ -242,5 +251,8 @@ class RecipeServiceTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
 
     }
+
+    @PersistenceContext
+    private EntityManager em;
 
 }
