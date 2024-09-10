@@ -1,11 +1,11 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.dto.CreateEatzUserDto;
 import imwhs.eatz_server.dto.EatzUserResponseDto;
 import imwhs.eatz_server.dto.UpdateEatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
+import imwhs.eatz_server.queryservice.EatzUserQueryService;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,14 +15,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @SpringBootTest
 @Transactional
 class EatzUserServiceTest {
 
     @Autowired
     private EatzUserService userService;
+
+    @Autowired
+    private EatzUserQueryService userQueryService;
+
+    @Autowired
+    private EatzUserRepository eatzUserRepository;
 
     @Test
     @DisplayName("새 사용자를 등록했을 때, ID로 해당 사용자가 정상적으로 조회되는지 테스트합니다.")
@@ -35,7 +39,7 @@ class EatzUserServiceTest {
         EatzUserResponseDto eatzUserResponseDto = userService.registerUser(createEatzUserDto);
 
         // then
-        EatzUserResponseDto registeredUserResponseDto = userService.findUserById(eatzUserResponseDto.getId());
+        EatzUserResponseDto registeredUserResponseDto = userQueryService.findById(eatzUserResponseDto.getId());
         Assertions.assertThat(createEatzUserDto.getUsername()).isEqualTo(registeredUserResponseDto.getUsername());
         Assertions.assertThat(createEatzUserDto.getEmail()).isEqualTo(registeredUserResponseDto.getEmail());
         Assertions.assertThat(registeredUserResponseDto).isEqualTo(eatzUserResponseDto);
@@ -68,8 +72,8 @@ class EatzUserServiceTest {
         EatzUserResponseDto registeredEatzUserResponseDto = userService.registerUser(createEatzUserDto);
 
         // then
-        EatzUserResponseDto foundEatzUserResponseDto = userService.findUserByUsername(username);
-        Assertions.assertThat(userService.findUserById(foundEatzUserResponseDto.getId())).isNotNull();
+        EatzUserResponseDto foundEatzUserResponseDto = userQueryService.findByUsername(username);
+        Assertions.assertThat(userQueryService.findById(foundEatzUserResponseDto.getId())).isNotNull();
         Assertions.assertThat(foundEatzUserResponseDto).isEqualTo(registeredEatzUserResponseDto);
         Assertions.assertThat(registeredEatzUserResponseDto.getEmail()).isEqualTo(foundEatzUserResponseDto.getEmail());
     }
@@ -88,7 +92,7 @@ class EatzUserServiceTest {
         userService.registerUser(createEatzUserDtoC);
 
         // then
-        Page<EatzUserResponseDto> allUsers = userService.findAllUsers(null, null);
+        Page<EatzUserResponseDto> allUsers = userQueryService.findAll(null, null);
         Assertions.assertThat(allUsers.getContent().size()).isEqualTo(3);
     }
 
@@ -121,7 +125,7 @@ class EatzUserServiceTest {
         userService.updateUser(eatzUserResponseDto.getId(), updateEatzUserDto);
 
         // then
-        EatzUserResponseDto updatedUser = userService.findUserById(eatzUserResponseDto.getId());
+        EatzUserResponseDto updatedUser = userQueryService.findById(eatzUserResponseDto.getId());
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(updatedUsername);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(updatedEmail);
     }
@@ -139,13 +143,13 @@ class EatzUserServiceTest {
 
         // when
         EatzUserResponseDto registeredUser = userService.registerUser(dto);
-        Page<EatzUserResponseDto> allUsersInitial = userService.findAllUsers(null, null);
+        Page<EatzUserResponseDto> allUsersInitial = userQueryService.findAll(null, null);
 
         // then
         userService.deleteUser(registeredUser.getId());
-        Page<EatzUserResponseDto> allUsers = userService.findAllUsers(null, null);
+        Page<EatzUserResponseDto> allUsers = userQueryService.findAll(null, null);
         Assertions.assertThat(allUsers.getContent().size()).isEqualTo(allUsersInitial.getContent().size() - 1);
-        Assertions.assertThatThrownBy(() -> userService.findUserById(registeredUser.getId()))
+        Assertions.assertThatThrownBy(() -> userQueryService.findById(registeredUser.getId()))
                 .isInstanceOf(EatzUserNotFoundException.class);
     }
 
