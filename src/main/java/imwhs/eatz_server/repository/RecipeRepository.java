@@ -4,10 +4,12 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+
 
 /**
  * RecipeRepository 리포지토리.<br/>
@@ -19,8 +21,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     Optional<Recipe> findByIdAndDeletedAtIsNull(Long id);
 
-    Page<Recipe> findAllByDeletedAtIsNull(PageRequest pageRequest);
+    Page<Recipe> findAllByDeletedAtIsNull(Pageable pageable);
 
-    Page<Recipe> findByUserAndDeletedAtIsNull(EatzUser user, PageRequest pageRequest);
+    Page<Recipe> findAllByUserIdAndDeletedAtIsNull(Long userId, Pageable pageable);
 
 }
