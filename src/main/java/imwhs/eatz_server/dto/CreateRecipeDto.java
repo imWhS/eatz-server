@@ -25,4 +25,9 @@ public class CreateRecipeDto {
         this.imageUrl = imageUrl;
         this.description = description;
     }
+
+    public Recipe toEntity() {
+        return Recipe.create(title, url, imageUrl, description);
+    }
+
 }

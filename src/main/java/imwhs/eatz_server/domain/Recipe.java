@@ -79,7 +79,25 @@ public class Recipe extends BaseEntity {
             String description
     ) {
         Recipe recipe = new Recipe();
-        recipe.setUser(user);
+        recipe.title = title;
+        recipe.url = url;
+        recipe.imageUrl = imageUrl;
+        recipe.description = description;
+
+        if (user != null) {
+            recipe.setUser(user);
+        }
+
+        return recipe;
+    }
+
+    public static Recipe create(
+            String title,
+            String url,
+            String imageUrl,
+            String description
+    ) {
+        Recipe recipe = new Recipe();
         recipe.title = title;
         recipe.url = url;
         recipe.imageUrl = imageUrl;
@@ -97,10 +115,6 @@ public class Recipe extends BaseEntity {
         this.url = dto.getUrl();
         this.imageUrl = dto.getImageUrl();
         this.description = dto.getDescription();
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
 }

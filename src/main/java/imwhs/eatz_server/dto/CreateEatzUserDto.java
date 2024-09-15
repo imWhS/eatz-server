@@ -1,5 +1,6 @@
 package imwhs.eatz_server.dto;
 
+import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +18,9 @@ public class CreateEatzUserDto {
     private String password;
 
     private Role role;
+
+    public EatzUser toEntity() {
+        return EatzUser.create(this.username, this.email, this.email, this.role);
+    }
 
 }
