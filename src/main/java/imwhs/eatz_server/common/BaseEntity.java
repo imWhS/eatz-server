@@ -6,7 +6,6 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -39,7 +38,7 @@ public class BaseEntity {
     /**
      * 해당 엔티티가 논리적으로 삭제 처리되었는지 확인합니다.
      */
-    public boolean isDeleted() {
+    public boolean isMarkedAsDeleted() {
         return deletedAt != null;
     }
 
