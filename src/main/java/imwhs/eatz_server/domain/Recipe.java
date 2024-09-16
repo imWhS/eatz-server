@@ -1,10 +1,13 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.reaction.Reaction;
 import imwhs.eatz_server.dto.UpdateRecipeDto;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
+import java.util.List;
 
 /**
  * Recipe 엔티티.<br/>
@@ -23,7 +26,7 @@ public class Recipe extends BaseEntity {
      * 레시피를 등록한 사용자.<br/>
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "eatz_user_id")
+    @JoinColumn(name = "eatz_user_id", nullable = false)
     private EatzUser user;
 
     /**
@@ -48,9 +51,15 @@ public class Recipe extends BaseEntity {
     private String imageUrl;
 
     /**
-     * 설명.<br/>
+     * 설명.
      */
     private String description;
+
+    /**
+     * 반응.
+     */
+    @OneToMany(mappedBy = "recipe")
+    private List<Reaction> reactions;
 
     /**
      * Recipe, EatzUser의 양방향 연관 관계 설정 메서드.
