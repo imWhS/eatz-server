@@ -26,6 +26,13 @@ public abstract class Reaction extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private EatzUser user;
 
-    private boolean isHidden;
+    private boolean isHidden = false;
+
+    protected Reaction() {}
+
+    protected Reaction(Recipe recipe, EatzUser user) {
+        this.recipe = recipe;
+        this.user = user;
+    }
 
 }
