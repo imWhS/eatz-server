@@ -1,7 +1,6 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
-import imwhs.eatz_server.domain.reaction.Reaction;
 import imwhs.eatz_server.dto.UpdateRecipeDto;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -54,12 +53,6 @@ public class Recipe extends BaseEntity {
      * 설명.
      */
     private String description;
-
-    /**
-     * 반응.
-     */
-    @OneToMany(mappedBy = "recipe")
-    private List<Reaction> reactions;
 
     /**
      * Recipe, EatzUser의 양방향 연관 관계 설정 메서드.
