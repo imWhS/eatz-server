@@ -44,4 +44,8 @@ public class Rating {
         this.score = score;
     }
 
+    public void updateScore(int score) {
+        this.score = score;
+    }
+
 }
