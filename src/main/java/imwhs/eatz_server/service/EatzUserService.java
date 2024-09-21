@@ -66,6 +66,7 @@ public class EatzUserService {
      * 사용자 삭제.
      * <p>
      * 특정 id의 사용자를 삭제합니다.
+     * TODO: 삭제 처리 여부 결정
      * </p>
      */
     @Transactional
