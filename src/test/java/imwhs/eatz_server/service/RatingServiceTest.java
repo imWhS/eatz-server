@@ -49,7 +49,7 @@ public class RatingServiceTest {
         int score = 4;
 
         // when
-        Long ratingId = ratingService.registerRating(recipeId, userId, score);
+        Long ratingId = ratingService.registerRating(recipeId, userId, score, null);
 
         // then
         Assertions.assertThat(ratingId).isNotNull();
@@ -82,7 +82,7 @@ public class RatingServiceTest {
         int newScore = 1;
 
         // when
-        ratingService.updateRating(ratingId, userId, newScore);
+        ratingService.updateRating(ratingId, userId, newScore, null);
 
         // then
         Optional<Rating> foundRating = ratingRepository.findById(ratingId);
