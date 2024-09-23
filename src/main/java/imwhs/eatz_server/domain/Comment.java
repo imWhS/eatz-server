@@ -24,6 +24,9 @@ public class Comment extends BaseEntity {
      */
     private String content;
 
+    /**
+     * 숨김 여부.
+     */
     private boolean isHidden;
 
     protected Comment() {}
@@ -40,8 +43,32 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
+    /**
+     * 댓글 내용을 수정합니다.
+     * @param content 수정할 댓글 내용
+     */
     public void updateContent(String content) {
+        validateComment();
         this.content = content;
+    }
+
+    /**
+     * 댓글 내용의 유효성을 검증합니다.
+     */
+    private void validateComment() {
+        if (this.isMarkedAsDeleted()) {
+            throw new IllegalStateException("삭제 처리된 댓글입니다.");
+        }
+    }
+
+    /**
+     * 댓글의 유효성을 검증합니다.
+     * content의 값을 지웁니다.
+     */
+    @Override
+    public void markAsDeleted() {
+        super.markAsDeleted();
+        this.content = null;
     }
 
 }
