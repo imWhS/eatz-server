@@ -12,9 +12,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Transactional
 @SpringBootTest
 public class RatingServiceTest {
 
@@ -46,6 +48,7 @@ public class RatingServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
+
         int score = 4;
 
         // when
@@ -56,6 +59,34 @@ public class RatingServiceTest {
         Optional<Rating> foundRating = ratingRepository.findById(ratingId);
         Assertions.assertThat(foundRating.isPresent()).isTrue();
         Assertions.assertThat(foundRating.get().getScore()).isEqualTo(score);
+    }
+
+    @Test
+    @DisplayName("레시피에 평가를 중복 등록하려고 할 때, 예외가 발생하는지 테스트합니다.")
+    void ratingDuplicatedRegisterTest() {
+        // given
+        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(user);
+        Long userId = user.getId();
+
+        Recipe recipe = Recipe.create(
+                user,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe);
+        Long recipeId = recipe.getId();
+
+        int score = 4;
+
+        Rating rating = new Rating(user, recipe, score, null);
+        ratingRepository.save(rating);
+
+        // when, then
+        Assertions.assertThat(ratingRepository.findAll()).hasSize(1);
+        Assertions.assertThatThrownBy(() -> ratingService.registerRating(recipeId, userId, score, null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -115,7 +146,7 @@ public class RatingServiceTest {
         ratingService.deleteRating(ratingId, userId);
 
         // then
-        Assertions.assertThat(ratingRepository.existsById(ratingId)).isFalse();
+        Assertions.assertThat(ratingRepository.findByIdAndDeletedAtIsNull(ratingId)).isEmpty();
     }
 
 }
