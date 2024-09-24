@@ -6,6 +6,7 @@ import imwhs.eatz_server.dto.CreateEatzUserDto;
 import imwhs.eatz_server.dto.UpdateEatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.service.command.EatzUserCommandService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-class EatzUserServiceTest {
+class EatzUserCommandServiceTest {
 
     @Autowired
-    EatzUserService userService;
+    EatzUserCommandService userService;
 
     @Autowired
     EatzUserRepository userRepository;
