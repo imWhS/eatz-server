@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.command;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.dto.CreateEatzUserDto;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class EatzUserService {
+public class EatzUserCommandService {
 
     private final EatzUserRepository userRepository;
 

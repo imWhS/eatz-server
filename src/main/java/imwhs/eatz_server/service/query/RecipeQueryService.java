@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.queryservice;
+package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.dto.RecipeResponseDto;
@@ -11,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

@@ -9,6 +9,7 @@ import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.service.command.CommentCommandService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-public class CommentServiceTest {
+public class CommentCommandServiceTest {
 
     @Autowired
-    private CommentService commentService;
+    private CommentCommandService commentCommandService;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -53,7 +54,7 @@ public class CommentServiceTest {
         String commentContent = "내 맘 속에 저장~";
 
         // when
-        Long commentId = commentService.registerComment(recipeId, userId, commentContent);
+        Long commentId = commentCommandService.registerComment(recipeId, userId, commentContent);
 
         // then
         boolean present = commentRepository.findById(commentId).isPresent();
@@ -79,7 +80,7 @@ public class CommentServiceTest {
         Long commentId = comment.getId();
 
         // when
-        commentService.updateComment(commentId, userId, commentContentAfter);
+        commentCommandService.updateComment(commentId, userId, commentContentAfter);
 
         // then
         Comment editedComment = commentRepository.findById(commentId)
@@ -113,7 +114,7 @@ public class CommentServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() ->
-                        commentService.updateComment(commentId, invalidUserId, commentContentAfter))
+                        commentCommandService.updateComment(commentId, invalidUserId, commentContentAfter))
                 .isInstanceOf(UnauthorizedEatzUserException.class);
     }
 
@@ -134,7 +135,7 @@ public class CommentServiceTest {
         Long commentId = comment.getId();
 
         // when
-        commentService.deleteComment(commentId, userId);
+        commentCommandService.deleteComment(commentId, userId);
 
         // then
         Assertions.assertThat(commentRepository.findByIdAndDeletedAtIsNull(commentId)).isEmpty();
@@ -158,7 +159,7 @@ public class CommentServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() ->
-                commentService.deleteComment(commentId, invalidUserId))
+                commentCommandService.deleteComment(commentId, invalidUserId))
                 .isInstanceOf(UnauthorizedEatzUserException.class);
     }
 

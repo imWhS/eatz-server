@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.command;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Rating;
@@ -19,7 +19,7 @@ import java.util.Objects;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class RatingService {
+public class RatingCommandService {
 
     private final RatingRepository ratingRepository;
 
