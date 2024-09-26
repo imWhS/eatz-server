@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+// TODO: EatzUser의 DTO 필드 추가
 @Data
 public class RecipeResponseDto {
 
