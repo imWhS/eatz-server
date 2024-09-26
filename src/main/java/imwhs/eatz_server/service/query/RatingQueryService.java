@@ -2,7 +2,9 @@ package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Rating;
 import imwhs.eatz_server.dto.RatingResponseDto;
+import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RatingNotFoundException;
+import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
@@ -41,8 +43,17 @@ public class RatingQueryService {
      * 시용자 ID, 레시피 ID로 특정 평가 조회.
      */
     public RatingResponseDto findRating(Long userId, Long recipeId) {
+        if (!userRepository.existsById(userId)) {
+            throw new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다.");
+        }
+
+        if (!recipeRepository.existsById(recipeId)) {
+            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
+        }
+
         Rating rating = ratingRepository.findRatingJoinUserRecipeByUserIdAndRecipeId(userId, recipeId)
                 .orElseThrow(() -> new RatingNotFoundException("평가가 존재하지 않습니다."));
+
         return new RatingResponseDto(rating);
     }
 
@@ -50,6 +61,10 @@ public class RatingQueryService {
      * 특정 레시피에 달린 모든 평가 조회.
      */
     public Page<RatingResponseDto> findAllRatings(Long recipeId, Integer pageNumber, Integer pageSize) {
+        if (!recipeRepository.existsById(recipeId)) {
+            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
+        }
+
         int number = (pageNumber == null ? DEFAULT_PAGE_NUMBER : pageNumber);
         int size = (pageSize == null ? DEFAULT_PAGE_SIZE : pageSize);
 
