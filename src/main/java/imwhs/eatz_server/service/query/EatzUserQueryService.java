@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.queryservice;
+package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.dto.EatzUserResponseDto;
@@ -34,8 +34,7 @@ public class EatzUserQueryService {
         EatzUser user = userRepository.findById(id).orElseThrow(
                 () -> new EatzUserNotFoundException("id가 " + id + "인 사용자를 찾지 못했습니다."));
 
-        EatzUserResponseDto dto = new EatzUserResponseDto(user);
-        return dto;
+        return new EatzUserResponseDto(user);
     }
 
     /**

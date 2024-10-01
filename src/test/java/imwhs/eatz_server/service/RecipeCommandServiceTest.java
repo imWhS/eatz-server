@@ -8,6 +8,7 @@ import imwhs.eatz_server.dto.UpdateRecipeDto;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.service.command.RecipeCommandService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-class RecipeServiceTest {
+class RecipeCommandServiceTest {
 
     @Autowired
-    private RecipeService recipeService;
+    private RecipeCommandService recipeCommandService;
 
     @Autowired
     private RecipeRepository recipeRepository;
@@ -42,7 +43,7 @@ class RecipeServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        Long recipeId = recipeService.registerRecipe(createRecipeDto, user.getId());
+        Long recipeId = recipeCommandService.registerRecipe(createRecipeDto, user.getId());
 
         // then
         Recipe recipe = recipeRepository.findById(recipeId).get();
@@ -70,7 +71,7 @@ class RecipeServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        recipeService.updateRecipe(recipeId, updateRecipeDto, user.getId());
+        recipeCommandService.updateRecipe(recipeId, updateRecipeDto, user.getId());
         Recipe foundRecipe = recipeRepository.findById(recipeId).get();
 
         // then
@@ -92,7 +93,7 @@ class RecipeServiceTest {
         Long recipeId = recipe.getId();
 
         // when
-        recipeService.deleteRecipe(recipeId, user.getId());
+        recipeCommandService.deleteRecipe(recipeId, user.getId());
 
         // then
         Assertions.assertThat(recipeRepository.findById(recipeId).get().isMarkedAsDeleted()).isTrue();
@@ -118,7 +119,7 @@ class RecipeServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, updateRecipeDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeCommandService.updateRecipe(recipeId, updateRecipeDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test
@@ -135,7 +136,7 @@ class RecipeServiceTest {
         Long recipeId = recipe.getId();
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeService.deleteRecipe(recipeId, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeCommandService.deleteRecipe(recipeId, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
     }
 
 }
