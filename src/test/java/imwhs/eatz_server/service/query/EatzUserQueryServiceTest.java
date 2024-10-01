@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.queryservice;
+package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;

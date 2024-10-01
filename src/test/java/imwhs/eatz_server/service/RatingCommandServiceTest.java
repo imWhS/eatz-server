@@ -7,6 +7,7 @@ import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.service.command.RatingCommandService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,10 @@ import java.util.Optional;
 
 @Transactional
 @SpringBootTest
-public class RatingServiceTest {
+public class RatingCommandServiceTest {
 
     @Autowired
-    private RatingService ratingService;
+    private RatingCommandService ratingCommandService;
 
     @Autowired
     private RatingRepository ratingRepository;
@@ -52,7 +53,7 @@ public class RatingServiceTest {
         int score = 4;
 
         // when
-        Long ratingId = ratingService.registerRating(recipeId, userId, score, null);
+        Long ratingId = ratingCommandService.registerRating(recipeId, userId, score, null);
 
         // then
         Assertions.assertThat(ratingId).isNotNull();
@@ -85,7 +86,7 @@ public class RatingServiceTest {
 
         // when, then
         Assertions.assertThat(ratingRepository.findAll()).hasSize(1);
-        Assertions.assertThatThrownBy(() -> ratingService.registerRating(recipeId, userId, score, null))
+        Assertions.assertThatThrownBy(() -> ratingCommandService.registerRating(recipeId, userId, score, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -113,7 +114,7 @@ public class RatingServiceTest {
         int newScore = 1;
 
         // when
-        ratingService.updateRating(ratingId, userId, newScore, null);
+        ratingCommandService.updateRating(ratingId, userId, newScore, null);
 
         // then
         Optional<Rating> foundRating = ratingRepository.findById(ratingId);
@@ -143,7 +144,7 @@ public class RatingServiceTest {
         Long ratingId = rating.getId();
 
         // when
-        ratingService.deleteRating(ratingId, userId);
+        ratingCommandService.deleteRating(ratingId, userId);
 
         // then
         Assertions.assertThat(ratingRepository.findByIdAndDeletedAtIsNull(ratingId)).isEmpty();

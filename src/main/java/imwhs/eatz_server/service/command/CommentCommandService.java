@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.command;
 
 import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.domain.EatzUser;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CommentService {
+public class CommentCommandService {
 
     private final CommentRepository commentRepository;
 
