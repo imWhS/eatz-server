@@ -1,17 +1,13 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Rating;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.RatingRecipeDto;
-import imwhs.eatz_server.dto.RatingResponseDto;
-import imwhs.eatz_server.dto.RatingUserDto;
+import imwhs.eatz_server.domain.*;
+import imwhs.eatz_server.dto.CommentRecipeDto;
+import imwhs.eatz_server.dto.CommentResponseDto;
+import imwhs.eatz_server.dto.CommentUserDto;
+import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.EatzUserRepository;
-import imwhs.eatz_server.repository.RatingRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-class RatingQueryServiceTest {
+public class CommentQueryServiceTest {
 
     @Autowired
-    RatingQueryService ratingQueryService;
+    CommentQueryService commentQueryService;
 
     @Autowired
-    RatingRepository ratingRepository;
+    CommentRepository commentRepository;
 
     @Autowired
     EatzUserRepository userRepository;
@@ -35,8 +31,7 @@ class RatingQueryServiceTest {
     RecipeRepository recipeRepository;
 
     @Test
-    @DisplayName("등록된 평가가 식별자로 정상적으로 조회되는지 테스트합니다.")
-    void findRatingByIdTest() {
+    void findCommentByIdTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
@@ -49,29 +44,27 @@ class RatingQueryServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
 
-        int score = 4;
+        String content = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
 
-        Rating rating = new Rating(user, recipe, score, null);
-        ratingRepository.save(rating);
+        Comment comment = new Comment(user, recipe, content);
+        commentRepository.save(comment);
 
         // when
-        RatingResponseDto ratingResponseDto = ratingQueryService.findRating(rating.getId());
+        CommentResponseDto commentResponseDto = commentQueryService.findComment(comment.getId());
 
         // then
-        Assertions.assertNotNull(ratingResponseDto);
-        Assertions.assertEquals(rating.getId(), ratingResponseDto.getId());
-        Assertions.assertEquals(rating.getScore(), ratingResponseDto.getScore());
-        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingResponseDto.getUser());
-        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingResponseDto.getRecipe());
+        Assertions.assertNotNull(commentResponseDto);
+        Assertions.assertEquals(comment.getId(), commentResponseDto.getId());
+        Assertions.assertEquals(comment.getContent(), commentResponseDto.getContent());
+        Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentResponseDto.getUser());
+        Assertions.assertEquals(new CommentRecipeDto(comment.getRecipe()), commentResponseDto.getRecipe());
     }
 
     @Test
-    @DisplayName("등록된 평가가 평가를 등록한 사용자의 식별자와 평가가 달린 레시피의 식별자로 정상적으로 조회되는지 테스트합니다.")
-    void findRatingByUserAndRecipeTest() {
+    void findCommentsByUserAndRecipeTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
-        Long userId = user.getId();
 
         Recipe recipe = Recipe.create(
                 user,
@@ -80,27 +73,24 @@ class RatingQueryServiceTest {
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
-        Long recipeId = recipe.getId();
 
-        int score = 4;
+        String content1 = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
+        Comment comment1 = new Comment(user, recipe, content1);
+        commentRepository.save(comment1);
 
-        Rating rating = new Rating(user, recipe, score, null);
-        ratingRepository.save(rating);
+        String content2 = "이거 완전 별루.. 내 맘 속의 별루,,,,,,";
+        Comment comment2 = new Comment(user, recipe, content2);
+        commentRepository.save(comment2);
 
         // when
-        RatingResponseDto ratingResponseDto = ratingQueryService.findRating(userId, recipeId);
+        Page<CommentResponseDto> comments = commentQueryService.findComments(user.getId(), recipe.getId(), null, null);
 
         // then
-        Assertions.assertNotNull(ratingResponseDto);
-        Assertions.assertEquals(rating.getId(), ratingResponseDto.getId());
-        Assertions.assertEquals(rating.getScore(), ratingResponseDto.getScore());
-        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingResponseDto.getUser());
-        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingResponseDto.getRecipe());
+        Assertions.assertEquals(comments.getTotalElements(), 2);
     }
 
     @Test
-    @DisplayName("특정 레시피에 달린 모든 평가가 정상적으로 조회되는지 테스트합니다.")
-    void findRatingsOfRecipeTest() {
+    void findCommentsOfRecipeTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
@@ -116,22 +106,21 @@ class RatingQueryServiceTest {
 
         EatzUser reviewerA = EatzUser.create("awesome", "awesome@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(reviewerA);
-        ratingRepository.save(new Rating(reviewerA, recipe, 5, null));
+        commentRepository.save(new Comment(reviewerA, recipe, "재료 무조건 다 갖춰야하나요? ㅠㅠ"));
 
         EatzUser reviewerB = EatzUser.create("bullshit", "bullshit@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(reviewerB);
-        ratingRepository.save(new Rating(reviewerB, recipe, 1, null));
+        commentRepository.save(new Comment(reviewerB, recipe, "제 마음 속에 우선 찜 해둘게요!"));
 
         // when
-        Page<RatingResponseDto> allRatings = ratingQueryService.findRatings(recipeId, null, null);
+        Page<CommentResponseDto> allComments = commentQueryService.findCommentsByRecipe(recipeId, null, null);
 
         // then
-        Assertions.assertEquals(allRatings.getTotalElements(), 2);
+        Assertions.assertEquals(allComments.getTotalElements(), 2);
     }
 
     @Test
-    @DisplayName("특정 사용자가 남긴 모든 평가가 정상적으로 조회되는지 테스트합니다.")
-    void findRatingsByUserTest() {
+    void findCommentsByUserTest() {
         // given
         EatzUser userA = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userA);
@@ -143,6 +132,7 @@ class RatingQueryServiceTest {
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
+        Long recipeAId = recipeA.getId();
 
         EatzUser userB = EatzUser.create("curve4403", "curve4403@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
@@ -154,18 +144,19 @@ class RatingQueryServiceTest {
                 "https://www.naver.com/test.jpg",
                 "마늘 듬뿍 볶음밥입니당");
         recipeRepository.save(recipeB);
+        Long recipeBId = recipeB.getId();
 
         EatzUser reviewer = EatzUser.create("awesome", "awesome@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(reviewer);
 
-        ratingRepository.save(new Rating(reviewer, recipeA, 5, null));
-        ratingRepository.save(new Rating(reviewer, recipeB, 3, null));
+        commentRepository.save(new Comment(reviewer, recipeA, "재료 무조건 다 갖춰야하나요? ㅠㅠ"));
+        commentRepository.save(new Comment(reviewer, recipeB, "제 마음 속에 우선 찜 해둘게요!"));
 
         // when
-        Page<RatingResponseDto> ratings = ratingQueryService.findRatingsByUser(reviewer.getId(), null, null);
+        Page<CommentResponseDto> comments = commentQueryService.findCommentsByUser(reviewer.getId(), null, null);
 
         // then
-        Assertions.assertEquals(ratings.getTotalElements(), 2);
+        Assertions.assertEquals(comments.getTotalElements(), 2);
     }
 
 }

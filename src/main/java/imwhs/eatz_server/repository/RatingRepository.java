@@ -2,6 +2,7 @@ package imwhs.eatz_server.repository;
 
 import imwhs.eatz_server.domain.Rating;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,13 +22,13 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "join fetch r.user u " +
             "join fetch r.recipe rc " +
             "where r.id = :ratingId")
-    Optional<Rating> findRatingJoinUserRecipeById(@Param("ratingId") Long id);
+    Optional<Rating> findJoinUserRecipeById(@Param("ratingId") Long id);
 
     @Query("select r from Rating r " +
             "join fetch r.user u " +
             "join fetch r.recipe rc " +
             "where r.user.id = :userId and r.recipe.id = :recipeId")
-    Optional<Rating> findRatingJoinUserRecipeByUserIdAndRecipeId(
+    Optional<Rating> findJoinUserRecipeByUserIdAndRecipeId(
             @Param("userId") Long userId,
             @Param("recipeId") Long recipeId);
 
@@ -35,6 +36,11 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "join fetch r.user u " +
             "join fetch r.recipe rc " +
             "where rc.id = :recipeId")
-    Page<Rating> findAllRatingsJoinUserRecipeByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
+    Page<Rating> findJoinUserRecipeByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
 
+    @Query("select r from Rating r " +
+            "join fetch r.user u " +
+            "join fetch r.recipe rc " +
+            "where u.id = :userId")
+    Page<Rating> findJoinUserRecipeByUserId(@Param("userId") Long userId, Pageable pageRequest);
 }
