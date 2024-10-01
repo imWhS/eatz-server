@@ -32,14 +32,6 @@ public class CommentCommandServiceTest {
     @Autowired
     private RecipeRepository recipeRepository;
 
-    /**
-     * 새 댓글 등록 테스트
-     * 댓글 수정 테스트
-     * 댓글 삭제 테스트
-     * 권한 없는 사용자에 의한 댓글 수정 시 예외 발생 테스트
-     * 권한 없는 사용자에 의한 댓글 삭제 시 예외 발생 테스트
-     */
-
     @Test
     void commentRegisterTest() {
         // given
