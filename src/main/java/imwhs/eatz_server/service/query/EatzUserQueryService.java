@@ -62,4 +62,8 @@ public class EatzUserQueryService {
         return foundUsers.map(EatzUserResponseDto::new);
     }
 
+    /**
+     *
+     */
+
 }
