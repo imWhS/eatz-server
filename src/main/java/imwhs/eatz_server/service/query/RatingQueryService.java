@@ -1,11 +1,11 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Rating;
-import imwhs.eatz_server.dto.RatingResponseDto;
+import imwhs.eatz_server.dto.rating.RatingResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;

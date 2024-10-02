@@ -5,7 +5,7 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.CommentRepository;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
