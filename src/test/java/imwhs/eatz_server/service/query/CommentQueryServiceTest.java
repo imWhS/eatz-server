@@ -1,11 +1,11 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.*;
-import imwhs.eatz_server.dto.CommentRecipeDto;
-import imwhs.eatz_server.dto.CommentResponseDto;
-import imwhs.eatz_server.dto.CommentUserDto;
+import imwhs.eatz_server.dto.comment.CommentRecipeDto;
+import imwhs.eatz_server.dto.comment.CommentResponseDto;
+import imwhs.eatz_server.dto.comment.CommentUserDto;
 import imwhs.eatz_server.repository.CommentRepository;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,14 +50,14 @@ public class CommentQueryServiceTest {
         commentRepository.save(comment);
 
         // when
-        CommentResponseDto commentResponseDto = commentQueryService.findComment(comment.getId());
+        CommentResponseDto commentDto = commentQueryService.findComment(comment.getId());
 
         // then
-        Assertions.assertNotNull(commentResponseDto);
-        Assertions.assertEquals(comment.getId(), commentResponseDto.getId());
-        Assertions.assertEquals(comment.getContent(), commentResponseDto.getContent());
-        Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentResponseDto.getUser());
-        Assertions.assertEquals(new CommentRecipeDto(comment.getRecipe()), commentResponseDto.getRecipe());
+        Assertions.assertNotNull(commentDto);
+        Assertions.assertEquals(comment.getId(), commentDto.getId());
+        Assertions.assertEquals(comment.getContent(), commentDto.getContent());
+        Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentDto.getUser());
+        Assertions.assertEquals(new CommentRecipeDto(comment.getRecipe()), commentDto.getRecipe());
     }
 
     @Test

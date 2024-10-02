@@ -1,6 +1,5 @@
-package imwhs.eatz_server.dto;
+package imwhs.eatz_server.dto.recipe;
 
-import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

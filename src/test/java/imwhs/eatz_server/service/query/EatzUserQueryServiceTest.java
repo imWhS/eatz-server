@@ -2,9 +2,9 @@ package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.EatzUserResponseDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
