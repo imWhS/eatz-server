@@ -1,14 +1,12 @@
-package imwhs.eatz_server.dto;
+package imwhs.eatz_server.repository.eatzuser.query;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.Recipe;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-// TODO: EatzUser의 DTO 필드 추가
 @Data
-public class RecipeResponseDto {
+public class EatzUserRecipeQueryDto {
 
     private Long id;
 
@@ -29,15 +27,15 @@ public class RecipeResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
-    public RecipeResponseDto(Recipe recipe) {
-        this.id = recipe.getId();
-        this.title = recipe.getTitle();
-        this.description = recipe.getDescription();
-        this.url = recipe.getUrl();
-        this.imageUrl = recipe.getImageUrl();
-        this.createdAt = recipe.getCreatedAt();
-        this.updatedAt = recipe.getUpdatedAt();
-        this.deletedAt = recipe.getDeletedAt();
+    public EatzUserRecipeQueryDto(Long id, String title, String description, String url, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
     }
 
 }
