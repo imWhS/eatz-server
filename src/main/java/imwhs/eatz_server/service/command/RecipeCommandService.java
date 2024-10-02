@@ -2,12 +2,12 @@ package imwhs.eatz_server.service.command;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.dto.CreateRecipeDto;
-import imwhs.eatz_server.dto.UpdateRecipeDto;
+import imwhs.eatz_server.dto.recipe.CreateRecipeDto;
+import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
