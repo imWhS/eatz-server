@@ -4,10 +4,10 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Rating;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.RatingRecipeDto;
-import imwhs.eatz_server.dto.RatingResponseDto;
-import imwhs.eatz_server.dto.RatingUserDto;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.dto.rating.RatingRecipeDto;
+import imwhs.eatz_server.dto.rating.RatingResponseDto;
+import imwhs.eatz_server.dto.rating.RatingUserDto;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import org.junit.jupiter.api.Assertions;
@@ -55,14 +55,14 @@ class RatingQueryServiceTest {
         ratingRepository.save(rating);
 
         // when
-        RatingResponseDto ratingResponseDto = ratingQueryService.findRating(rating.getId());
+        RatingResponseDto ratingDto = ratingQueryService.findRating(rating.getId());
 
         // then
-        Assertions.assertNotNull(ratingResponseDto);
-        Assertions.assertEquals(rating.getId(), ratingResponseDto.getId());
-        Assertions.assertEquals(rating.getScore(), ratingResponseDto.getScore());
-        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingResponseDto.getUser());
-        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingResponseDto.getRecipe());
+        Assertions.assertNotNull(ratingDto);
+        Assertions.assertEquals(rating.getId(), ratingDto.getId());
+        Assertions.assertEquals(rating.getScore(), ratingDto.getScore());
+        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingDto.getUser());
+        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingDto.getRecipe());
     }
 
     @Test
@@ -88,14 +88,14 @@ class RatingQueryServiceTest {
         ratingRepository.save(rating);
 
         // when
-        RatingResponseDto ratingResponseDto = ratingQueryService.findRating(userId, recipeId);
+        RatingResponseDto ratingDto = ratingQueryService.findRating(userId, recipeId);
 
         // then
-        Assertions.assertNotNull(ratingResponseDto);
-        Assertions.assertEquals(rating.getId(), ratingResponseDto.getId());
-        Assertions.assertEquals(rating.getScore(), ratingResponseDto.getScore());
-        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingResponseDto.getUser());
-        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingResponseDto.getRecipe());
+        Assertions.assertNotNull(ratingDto);
+        Assertions.assertEquals(rating.getId(), ratingDto.getId());
+        Assertions.assertEquals(rating.getScore(), ratingDto.getScore());
+        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingDto.getUser());
+        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingDto.getRecipe());
     }
 
     @Test

@@ -59,7 +59,7 @@ public class EatzUser extends BaseEntity {
      * TODO: 사용자 회원 탈퇴 시, 연관 관계인 레시피도 함께 삭제되어야 하는지 여부 결정
      */
     @OneToMany(mappedBy = "user")
-    private List<Recipe> recipeList = new ArrayList<>();
+    private List<Recipe> recipes = new ArrayList<>();
 
     protected EatzUser() {}
 
