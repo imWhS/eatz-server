@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto;
+package imwhs.eatz_server.dto.eatzuser;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;

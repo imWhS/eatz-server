@@ -1,12 +1,12 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Comment;
-import imwhs.eatz_server.dto.CommentResponseDto;
+import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.CommentRepository;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

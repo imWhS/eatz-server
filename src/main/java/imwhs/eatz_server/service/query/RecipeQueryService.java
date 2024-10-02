@@ -1,7 +1,7 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.dto.RecipeResponseDto;
+import imwhs.eatz_server.dto.recipe.RecipeResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.RecipeRepository;

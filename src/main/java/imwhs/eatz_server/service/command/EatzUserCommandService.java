@@ -1,10 +1,10 @@
 package imwhs.eatz_server.service.command;
 
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.dto.CreateEatzUserDto;
-import imwhs.eatz_server.dto.UpdateEatzUserDto;
+import imwhs.eatz_server.dto.eatzuser.CreateEatzUserDto;
+import imwhs.eatz_server.dto.eatzuser.UpdateEatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
