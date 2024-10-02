@@ -1,12 +1,10 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
-import imwhs.eatz_server.dto.UpdateRecipeDto;
+import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * Recipe 엔티티.<br/>
@@ -60,7 +58,7 @@ public class Recipe extends BaseEntity {
      */
     public void setUser(EatzUser user) {
         this.user = user;
-        user.getRecipeList().add(this);
+        user.getRecipes().add(this);
     }
 
     protected Recipe() {}
