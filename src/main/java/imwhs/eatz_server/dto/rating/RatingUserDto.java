@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto;
+package imwhs.eatz_server.dto.rating;
 
 import imwhs.eatz_server.domain.EatzUser;
 import lombok.AllArgsConstructor;
@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CommentUserDto {
+public class RatingUserDto {
 
     private Long id;
 
     private String username;
 
-    public CommentUserDto(EatzUser user) {
+    public RatingUserDto(EatzUser user) {
         this.id = user.getId();
         this.username = user.getUsername();
     }

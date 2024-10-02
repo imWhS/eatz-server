@@ -4,7 +4,7 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Rating;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
 import imwhs.eatz_server.service.command.RatingCommandService;

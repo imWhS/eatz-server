@@ -1,8 +1,7 @@
-package imwhs.eatz_server.dto;
+package imwhs.eatz_server.dto.rating;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.domain.Rating;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
