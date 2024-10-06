@@ -27,8 +27,8 @@ public class CommentQueryService {
      * 페이지 번호 및 크기 기본 값.
      * 응답 메시지에 포함시킬 시용자에 대해 페이징 처리를 하기 위해 정의합니다.
      */
-    private static final int DEFAULT_PAGE_NUMBER = 0;
-    private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final int DEFAULT_CURRENT_PAGE = 0;
+    private static final int DEFAULT_PAGING_SIZE = 10;
 
     /**
      * ID로 특정 댓글 조회.
@@ -42,19 +42,14 @@ public class CommentQueryService {
     /**
      * 사용자 ID, 레시피 ID로 모든 댓글 조회.
      */
-    public Page<CommentResponseDto> findComments(Long userId, Long recipeId, Integer pageNumber, Integer pageSize) {
-        if (!userRepository.existsById(userId)) {
-            throw new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다.");
-        }
+    public Page<CommentResponseDto> findComments(Long userId, Long recipeId, Integer currentPage, Integer pagingSize) {
+        validateUser(userId);
+        validateRecipe(recipeId);
 
-        if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
-        }
+        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
+        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
 
-        int number = (pageNumber == null ? DEFAULT_PAGE_NUMBER : pageNumber);
-        int size = (pageSize == null ? DEFAULT_PAGE_SIZE : pageSize);
-
-        PageRequest pageRequest = PageRequest.of(number, size);
+        PageRequest pageRequest = PageRequest.of(page, size);
         Page<Comment> comments = commentRepository.findJoinUserRecipeByUserIdAndRecipeId(userId, recipeId, pageRequest);
 
         return comments.map(CommentResponseDto::new);
@@ -63,15 +58,13 @@ public class CommentQueryService {
     /**
      * 특정 레시피에 달린 모든 댓글 조회.
      */
-    public Page<CommentResponseDto> findCommentsByRecipe(Long recipeId, Integer pageNumber, Integer pageSize) {
-        if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
-        }
+    public Page<CommentResponseDto> findCommentsByRecipe(Long recipeId, Integer currentPage, Integer pagingSize) {
+        validateRecipe(recipeId);
 
-        int number = (pageNumber == null ? DEFAULT_PAGE_NUMBER : pageNumber);
-        int size = (pageSize == null ? DEFAULT_PAGE_SIZE : pageSize);
+        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
+        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
 
-        PageRequest pageRequest = PageRequest.of(number, size);
+        PageRequest pageRequest = PageRequest.of(page, size);
         Page<Comment> comments = commentRepository.findJoinUserRecipeByRecipeId(recipeId, pageRequest);
 
         return comments.map(CommentResponseDto::new);
@@ -80,18 +73,28 @@ public class CommentQueryService {
     /**
      * 특정 사용자가 등록한 모든 댓글 조회.
      */
-    public Page<CommentResponseDto> findCommentsByUser(Long userId, Integer pageNumber, Integer pageSize) {
-        if (!userRepository.existsById(userId)) {
-            throw new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다.");
-        }
+    public Page<CommentResponseDto> findCommentsByUser(Long userId, Integer currentPage, Integer pagingSize) {
+        validateUser(userId);
 
-        int number = (pageNumber == null ? DEFAULT_PAGE_NUMBER : pageNumber);
-        int size = (pageSize == null ? DEFAULT_PAGE_SIZE : pageSize);
+        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
+        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
 
-        PageRequest pageRequest = PageRequest.of(number, size);
+        PageRequest pageRequest = PageRequest.of(page, size);
         Page<Comment> comments = commentRepository.findJoinUserRecipeByUserId(userId, pageRequest);
 
         return comments.map(CommentResponseDto::new);
+    }
+
+    private void validateUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다.");
+        }
+    }
+
+    private void validateRecipe(Long recipeId) {
+        if (!recipeRepository.existsById(recipeId)) {
+            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
+        }
     }
 
 }
