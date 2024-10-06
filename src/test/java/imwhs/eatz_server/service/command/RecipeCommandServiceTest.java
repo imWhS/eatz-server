@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.command;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
@@ -8,7 +8,6 @@ import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
-import imwhs.eatz_server.service.command.RecipeCommandService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

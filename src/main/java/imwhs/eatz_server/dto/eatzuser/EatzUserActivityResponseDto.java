@@ -1,12 +1,11 @@
 package imwhs.eatz_server.dto.eatzuser;
 
-import imwhs.eatz_server.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class EatzUserActivityDto {
+public class EatzUserActivityResponseDto {
 
     private Long id;
 

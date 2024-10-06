@@ -1,9 +1,12 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.dto.Paged;
+import imwhs.eatz_server.dto.eatzuser.EatzUserActivityResponseDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
+import imwhs.eatz_server.repository.eatzuser.query.EatzUserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,18 +22,20 @@ public class EatzUserQueryService {
 
     private final EatzUserRepository userRepository;
 
+    private final EatzUserQueryRepository userQueryRepository;
+
     /**
      * 페이지 번호 및 크기 기본 값.
      * 응답 메시지에 포함시킬 시용자에 대해 페이징 처리를 하기 위해 정의합니다.
      */
-    private static final int DEFAULT_PAGE_NUMBER = 0;
-    private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final int DEFAULT_CURRENT_PAGE = 0;
+    private static final int DEFAULT_PAGING_SIZE = 10;
 
     /**
      * 식별자로 사용자 조회.
      * 특정 id의 사용자를 조회합니다.
      */
-    public EatzUserResponseDto findById(Long id) {
+    public EatzUserResponseDto findUserById(Long id) {
         EatzUser user = userRepository.findById(id).orElseThrow(
                 () -> new EatzUserNotFoundException("id가 " + id + "인 사용자를 찾지 못했습니다."));
 
@@ -40,7 +45,7 @@ public class EatzUserQueryService {
     /**
      * 이메일로 사용자 조회.
      */
-    public EatzUserResponseDto findByEmail(String email) {
+    public EatzUserResponseDto findUserByEmail(String email) {
         EatzUser user = userRepository.findByEmail(email).orElseThrow(
                 () -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾지 못했습니다."));
 
@@ -52,18 +57,26 @@ public class EatzUserQueryService {
      * 등록된 모든 사용자를 조회합니다.
      * 페이징이 적용됩니다.
      */
-    public Page<EatzUserResponseDto> findAll(Integer pageNumber, Integer pageSize) {
-        int number = (pageNumber == null ? DEFAULT_PAGE_NUMBER : pageNumber);
-        int size = (pageSize == null ? DEFAULT_PAGE_SIZE : pageSize);
+    public Page<EatzUserResponseDto> findAllUsers(Integer currentPage, Integer pagingSize) {
+        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
+        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
 
-        PageRequest pageRequest = PageRequest.of(number, size);
+        PageRequest pageRequest = PageRequest.of(page, size);
         Page<EatzUser> foundUsers = userRepository.findAll(pageRequest);
 
         return foundUsers.map(EatzUserResponseDto::new);
     }
 
     /**
-     *
+     * 모든 사용자와 활동 요약 조회.
+     * 등록된 모든 사용자를 활동 요약과 함께 조회합니다.
+     * 페이징이 적용됩니다.
      */
+    public Paged<EatzUserActivityResponseDto> findAllUsersWithActivity(Integer currentPage, Integer pagingSize) {
+        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
+        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
+
+        return userQueryRepository.findAllWithActivity(page, size);
+    }
 
 }

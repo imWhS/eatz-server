@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.command;
 
 import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.domain.EatzUser;
@@ -9,7 +9,6 @@ import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RecipeRepository;
-import imwhs.eatz_server.service.command.CommentCommandService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
