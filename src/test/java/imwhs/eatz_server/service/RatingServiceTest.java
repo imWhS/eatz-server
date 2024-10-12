@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.command;
+package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Rating;
@@ -6,8 +6,9 @@ import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Transactional
+@Transactional(readOnly = true)
 @SpringBootTest
-public class RatingCommandServiceTest {
+public class RatingServiceTest {
 
     @Autowired
-    private RatingCommandService ratingCommandService;
+    private RatingService ratingService;
 
     @Autowired
     private RatingRepository ratingRepository;
@@ -32,8 +33,16 @@ public class RatingCommandServiceTest {
     @Autowired
     private RecipeRepository recipeRepository;
 
+//    @BeforeEach
+//    void setUp() {
+//        ratingRepository.deleteAll();
+//        userRepository.deleteAll();
+//        recipeRepository.deleteAll();
+//    }
+
     @Test
     @DisplayName("레시피에 새 평가가 정상적으로 등록되는지 테스트합니다.")
+    @Transactional
     void ratingRegisterTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -52,7 +61,7 @@ public class RatingCommandServiceTest {
         int score = 4;
 
         // when
-        Long ratingId = ratingCommandService.registerRating(recipeId, userId, score, null);
+        Long ratingId = ratingService.registerRating(recipeId, userId, score, null);
 
         // then
         Assertions.assertThat(ratingId).isNotNull();
@@ -63,6 +72,7 @@ public class RatingCommandServiceTest {
 
     @Test
     @DisplayName("레시피에 평가를 중복 등록하려고 할 때, 예외가 발생하는지 테스트합니다.")
+    @Transactional
     void ratingDuplicatedRegisterTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -85,12 +95,13 @@ public class RatingCommandServiceTest {
 
         // when, then
         Assertions.assertThat(ratingRepository.findAll()).hasSize(1);
-        Assertions.assertThatThrownBy(() -> ratingCommandService.registerRating(recipeId, userId, score, null))
+        Assertions.assertThatThrownBy(() -> ratingService.registerRating(recipeId, userId, score, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("평가가 정상적으로 수정되는지 테스트합니다.")
+    @Transactional
     void ratingUpdateTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -113,7 +124,7 @@ public class RatingCommandServiceTest {
         int newScore = 1;
 
         // when
-        ratingCommandService.updateRating(ratingId, userId, newScore, null);
+        ratingService.updateRating(ratingId, userId, newScore, null);
 
         // then
         Optional<Rating> foundRating = ratingRepository.findById(ratingId);
@@ -123,6 +134,7 @@ public class RatingCommandServiceTest {
 
     @Test
     @DisplayName("평가가 정상적으로 삭제되는지 테스트합니다.")
+    @Transactional
     void ratingDeleteTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -143,7 +155,7 @@ public class RatingCommandServiceTest {
         Long ratingId = rating.getId();
 
         // when
-        ratingCommandService.deleteRating(ratingId, userId);
+        ratingService.deleteRating(ratingId, userId);
 
         // then
         Assertions.assertThat(ratingRepository.findByIdAndDeletedAtIsNull(ratingId)).isEmpty();

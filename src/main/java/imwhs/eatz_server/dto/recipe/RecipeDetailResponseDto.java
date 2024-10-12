@@ -1,0 +1,41 @@
+package imwhs.eatz_server.dto.recipe;
+
+import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
+import imwhs.eatz_server.dto.rating.RatingSummaryDto;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 특정 레시피의 상세 정보 데이터를 전달하기 위해 사용하는 DTO 클래스입니다.
+ * 주로 레시피 목록에서 특정 레시피를 조회하거나, 특정 id 레시피를 조회할 때,
+ * 해당 레시피의 상세 정보를 클라이언트가 출력하기 위한 API에 사용됩니다.
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class RecipeDetailResponseDto {
+
+    private Long id;
+
+    private EatzUserSummaryDto user;
+
+    private String title;
+
+    private String url;
+
+    private String imageUrl;
+
+    private String description;
+
+    /**
+     * 레시피에 달린 댓글 수
+     */
+    private int commentCount;
+
+    /**
+     * 레시피에 달린 평가들의 요약
+     */
+    private RatingSummaryDto ratingSummary;
+
+}
