@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.command;
+package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.domain.EatzUser;
@@ -6,7 +6,7 @@ import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CommentCommandService {
+public class CommentService {
 
     private final CommentRepository commentRepository;
 
