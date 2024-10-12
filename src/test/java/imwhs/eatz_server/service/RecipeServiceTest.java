@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.command;
+package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
@@ -7,7 +7,7 @@ import imwhs.eatz_server.dto.recipe.CreateRecipeDto;
 import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,12 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+@Transactional(readOnly = true)
 @SpringBootTest
-class RecipeCommandServiceTest {
+public class RecipeServiceTest {
 
     @Autowired
-    private RecipeCommandService recipeCommandService;
+    private RecipeService recipeService;
 
     @Autowired
     private RecipeRepository recipeRepository;
@@ -30,6 +30,7 @@ class RecipeCommandServiceTest {
 
     @Test
     @DisplayName("새 레시피가 정상적으로 등록되는지 테스트합니다.")
+    @Transactional
     void registerRecipeTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -42,7 +43,7 @@ class RecipeCommandServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        Long recipeId = recipeCommandService.registerRecipe(createRecipeDto, user.getId());
+        Long recipeId = recipeService.registerRecipe(createRecipeDto, user.getId());
 
         // then
         Recipe recipe = recipeRepository.findById(recipeId).get();
@@ -54,6 +55,7 @@ class RecipeCommandServiceTest {
 
     @Test
     @DisplayName("레시피가 정상적으로 수정되는지 테스트합니다.")
+    @Transactional
     void updateRecipeTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -70,7 +72,7 @@ class RecipeCommandServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        recipeCommandService.updateRecipe(recipeId, updateRecipeDto, user.getId());
+        recipeService.updateRecipe(recipeId, updateRecipeDto, user.getId());
         Recipe foundRecipe = recipeRepository.findById(recipeId).get();
 
         // then
@@ -82,6 +84,7 @@ class RecipeCommandServiceTest {
 
     @Test
     @DisplayName("레시피가 정상적으로 삭제 처리되는지 테스트합니다.")
+    @Transactional
     void deleteRecipeTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -92,7 +95,7 @@ class RecipeCommandServiceTest {
         Long recipeId = recipe.getId();
 
         // when
-        recipeCommandService.deleteRecipe(recipeId, user.getId());
+        recipeService.deleteRecipe(recipeId, user.getId());
 
         // then
         Assertions.assertThat(recipeRepository.findById(recipeId).get().isMarkedAsDeleted()).isTrue();
@@ -100,6 +103,7 @@ class RecipeCommandServiceTest {
 
     @Test
     @DisplayName("권한이 없는 사용자가 레시피를 수정하려고 할 때, 관련 예외가 발생하는지 테스트합니다.")
+    @Transactional
     void updateRecipeByUnauthorizedUserTest() {
         // given
         EatzUser userA = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -118,11 +122,12 @@ class RecipeCommandServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeCommandService.updateRecipe(recipeId, updateRecipeDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, updateRecipeDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test
     @DisplayName("권한이 없는 사용자가 레시피를 삭제하려고 할 때, 관련 예외가 발생하는지 테스트합니다.")
+    @Transactional
     void deleteRecipeByUnauthorizedUserTest() {
         // given
         EatzUser userA = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -135,7 +140,7 @@ class RecipeCommandServiceTest {
         Long recipeId = recipe.getId();
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeCommandService.deleteRecipe(recipeId, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeService.deleteRecipe(recipeId, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
     }
 
 }
