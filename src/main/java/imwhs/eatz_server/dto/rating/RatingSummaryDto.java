@@ -1,5 +1,6 @@
 package imwhs.eatz_server.dto.rating;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class RatingSummaryDto {
 
     /**
@@ -22,10 +24,5 @@ public class RatingSummaryDto {
      * 1~5점 사이의 자연수 값이며, 사용자들이 남긴 평가 점수의 평균입니다.
      */
     private double averageRatingScore;
-
-    public RatingSummaryDto(int ratingCount, double averageRatingScore) {
-        this.ratingCount = ratingCount;
-        this.averageRatingScore = averageRatingScore;
-    }
 
 }
