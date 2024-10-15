@@ -6,15 +6,16 @@ import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.dto.comment.CommentUserDto;
 import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+@Transactional(readOnly = true)
 @SpringBootTest
 public class CommentQueryServiceTest {
 
@@ -31,9 +32,10 @@ public class CommentQueryServiceTest {
     RecipeRepository recipeRepository;
 
     @Test
+    @Transactional
     void findCommentByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextoryAA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.create(
@@ -61,9 +63,10 @@ public class CommentQueryServiceTest {
     }
 
     @Test
+    @Transactional
     void findCommentsByUserAndRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextoryBB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.create(
@@ -90,9 +93,10 @@ public class CommentQueryServiceTest {
     }
 
     @Test
+    @Transactional
     void findCommentsOfRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextoryCC", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.create(
@@ -120,9 +124,10 @@ public class CommentQueryServiceTest {
     }
 
     @Test
+    @Transactional
     void findCommentsByUserTest() {
         // given
-        EatzUser userA = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userA = EatzUser.create("heextoryDD", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userA);
 
         Recipe recipeA = Recipe.create(
@@ -132,7 +137,6 @@ public class CommentQueryServiceTest {
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
-        Long recipeAId = recipeA.getId();
 
         EatzUser userB = EatzUser.create("curve4403", "curve4403@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
@@ -144,7 +148,6 @@ public class CommentQueryServiceTest {
                 "https://www.naver.com/test.jpg",
                 "마늘 듬뿍 볶음밥입니당");
         recipeRepository.save(recipeB);
-        Long recipeBId = recipeB.getId();
 
         EatzUser reviewer = EatzUser.create("awesome", "awesome@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(reviewer);

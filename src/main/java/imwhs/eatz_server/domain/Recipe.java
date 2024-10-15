@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Recipe 엔티티.<br/>
  * <p>
@@ -51,6 +54,18 @@ public class Recipe extends BaseEntity {
      * 설명.
      */
     private String description;
+
+    /**
+     * 모든 댓글.
+     */
+    @OneToMany(mappedBy = "recipe")
+    private List<Comment> comments = new ArrayList<>();
+
+    /**
+     * 모든 평가.
+     */
+    @OneToMany(mappedBy = "recipe")
+    private List<Rating> ratings = new ArrayList<>();
 
     /**
      * Recipe, EatzUser의 양방향 연관 관계 설정 메서드.

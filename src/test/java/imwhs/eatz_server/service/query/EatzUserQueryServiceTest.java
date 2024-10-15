@@ -3,11 +3,11 @@ package imwhs.eatz_server.service.query;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.eatzuser.EatzUserActivityResponseDto;
+import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @SpringBootTest
 class EatzUserQueryServiceTest {
 
@@ -24,11 +26,13 @@ class EatzUserQueryServiceTest {
 
     @Autowired
     EatzUserRepository userRepository;
+
     @Autowired
     private RecipeRepository recipeRepository;
 
     @Test
     @DisplayName("등록된 사용자가 식별자로 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findUserByIdTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -45,6 +49,7 @@ class EatzUserQueryServiceTest {
 
     @Test
     @DisplayName("등록되지 않은 사용자가 식별자로 조회되지 않는지 테스트합니다.")
+    @Transactional
     void findInvalidUserByIdTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -56,6 +61,7 @@ class EatzUserQueryServiceTest {
 
     @Test
     @DisplayName("등록된 사용자가 이메일로 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findUserByEmailTest() {
         // given
         String email = "heextory@icloud.com";
@@ -73,6 +79,7 @@ class EatzUserQueryServiceTest {
 
     @Test
     @DisplayName("등록된 모든 사용자가 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findAllUsersTest() {
         // given
         EatzUser user1 = EatzUser.create("1heextory", "1heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -94,6 +101,7 @@ class EatzUserQueryServiceTest {
 
     @Test
     @DisplayName("등록된 모든 사용자와 사용자 별 활동 요약 정보가 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findAllUsersWithActivityTest() {
         // given
         EatzUser user1 = EatzUser.create("1heextory", "1heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -118,7 +126,7 @@ class EatzUserQueryServiceTest {
         userRepository.save(user4);
 
         // when
-        Paged<EatzUserActivityResponseDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(null, null);
+        PagedResponse<EatzUserSummaryDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(null, null);
 
         // then
         Assertions.assertThat(foundUsersWithActivities.getTotalItems()).isEqualTo(4);
@@ -130,6 +138,7 @@ class EatzUserQueryServiceTest {
 
     @Test
     @DisplayName("등록된 모든 사용자와 사용자 별 활동 요약 정보를 조회할 때, 페이징 처리가 제대로 동작하는지 테스트합니다.")
+    @Transactional
     void findAllUsersWithActivity_PagingTest() {
         // given
         EatzUser user1 = EatzUser.create("user1", "user1@icloud.com", "password1", Role.MEMBER);
@@ -150,7 +159,7 @@ class EatzUserQueryServiceTest {
         // when
         int page = 0;
         int size = 2;
-        Paged<EatzUserActivityResponseDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(page, size);
+        PagedResponse<EatzUserSummaryDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(page, size);
 
         // then
         Assertions.assertThat(foundUsersWithActivities.getData().size()).isEqualTo(2);

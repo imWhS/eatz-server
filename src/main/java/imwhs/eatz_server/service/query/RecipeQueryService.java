@@ -1,10 +1,11 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.dto.recipe.RecipeDetailResponseDto;
 import imwhs.eatz_server.dto.recipe.RecipeResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RecipeQueryService {
 
-    @Autowired
-    private RecipeRepository recipeRepository;
+    private final RecipeRepository recipeRepository;
 
     /**
      * 페이지 번호 및 크기 기본 값.
@@ -39,6 +39,22 @@ public class RecipeQueryService {
 
         return new RecipeResponseDto(recipe);
     }
+
+    /**
+     * ID로 레시피와 해당 레시피를 등록한 사용자, 해당 레시피에 달린 댓글 및 평가 조회
+     *
+     * 조회할 데이터
+     * 1. Recipe
+     * 2. Recipe와 연관 관계인 EatzUser의 요약 정보
+     * 2. Recipe와 연관 관계인 모든 Comment의 수
+     * 3. Recipe와 연관 관계인 모든 Rating의 평균 점수, 평가 수, 평가자 수
+     *
+     * - Recipe -> EatzUser: 페치 조인
+     * - Recipe -> Comment, Recipe -> Rating:
+     */
+//    public RecipeDetailResponseDto findRecipeDetailsById(Long id) {
+//
+//    }
 
     /**
      * 모든 레시피 조회.
