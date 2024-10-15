@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional(readOnly = true)
@@ -70,10 +72,13 @@ class RecipeQueryRepositoryTest {
         ratingRepository.save(new Rating(userD, recipe1, 3, "무난한 맛이네요."));
 
         // when
-        RecipeDetailResponseDto recipeDetail = recipeQueryRepository.findRecipeDetailById(recipeId);
+        Optional<RecipeDetailResponseDto> recipeDetailOptional = recipeQueryRepository.findRecipeDetailById(recipeId);
 
         // then
-        assertNotNull(recipeDetail);
+        assertNotNull(recipeDetailOptional);
+        assertTrue(recipeDetailOptional.isPresent());
+
+        RecipeDetailResponseDto recipeDetail = recipeDetailOptional.get();
         assertEquals(recipeId, recipeDetail.getId());
         assertEquals("Pasta", recipeDetail.getTitle());
         assertEquals(6, recipeDetail.getCommentCount());
