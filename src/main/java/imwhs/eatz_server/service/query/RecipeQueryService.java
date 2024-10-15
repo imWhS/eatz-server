@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -46,11 +48,8 @@ public class RecipeQueryService {
      * ID로 레시피와 해당 레시피를 등록한 사용자, 해당 레시피에 달린 댓글 및 평가 조회.
      */
     public RecipeDetailResponseDto findRecipeDetailsById(Long id) {
-        RecipeDetailResponseDto recipeDetail = recipeQueryRepository.findRecipeDetailById(id);
-
-        if (recipeDetail == null) {
-
-        }
+        return recipeQueryRepository.findRecipeDetailById(id)
+                .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
     }
 
     /**
