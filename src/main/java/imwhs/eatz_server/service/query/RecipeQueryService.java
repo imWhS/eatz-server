@@ -21,13 +21,14 @@ public class RecipeQueryService {
 
     private final RecipeRepository recipeRepository;
 
+    private final RecipeQueryRepository recipeQueryRepository;
+
     /**
      * 페이지 번호 및 크기 기본 값.
      * 응답 메시지에 포함시킬 레시피에 대해 페이징 처리를 하기 위해 정의합니다.
      */
     private static final int DEFAULT_PAGE_NUMBER = 0;
     private static final int DEFAULT_PAGE_SIZE = 10;
-    private final RecipeQueryRepository recipeQueryRepository;
 
     /**
      * ID로 레시피 조회.
