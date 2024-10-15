@@ -2,19 +2,17 @@ package imwhs.eatz_server.dto.eatzuser;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class EatzUserActivityResponseDto {
+@NoArgsConstructor
+public class EatzUserSummaryDto {
 
     private Long id;
 
     private String username;
 
     private Long recipeCount;
-
-//    private Long commentCount;
-
-//    private Long ratingCount;
 
 }
