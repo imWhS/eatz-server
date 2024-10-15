@@ -6,6 +6,7 @@ import imwhs.eatz_server.dto.recipe.RecipeResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.query.RecipeQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class RecipeQueryService {
 
     private final RecipeRepository recipeRepository;
+
+    private final RecipeQueryRepository recipeQueryRepository;
 
     /**
      * 페이지 번호 및 크기 기본 값.
