@@ -41,20 +41,16 @@ public class RecipeQueryService {
     }
 
     /**
-     * ID로 레시피와 해당 레시피를 등록한 사용자, 해당 레시피에 달린 댓글 및 평가 조회
-     *
-     * 조회할 데이터
-     * 1. Recipe
-     * 2. Recipe와 연관 관계인 EatzUser의 요약 정보
-     * 2. Recipe와 연관 관계인 모든 Comment의 수
-     * 3. Recipe와 연관 관계인 모든 Rating의 평균 점수, 평가 수, 평가자 수
-     *
-     * - Recipe -> EatzUser: 페치 조인
-     * - Recipe -> Comment, Recipe -> Rating:
+     * ID로 레시피 상세 정보 조회.
+     * ID로 레시피와 해당 레시피를 등록한 사용자와 해당 레시피에 달린 댓글 및 평가의 요약 정보를 함께 조회합니다.
+     * @param id 조회할 레시피의 ID
+     * @return 조회된 레시피의 상세 정보를 담고 있는 RecipeDetailResponseDto
+     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
      */
-//    public RecipeDetailResponseDto findRecipeDetailsById(Long id) {
-//
-//    }
+    public RecipeDetailResponseDto findRecipeDetailsById(Long id) {
+        return recipeQueryRepository.findRecipeDetailById(id)
+                .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
+    }
 
     /**
      * 모든 레시피 조회.
