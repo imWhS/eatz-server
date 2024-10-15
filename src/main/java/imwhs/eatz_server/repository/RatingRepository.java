@@ -28,9 +28,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "join fetch r.user u " +
             "join fetch r.recipe rc " +
             "where r.user.id = :userId and r.recipe.id = :recipeId")
-    Optional<Rating> findJoinUserRecipeByUserIdAndRecipeId(
-            @Param("userId") Long userId,
-            @Param("recipeId") Long recipeId);
+    Optional<Rating> findJoinUserRecipeByUserIdAndRecipeId(@Param("userId") Long userId, @Param("recipeId") Long recipeId);
 
     @Query("select r from Rating r " +
             "join fetch r.user u " +
@@ -43,4 +41,5 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "join fetch r.recipe rc " +
             "where u.id = :userId")
     Page<Rating> findJoinUserRecipeByUserId(@Param("userId") Long userId, Pageable pageRequest);
+    
 }

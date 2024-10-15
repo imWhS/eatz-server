@@ -1,4 +1,4 @@
-package imwhs.eatz_server.repository;
+package imwhs.eatz_server.repository.recipe;
 
 import imwhs.eatz_server.domain.Recipe;
 import org.springframework.data.domain.Page;

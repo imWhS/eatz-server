@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.command;
+package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
@@ -13,18 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @SpringBootTest
-@Transactional
-class EatzUserCommandServiceTest {
+public class EatzUserServiceTest {
 
     @Autowired
-    EatzUserCommandService userService;
+    private EatzUserService userService;
 
     @Autowired
-    EatzUserRepository userRepository;
+    private EatzUserRepository userRepository;
 
     @Test
     @DisplayName("새 사용자가 정상적으로 등록되는지 테스트합니다.")
+    @Transactional
     void userRegisterTest() {
         // given
         CreateEatzUserDto dto = new CreateEatzUserDto(
@@ -47,6 +48,7 @@ class EatzUserCommandServiceTest {
 
     @Test
     @DisplayName("중복된 사용자 이름으로 새 사용자를 등록하려고 할 때 등록이 실패하는지 테스트합니다.")
+    @Transactional
     void duplicatedNameUserRegisterTest() {
         // given
         CreateEatzUserDto user1Dto = new CreateEatzUserDto(
@@ -71,6 +73,7 @@ class EatzUserCommandServiceTest {
 
     @Test
     @DisplayName("중복된 이메일로 새 사용자를 등록하려고 할 때 등록이 실패하는지 테스트합니다.")
+    @Transactional
     void duplicatedEmailUserRegisterTest() {
         // given
         CreateEatzUserDto user1Dto = new CreateEatzUserDto(
@@ -95,6 +98,7 @@ class EatzUserCommandServiceTest {
 
     @Test
     @DisplayName("사용자가 정상적으로 수정되는지 테스트합니다.")
+    @Transactional
     void userUpdateTest() {
         // given
         CreateEatzUserDto createDto = new CreateEatzUserDto(
@@ -124,6 +128,7 @@ class EatzUserCommandServiceTest {
 
     @Test
     @DisplayName("유효하지 않은 사용자의 수정이 실패하는지 테스트합니다.")
+    @Transactional
     void invalidUserUpdateTest() {
         // given
         CreateEatzUserDto createDto = new CreateEatzUserDto(
@@ -140,6 +145,7 @@ class EatzUserCommandServiceTest {
 
     @Test
     @DisplayName("사용자가 정상적으로 삭제되는지 테스트합니다.")
+    @Transactional
     void userDeleteTest() {
         // given
         CreateEatzUserDto createDto = new CreateEatzUserDto(
@@ -159,6 +165,7 @@ class EatzUserCommandServiceTest {
 
     @Test
     @DisplayName("유효하지 않은 사용자의 삭제가 실패하는지 테스트합니다.")
+    @Transactional
     void invalidUserDeleteTest() {
         // given
         CreateEatzUserDto createDto = new CreateEatzUserDto(

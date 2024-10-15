@@ -9,8 +9,9 @@ import imwhs.eatz_server.dto.rating.RatingResponseDto;
 import imwhs.eatz_server.dto.rating.RatingUserDto;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+@Transactional(readOnly = true)
 @SpringBootTest
 class RatingQueryServiceTest {
 
@@ -34,11 +35,19 @@ class RatingQueryServiceTest {
     @Autowired
     RecipeRepository recipeRepository;
 
+    @BeforeEach
+    void setUp() {
+        ratingRepository.deleteAll();
+        userRepository.deleteAll();
+        recipeRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("등록된 평가가 식별자로 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findRatingByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.create(
@@ -67,9 +76,10 @@ class RatingQueryServiceTest {
 
     @Test
     @DisplayName("등록된 평가가 평가를 등록한 사용자의 식별자와 평가가 달린 레시피의 식별자로 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findRatingByUserAndRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -100,9 +110,10 @@ class RatingQueryServiceTest {
 
     @Test
     @DisplayName("특정 레시피에 달린 모든 평가가 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findRatingsOfRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextory3", "heextory3@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.create(
@@ -131,9 +142,10 @@ class RatingQueryServiceTest {
 
     @Test
     @DisplayName("특정 사용자가 남긴 모든 평가가 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
     void findRatingsByUserTest() {
         // given
-        EatzUser userA = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userA = EatzUser.create("heextory4", "heextory4@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userA);
 
         Recipe recipeA = Recipe.create(
@@ -155,7 +167,7 @@ class RatingQueryServiceTest {
                 "마늘 듬뿍 볶음밥입니당");
         recipeRepository.save(recipeB);
 
-        EatzUser reviewer = EatzUser.create("awesome", "awesome@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser reviewer = EatzUser.create("awesome2", "awesome2@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(reviewer);
 
         ratingRepository.save(new Rating(reviewer, recipeA, 5, null));

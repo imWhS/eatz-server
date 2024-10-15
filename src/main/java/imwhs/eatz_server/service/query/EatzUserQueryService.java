@@ -1,8 +1,8 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.eatzuser.EatzUserActivityResponseDto;
+import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -72,7 +72,7 @@ public class EatzUserQueryService {
      * 등록된 모든 사용자를 활동 요약과 함께 조회합니다.
      * 페이징이 적용됩니다.
      */
-    public Paged<EatzUserActivityResponseDto> findAllUsersWithActivity(Integer currentPage, Integer pagingSize) {
+    public PagedResponse<EatzUserSummaryDto> findAllUsersWithActivity(Integer currentPage, Integer pagingSize) {
         int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
         int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
 
