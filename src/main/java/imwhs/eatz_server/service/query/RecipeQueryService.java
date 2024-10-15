@@ -6,15 +6,12 @@ import imwhs.eatz_server.dto.recipe.RecipeResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.repository.recipe.query.RecipeQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -29,7 +26,6 @@ public class RecipeQueryService {
      */
     private static final int DEFAULT_PAGE_NUMBER = 0;
     private static final int DEFAULT_PAGE_SIZE = 10;
-    private final RecipeQueryRepository recipeQueryRepository;
 
     /**
      * ID로 레시피 조회.
