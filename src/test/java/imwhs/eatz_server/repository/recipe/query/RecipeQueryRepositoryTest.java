@@ -36,7 +36,7 @@ class RecipeQueryRepositoryTest {
 
     @Test
     @Transactional
-    void findRecipeDetailById_MultipleUsersCommentsAndRatings() {
+    void findRecipeDetailById() {
         // given: 사용자 A가 레시피를 등록합니다.
         EatzUser userA = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userA);
