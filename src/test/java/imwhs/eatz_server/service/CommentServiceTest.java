@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.command;
+package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.domain.EatzUser;
@@ -8,19 +8,20 @@ import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.RecipeRepository;
+import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+@Transactional(readOnly = true)
 @SpringBootTest
-public class CommentCommandServiceTest {
+public class CommentServiceTest {
 
     @Autowired
-    private CommentCommandService commentCommandService;
+    private CommentService commentService;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -32,6 +33,7 @@ public class CommentCommandServiceTest {
     private RecipeRepository recipeRepository;
 
     @Test
+    @Transactional
     void commentRegisterTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -45,7 +47,7 @@ public class CommentCommandServiceTest {
         String commentContent = "내 맘 속에 저장~";
 
         // when
-        Long commentId = commentCommandService.registerComment(recipeId, userId, commentContent);
+        Long commentId = commentService.registerComment(recipeId, userId, commentContent);
 
         // then
         boolean present = commentRepository.findById(commentId).isPresent();
@@ -54,6 +56,7 @@ public class CommentCommandServiceTest {
     }
 
     @Test
+    @Transactional
     void updateCommentTest() {
         // given
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
@@ -71,7 +74,7 @@ public class CommentCommandServiceTest {
         Long commentId = comment.getId();
 
         // when
-        commentCommandService.updateComment(commentId, userId, commentContentAfter);
+        commentService.updateComment(commentId, userId, commentContentAfter);
 
         // then
         Comment editedComment = commentRepository.findById(commentId)
@@ -81,9 +84,10 @@ public class CommentCommandServiceTest {
     }
 
     @Test
+    @Transactional
     void updateCommentByInvalidUserTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextoryA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Long invalidUserId = 99999L;
@@ -105,14 +109,15 @@ public class CommentCommandServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() ->
-                        commentCommandService.updateComment(commentId, invalidUserId, commentContentAfter))
+                        commentService.updateComment(commentId, invalidUserId, commentContentAfter))
                 .isInstanceOf(UnauthorizedEatzUserException.class);
     }
 
     @Test
+    @Transactional
     void deleteCommentTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextoryB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -126,16 +131,17 @@ public class CommentCommandServiceTest {
         Long commentId = comment.getId();
 
         // when
-        commentCommandService.deleteComment(commentId, userId);
+        commentService.deleteComment(commentId, userId);
 
         // then
         Assertions.assertThat(commentRepository.findByIdAndDeletedAtIsNull(commentId)).isEmpty();
     }
 
     @Test
+    @Transactional
     void deleteCommentByInvalidUserTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.create("heextoryC", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long invalidUserId = 99999L;
 
@@ -150,7 +156,7 @@ public class CommentCommandServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() ->
-                commentCommandService.deleteComment(commentId, invalidUserId))
+                commentService.deleteComment(commentId, invalidUserId))
                 .isInstanceOf(UnauthorizedEatzUserException.class);
     }
 
