@@ -45,7 +45,11 @@ public class RecipeQueryService {
     }
 
     /**
-     * ID로 레시피와 해당 레시피를 등록한 사용자, 해당 레시피에 달린 댓글 및 평가 조회.
+     * ID로 레시피 상세 정보 조회.
+     * ID로 레시피와 해당 레시피를 등록한 사용자와 해당 레시피에 달린 댓글 및 평가의 요약 정보를 함께 조회합니다.
+     * @param id 조회할 레시피의 ID
+     * @return 조회된 레시피의 상세 정보를 담고 있는 RecipeDetailResponseDto
+     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
      */
     public RecipeDetailResponseDto findRecipeDetailsById(Long id) {
         return recipeQueryRepository.findRecipeDetailById(id)
