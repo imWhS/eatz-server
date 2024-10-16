@@ -25,6 +25,7 @@ public class EatzUser extends BaseEntity {
     /**
      * 사용자 이름.<br/>
      * <p>
+     *     필수 값입니다.
      * TODO: 데이터베이스에 인덱스 추가 고려
      */
     @Column(unique = true, nullable = false)
@@ -33,6 +34,7 @@ public class EatzUser extends BaseEntity {
     /**
      * 이메일 주소.<br/>
      * <p>
+     *     필수 값입니다.
      * TODO: 데이터베이스에 인덱스 추가 고려
      */
     @Column(unique = true, nullable = false)
@@ -41,6 +43,7 @@ public class EatzUser extends BaseEntity {
     /**
      * 비밀 번호.<br/>
      * <p>
+     *     필수 값입니다.
      * TODO: 보안을 위해 Spring Security를 이용한 필드 값 암호화 처리
      */
     private String password;
