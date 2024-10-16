@@ -82,6 +82,11 @@ public class Ingredient {
         }
     }
 
+    public void addChild(Ingredient child) {
+        child.parent = this;
+        this.children.add(child);
+    }
+
     /**
      * 재료 기본 생성자.
      */
