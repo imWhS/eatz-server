@@ -23,7 +23,7 @@ public class EatzUserService {
      * username, email, password, role 등 EatzUser 엔티티 생성에 필요한 데이터가 많기 때문에
      * DTO인 CreateEatzUserDto로 데이터를 전달받습니다.
      *
-     * @param dto 새 사용자를 등록하기 위한 데이터를 전달받기 위한 DTO
+     * @param dto 사용자 생성 DTO
      * @return 등록 완료된 사용자 엔티티 EatzUser의 id
      */
     @Transactional
