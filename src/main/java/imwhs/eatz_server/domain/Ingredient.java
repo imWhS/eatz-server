@@ -43,8 +43,8 @@ public class Ingredient {
      * </p>
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Ingredient parent;
+    @JoinColumn(name = "category_id")
+    private Ingredient category;
 
     /**
      * 하위 재료.
@@ -52,7 +52,7 @@ public class Ingredient {
      *     카테고리로서의 해당 재료에 속해있는 다른 재료들의 목록입니다.
      * </p>
      */
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "category")
     private List<Ingredient> children = new ArrayList<>();
 
     /**
@@ -79,7 +79,7 @@ public class Ingredient {
         }
 
         //카테고리로 설정할 재료와 현재 재료가 이미 연관 관계를 갖고 있지는 않은지 확인합니다.
-        if (category.children.contains(this) && this.parent == category) {
+        if (category.children.contains(this) && this.category == category) {
             return;
         }
 
@@ -88,24 +88,24 @@ public class Ingredient {
         }
 
         // 현재 재료에 설정되어 있던 기존 카테고리와의 연관 관계를 지웁니다.
-        if (this.parent != null && this.parent != category) {
-            this.parent.children.remove(this);
+        if (this.category != null && this.category != category) {
+            this.category.children.remove(this);
         }
 
         // 카테고리로 설정할 재료와 연관 관계를 설정합니다.
         category.children.add(this);
-        this.parent = category;
+        this.category = category;
     }
 
     /**
      * 카테고리 지정 해제.
      */
     public void removeCategory() {
-        if (this.parent == null) {
+        if (this.category == null) {
             throw new IllegalArgumentException("현재 재료는 어떠한 카테고리에도 속해 있지 않습니다.");
         }
-        this.parent.children.remove(this);
-        this.parent = null;
+        this.category.children.remove(this);
+        this.category = null;
     }
 
     /**
@@ -125,7 +125,7 @@ public class Ingredient {
         }
 
         // 이미 현재 재료를 카테고리로서, 하위 재료와 연관 관계가 맺어져있지는 않은지 확인합니다.
-        if (this.children.contains(child) && child.parent == this) return;
+        if (this.children.contains(child) && child.category == this) return;
 
         // 순환 참조 방지를 위해, 하위 계층에 둘 재료가 이미 현재 재료의 카테고리로서 설정돼있지는 않은지 확인합니다.
         if (isCategoryOf(child)) {
@@ -134,12 +134,12 @@ public class Ingredient {
 
         // 하위 계층에 둘 재료가 이미 다른 카테고리와 연관 관계를 갖고 있지 않은지 확인합니다.
         // 이미 다른 카테고리와 연관 관계를 갖고 있다면, 해당 재료 엔티티를 통해 카테고리 지정을 해제해야 합니다.
-        if (child.parent != null && !Objects.equals(child.parent, this)) {
-            throw new IllegalArgumentException("하위 계층에 추가할 재료가 이미 " + child.parent.getName() + " 카테고리에 속해 있습니다.");
+        if (child.category != null && !Objects.equals(child.category, this)) {
+            throw new IllegalArgumentException("하위 계층에 추가할 재료가 이미 " + child.category.getName() + " 카테고리에 속해 있습니다.");
         }
 
         // 하위로 추가할 재료와 연관 관계를 설정합니다.
-        child.parent = this;
+        child.category = this;
         this.children.add(child);
     }
 
@@ -151,15 +151,15 @@ public class Ingredient {
             throw new IllegalArgumentException("삭제하려는 재료가 유효하지 않습니다.");
         }
 
-        if (child.parent == null) {
+        if (child.category == null) {
             throw new IllegalArgumentException("삭제하려는 재료는 어떠한 카테고리에도 속해있지 않습니다.");
         }
 
-        if (child.parent != this) {
-            throw new IllegalArgumentException("삭제하려는 재료가 다른 카테고리(" + child.parent.getName() + ")와 연관 관계가 설정되어 있습니다.");
+        if (child.category != this) {
+            throw new IllegalArgumentException("삭제하려는 재료가 다른 카테고리(" + child.category.getName() + ")와 연관 관계가 설정되어 있습니다.");
         }
 
-        child.parent = null;
+        child.category = null;
         this.children.remove(child);
     }
 
@@ -174,14 +174,14 @@ public class Ingredient {
      * @return 상위 계층에 특정 재료가 존재하는지 여부
      */
     public boolean isCategoryOf(Ingredient target) {
-        Ingredient current = this.parent;
+        Ingredient current = this.category;
 
         while (current != null) {
             if (current == target) {
                 return true;
             }
 
-            current = current.parent;
+            current = current.category;
         }
 
         return false;

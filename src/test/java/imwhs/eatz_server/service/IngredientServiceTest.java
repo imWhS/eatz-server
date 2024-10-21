@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,8 +66,8 @@ class IngredientServiceTest {
         Assertions.assertTrue(foundIngredient.isPresent());
         Assertions.assertEquals(ingredientName, foundIngredient.get().getName());
 
-        Assertions.assertNotNull(foundIngredient.get().getParent());
-        Assertions.assertEquals(categoryName, foundIngredient.get().getParent().getName());
+        Assertions.assertNotNull(foundIngredient.get().getCategory());
+        Assertions.assertEquals(categoryName, foundIngredient.get().getCategory().getName());
 
         List<Long> foundChildIds = foundIngredient.get().getChildren().stream()
                 .map(Ingredient::getId)
@@ -86,7 +85,7 @@ class IngredientServiceTest {
         CreateIngredientDto dto = new CreateIngredientDto(ingredientName, categoryId);
 
         // when, then
-        IngredientNotFoundException exception = assertThrows(IngredientNotFoundException.class, () -> ingredientService.registerIngredient(dto));
+        IngredientNotFoundException exception = Assertions.assertThrows(IngredientNotFoundException.class, () -> ingredientService.registerIngredient(dto));
         Assertions.assertEquals("id가 " + categoryId + "인 카테고리를 찾을 수 없습니다.", exception.getMessage());
     }
 
