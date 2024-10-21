@@ -62,6 +62,20 @@ public class Ingredient {
         this.name = name;
     }
 
+    public void update(String name, Ingredient category, List<Ingredient> children) {
+        this.name = name;
+
+        if (category != null) {
+            this.setCategory(category);
+        }
+
+        if (children != null && !children.isEmpty()) {
+            for (Ingredient child : children) {
+                this.addChild(child);
+            }
+        }
+    }
+
     /**
      * 카테고리 설정.
      * 다른 재료를 카테고리로 지정해, 해당 재료와 연관 관계를 맺습니다.
