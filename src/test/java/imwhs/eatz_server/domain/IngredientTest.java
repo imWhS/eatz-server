@@ -130,7 +130,7 @@ class IngredientTest {
 
         // when, then
         Assertions.assertTrue(flour.isChildOf(sugar)); // sugar가 flour의 하위 재료인지 확인
-        Assertions.assertEquals(flour, sugar.getParent()); // sugar의 상위 재료가 flour인지 확인
+        Assertions.assertEquals(flour, sugar.getCategory()); // sugar의 상위 재료가 flour인지 확인
     }
 
     @Test
@@ -141,7 +141,7 @@ class IngredientTest {
 
         // when, then
         assertTrue(sugar.isCategoryOf(flour)); // flour가 sugar의 카테고리인지 확인
-        Assertions.assertEquals(flour, sugar.getParent()); // flour가 sugar의 상위 재료인지 확인
+        Assertions.assertEquals(flour, sugar.getCategory()); // flour가 sugar의 상위 재료인지 확인
     }
 
     @Test
@@ -179,15 +179,15 @@ class IngredientTest {
     }
 
     @Test
-    @DisplayName("addChild()를 통해 카테고리를 변경했을 때, 재료 간 계층 관계가 유효한 구조를 유지하는지 확인합니다.")
+    @DisplayName("addChild()를 통해 이미 다른 카테고리에 속해있는 재료를 하위 계층에 추가할 때, 예외가 발생하는지 확인합니다.")
     void changeCategoryTest_addChild() {
         // given
         flour.addChild(sugar);
-        baking.addChild(sugar); // sugar를 baking의 하위로 이동
 
         // when, then
-        Assertions.assertEquals(baking, sugar.getParent()); // sugar의 부모가 baking으로 바뀌었는지 확인
-        Assertions.assertFalse(flour.getChildren().contains(sugar)); // sugar가 더 이상 flour의 하위에 있지 않은지 확인
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> baking.addChild(sugar));
+        Assertions.assertEquals(exception.getMessage(), "하위 계층에 추가할 재료가 이미 " + sugar.getCategory().getName() + " 카테고리에 속해 있습니다.");
+        Assertions.assertEquals(baking.getChildren().size(), 0);
     }
 
     @Test
@@ -198,7 +198,7 @@ class IngredientTest {
         sugar.setCategory(baking);
 
         // when, then
-        Assertions.assertEquals(baking, sugar.getParent()); // sugar의 부모가 baking으로 바뀌었는지 확인
+        Assertions.assertEquals(baking, sugar.getCategory()); // sugar의 부모가 baking으로 바뀌었는지 확인
         Assertions.assertFalse(flour.getChildren().contains(sugar)); // sugar가 더 이상 flour의 하위에 있지 않은지 확인
     }
 
@@ -212,7 +212,7 @@ class IngredientTest {
         flour.removeChild(sugar);
 
         // then
-        Assertions.assertNull(sugar.getParent());
+        Assertions.assertNull(sugar.getCategory());
         Assertions.assertFalse(flour.getChildren().contains(sugar));
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> flour.removeChild(sugar));
@@ -228,7 +228,7 @@ class IngredientTest {
         sugar.removeCategory();
 
         // then
-        Assertions.assertNull(sugar.getParent());
+        Assertions.assertNull(sugar.getCategory());
         Assertions.assertFalse(flour.getChildren().contains(sugar));
 
         Assertions.assertThrows(IllegalArgumentException.class, sugar::removeCategory);
