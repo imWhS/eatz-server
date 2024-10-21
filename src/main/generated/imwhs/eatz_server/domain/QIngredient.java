@@ -22,13 +22,13 @@ public class QIngredient extends EntityPathBase<Ingredient> {
 
     public static final QIngredient ingredient = new QIngredient("ingredient");
 
+    public final QIngredient category;
+
     public final ListPath<Ingredient, QIngredient> children = this.<Ingredient, QIngredient>createList("children", Ingredient.class, QIngredient.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath name = createString("name");
-
-    public final QIngredient parent;
 
     public QIngredient(String variable) {
         this(Ingredient.class, forVariable(variable), INITS);
@@ -48,7 +48,7 @@ public class QIngredient extends EntityPathBase<Ingredient> {
 
     public QIngredient(Class<? extends Ingredient> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.parent = inits.isInitialized("parent") ? new QIngredient(forProperty("parent"), inits.get("parent")) : null;
+        this.category = inits.isInitialized("category") ? new QIngredient(forProperty("category"), inits.get("category")) : null;
     }
 
 }
