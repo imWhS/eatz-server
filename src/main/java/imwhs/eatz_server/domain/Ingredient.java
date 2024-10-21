@@ -13,7 +13,8 @@ import java.util.Objects;
  * <p>
  * Recipe를 요리하기 위해 필요한 재료를 나타내는 엔티티 클래스입니다.
  * 재료는 상위 재료에 속할 수 있고, 하위 재료를 가질 수도 있습니다.
- * 이때, 해당 재료가 속해있는 상위 재료 또는, 하위 재료를 가지고 있는 재료는 카테고리(category)로서 역할을 합니다.
+ * 이때, 해당 재료가 속해있는 상위 재료 또는, 하위 재료를 가지고 있는 재료는 카테고리(category)로서의 역할을 합니다.
+ * apple이라는 재료가 fruit라는 상위 재료에 속한다면, fruit는 apple의 상위 재료이자 apple이 속한 카테고리가 됩니다.
  */
 @Getter
 @Entity
@@ -131,9 +132,10 @@ public class Ingredient {
             throw new IllegalArgumentException("현재 재료의 카테고리로서 사용 중인 재료를 현재 재료의 하위 계층에 추가할 수 없습니다.");
         }
 
-        // 하위 계층에 둘 재료가 이미 다른 카테고리와 연관 관계를 갖고 있는 경우, 현재 재료를 카테고리로 설정하기 전 해당 연관 관계를 지웁니다.
+        // 하위 계층에 둘 재료가 이미 다른 카테고리와 연관 관계를 갖고 있지 않은지 확인합니다.
+        // 이미 다른 카테고리와 연관 관계를 갖고 있다면, 해당 재료 엔티티를 통해 카테고리 지정을 해제해야 합니다.
         if (child.parent != null && !Objects.equals(child.parent, this)) {
-            child.parent.children.remove(child);
+            throw new IllegalArgumentException("하위 계층에 추가할 재료가 이미 " + child.parent.getName() + " 카테고리에 속해 있습니다.");
         }
 
         // 하위로 추가할 재료와 연관 관계를 설정합니다.

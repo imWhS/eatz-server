@@ -9,7 +9,7 @@ public class CreateIngredientDto {
 
     private String name;
 
-    private Long parentId;
+    private Long categoryId;
 
     private List<Long> childIds;
 
