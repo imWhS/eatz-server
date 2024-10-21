@@ -26,6 +26,7 @@ public class IngredientService {
      * @param dto 재료 생성 DTO
      * @return 생성된 재료의 ID
      * @throws IngredientNotFoundException 유효하지 않은 ID의 재료를 카테고리 또는 하위 재료로서 추가하려는 경우
+     * TODO: 같은 이름을 가진 재료에 대한 처리
      */
     @Transactional
     public Long registerIngredient(CreateIngredientDto dto) {
@@ -47,13 +48,15 @@ public class IngredientService {
         }
 
         // 하위 재료를 추가합니다.
-        List<Ingredient> children = ingredientRepository.findAllById(dto.getChildIds());
-        if (children.size() != dto.getChildIds().size()) {
-            throw new IllegalArgumentException("하위 재료 중 일부를 찾을 수 없습니다.");
-        }
+        if (dto.getChildIds() != null && dto.getChildIds().size() > 0) {
+            List<Ingredient> children = ingredientRepository.findAllById(dto.getChildIds());
+            if (children.size() != dto.getChildIds().size()) {
+                throw new IllegalArgumentException("하위 재료 중 일부를 찾을 수 없습니다.");
+            }
 
-        for (Ingredient child : children) {
-            ingredient.addChild(child);
+            for (Ingredient child : children) {
+                ingredient.addChild(child);
+            }
         }
 
         return ingredient.getId();
