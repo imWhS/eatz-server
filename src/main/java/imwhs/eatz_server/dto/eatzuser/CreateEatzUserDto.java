@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * 사용자 생성 DTO
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -20,7 +23,7 @@ public class CreateEatzUserDto {
     private Role role;
 
     public EatzUser toEntity() {
-        return EatzUser.create(this.username, this.email, this.email, this.role);
+        return EatzUser.create(this.username, this.email, this.password, this.role);
     }
 
 }

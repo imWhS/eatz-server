@@ -1,4 +1,4 @@
-package imwhs.eatz_server.repository.eatzuser.query;
+package imwhs.eatz_server.dto.eatzuser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
