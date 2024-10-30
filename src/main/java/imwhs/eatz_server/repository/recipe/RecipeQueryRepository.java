@@ -1,14 +1,12 @@
-package imwhs.eatz_server.repository.recipe.query;
+package imwhs.eatz_server.repository.recipe;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.*;
-import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
+import imwhs.eatz_server.repository.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.RecipeDetailResponseDto;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
