@@ -4,7 +4,7 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.dto.PagedResponse;
-import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
+import imwhs.eatz_server.repository.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;

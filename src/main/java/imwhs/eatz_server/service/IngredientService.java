@@ -95,6 +95,10 @@ public class IngredientService {
         List<Ingredient> children = new ArrayList<>();
         if (dto.getChildIds() != null && dto.getChildIds().size() > 0) {
             children = ingredientRepository.findAllById(dto.getChildIds());
+
+            for (Ingredient child : children) {
+                System.out.println("하위 재료가 다음으로 변경됩니다: " + child.getName());
+            }
         }
 
         ingredient.update(dto.getName(), category, children);

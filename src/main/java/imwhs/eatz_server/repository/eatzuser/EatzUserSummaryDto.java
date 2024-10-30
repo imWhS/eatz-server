@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto.eatzuser;
+package imwhs.eatz_server.repository.eatzuser;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

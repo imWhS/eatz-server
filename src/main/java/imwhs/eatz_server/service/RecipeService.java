@@ -35,9 +35,7 @@ public class RecipeService {
     @Transactional
     public Long registerRecipe(CreateRecipeDto dto, Long userId) {
         EatzUser user = getEatzUser(userId);
-
-        Recipe recipe = dto.toEntity();
-        recipe.setUser(user);
+        Recipe recipe = dto.toEntity(user);
         recipeRepository.save(recipe);
         return recipe.getId();
     }
