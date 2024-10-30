@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Recipe 엔티티.<br/>
@@ -93,6 +94,13 @@ public class Recipe extends BaseEntity {
             String imageUrl,
             String description
     ) {
+        if (Objects.isNull(title) || title.isEmpty()) {
+            throw new IllegalArgumentException("레시피 제목은 필수 항목입니다.");
+        }
+        if (Objects.isNull(url) || url.isEmpty()) {
+            throw new IllegalArgumentException("레시피 URL은 필수 항목입니다.");
+        }
+
         Recipe recipe = new Recipe();
         recipe.title = title;
         recipe.url = url;
@@ -106,26 +114,18 @@ public class Recipe extends BaseEntity {
         return recipe;
     }
 
-    public static Recipe create(
-            String title,
-            String url,
-            String imageUrl,
-            String description
-    ) {
-        Recipe recipe = new Recipe();
-        recipe.title = title;
-        recipe.url = url;
-        recipe.imageUrl = imageUrl;
-        recipe.description = description;
-
-        return recipe;
-    }
-
     /**
      * Recipe 수정 메서드.
      * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto
      */
     public void update(UpdateRecipeDto dto) {
+        if (Objects.isNull(dto.getTitle()) || dto.getTitle().isEmpty()) {
+            throw new IllegalArgumentException("레시피 제목은 필수 항목입니다.");
+        }
+        if (Objects.isNull(dto.getUrl()) || dto.getUrl().isEmpty()) {
+            throw new IllegalArgumentException("레시피 URL은 필수 항목입니다.");
+        }
+
         this.title = dto.getTitle();
         this.url = dto.getUrl();
         this.imageUrl = dto.getImageUrl();

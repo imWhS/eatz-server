@@ -1,7 +1,6 @@
-package imwhs.eatz_server.repository.eatzuser.query;
+package imwhs.eatz_server.dto.eatzuser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
 import lombok.Data;
 

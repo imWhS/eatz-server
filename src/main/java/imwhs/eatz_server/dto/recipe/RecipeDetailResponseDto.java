@@ -1,6 +1,6 @@
 package imwhs.eatz_server.dto.recipe;
 
-import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
+import imwhs.eatz_server.repository.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;

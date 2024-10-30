@@ -69,6 +69,7 @@ public class Ingredient {
             this.setCategory(category);
         }
 
+        // TODO: 하위 재료를 모두 덮어쓸지, 하위 재료는 일괄 수정 불가능하게 할 것인지 결정
         if (children != null && !children.isEmpty()) {
             for (Ingredient child : children) {
                 this.addChild(child);
