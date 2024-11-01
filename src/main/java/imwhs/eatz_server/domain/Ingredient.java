@@ -23,6 +23,7 @@ public class Ingredient {
 
     @EqualsAndHashCode.Include
     @Id @GeneratedValue
+    @Column(name = "ingredient_id")
     private Long id;
 
     /**

@@ -42,7 +42,7 @@ class RecipeQueryRepositoryTest {
         EatzUser userA = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userA);
 
-        Recipe recipe1 = Recipe.create(userA, "Pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 파스타를 즐겨보세요!");
+        Recipe recipe1 = Recipe.of(userA, "Pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 파스타를 즐겨보세요!");
         recipeRepository.save(recipe1);
         Long recipeId = recipe1.getId();
 

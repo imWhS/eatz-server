@@ -10,7 +10,6 @@ import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,7 +39,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -63,7 +62,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContentBefore = "내 맘 속에 저장~";
@@ -92,7 +91,7 @@ public class CommentServiceTest {
 
         Long invalidUserId = 99999L;
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi pasta",
                 "https://www.naver.com/",
@@ -121,7 +120,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContent = "내 맘 속에 저장~";
@@ -145,7 +144,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long invalidUserId = 99999L;
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContent = "내 맘 속에 저장~";

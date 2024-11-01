@@ -8,7 +8,6 @@ import imwhs.eatz_server.repository.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +37,7 @@ public class CommentQueryServiceTest {
         EatzUser user = EatzUser.create("heextoryAA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -69,7 +68,7 @@ public class CommentQueryServiceTest {
         EatzUser user = EatzUser.create("heextoryBB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -99,7 +98,7 @@ public class CommentQueryServiceTest {
         EatzUser user = EatzUser.create("heextoryCC", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -130,7 +129,7 @@ public class CommentQueryServiceTest {
         EatzUser userA = EatzUser.create("heextoryDD", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userA);
 
-        Recipe recipeA = Recipe.create(
+        Recipe recipeA = Recipe.of(
                 userA,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -141,7 +140,7 @@ public class CommentQueryServiceTest {
         EatzUser userB = EatzUser.create("curve4403", "curve4403@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
 
-        Recipe recipeB = Recipe.create(
+        Recipe recipeB = Recipe.of(
                 userB,
                 "Garlic BBOKKEUMBOB",
                 "https://www.naver.com/",
