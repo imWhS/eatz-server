@@ -61,7 +61,7 @@ public class RecipeServiceTest {
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -90,7 +90,7 @@ public class RecipeServiceTest {
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -111,7 +111,7 @@ public class RecipeServiceTest {
         EatzUser userB = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
 
-        Recipe recipe = Recipe.create(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -135,7 +135,7 @@ public class RecipeServiceTest {
         EatzUser userB = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
 
-        Recipe recipe = Recipe.create(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 

@@ -106,6 +106,7 @@ public class EatzUser extends BaseEntity {
         user.email = email;
         user.password = password;
         user.role = role == null ? Role.MEMBER : role;
+        System.out.println("EatzUser.create called!");
         return user;
     }
 
