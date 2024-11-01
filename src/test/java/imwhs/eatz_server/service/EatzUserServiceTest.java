@@ -11,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -45,7 +47,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(user.getEmail()).isEqualTo("imwhs@icloud.com");
         Assertions.assertThat(user.getRole()).isEqualTo(Role.MEMBER);
         Assertions.assertThat(user.getCreatedAt()).isNotNull();
-        Assertions.assertThat(user.getUpdatedAt()).isNull();
+        Assertions.assertThat(user.getUpdatedAt()).isEqualTo(user.getCreatedAt());
         Assertions.assertThat(user.getDeletedAt()).isNull();
     }
 
@@ -100,6 +102,7 @@ public class EatzUserServiceTest {
 
         // when
         userService.updateUser(user.getId(), updateDto);
+        userRepository.flush();
         EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
         // then
@@ -109,6 +112,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser.getPassword()).isEqualTo("21q2w3e4r!");
         Assertions.assertThat(updatedUser.getRole()).isEqualTo(Role.MEMBER);
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
+        Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getDeletedAt()).isNull();
     }
@@ -134,6 +138,7 @@ public class EatzUserServiceTest {
 
         // when
         userService.updateUser(user.getId(), updateDto);
+        userRepository.flush();
         EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
         // then
@@ -143,6 +148,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser.getPassword()).isEqualTo(password);
         Assertions.assertThat(updatedUser.getRole()).isEqualTo(Role.MEMBER);
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
+        Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getDeletedAt()).isNull();
     }
@@ -168,6 +174,7 @@ public class EatzUserServiceTest {
 
         // when
         userService.updateUser(user.getId(), updateDto);
+        userRepository.flush();
         EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
         // then
@@ -177,6 +184,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser.getPassword()).isEqualTo(updatedPassword);
         Assertions.assertThat(updatedUser.getRole()).isEqualTo(Role.MEMBER);
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
+        Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getDeletedAt()).isNull();
     }
@@ -202,6 +210,7 @@ public class EatzUserServiceTest {
 
         // when
         userService.updateUser(user.getId(), updateDto);
+        userRepository.flush();
         EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
         // then
@@ -211,6 +220,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser.getPassword()).isEqualTo(password);
         Assertions.assertThat(updatedUser.getRole()).isEqualTo(Role.MEMBER);
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
+        Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getDeletedAt()).isNull();
     }

@@ -46,7 +46,7 @@ class RecipeQueryServiceTest {
         EatzUser user = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -69,14 +69,14 @@ class RecipeQueryServiceTest {
         EatzUser user = EatzUser.create("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipeA = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeA = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
-        Recipe recipeB = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeB = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeB);
-        Recipe recipeC = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeC = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeC);
 
-        Recipe deletedRecipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe deletedRecipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(deletedRecipe);
         recipeService.deleteRecipe(deletedRecipe.getId(), user.getId());
 
@@ -99,14 +99,14 @@ class RecipeQueryServiceTest {
         EatzUser anotherUser = EatzUser.create("yourstory", "mystory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(anotherUser);
 
-        Recipe recipeA = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeA = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
-        Recipe recipeB = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeB = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeB);
-        Recipe recipeC = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeC = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeC);
 
-        Recipe anotherRecipe = Recipe.create(anotherUser, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe anotherRecipe = Recipe.of(anotherUser, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(anotherRecipe);
 
         // when

@@ -8,7 +8,6 @@ import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -79,7 +78,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -108,7 +107,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -141,7 +140,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
