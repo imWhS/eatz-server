@@ -9,6 +9,7 @@ import lombok.Getter;
 public class Comment extends BaseEntity {
 
     @Id @GeneratedValue
+    @Column(name = "comment_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

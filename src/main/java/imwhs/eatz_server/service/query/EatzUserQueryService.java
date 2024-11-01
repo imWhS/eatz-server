@@ -2,11 +2,11 @@ package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.dto.PagedResponse;
-import imwhs.eatz_server.repository.eatzuser.EatzUserSummaryDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
+import imwhs.eatz_server.repository.eatzuser.EatzUserQueryRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.dto.eatzuser.EatzUserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

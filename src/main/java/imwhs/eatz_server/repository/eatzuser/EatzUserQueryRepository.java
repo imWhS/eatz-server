@@ -1,11 +1,12 @@
-package imwhs.eatz_server.dto.eatzuser;
+package imwhs.eatz_server.repository.eatzuser;
+
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.QEatzUser;
 import imwhs.eatz_server.domain.QRecipe;
 import imwhs.eatz_server.dto.PagedResponse;
-import imwhs.eatz_server.repository.eatzuser.EatzUserSummaryDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

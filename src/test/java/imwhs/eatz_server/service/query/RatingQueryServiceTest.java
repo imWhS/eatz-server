@@ -50,7 +50,7 @@ class RatingQueryServiceTest {
         EatzUser user = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -83,7 +83,7 @@ class RatingQueryServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -116,7 +116,7 @@ class RatingQueryServiceTest {
         EatzUser user = EatzUser.create("heextory3", "heextory3@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -148,7 +148,7 @@ class RatingQueryServiceTest {
         EatzUser userA = EatzUser.create("heextory4", "heextory4@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userA);
 
-        Recipe recipeA = Recipe.create(
+        Recipe recipeA = Recipe.of(
                 userA,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -159,7 +159,7 @@ class RatingQueryServiceTest {
         EatzUser userB = EatzUser.create("curve4403", "curve4403@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
 
-        Recipe recipeB = Recipe.create(
+        Recipe recipeB = Recipe.of(
                 userB,
                 "Garlic BBOKKEUMBOB",
                 "https://www.naver.com/",

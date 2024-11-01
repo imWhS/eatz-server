@@ -9,6 +9,7 @@ import lombok.Getter;
 public class Rating extends BaseEntity {
 
     @Id @GeneratedValue
+    @Column(name = "rating_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
