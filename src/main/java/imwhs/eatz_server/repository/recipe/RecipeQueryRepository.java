@@ -55,7 +55,7 @@ public class RecipeQueryRepository {
                                 comment.id.countDistinct().intValue(),
                                 Projections.constructor(RatingSummaryDto.class,
                                         // 사용자는 레시피에 하나의 평가만 남길 수 있기 때문에, 평가 식별자 값 기준으로 distinct를 적용합니다.
-                                        rating.countDistinct().intValue(),
+                                        rating.id.countDistinct().intValue(),
                                         rating.score.avg())
                         )
                 )
