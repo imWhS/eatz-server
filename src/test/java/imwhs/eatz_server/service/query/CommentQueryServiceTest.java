@@ -1,10 +1,11 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.*;
+import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
 import imwhs.eatz_server.dto.comment.CommentRecipeDto;
 import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.dto.comment.CommentUserDto;
-import imwhs.eatz_server.repository.CommentRepository;
+import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.junit.jupiter.api.Assertions;
@@ -59,6 +60,56 @@ public class CommentQueryServiceTest {
         Assertions.assertEquals(comment.getContent(), commentDto.getContent());
         Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentDto.getUser());
         Assertions.assertEquals(new CommentRecipeDto(comment.getRecipe()), commentDto.getRecipe());
+    }
+
+    @Test
+    @Transactional
+    void findCommentDetailByUserIdTest() {
+        // given
+        EatzUser userB = EatzUser.create("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(userB);
+
+        Recipe recipe = Recipe.of(
+                userB,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe);
+
+        EatzUser userA = EatzUser.create("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(userA);
+
+        Recipe recipe2 = Recipe.of(
+                userA,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe2);
+
+        Recipe recipe3 = Recipe.of(
+                userA,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe3);
+
+        String content = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
+
+        Comment comment = new Comment(userA, recipe, content);
+        commentRepository.save(comment);
+
+        // when
+        CommentDetailResponseDto commentDetailResponseDto = commentQueryService.findCommentDetail(comment.getId());
+        Assertions.assertNotNull(commentDetailResponseDto);
+        Assertions.assertEquals(comment.getId(), commentDetailResponseDto.getId());
+        Assertions.assertEquals(userA.getId(), commentDetailResponseDto.getUser().getId());
+        Assertions.assertEquals(2, commentDetailResponseDto.getUser().getRecipeCount());
+        Assertions.assertEquals(recipe.getId(), commentDetailResponseDto.getRecipe().getId());
+        Assertions.assertEquals(recipe.getTitle(), commentDetailResponseDto.getRecipe().getTitle());
+        Assertions.assertEquals(comment.getContent(), commentDetailResponseDto.getContent());
     }
 
     @Test

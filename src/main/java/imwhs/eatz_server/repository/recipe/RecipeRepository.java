@@ -19,27 +19,36 @@ import java.util.Optional;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     /**
-     * 식별자로 특정 레시피를 조회합니다.
-     * 삭제 처리된 레시피는 조회 대상에서 제외됩니다.
+     * 식별자로 레시피 조회.
+     * <p>
+     *     식별자로 단일 Recipe 엔티티를 조회합니다.
+     *     삭제 처리된 레시피는 조회 대상에서 제외됩니다.
+     * </p>
      * @param id 레시피 식별자.
-     * @return Optional로 wrapping된 레시피 엔티티.
+     * @return Optional로 wrapping된 Recipe 엔티티.
      */
     Optional<Recipe> findByIdAndDeletedAtIsNull(Long id);
 
     /**
-     * 모든 레시피를 페이징 적용해 조회합니다.
-     * 삭제 처리된 레시피는 조회 대상에서 제외됩니다.
+     * 모든 레시피 조회.
+     * <p>
+     *     모든 Recipe 엔티티를 페이징 적용해 조회합니다.
+     *     삭제 처리된 레시피는 조회 대상에서 제외됩니다.
+     * </p>
      * @param pageable 페이징 설정 정보.
-     * @return 페이징 적용된 모든 레시피 컬렉션.
+     * @return 페이징 적용된 모든 Recipe 컬렉션.
      */
     Page<Recipe> findAllByDeletedAtIsNull(Pageable pageable);
 
     /**
-     * 특정 사용자가 등록한 모든 레시피를 페이징 적용해 조회합니다.
-     * 삭제 처리된 레시피는 조회 대상에서 제외됩니다.
+     * 특정 사용자가 등록한 모든 레시피 조회.
+     * <p>
+     *     특정 EatzUser의 식별자로 모든 Recipe 엔티티를 페이징 적용해 조회합니다.
+     *     삭제 처리된 레시피는 조회 대상에서 제외됩니다.
+     * </p>
      * @param userId 사용자 식별자.
      * @param pageable 페이징 설정 정보.
-     * @return 페이징 적용된 모든 레시피 컬렉션.
+     * @return 페이징 적용된 모든 Recipe 컬렉션.
      */
     Page<Recipe> findAllByUserIdAndDeletedAtIsNull(Long userId, Pageable pageable);
 
