@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EatzUser 엔티티<br/>
+ * EatzUser 엔티티입니다.
  * <p>
- * 사용자에 대한 정보를 저장 및 관리하기 위한 클래스입니다.
- * username 등과 같은 사용자에 대한 기본적인 정보와 사용자가 등록한 레시피 등과 같은 연관 정보를 저장, 관리합니다.
+ *     사용자에 대한 정보를 저장 및 관리하기 위한 클래스입니다.
+ *     username 등과 같은 사용자에 대한 기본적인 정보와 사용자가 등록한 레시피 등과 같은 연관 정보를 저장, 관리합니다.
+ * </p>
  */
 @Table(name = "eatz_user")
 @Getter

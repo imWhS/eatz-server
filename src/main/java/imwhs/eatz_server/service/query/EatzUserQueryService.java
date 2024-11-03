@@ -80,7 +80,7 @@ public class EatzUserQueryService {
      * 모든 사용자와 활동 요약 조회.
      * <ul>
      *     <li>등록된 모든 사용자를 활동 요약과 함께 조회합니다.</li>
-     *     <li>페이징이 적용됩니다.</li>
+     *     <li>페이징을 적용할 수 있습니다.</li>
      * </ul>
      */
     public PagedResponse<EatzUserSummaryDto> findAllUsersWithActivity(Integer currentPage, Integer pagingSize) {

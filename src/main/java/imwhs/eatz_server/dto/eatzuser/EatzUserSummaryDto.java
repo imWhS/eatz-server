@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * EatzUserSummaryDto 클래스입니다.
+ * 특정 사용자에 대한 간략한 정보를 전달하기 위해 사용합니다.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,6 +17,6 @@ public class EatzUserSummaryDto {
 
     private String username;
 
-    private Long recipeCount;
+    private Integer recipeCount;
 
 }

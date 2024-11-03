@@ -6,7 +6,7 @@ import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
-import imwhs.eatz_server.repository.CommentRepository;
+import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.assertj.core.api.Assertions;
