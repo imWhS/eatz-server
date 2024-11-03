@@ -1,4 +1,4 @@
-package imwhs.eatz_server.repository;
+package imwhs.eatz_server.repository.comment;
 
 import imwhs.eatz_server.domain.Comment;
 import org.springframework.data.domain.Page;

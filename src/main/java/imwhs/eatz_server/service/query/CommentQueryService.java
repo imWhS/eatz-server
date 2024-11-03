@@ -1,17 +1,21 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Comment;
+import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
 import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
-import imwhs.eatz_server.repository.CommentRepository;
+import imwhs.eatz_server.repository.comment.CommentQueryRepository;
+import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -29,14 +33,26 @@ public class CommentQueryService {
      */
     private static final int DEFAULT_CURRENT_PAGE = 0;
     private static final int DEFAULT_PAGING_SIZE = 10;
+    private final CommentQueryRepository commentQueryRepository;
 
     /**
-     * ID로 특정 댓글 조회.
+     * 식별자로 댓글 조회.
      */
     public CommentResponseDto findComment(Long id) {
         Comment comment = commentRepository.findJoinUserRecipeById(id)
-                .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글가 존재하지 않습니다."));
+                .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글이 존재하지 않습니다."));
         return new CommentResponseDto(comment);
+    }
+
+    /**
+     * 식별자로 댓글 상세 정보 조회.
+     * <ul>
+     *     <li>식별자로 댓글과 댓글을 작성한 사용자, 댓글이 달려 있는 레시피 정보를 함께 조회합니다.</li>
+     * </ul>
+     */
+    public CommentDetailResponseDto findCommentDetail(Long id) {
+        return commentQueryRepository.findCommentDetailById(id)
+                .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글이 존재하지 않습니다."));
     }
 
     /**
