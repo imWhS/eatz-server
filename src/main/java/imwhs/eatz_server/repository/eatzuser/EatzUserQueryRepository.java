@@ -1,6 +1,5 @@
 package imwhs.eatz_server.repository.eatzuser;
 
-
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.QEatzUser;
@@ -13,6 +12,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * EatzUserQueryRepository 클래스입니다.
+ * <p>
+ *     EatzUser 엔티티에 대한 복잡한 조회 쿼리 위주로 처리하는 리포지토리입니다.
+ *     QueryDSL을 기반으로 조회 쿼리를 생성, 실행합니다.
+ * </p>
+ */
 @Repository
 @RequiredArgsConstructor
 public class EatzUserQueryRepository {
