@@ -2,12 +2,12 @@ package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.*;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
-import imwhs.eatz_server.dto.comment.CommentRecipeDto;
 import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.dto.comment.CommentUserDto;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
+import imwhs.eatz_server.service.CommentService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,8 @@ public class CommentQueryServiceTest {
 
     @Autowired
     RecipeRepository recipeRepository;
+    @Autowired
+    private CommentService commentService;
 
     @Test
     @Transactional
@@ -52,14 +54,13 @@ public class CommentQueryServiceTest {
         commentRepository.save(comment);
 
         // when
-        CommentResponseDto commentDto = commentQueryService.findComment(comment.getId());
+        CommentResponseDto commentDto = commentService.findComment(comment.getId());
 
         // then
         Assertions.assertNotNull(commentDto);
         Assertions.assertEquals(comment.getId(), commentDto.getId());
         Assertions.assertEquals(comment.getContent(), commentDto.getContent());
         Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentDto.getUser());
-        Assertions.assertEquals(new CommentRecipeDto(comment.getRecipe()), commentDto.getRecipe());
     }
 
     @Test
@@ -136,7 +137,7 @@ public class CommentQueryServiceTest {
         commentRepository.save(comment2);
 
         // when
-        Page<CommentResponseDto> comments = commentQueryService.findComments(user.getId(), recipe.getId(), null, null);
+        Page<CommentResponseDto> comments = commentService.findComments(user.getId(), recipe.getId(), null, null);
 
         // then
         Assertions.assertEquals(comments.getTotalElements(), 2);
@@ -167,7 +168,7 @@ public class CommentQueryServiceTest {
         commentRepository.save(new Comment(reviewerB, recipe, "제 마음 속에 우선 찜 해둘게요!"));
 
         // when
-        Page<CommentResponseDto> allComments = commentQueryService.findCommentsByRecipe(recipeId, null, null);
+        Page<CommentResponseDto> allComments = commentService.findCommentsByRecipe(recipeId, null, null);
 
         // then
         Assertions.assertEquals(allComments.getTotalElements(), 2);
@@ -206,7 +207,7 @@ public class CommentQueryServiceTest {
         commentRepository.save(new Comment(reviewer, recipeB, "제 마음 속에 우선 찜 해둘게요!"));
 
         // when
-        Page<CommentResponseDto> comments = commentQueryService.findCommentsByUser(reviewer.getId(), null, null);
+        Page<CommentResponseDto> comments = commentService.findCommentsByUser(reviewer.getId(), null, null);
 
         // then
         Assertions.assertEquals(comments.getTotalElements(), 2);

@@ -2,8 +2,8 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.eatzuser.CreateEatzUserDto;
-import imwhs.eatz_server.dto.eatzuser.UpdateEatzUserDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import org.assertj.core.api.Assertions;
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -30,7 +28,7 @@ public class EatzUserServiceTest {
     @Transactional
     void userRegisterTest() {
         // given
-        CreateEatzUserDto dto = new CreateEatzUserDto(
+        EatzUserCreateDto dto = new EatzUserCreateDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!",
@@ -58,8 +56,8 @@ public class EatzUserServiceTest {
         String username = "heextory";
 
         // given
-        CreateEatzUserDto user1Dto = new CreateEatzUserDto(username, "imwhs1@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        CreateEatzUserDto user2Dto = new CreateEatzUserDto(username, "imwhs2@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUserCreateDto user1Dto = new EatzUserCreateDto(username, "imwhs1@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUserCreateDto user2Dto = new EatzUserCreateDto(username, "imwhs2@icloud.com", "1q2w3e4r!", Role.MEMBER);
 
         // when, then
         userService.registerUser(user1Dto);
@@ -73,8 +71,8 @@ public class EatzUserServiceTest {
     void duplicatedEmailUserRegisterTest() {
         // given
         String email = "imwhs@icloud.com";
-        CreateEatzUserDto user1Dto = new CreateEatzUserDto("hee1xtory", email, "1q2w3e4r!", Role.MEMBER);
-        CreateEatzUserDto user2Dto = new CreateEatzUserDto("hee2xtory", email, "1q2w3e4r!", Role.MEMBER);
+        EatzUserCreateDto user1Dto = new EatzUserCreateDto("hee1xtory", email, "1q2w3e4r!", Role.MEMBER);
+        EatzUserCreateDto user2Dto = new EatzUserCreateDto("hee2xtory", email, "1q2w3e4r!", Role.MEMBER);
 
         // when, then
         userService.registerUser(user1Dto);
@@ -87,7 +85,7 @@ public class EatzUserServiceTest {
     @Transactional
     void userUpdateTest() {
         // given
-        CreateEatzUserDto createDto = new CreateEatzUserDto(
+        EatzUserCreateDto createDto = new EatzUserCreateDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!",
@@ -95,7 +93,7 @@ public class EatzUserServiceTest {
         Long userId = userService.registerUser(createDto);
         EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
-        UpdateEatzUserDto updateDto = new UpdateEatzUserDto();
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
         updateDto.setUsername("2heextory");
         updateDto.setEmail("2imwhs@icloud.com");
         updateDto.setPassword("21q2w3e4r!");
@@ -124,7 +122,7 @@ public class EatzUserServiceTest {
         // given
         String username = "heextory";
         String password = "1q2w3e4r!";
-        CreateEatzUserDto createDto = new CreateEatzUserDto(
+        EatzUserCreateDto createDto = new EatzUserCreateDto(
                 username,
                 "imwhs@icloud.com",
                 password,
@@ -132,7 +130,7 @@ public class EatzUserServiceTest {
         Long userId = userService.registerUser(createDto);
         EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
-        UpdateEatzUserDto updateDto = new UpdateEatzUserDto();
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
         String updatedEmail = "2imwhs@icloud.com";
         updateDto.setEmail(updatedEmail);
 
@@ -160,7 +158,7 @@ public class EatzUserServiceTest {
         // given
         String username = "heextory";
         String email = "imwhs@icloud.com";
-        CreateEatzUserDto createDto = new CreateEatzUserDto(
+        EatzUserCreateDto createDto = new EatzUserCreateDto(
                 username,
                 email,
                 "1q2w3e4r!",
@@ -168,7 +166,7 @@ public class EatzUserServiceTest {
         Long userId = userService.registerUser(createDto);
         EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
-        UpdateEatzUserDto updateDto = new UpdateEatzUserDto();
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
         String updatedPassword = "2q2w3e4r!";
         updateDto.setPassword(updatedPassword);
 
@@ -196,7 +194,7 @@ public class EatzUserServiceTest {
         // given
         String password = "1q2w3e4r!";
         String email = "imwhs@icloud.com";
-        CreateEatzUserDto createDto = new CreateEatzUserDto(
+        EatzUserCreateDto createDto = new EatzUserCreateDto(
                 "heextory",
                 email,
                 password,
@@ -204,7 +202,7 @@ public class EatzUserServiceTest {
         Long userId = userService.registerUser(createDto);
         EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
-        UpdateEatzUserDto updateDto = new UpdateEatzUserDto();
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
         String updatedUsername = "heextory2";
         updateDto.setUsername(updatedUsername);
 
@@ -230,7 +228,7 @@ public class EatzUserServiceTest {
     @Transactional
     void invalidUserUpdateTest() {
         // given
-        CreateEatzUserDto createDto = new CreateEatzUserDto(
+        EatzUserCreateDto createDto = new EatzUserCreateDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!",
@@ -239,7 +237,7 @@ public class EatzUserServiceTest {
         userService.registerUser(createDto);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> userService.updateUser(99999L, new UpdateEatzUserDto())).isInstanceOf(EatzUserNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> userService.updateUser(99999L, new EatzUserUpdateDto())).isInstanceOf(EatzUserNotFoundException.class);
     }
 
     @Test
@@ -247,7 +245,7 @@ public class EatzUserServiceTest {
     @Transactional
     void userDeleteTest() {
         // given
-        CreateEatzUserDto createDto = new CreateEatzUserDto(
+        EatzUserCreateDto createDto = new EatzUserCreateDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!",
@@ -267,7 +265,7 @@ public class EatzUserServiceTest {
     @Transactional
     void invalidUserDeleteTest() {
         // given
-        CreateEatzUserDto createDto = new CreateEatzUserDto(
+        EatzUserCreateDto createDto = new EatzUserCreateDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!",

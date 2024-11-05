@@ -8,7 +8,9 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CreateIngredientDto {
+public class IngredientUpdateDto {
+
+    private Long id;
 
     private String name;
 
@@ -16,21 +18,24 @@ public class CreateIngredientDto {
 
     private List<Long> childIds = new ArrayList<>();
 
-    public CreateIngredientDto(String name) {
+    public IngredientUpdateDto(Long id, String name) {
         this.name = name;
     }
 
-    public CreateIngredientDto(String name, Long categoryId) {
+    public IngredientUpdateDto(Long id, String name, Long categoryId) {
+        this.id = id;
         this.name = name;
         this.categoryId = categoryId;
     }
 
-    public CreateIngredientDto(String name, List<Long> childIds) {
+    public IngredientUpdateDto(Long id, String name, List<Long> childIds) {
+        this.id = id;
         this.name = name;
         this.childIds = childIds;
     }
 
-    public CreateIngredientDto(String name, Long categoryId, List<Long> childIds) {
+    public IngredientUpdateDto(Long id, String name, Long categoryId, List<Long> childIds) {
+        this.id = id;
         this.name = name;
         this.categoryId = categoryId;
         this.childIds = childIds;

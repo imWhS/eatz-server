@@ -7,9 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * EatzUserRepository 리포지토리.<br/>
- * <p>
- * EatzUser 엔티티에 대해 CRUD를 포함한 데이터 처리 작업을 수행합니다.
+ * EatzUserRepository 클래스입니다.<br/>
+ * EatzUser 엔티티의 기본적인 조회를 포함한 CRUD 쿼리 작업을 처리하는 Spring Data JPA 리포지토리입니다.
  */
 @Repository
 public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
