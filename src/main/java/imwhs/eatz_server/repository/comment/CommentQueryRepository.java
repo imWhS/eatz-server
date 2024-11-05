@@ -31,7 +31,7 @@ public class CommentQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     /**
-     * 식별자에 해당하는 댓글의 상세 정보를 조회합니다.<br/>
+     * 식별자에 해당하는 댓글의 기본 정보 및 댓글을 작성한 사용자와 레시피 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
      * @param id 댓글 식별자
      * @return Optional로 wrapping된 CommentDetailResponseDto. 댓글의 상세 정보를 담은 DTO입니다.
@@ -69,9 +69,12 @@ public class CommentQueryRepository {
 
     /**
      * 특정 레시피에 달린 모든 댓글을 조회합니다.<br/>
+     * 댓글 별 기본 정보 뿐 아니라 해당 댓글을 작성한 사용자의 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
+     * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
+     * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      */
-    public List<CommentResponseDto> findCommentsByRecipe(Long id) {
+    public List<CommentResponseDto> findCommentsByRecipe(Long id, int page, int size) {
         QComment comment = QComment.comment;
         QEatzUser user = QEatzUser.eatzUser;
 
@@ -93,7 +96,23 @@ public class CommentQueryRepository {
                 .leftJoin(comment.user, user)
                 .where(comment.recipe.id.eq(id)
                         .and(comment.deletedAt.isNull()))
+                .offset((long) page * size)
+                .limit(size)
                 .fetch();
+    }
+
+    /**
+     * 특정 레시피에 달린 총 댓글 수를 조회합니다.
+     * @return
+     */
+    public Long countCommentsByRecipe(Long id) {
+        QComment comment = QComment.comment;
+
+        return queryFactory.select(comment.count())
+                .from(comment)
+                .where(comment.recipe.id.eq(id)
+                        .and(comment.deletedAt.isNull()))
+                .fetchOne();
     }
 
 }
