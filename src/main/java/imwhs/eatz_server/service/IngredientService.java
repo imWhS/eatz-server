@@ -1,8 +1,8 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.Ingredient;
-import imwhs.eatz_server.dto.ingredient.CreateIngredientDto;
-import imwhs.eatz_server.dto.ingredient.UpdateIngredientDto;
+import imwhs.eatz_server.dto.ingredient.IngredientCreateDto;
+import imwhs.eatz_server.dto.ingredient.IngredientUpdateDto;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class IngredientService {
      * TODO: 같은 이름을 가진 재료에 대한 처리
      */
     @Transactional
-    public Long registerIngredient(CreateIngredientDto dto) {
+    public Long registerIngredient(IngredientCreateDto dto) {
         if (dto.getName() == null) {
             throw new IllegalArgumentException("재료의 이름은 필수 값입니다.");
         }
@@ -75,7 +75,7 @@ public class IngredientService {
      * </p>
      */
     @Transactional
-    public void updateIngredient(UpdateIngredientDto dto) {
+    public void updateIngredient(IngredientUpdateDto dto) {
         if (dto.getId() == null) {
             throw new IllegalArgumentException("수정할 재료의 ID는 필수 값입니다.");
         }

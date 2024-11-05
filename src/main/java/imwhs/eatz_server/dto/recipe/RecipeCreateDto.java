@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class CreateRecipeDto {
+public class RecipeCreateDto {
 
     @NotNull
     private String title;

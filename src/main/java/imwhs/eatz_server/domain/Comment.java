@@ -5,9 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 /**
- * Comment 엔티티 클래스입니다.
+ * Comment 클래스입니다.
  * <p>
- *     댓글 정보를 저장, 관리하기 위한 클래스입니다.
+ *     댓글 정보를 저장, 관리하기 위한 엔티티 클래스입니다.
  * </p>
  */
 @Getter

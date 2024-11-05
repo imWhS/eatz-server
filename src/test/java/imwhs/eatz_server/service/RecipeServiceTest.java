@@ -3,8 +3,8 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.recipe.CreateRecipeDto;
-import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
+import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
+import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
@@ -36,21 +36,21 @@ public class RecipeServiceTest {
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        CreateRecipeDto createRecipeDto = new CreateRecipeDto(
+        RecipeCreateDto recipeCreateDto = new RecipeCreateDto(
                 "Kimchi pasta",
                 "https://www.naver.com",
                 "https://imgcdn.naver.com",
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        Long recipeId = recipeService.registerRecipe(createRecipeDto, user.getId());
+        Long recipeId = recipeService.registerRecipe(recipeCreateDto, user.getId());
 
         // then
         Recipe recipe = recipeRepository.findById(recipeId).get();
-        Assertions.assertThat(recipe.getTitle()).isEqualTo(createRecipeDto.getTitle());
-        Assertions.assertThat(recipe.getDescription()).isEqualTo(createRecipeDto.getDescription());
-        Assertions.assertThat(recipe.getUrl()).isEqualTo(createRecipeDto.getUrl());
-        Assertions.assertThat(recipe.getImageUrl()).isEqualTo(createRecipeDto.getImageUrl());
+        Assertions.assertThat(recipe.getTitle()).isEqualTo(recipeCreateDto.getTitle());
+        Assertions.assertThat(recipe.getDescription()).isEqualTo(recipeCreateDto.getDescription());
+        Assertions.assertThat(recipe.getUrl()).isEqualTo(recipeCreateDto.getUrl());
+        Assertions.assertThat(recipe.getImageUrl()).isEqualTo(recipeCreateDto.getImageUrl());
     }
 
     @Test
@@ -65,21 +65,21 @@ public class RecipeServiceTest {
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
-        UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto(
+        RecipeUpdateDto recipeUpdateDto = new RecipeUpdateDto(
                 "Kimchi pasta",
                 "https://www.naver.com",
                 "https://imgcdn.naver.com",
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        recipeService.updateRecipe(recipeId, updateRecipeDto, user.getId());
+        recipeService.updateRecipe(recipeId, recipeUpdateDto, user.getId());
         Recipe foundRecipe = recipeRepository.findById(recipeId).get();
 
         // then
-        Assertions.assertThat(foundRecipe.getTitle()).isEqualTo(updateRecipeDto.getTitle());
-        Assertions.assertThat(foundRecipe.getDescription()).isEqualTo(updateRecipeDto.getDescription());
-        Assertions.assertThat(foundRecipe.getUrl()).isEqualTo(updateRecipeDto.getUrl());
-        Assertions.assertThat(foundRecipe.getImageUrl()).isEqualTo(updateRecipeDto.getImageUrl());
+        Assertions.assertThat(foundRecipe.getTitle()).isEqualTo(recipeUpdateDto.getTitle());
+        Assertions.assertThat(foundRecipe.getDescription()).isEqualTo(recipeUpdateDto.getDescription());
+        Assertions.assertThat(foundRecipe.getUrl()).isEqualTo(recipeUpdateDto.getUrl());
+        Assertions.assertThat(foundRecipe.getImageUrl()).isEqualTo(recipeUpdateDto.getImageUrl());
     }
 
     @Test
@@ -115,14 +115,14 @@ public class RecipeServiceTest {
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
-        UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto(
+        RecipeUpdateDto recipeUpdateDto = new RecipeUpdateDto(
                 "Kimchi pasta",
                 "https://www.naver.com",
                 "https://imgcdn.naver.com",
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, updateRecipeDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, recipeUpdateDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test

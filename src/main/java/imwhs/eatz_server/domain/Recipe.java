@@ -1,7 +1,7 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
-import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
+import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * Recipe 엔티티 클래스입니다.
  * <p>
- *     레시피 정보를 저장, 관리하기 위한 클래스입니다.
+ *     레시피 정보를 저장, 관리하기 위한 엔티티 클래스입니다.
  * </p>
  */
 @Getter
@@ -127,7 +127,7 @@ public class Recipe extends BaseEntity {
      * Recipe 통합 수정 메서드.
      * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto
      */
-    public void update(UpdateRecipeDto dto) {
+    public void update(RecipeUpdateDto dto) {
         // 레시피 제목은 필수 항목이기에, null이거나 빈 값으로 수정 요청한 경우 예외를 발생시켜 수정을 진행하지 않습니다.
         if (Objects.isNull(dto.getTitle()) || dto.getTitle().isEmpty()) {
             throw new IllegalArgumentException("레시피 제목은 필수 항목입니다.");

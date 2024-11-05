@@ -6,11 +6,12 @@ import lombok.NoArgsConstructor;
 
 /**
  * RecipeSummaryDto 클래스입니다.
- * 특정 레시피에 대한 간략한 정보를 전달하기 위해 사용합니다.
+ * <ul>
+ *     <li>레시피의 기본 정보를 포함하는 DTO입니다.</li>
+ * </ul>
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class RecipeSummaryDto {
 
     private Long id;

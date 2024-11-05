@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
  * </p>
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class RecipeDetailResponseDto {
 
     private Long id;
