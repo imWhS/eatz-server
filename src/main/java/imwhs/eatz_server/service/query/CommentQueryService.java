@@ -1,6 +1,7 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.Comment;
+import imwhs.eatz_server.dto.PagedResponse;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
 import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,14 +35,26 @@ public class CommentQueryService {
     private final CommentQueryRepository commentQueryRepository;
 
     /**
-     * 식별자에 해당하는 댓글의 상세 정보를 조회합니다.
-     * <ul>
-     *     <li>식별자로 댓글과 댓글을 작성한 사용자, 댓글이 달려 있는 레시피 정보를 함께 조회합니다.</li>
-     * </ul>
+     * 식별자로 댓글과 관련된 상세 정보를 조회합니다.<br/>
+     * 식별자에 해당하는 댓글의 기본 정보와 댓글을 작성한 사용자, 댓글이 달린 레시피의 부가 정보를 조회합니다.
      */
     public CommentDetailResponseDto findCommentDetail(Long id) {
         return commentQueryRepository.findCommentDetailById(id)
                 .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글이 존재하지 않습니다."));
+    }
+
+    /**
+     * 특정 레시피에 달린 모든 댓글과 작성자 정보를 조회합니다.<br/>
+     * 레시피에 달린 모든 댓글 별 기본 정보와 해당 댓글을 작성한 사용자의 부가 정보를 조회합니다.
+     * @param id 레시피 식별자
+     */
+    public PagedResponse<CommentResponseDto> findCommentsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
+        int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
+        int size = pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize;
+
+        List<CommentResponseDto> data = commentQueryRepository.findCommentsByRecipe(id, page, size);
+        Long totalItems = commentQueryRepository.countCommentsByRecipe(id);
+        return PagedResponse.of(data, totalItems, (int) Math.ceil((double) totalItems / pagingSize), currentPage, pagingSize);
     }
 
 }
