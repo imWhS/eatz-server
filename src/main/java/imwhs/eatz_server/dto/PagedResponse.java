@@ -21,7 +21,7 @@ public class PagedResponse<T> {
     // 현재 페이지 번호. 0부터 시작합니다.
     private int page;
 
-    // 한 페이지에 포함할 데이터 수
+    // 한 페이지에 포함할 데이터 수.
     private int size;
 
     public static <T> PagedResponse<T> of(List<T> data, long totalItems, int totalPages, int page, int size) {

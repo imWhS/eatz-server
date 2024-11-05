@@ -10,8 +10,11 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * EatzUserResponseDto 클래스입니다.<br/>
+ * 사용자 정보를 전달하기 위해 사용합니다.
+ */
 @Data
-@AllArgsConstructor
 public class EatzUserResponseDto {
 
     private Long id;
