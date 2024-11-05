@@ -25,6 +25,8 @@ public class EatzUserQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    // TODO: 데이터 조회, 페이징 처리 별도의 메서드로 분리
+    //  분리
     /**
      * 모든 사용자의 기본 정보와 각 사용자가 등록한 레시피 수를 조회합니다.
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
