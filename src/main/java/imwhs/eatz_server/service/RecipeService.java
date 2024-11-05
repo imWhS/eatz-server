@@ -2,8 +2,8 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.dto.recipe.CreateRecipeDto;
-import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
+import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
+import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
@@ -33,7 +33,7 @@ public class RecipeService {
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우
      */
     @Transactional
-    public Long registerRecipe(CreateRecipeDto dto, Long userId) {
+    public Long registerRecipe(RecipeCreateDto dto, Long userId) {
         EatzUser user = getEatzUser(userId);
         Recipe recipe = dto.toEntity(user);
         recipeRepository.save(recipe);
@@ -49,7 +49,7 @@ public class RecipeService {
      * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 ID와 레시피를 등록한 사용자 ID가 다른 경우
      */
     @Transactional
-    public void updateRecipe(Long id, UpdateRecipeDto dto, Long userId) {
+    public void updateRecipe(Long id, RecipeUpdateDto dto, Long userId) {
         Recipe recipe = getRecipe(id);
         EatzUser user = getEatzUser(userId);
         if (!recipe.getUser().equals(user)) {

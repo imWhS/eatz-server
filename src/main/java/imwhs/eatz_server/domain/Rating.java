@@ -4,6 +4,12 @@ import imwhs.eatz_server.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+/**
+ * Rating 클래스입니다.
+ * <p>
+ *     평가 정보를 저장, 관리하기 위한 엔티티 클래스입니다.
+ * </p>
+ */
 @Getter
 @Entity
 public class Rating extends BaseEntity {

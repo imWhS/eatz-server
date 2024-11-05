@@ -1,8 +1,8 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.Ingredient;
-import imwhs.eatz_server.dto.ingredient.CreateIngredientDto;
-import imwhs.eatz_server.dto.ingredient.UpdateIngredientDto;
+import imwhs.eatz_server.dto.ingredient.IngredientCreateDto;
+import imwhs.eatz_server.dto.ingredient.IngredientUpdateDto;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
 import org.junit.jupiter.api.Assertions;
@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -33,7 +31,7 @@ class IngredientServiceTest {
     void registerIngredientTest() {
         // given
         String ingredientName = "apple";
-        CreateIngredientDto dto = new CreateIngredientDto(ingredientName);
+        IngredientCreateDto dto = new IngredientCreateDto(ingredientName);
 
         // when
         Long ingredientId = ingredientService.registerIngredient(dto);
@@ -57,7 +55,7 @@ class IngredientServiceTest {
         ingredientRepository.save(child);
 
         String ingredientName = "apple";
-        CreateIngredientDto dto = new CreateIngredientDto(ingredientName, category.getId(), Arrays.asList(child.getId()));
+        IngredientCreateDto dto = new IngredientCreateDto(ingredientName, category.getId(), Arrays.asList(child.getId()));
 
         // when
         Long ingredientId = ingredientService.registerIngredient(dto);
@@ -83,7 +81,7 @@ class IngredientServiceTest {
         // given
         String ingredientName = "apple";
         Long categoryId = 99999L;
-        CreateIngredientDto dto = new CreateIngredientDto(ingredientName, categoryId);
+        IngredientCreateDto dto = new IngredientCreateDto(ingredientName, categoryId);
 
         // when, then
         IngredientNotFoundException exception = Assertions.assertThrows(IngredientNotFoundException.class, () -> ingredientService.registerIngredient(dto));
@@ -119,7 +117,7 @@ class IngredientServiceTest {
 
         String updatedIngredientName = "banana";
 
-        UpdateIngredientDto dto = new UpdateIngredientDto(
+        IngredientUpdateDto dto = new IngredientUpdateDto(
                 ingredientId,
                 updatedIngredientName,
                 updatedCategory.getId(),

@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * EatzUserQueryRepository 클래스입니다.
  * <p>
- *     EatzUser 엔티티에 대한 복잡한 조회 쿼리 위주로 처리하는 리포지토리입니다.
+ *     EatzUser 엔티티의 복잡한 조회 쿼리를 처리하는 리포지토리입니다.
  *     QueryDSL을 기반으로 조회 쿼리를 생성, 실행합니다.
  * </p>
  */
@@ -29,7 +29,7 @@ public class EatzUserQueryRepository {
      * 모든 사용자의 기본 정보와 각 사용자가 등록한 레시피 수를 조회합니다.
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
-     * @return
+     * @return 페이징 처리된 EatzUserSummaryDto.
      */
     public PagedResponse<EatzUserSummaryDto> findAllWithActivity(int page, int size) {
         QEatzUser eatzUser = QEatzUser.eatzUser;
