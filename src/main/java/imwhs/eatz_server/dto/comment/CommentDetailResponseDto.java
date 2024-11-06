@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
  * </ul>
  */
 @Data
+@AllArgsConstructor
 public class CommentDetailResponseDto {
 
     private Long id;

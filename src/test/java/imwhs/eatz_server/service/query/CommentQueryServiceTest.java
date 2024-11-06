@@ -1,9 +1,12 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.*;
+import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.comment.CommentByUserResponseDto;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
-import imwhs.eatz_server.dto.comment.CommentResponseDto;
+import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
 import imwhs.eatz_server.dto.comment.CommentUserDto;
+import imwhs.eatz_server.repository.comment.CommentQueryRepository;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
@@ -14,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional(readOnly = true)
 @SpringBootTest
@@ -32,6 +37,8 @@ public class CommentQueryServiceTest {
     RecipeRepository recipeRepository;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private CommentQueryRepository commentQueryRepository;
 
     @Test
     @Transactional
@@ -54,7 +61,7 @@ public class CommentQueryServiceTest {
         commentRepository.save(comment);
 
         // when
-        CommentResponseDto commentDto = commentService.findComment(comment.getId());
+        CommentByRecipeResponseDto commentDto = commentService.findComment(comment.getId());
 
         // then
         Assertions.assertNotNull(commentDto);
@@ -63,55 +70,150 @@ public class CommentQueryServiceTest {
         Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentDto.getUser());
     }
 
+
+
     @Test
     @Transactional
-    void findCommentDetailByUserIdTest() {
+    void findCommentDetailTest() {
         // given
-        EatzUser userB = EatzUser.create("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(userB);
+        EatzUser recipeWriter = EatzUser.create("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriter);
 
         Recipe recipe = Recipe.of(
-                userB,
+                recipeWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
 
-        EatzUser userA = EatzUser.create("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(userA);
+        EatzUser commentWriter = EatzUser.create("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(commentWriter);
 
-        Recipe recipe2 = Recipe.of(
-                userA,
+        Recipe recipeA = Recipe.of(
+                commentWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe2);
+        recipeRepository.save(recipeA);
 
-        Recipe recipe3 = Recipe.of(
-                userA,
+        Recipe recipeB = Recipe.of(
+                commentWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe3);
+        recipeRepository.save(recipeB);
 
-        String content = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
+        String commentContent = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
 
-        Comment comment = new Comment(userA, recipe, content);
+        Comment comment = new Comment(commentWriter, recipe, commentContent);
         commentRepository.save(comment);
 
         // when
         CommentDetailResponseDto commentDetailResponseDto = commentQueryService.findCommentDetail(comment.getId());
         Assertions.assertNotNull(commentDetailResponseDto);
         Assertions.assertEquals(comment.getId(), commentDetailResponseDto.getId());
-        Assertions.assertEquals(userA.getId(), commentDetailResponseDto.getUser().getId());
+        Assertions.assertEquals(commentWriter.getId(), commentDetailResponseDto.getUser().getId());
         Assertions.assertEquals(2, commentDetailResponseDto.getUser().getRecipeCount());
         Assertions.assertEquals(recipe.getId(), commentDetailResponseDto.getRecipe().getId());
         Assertions.assertEquals(recipe.getTitle(), commentDetailResponseDto.getRecipe().getTitle());
         Assertions.assertEquals(comment.getContent(), commentDetailResponseDto.getContent());
     }
+
+    @Test
+    @Transactional
+    void findCommentsByRecipeTest() {
+        // given
+        EatzUser recipeWriter = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriter);
+
+        Recipe recipe = Recipe.of(
+                recipeWriter,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe);
+        Long recipeId = recipe.getId();
+
+        EatzUser commentWriterA = EatzUser.create("commentWriterA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(commentWriterA);
+
+        Comment commentA = new Comment(commentWriterA, recipe, "이런 존맛 레시피 발견한 나 럭키비키쟌앙~");
+        commentRepository.save(commentA);
+        CommentByRecipeResponseDto commentAResponseDto = new CommentByRecipeResponseDto(commentA);
+
+        EatzUser commentWriterB = EatzUser.create("commentWriterB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(commentWriterB);
+
+        Comment commentB = new Comment(commentWriterB, recipe, "헉 이거 뭐야?");
+        commentRepository.save(commentB);
+        CommentByRecipeResponseDto commentBResponseDto = new CommentByRecipeResponseDto(commentB);
+
+        // when
+        PagedResponse<CommentByRecipeResponseDto> pagedComments = commentQueryService.findCommentsByRecipe(recipeId, null, null);
+        Assertions.assertEquals(1, pagedComments.getTotalPages());
+        Assertions.assertEquals(2, pagedComments.getTotalItems());
+        List<CommentByRecipeResponseDto> comments = pagedComments.getData();
+        Assertions.assertEquals(2, comments.size());
+        Assertions.assertTrue(comments.contains(commentAResponseDto));
+        Assertions.assertTrue(comments.contains(commentBResponseDto));
+    }
+
+    @Test
+    @Transactional
+    void findCommentsByUserTest() {
+        // given
+        EatzUser recipeWriterA = EatzUser.create("heextoryA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriterA);
+
+        Recipe recipeKimchi = Recipe.of(
+                recipeWriterA,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipeKimchi);
+
+        EatzUser recipeWriterB = EatzUser.create("heextoryB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriterB);
+
+        Recipe recipeGarlic = Recipe.of(
+                recipeWriterB,
+                "Garlic BBOKKEUMBOB",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "마늘 듬뿍 볶음밥입니당");
+        recipeRepository.save(recipeGarlic);
+
+        EatzUser commentWriter = EatzUser.create("commentWriter", "writer@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(commentWriter);
+        Long commentWriterId = commentWriter.getId();
+
+        Comment commentA = new Comment(commentWriter, recipeKimchi, "이런 존맛 레시피 발견한 나 럭키비키쟌앙~");
+        commentRepository.save(commentA);
+        CommentByUserResponseDto commentAResponseDto = new CommentByUserResponseDto(commentA);
+
+        Comment commentB = new Comment(commentWriter, recipeGarlic, "헉 이거 뭐야?");
+        commentRepository.save(commentB);
+        CommentByUserResponseDto commentBResponseDto = new CommentByUserResponseDto(commentB);
+
+        // when
+        PagedResponse<CommentByUserResponseDto> pagedComments = commentQueryService.findCommentsByUser(commentWriterId, null, null);
+        Assertions.assertEquals(1, pagedComments.getTotalPages());
+        Assertions.assertEquals(2, pagedComments.getTotalItems());
+        List<CommentByUserResponseDto> comments = pagedComments.getData();
+        System.out.println("comments.size() = " + comments.size());
+        for (CommentByUserResponseDto comment : comments) {
+            System.out.println("comment.getContent() = " + comment.getContent());
+        }
+        Assertions.assertEquals(2, comments.size());
+        Assertions.assertTrue(comments.contains(commentAResponseDto));
+        Assertions.assertTrue(comments.contains(commentBResponseDto));
+    }
+
 
     @Test
     @Transactional
@@ -137,77 +239,7 @@ public class CommentQueryServiceTest {
         commentRepository.save(comment2);
 
         // when
-        Page<CommentResponseDto> comments = commentService.findComments(user.getId(), recipe.getId(), null, null);
-
-        // then
-        Assertions.assertEquals(comments.getTotalElements(), 2);
-    }
-
-    @Test
-    @Transactional
-    void findCommentsOfRecipeTest() {
-        // given
-        EatzUser user = EatzUser.create("heextoryCC", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(user);
-
-        Recipe recipe = Recipe.of(
-                user,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-        Long recipeId = recipe.getId();
-
-        EatzUser reviewerA = EatzUser.create("awesome", "awesome@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(reviewerA);
-        commentRepository.save(new Comment(reviewerA, recipe, "재료 무조건 다 갖춰야하나요? ㅠㅠ"));
-
-        EatzUser reviewerB = EatzUser.create("bullshit", "bullshit@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(reviewerB);
-        commentRepository.save(new Comment(reviewerB, recipe, "제 마음 속에 우선 찜 해둘게요!"));
-
-        // when
-        Page<CommentResponseDto> allComments = commentService.findCommentsByRecipe(recipeId, null, null);
-
-        // then
-        Assertions.assertEquals(allComments.getTotalElements(), 2);
-    }
-
-    @Test
-    @Transactional
-    void findCommentsByUserTest() {
-        // given
-        EatzUser userA = EatzUser.create("heextoryDD", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(userA);
-
-        Recipe recipeA = Recipe.of(
-                userA,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipeA);
-
-        EatzUser userB = EatzUser.create("curve4403", "curve4403@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(userB);
-
-        Recipe recipeB = Recipe.of(
-                userB,
-                "Garlic BBOKKEUMBOB",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "마늘 듬뿍 볶음밥입니당");
-        recipeRepository.save(recipeB);
-
-        EatzUser reviewer = EatzUser.create("awesome", "awesome@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(reviewer);
-
-        commentRepository.save(new Comment(reviewer, recipeA, "재료 무조건 다 갖춰야하나요? ㅠㅠ"));
-        commentRepository.save(new Comment(reviewer, recipeB, "제 마음 속에 우선 찜 해둘게요!"));
-
-        // when
-        Page<CommentResponseDto> comments = commentService.findCommentsByUser(reviewer.getId(), null, null);
+        Page<CommentByRecipeResponseDto> comments = commentService.findComments(user.getId(), recipe.getId(), null, null);
 
         // then
         Assertions.assertEquals(comments.getTotalElements(), 2);
