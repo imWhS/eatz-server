@@ -3,7 +3,7 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.dto.comment.CommentResponseDto;
+import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -84,17 +84,17 @@ public class CommentService {
      * @param id 조회할 댓글의 식별자
      * @return
      */
-    public CommentResponseDto findComment(Long id) {
+    public CommentByRecipeResponseDto findComment(Long id) {
         Comment comment = commentRepository.findWithUserRecipeById(id)
                 .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글이 존재하지 않습니다."));
-        return new CommentResponseDto(comment);
+        return new CommentByRecipeResponseDto(comment);
     }
 
     /**
      * 사용자와 레시피 각 식별자에 해당하는 모든 댓글을 조회합니다.
      * @
      */
-    public Page<CommentResponseDto> findComments(Long userId, Long recipeId, Integer currentPage, Integer pagingSize) {
+    public Page<CommentByRecipeResponseDto> findComments(Long userId, Long recipeId, Integer currentPage, Integer pagingSize) {
         validateUser(userId);
         validateRecipe(recipeId);
 
@@ -104,7 +104,7 @@ public class CommentService {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Comment> comments = commentRepository.findWithUserRecipeByUserIdAndRecipeId(userId, recipeId, pageRequest);
 
-        return comments.map(CommentResponseDto::new);
+        return comments.map(CommentByRecipeResponseDto::new);
     }
 
     /**
@@ -129,36 +129,6 @@ public class CommentService {
         }
 
         return comment;
-    }
-
-    /**
-     * 특정 레시피에 달린 모든 댓글을 조회합니다.
-     */
-    public Page<CommentResponseDto> findCommentsByRecipe(Long recipeId, Integer currentPage, Integer pagingSize) {
-        validateRecipe(recipeId);
-
-        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
-        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
-
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Comment> comments = commentRepository.findWithUserRecipeByRecipeId(recipeId, pageRequest);
-
-        return comments.map(CommentResponseDto::new);
-    }
-
-    /**
-     * 특정 사용자가 등록한 모든 댓글을 조회합니다.
-     */
-    public Page<CommentResponseDto> findCommentsByUser(Long userId, Integer currentPage, Integer pagingSize) {
-        validateUser(userId);
-
-        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
-        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
-
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Comment> comments = commentRepository.findWithUserRecipeByUserId(userId, pageRequest);
-
-        return comments.map(CommentResponseDto::new);
     }
 
     private void validateUser(Long userId) {

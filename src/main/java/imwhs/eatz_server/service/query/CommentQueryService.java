@@ -1,23 +1,15 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.comment.CommentByUserResponseDto;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
-import imwhs.eatz_server.dto.comment.CommentResponseDto;
+import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
-import imwhs.eatz_server.exception.EatzUserNotFoundException;
-import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentQueryRepository;
-import imwhs.eatz_server.repository.comment.CommentRepository;
-import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -48,13 +40,27 @@ public class CommentQueryService {
      * 레시피에 달린 모든 댓글 별 기본 정보와 해당 댓글을 작성한 사용자의 부가 정보를 조회합니다.
      * @param id 레시피 식별자
      */
-    public PagedResponse<CommentResponseDto> findCommentsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
+    public PagedResponse<CommentByRecipeResponseDto> findCommentsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
         int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
         int size = pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize;
 
-        List<CommentResponseDto> data = commentQueryRepository.findCommentsByRecipe(id, page, size);
+        List<CommentByRecipeResponseDto> data = commentQueryRepository.findCommentsByRecipe(id, page, size);
         Long totalItems = commentQueryRepository.countCommentsByRecipe(id);
-        return PagedResponse.of(data, totalItems, (int) Math.ceil((double) totalItems / pagingSize), currentPage, pagingSize);
+        return PagedResponse.of(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
+    }
+
+    /**
+     * 특정 사용자가 등록한 모든 댓글과 작성자 정보를 조회합니다.<br/>
+     * 사용자가 등록한 모든 댓글 별 기본 정보와 해당 댓글을 작성한 사용자의 부가 정보를 조회합니다.
+     * @param id 레시피 식별자
+     */
+    public PagedResponse<CommentByUserResponseDto> findCommentsByUser(Long id, Integer currentPage, Integer pagingSize) {
+        int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
+        int size = pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize;
+
+        List<CommentByUserResponseDto> data = commentQueryRepository.findCommentsByUser(id, page, size);
+        Long totalItems = commentQueryRepository.countCommentsByUser(id);
+        return PagedResponse.of(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
     }
 
 }
