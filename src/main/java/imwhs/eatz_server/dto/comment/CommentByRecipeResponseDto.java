@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 /**
  * CommentByRecipeResponseDto 클래스입니다.
  * <ul>
- *     <li>댓글의 기본 정보와 댓글을 작성한 사용자의 기본(최소) 정보를 포함하는 DTO입니다.</li>
- *     <li>레시피 별 댓글 목록을 조회하는 상황과 같이, 댓글 목록과 같이 댓글이 컬렉션에 포함되어졌을 때<br/>
+ *     <li>댓글의 기본 정보와 댓글을 등록한 사용자의 기본(최소) 정보를 포함하는 DTO입니다.</li>
+ *     <li>레시피 별 댓글 목록을 조회하는 상황에서, 댓글 목록과 같이 댓글이 컬렉션에 포함되어졌을 때<br/>
  *     컬렉션 내 모든 댓글을 보다 효율적으로 조회해야 하는 경우에 주로 사용합니다.</li>
  * </ul>
  */
@@ -22,7 +22,7 @@ public class CommentByRecipeResponseDto {
 
     private Long id;
 
-    /** 댓글을 작성한 사용자의 기본 정보 */
+    /** 댓글을 등록한 사용자의 기본 정보 */
     private CommentUserDto user;
 
     private String content;
