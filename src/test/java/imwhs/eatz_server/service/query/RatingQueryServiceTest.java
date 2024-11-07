@@ -132,4 +132,54 @@ class RatingQueryServiceTest {
         Assertions.assertTrue(ratings.contains(ratingBResponseDto));
     }
 
+    @Test
+    @Transactional
+    public void findRatingsByUserTest() {
+        // given
+        EatzUser recipeWriterA = EatzUser.create("heextoryA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriterA);
+
+        Recipe recipeKimchi = Recipe.of(
+                recipeWriterA,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipeKimchi);
+
+        EatzUser recipeWriterB = EatzUser.create("heextoryB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriterB);
+
+        Recipe recipeGarlic = Recipe.of(
+                recipeWriterB,
+                "Garlic BBOKKEUMBOB",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "마늘 듬뿍 볶음밥입니당");
+        recipeRepository.save(recipeGarlic);
+
+        EatzUser ratingWriter = EatzUser.create("ratingWriter", "writer@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(ratingWriter);
+        Long ratingWriterId = ratingWriter.getId();
+
+        Rating ratingA = new Rating(ratingWriter, recipeKimchi, 4);
+        ratingRepository.save(ratingA);
+        RatingByUserResponseDto ratingAResponseDto = new RatingByUserResponseDto(ratingA);
+
+        Rating ratingB = new Rating(ratingWriter, recipeGarlic, 1);
+        ratingRepository.save(ratingB);
+        RatingByUserResponseDto ratingBResponseDto = new RatingByUserResponseDto(ratingB);
+
+        // when
+        PagedResponse<RatingByUserResponseDto> pagedRatings = ratingQueryService.findRatingsByUser(ratingWriterId, null, null);
+
+        // then
+        Assertions.assertEquals(1, pagedRatings.getTotalPages());
+        Assertions.assertEquals(2, pagedRatings.getTotalItems());
+        List<RatingByUserResponseDto> ratings = pagedRatings.getData();
+        Assertions.assertEquals(2, ratings.size());
+        Assertions.assertTrue(ratings.contains(ratingAResponseDto));
+        Assertions.assertTrue(ratings.contains(ratingBResponseDto));
+    }
+
 }

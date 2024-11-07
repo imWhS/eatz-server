@@ -120,6 +120,8 @@ public class CommentQueryServiceTest {
 
         // when
         PagedResponse<CommentByRecipeResponseDto> pagedComments = commentQueryService.findCommentsByRecipe(recipeId, null, null);
+
+        // then
         Assertions.assertEquals(1, pagedComments.getTotalPages());
         Assertions.assertEquals(2, pagedComments.getTotalItems());
         List<CommentByRecipeResponseDto> comments = pagedComments.getData();
@@ -168,6 +170,8 @@ public class CommentQueryServiceTest {
 
         // when
         PagedResponse<CommentByUserResponseDto> pagedComments = commentQueryService.findCommentsByUser(commentWriterId, null, null);
+
+        // then
         Assertions.assertEquals(1, pagedComments.getTotalPages());
         Assertions.assertEquals(2, pagedComments.getTotalItems());
         List<CommentByUserResponseDto> comments = pagedComments.getData();
