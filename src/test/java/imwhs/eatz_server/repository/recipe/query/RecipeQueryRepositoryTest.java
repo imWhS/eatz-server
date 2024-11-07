@@ -3,7 +3,7 @@ package imwhs.eatz_server.repository.recipe.query;
 import imwhs.eatz_server.domain.*;
 import imwhs.eatz_server.dto.recipe.RecipeDetailResponseDto;
 import imwhs.eatz_server.repository.comment.CommentRepository;
-import imwhs.eatz_server.repository.RatingRepository;
+import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeQueryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;

@@ -29,7 +29,7 @@ public class CommentQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     /**
-     * 식별자에 해당하는 댓글의 기본 정보 및 댓글을 작성한 사용자와 레시피 부가 정보를 함께 조회합니다.<br/>
+     * 식별자에 해당하는 댓글의 기본 정보 및 댓글을 등록한 사용자와 레시피 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
      * @param id 댓글 식별자
      * @return Optional로 wrapping된 CommentDetailResponseDto. 댓글의 상세 정보를 담은 DTO입니다.
@@ -67,7 +67,7 @@ public class CommentQueryRepository {
 
     /**
      * 특정 레시피에 달린 모든 댓글을 조회합니다.<br/>
-     * 댓글 별 기본 정보 뿐 아니라 해당 댓글을 작성한 사용자의 부가 정보를 함께 조회합니다.<br/>
+     * 댓글 별 기본 정보 뿐 아니라 해당 댓글을 등록한 사용자의 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
      * @param id 레시피 식별자.
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
@@ -77,25 +77,26 @@ public class CommentQueryRepository {
         QComment comment = QComment.comment;
         QEatzUser user = QEatzUser.eatzUser;
 
-        // TODO: 결국 레시피를 작성한 사용자 정보도 조회하니, EatzUser도 join?
-
         return queryFactory
                 .select(
                         Projections.constructor(CommentByRecipeResponseDto.class,
                                 comment.id,
                                 Projections.constructor(CommentUserDto.class,
                                         user.id,
-                                        user.username),
+                                        user.username
+                                ),
                                 comment.content,
                                 comment.isHidden,
                                 comment.createdAt,
                                 comment.updatedAt,
-                                comment.deletedAt)
+                                comment.deletedAt
+                        )
                 )
                 .from(comment)
                 .leftJoin(comment.user, user)
                 .where(comment.recipe.id.eq(id)
-                        .and(comment.deletedAt.isNull()))
+                        .and(comment.deletedAt.isNull())
+                )
                 .offset((long) page * size)
                 .limit(size)
                 .fetch();
@@ -118,8 +119,8 @@ public class CommentQueryRepository {
     }
 
     /**
-     * 특정 사용자가 작성한 모든 댓글을 조회합니다.<br/>
-     * 댓글 별 기본 정보 뿐 아니라 해당 댓글을 작성한 사용자의 부가 정보를 함께 조회합니다.<br/>
+     * 특정 사용자가 등록한 모든 댓글을 조회합니다.<br/>
+     * 댓글 별 기본 정보 뿐 아니라 해당 댓글을 등록한 사용자의 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
      * @param id 사용자 식별자
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
@@ -136,12 +137,14 @@ public class CommentQueryRepository {
                                 Projections.constructor(CommentRecipeDto.class,
                                         recipe.id,
                                         recipe.title,
-                                        recipe.imageUrl),
+                                        recipe.imageUrl
+                                ),
                                 comment.content,
                                 comment.isHidden,
                                 comment.createdAt,
                                 comment.updatedAt,
-                                comment.deletedAt)
+                                comment.deletedAt
+                        )
                 )
                 .from(comment)
                 .leftJoin(comment.recipe, recipe)
