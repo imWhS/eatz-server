@@ -35,42 +35,6 @@ public class CommentQueryServiceTest {
 
     @Autowired
     RecipeRepository recipeRepository;
-    @Autowired
-    private CommentService commentService;
-    @Autowired
-    private CommentQueryRepository commentQueryRepository;
-
-    @Test
-    @Transactional
-    void findCommentByIdTest() {
-        // given
-        EatzUser user = EatzUser.create("heextoryAA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(user);
-
-        Recipe recipe = Recipe.of(
-                user,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-
-        String content = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
-
-        Comment comment = new Comment(user, recipe, content);
-        commentRepository.save(comment);
-
-        // when
-        CommentByRecipeResponseDto commentDto = commentService.findComment(comment.getId());
-
-        // then
-        Assertions.assertNotNull(commentDto);
-        Assertions.assertEquals(comment.getId(), commentDto.getId());
-        Assertions.assertEquals(comment.getContent(), commentDto.getContent());
-        Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentDto.getUser());
-    }
-
-
 
     @Test
     @Transactional
@@ -113,6 +77,8 @@ public class CommentQueryServiceTest {
 
         // when
         CommentDetailResponseDto commentDetailResponseDto = commentQueryService.findCommentDetail(comment.getId());
+
+        // then
         Assertions.assertNotNull(commentDetailResponseDto);
         Assertions.assertEquals(comment.getId(), commentDetailResponseDto.getId());
         Assertions.assertEquals(commentWriter.getId(), commentDetailResponseDto.getUser().getId());
@@ -205,44 +171,9 @@ public class CommentQueryServiceTest {
         Assertions.assertEquals(1, pagedComments.getTotalPages());
         Assertions.assertEquals(2, pagedComments.getTotalItems());
         List<CommentByUserResponseDto> comments = pagedComments.getData();
-        System.out.println("comments.size() = " + comments.size());
-        for (CommentByUserResponseDto comment : comments) {
-            System.out.println("comment.getContent() = " + comment.getContent());
-        }
         Assertions.assertEquals(2, comments.size());
         Assertions.assertTrue(comments.contains(commentAResponseDto));
         Assertions.assertTrue(comments.contains(commentBResponseDto));
-    }
-
-
-    @Test
-    @Transactional
-    void findCommentsByUserAndRecipeTest() {
-        // given
-        EatzUser user = EatzUser.create("heextoryBB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(user);
-
-        Recipe recipe = Recipe.of(
-                user,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-
-        String content1 = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
-        Comment comment1 = new Comment(user, recipe, content1);
-        commentRepository.save(comment1);
-
-        String content2 = "이거 완전 별루.. 내 맘 속의 별루,,,,,,";
-        Comment comment2 = new Comment(user, recipe, content2);
-        commentRepository.save(comment2);
-
-        // when
-        Page<CommentByRecipeResponseDto> comments = commentService.findComments(user.getId(), recipe.getId(), null, null);
-
-        // then
-        Assertions.assertEquals(comments.getTotalElements(), 2);
     }
 
 }
