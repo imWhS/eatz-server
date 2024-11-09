@@ -41,28 +41,23 @@ public class RatingService {
 
     /**
      * 새 평가를 등록합니다.
-     * @param recipeId 평가를 달 레시피의 ID
-     * @param userId 평가 등록을 요청한 사용자의 ID
-     * @param score 등록할 평가의 점수
-     * @param content 등록할 평가의 내용
-     * @return 등록 완료된 평가의 ID
+     * @param recipeId 평가를 달 레시피의 식별자.
+     * @param userId 평가 등록을 요청한 사용자의 식별자.
+     * @param score 등록할 평가의 점수.
+     * @param content 등록할 평가의 내용.
+     * @return 등록 완료된 평가의 식별자.
      */
     @Transactional
     public Long registerRating(Long recipeId, Long userId, int score, String content) {
         validateRatingScore(score);
-
-        // 이미 해당 레시피에 해당 사용자가 평점을 등록했는지 확인합니다.
-        boolean isDuplicatedRating = ratingRepository.existsByRecipeIdAndUserId(recipeId, userId);
-        if (isDuplicatedRating) {
-            throw new IllegalArgumentException("이미 사용자가 레시피에 평가를 남겼습니다.");
-        }
+        validateDuplicates(recipeId, userId);
 
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다."));
         EatzUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
 
-        Rating rating = new Rating(user, recipe, score);
+        Rating rating = new Rating(user, recipe, score, content);
         ratingRepository.save(rating);
 
         return rating.getId();
@@ -70,8 +65,8 @@ public class RatingService {
 
     /**
      * 평가를 수정합니다.
-     * @param ratingId 수정할 평가의 ID
-     * @param userId 평가 수정을 요청한 사용자의 ID
+     * @param ratingId 수정할 평가의 식별자.
+     * @param userId 평가 수정을 요청한 사용자의 식별자.
      * @param score 수정할 평가의 점수. null일 경우 수정하지 않습니다.
      * @param content 수정할 평가의 내용. null일 경우 수정하지 않습니다.
      */
@@ -93,8 +88,8 @@ public class RatingService {
 
     /**
      * 평가를 삭제 처리합니다.
-     * @param ratingId 삭제 처리할 평가의 ID
-     * @param userId 평가 삭제 처리를 요청한 사용자의 ID
+     * @param ratingId 삭제 처리할 평가의 식별자.
+     * @param userId 평가 삭제 처리를 요청한 사용자의 식별자.
      */
     @Transactional
     public void deleteRating(Long ratingId, Long userId) {
@@ -103,7 +98,7 @@ public class RatingService {
     }
 
     /**
-     * ID로 특정 평가 조회.
+     * 식별자로 평가를 조회합니다.
      */
     public RatingResponseDto findRating(Long id) {
         Rating rating = ratingRepository.findJoinUserRecipeById(id)
@@ -112,21 +107,18 @@ public class RatingService {
     }
 
     /**
-     * 시용자 ID, 레시피 ID로 특정 평가 조회.
+     * 시용자 식별자, 레시피 식별자로 평가를 조회합니다.
      */
     public RatingResponseDto findRating(Long userId, Long recipeId) {
         validateUser(userId);
-
         validateRecipe(recipeId);
-
         Rating rating = ratingRepository.findJoinUserRecipeByUserIdAndRecipeId(userId, recipeId)
                 .orElseThrow(() -> new RatingNotFoundException("평가가 존재하지 않습니다."));
-
         return new RatingResponseDto(rating);
     }
 
     /**
-     * 특정 레시피에 달린 모든 평가 조회.
+     * 특정 레시피에 달린 평가를 모두 조회합니다.
      */
     public Page<RatingResponseDto> findRatings(Long recipeId, Integer currentPage, Integer pagingSize) {
         validateRecipe(recipeId);
@@ -141,7 +133,7 @@ public class RatingService {
     }
 
     /**
-     * 특정 사용자가 등록한 모든 평가 조회.
+     * 특정 사용자가 등록한 평가를 모두 조회합니다.
      */
     public Page<RatingResponseDto> findRatingsByUser(Long userId, Integer currentPage, Integer pagingSize) {
         validateUser(userId);
@@ -157,12 +149,12 @@ public class RatingService {
 
     /**
      * Rating 엔티티를 가져옵니다.
-     * @param ratingId 레시피 ID
-     * @param userId 엔티티를 요청한 사용자 ID
-     * @throws RatingNotFoundException ratingId에 해당하는 Rating 엔티티가 존재하지 않을 경우
-     * @throws UnauthorizedEatzUserException 평가를 등록한 사용자의 id가 userId와 일치하지 않을 경우(접근 권한이 없는 사용자의 요청인 경우)
-     * @throws IllegalArgumentException 가져오려는 평가가 삭제 처리된 경우
-     * @return Rating 엔티티
+     * @param ratingId 레시피 식별자.
+     * @param userId 엔티티를 요청한 사용자 식별자.
+     * @throws RatingNotFoundException ratingId에 해당하는 Rating 엔티티가 존재하지 않을 경우.
+     * @throws UnauthorizedEatzUserException 평가를 등록한 사용자의 식별자가 userId와 일치하지 않을 경우(접근 권한이 없는 사용자의 요청인 경우).
+     * @throws IllegalArgumentException 가져오려는 평가가 삭제 처리된 경우.
+     * @return Rating 엔티티.
      */
     private Rating getRating(Long ratingId, Long userId) {
         Rating rating = ratingRepository.findById(ratingId)
@@ -177,6 +169,17 @@ public class RatingService {
         }
 
         return rating;
+    }
+
+    /**
+     * 레시피에 사용자가 평점을 등록했는지 확인합니다.
+     * @param recipeId 레시피 식별자.
+     * @param userId 사용자 식별자.
+     */
+    private void validateDuplicates(Long recipeId, Long userId) {
+        if (ratingRepository.existsByRecipeIdAndUserId(recipeId, userId)) {
+            throw new IllegalArgumentException("이미 사용자가 레시피에 평가를 남겼습니다.");
+        }
     }
 
     /**

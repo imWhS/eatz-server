@@ -34,7 +34,7 @@ public class EatzUserQueryService {
     private static final int DEFAULT_PAGING_SIZE = 10;
 
     /**
-     * 식별자로 사용자 조회.
+     * 식별자로 사용자를 조회합니다.
      * <p>
      * 특정 엔티티 ID에 해당하는 사용자 정보를 조회합니다.
      * </p>
@@ -47,7 +47,7 @@ public class EatzUserQueryService {
     }
 
     /**
-     * 이메일 주소로 사용자 조회.
+     * 이메일 주소로 사용자를 조회합니다.
      * <p>
      *     특정 이메일 주소에 해당하는 사용자 정보를 조회합니다.
      * </p>
@@ -60,7 +60,7 @@ public class EatzUserQueryService {
     }
 
     /**
-     * 모든 사용자 조회.
+     * 모든 사용자를 조회합니다.
      * <ul>
      *     <li>등록된 모든 사용자를 조회합니다.</li>
      *     <li>페이징이 적용됩니다.</li>
@@ -77,7 +77,7 @@ public class EatzUserQueryService {
     }
 
     /**
-     * 모든 사용자와 활동 요약 조회.
+     * 모든 사용자와 사용자 별 활동 요약을 함께 조회합니다.
      * <ul>
      *     <li>등록된 모든 사용자를 활동 요약과 함께 조회합니다.</li>
      *     <li>페이징을 적용할 수 있습니다.</li>

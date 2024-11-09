@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Ingredient 엔티티.<br/>
- * <p>
- * Recipe를 요리하기 위해 필요한 재료를 나타내는 엔티티 클래스입니다.
- * 재료는 상위 재료에 속할 수 있고, 하위 재료를 가질 수도 있습니다.
+ * Ingredient 엔티티입니다.<br/>
+ * <ul>
+ * <li>레시피를를 요리하기 위해 필요한 재료 정보를 저장, 관리하는 엔티티 클래스입니다.</li>
+ * <li>재료는 상위 재료에 속할 수 있고, 하위 재료를 가질 수도 있습니다.</li>
+ * <li>
  * 이때, 해당 재료가 속해있는 상위 재료 또는, 하위 재료를 가지고 있는 재료는 카테고리(category)로서의 역할을 합니다.
  * apple이라는 재료가 fruit라는 상위 재료에 속한다면, fruit는 apple의 상위 재료이자 apple이 속한 카테고리가 됩니다.
+ * </li>
+ * </ul>
  */
 @Getter
 @Entity
@@ -37,20 +40,20 @@ public class Ingredient {
     private String name;
 
     /**
-     * 상위 재료.
-     * <p>
-     *     재료가 속한 카테고리입니다.
-     *     아무 카테고리에도 속하지 않은 경우 null 값을 가집니다.
-     * </p>
+     * 카테고리.
+     * <ul>
+     *     <li>재료가 속해 있는 카테고리로, 상위 재료에 해당합니다.</li>
+     *     <li>아무 카테고리에도 속하지 않은 경우 null 값을 가집니다.</li>
+     * </ul>
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Ingredient category;
 
     /**
-     * 하위 재료.
+     * 하위 재료 컬렉션.
      * <p>
-     *     카테고리로서의 해당 재료에 속해있는 다른 재료들의 목록입니다.
+     *     카테고리로서의 해당 재료에 속해 있는 다른 재료들의 목록입니다.
      * </p>
      */
     @OneToMany(mappedBy = "category")
@@ -63,15 +66,23 @@ public class Ingredient {
         this.name = name;
     }
 
+    /**
+     * 재료의 정보를 수정합니다.
+     * @param name 변경할 재료의 이름. null인 경우 기존 이름을 계속 사용합니다.
+     * @param category 변경할 카테고리. null인 경우 카테고리 지정을 해제합니다.
+     * @param children 변경할 하위 재료 목록. 기존 하위 재료는 모두 제거됩니다. null인 경우 기존 하위 재료를 유지합니다.
+     */
     public void update(String name, Ingredient category, List<Ingredient> children) {
-        this.name = name;
+        this.name = (name == null || name.isEmpty()) ? this.name : name;
 
-        if (category != null) {
-            this.setCategory(category);
-        }
+        if (category == null && this.category != null) this.removeCategory();
+        else if (category != null) this.setCategory(category);
 
-        // TODO: 하위 재료를 모두 덮어쓸지, 하위 재료는 일괄 수정 불가능하게 할 것인지 결정
-        if (children != null && !children.isEmpty()) {
+        if (children != null) {
+            for (Ingredient child : this.children) {
+                child.removeCategory();
+            }
+
             for (Ingredient child : children) {
                 this.addChild(child);
             }
@@ -79,10 +90,10 @@ public class Ingredient {
     }
 
     /**
-     * 카테고리 설정.
+     * 카테고리를 지정합니다.
      * 다른 재료를 카테고리로 지정해, 해당 재료와 연관 관계를 맺습니다.
-     * @param category 카테고리로 지정할 재료
-     * @throws IllegalArgumentException 유효하지 않은 카테고리를 지정한 경우
+     * @param category 카테고리로 지정할 재료.
+     * @throws IllegalArgumentException 유효하지 않은 카테고리를 지정한 경우.
      */
     public void setCategory(Ingredient category) {
         // 카테고리로 설정할 재료의 유효성을 확인합니다.
@@ -114,7 +125,7 @@ public class Ingredient {
     }
 
     /**
-     * 카테고리 지정 해제.
+     * 카테고리 지정을 해제합니다.
      */
     public void removeCategory() {
         if (this.category == null) {
@@ -125,10 +136,10 @@ public class Ingredient {
     }
 
     /**
-     * 하위 재료 추가.
+     * 하위 재료를 추가합니다.
      * 현재 재료를 카테고리로서, 하위 재료와 연관 관계를 맺음으로써 특정 재료를 현재 재료의 하위 계층에 추가합니다.
-     * @param child 하위 재료로서 추가할 재료
-     * @throws IllegalArgumentException 유효하지 않은 재료를 하위 재료로서 설정하려는 경우
+     * @param child 하위 재료로서 추가할 재료.
+     * @throws IllegalArgumentException 유효하지 않은 재료를 하위 재료로서 설정하려는 경우.
      */
     public void addChild(Ingredient child) {
         // 하위로 추가할 재료의 유효성을 확인합니다.
@@ -160,7 +171,7 @@ public class Ingredient {
     }
 
     /**
-     * 하위 재료 삭제.
+     * 하위 재료를 삭제합니다.
      */
     public void removeChild(Ingredient child) {
         if (child == null) {
@@ -168,11 +179,11 @@ public class Ingredient {
         }
 
         if (child.category == null) {
-            throw new IllegalArgumentException("삭제하려는 재료는 어떠한 카테고리에도 속해있지 않습니다.");
+            throw new IllegalArgumentException("삭제하려는 재료가 어떠한 카테고리에도 속해 있지 않습니다.");
         }
 
         if (child.category != this) {
-            throw new IllegalArgumentException("삭제하려는 재료가 다른 카테고리(" + child.category.getName() + ")와 연관 관계가 설정되어 있습니다.");
+            throw new IllegalArgumentException("삭제하려는 재료가 다른 카테고리(" + child.category.getName() + ")에 속해 있습니다.");
         }
 
         child.category = null;

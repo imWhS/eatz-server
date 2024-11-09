@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
+@Transactional(readOnly = true)
 @SpringBootTest
 class IngredientServiceTest {
 
@@ -28,6 +28,7 @@ class IngredientServiceTest {
 
     @Test
     @DisplayName("새 재료가 정상적으로 등록되는지 테스트합니다.")
+    @Transactional
     void registerIngredientTest() {
         // given
         String ingredientName = "apple";
@@ -44,6 +45,7 @@ class IngredientServiceTest {
 
     @Test
     @DisplayName("새 재료가 정상적으로 등록되는지, 계층 구조 또한 정상적으로 반영되는지 테스트합니다.")
+    @Transactional
     void registerIngredientWithCategoryAndChildrenTest() {
         // given
         String categoryName = "Category name";
@@ -77,6 +79,7 @@ class IngredientServiceTest {
 
     @Test
     @DisplayName("유효하지 않은 카테고리를 지정해 재료를 추가하려고 할 때, 예외가 발생하는지 테스트합니다.")
+    @Transactional
     void registerIngredientWithNonExistingCategoryTest() {
         // given
         String ingredientName = "apple";
@@ -85,11 +88,12 @@ class IngredientServiceTest {
 
         // when, then
         IngredientNotFoundException exception = Assertions.assertThrows(IngredientNotFoundException.class, () -> ingredientService.registerIngredient(dto));
-        Assertions.assertEquals("id가 " + categoryId + "인 카테고리를 찾을 수 없습니다.", exception.getMessage());
+        Assertions.assertEquals("id가 " + categoryId + "인 재료 엔티티를 찾을 수 없습니다.", exception.getMessage());
     }
 
     @Test
     @DisplayName("재료가 정상적으로 수정되는지 테스트합니다.")
+    @Transactional
     void updateIngredientTest() {
         // given
         String categoryName = "Category name";
