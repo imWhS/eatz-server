@@ -45,7 +45,7 @@ public class RecipeQueryRepository {
                                         user.id,
                                         user.username,
                                         JPAExpressions
-                                                .select(recipe.count())
+                                                .select(recipe.count().intValue())
                                                 .from(recipe)
                                                 .where(recipe.user.eq(user))),
                                 recipe.title,
@@ -56,7 +56,7 @@ public class RecipeQueryRepository {
                                 Projections.constructor(RatingSummaryDto.class,
                                         // 사용자는 레시피에 하나의 평가만 남길 수 있기 때문에, 평가 식별자 값 기준으로 distinct를 적용합니다.
                                         rating.id.countDistinct().intValue(),
-                                        rating.score.avg())
+                                        rating.score.avg().doubleValue())
                         )
                 )
                 .from(recipe)

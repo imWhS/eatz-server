@@ -44,7 +44,7 @@ public class EatzUserQueryRepository {
                         Projections.constructor(EatzUserSummaryDto.class,
                                 eatzUser.id,
                                 eatzUser.username,
-                                recipe.count()
+                                recipe.count().intValue()
                         ))
                 .from(eatzUser)
                 .leftJoin(eatzUser.recipes, recipe)

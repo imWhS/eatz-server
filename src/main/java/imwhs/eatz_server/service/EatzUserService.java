@@ -17,7 +17,7 @@ public class EatzUserService {
     private final EatzUserRepository userRepository;
 
     /**
-     * 새 사용자 등록
+     * 새 사용자를 등록합니다.
      * <ul>
      *     <li>EatzUser 엔티티를 생성하고 리포지토리를 통해 저장합니다.</li>
      *     <li>EatzUser 엔티티 생성에 필요한 데이터가 많기 때문에, 사용자 생성 DTO로 사용자 생성에 필요한 데이터를 전달 받습니다.</li>
@@ -41,7 +41,7 @@ public class EatzUserService {
     }
 
     /**
-     * 사용자 수정
+     * 사용자를 수정합니다.
      * <ul>
      *     <li>기존 EatzUser 엔티티의 필드 별 데이터를 수정합니다.</li>
      *     <li>EatzUser 엔티티에 수정 가능한 필드가 많기 때문에, 사용자 수정 DTO로 사용자 수정에 필요한 데이터를 전달 받습니다.</li>
@@ -60,7 +60,7 @@ public class EatzUserService {
     }
 
     /**
-     * 사용자 삭제
+     * 사용자를 삭제합니다.
      * <p>
      * 특정 사용자를 삭제합니다.
      * </p>

@@ -37,8 +37,6 @@ class RatingQueryServiceTest {
 
     @Autowired
     RecipeRepository recipeRepository;
-    @Autowired
-    private CommentQueryService commentQueryService;
 
     @Test
     @Transactional
