@@ -29,7 +29,7 @@ public class RatingQueryService {
     /**
      * 식별자로 평가와 관련된 상세 정보를 조회합니다.<br/>
      * 식별자에 해당하는 평가의 기본 정보와 평가를 등록한 사용자, 평가가 달린 레시피의 부가 정보를 조회합니다.
-     * @param id 평가 식별자
+     * @param id 평가 식별자.
      */
     public RatingDetailResponseDto findRatingDetail(Long id) {
         return ratingQueryRepository.findRatingDetailById(id)
@@ -39,7 +39,7 @@ public class RatingQueryService {
     /**
      * 특정 레시피에 달린 모든 평가와 작성자 정보를 조회합니다.<br/>
      * 레시피에 달린 모든 평가 별 기본 정보와 해당 평가를 등록한 사용자의 부가 정보를 조회합니다.
-     * @param id 레시피 식별자
+     * @param id 레시피 식별자.
      */
     public PagedResponse<RatingByRecipeResponseDto> findRatingsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
         int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
@@ -53,7 +53,7 @@ public class RatingQueryService {
     /**
      * 특정 사용자가 등록한 모든 댓글과 레시피 정보를 조회합니다.<br/>
      * 사용자가 등록한 모든 댓글 별 기본 정보와 해당 댓글이 달린 레시피의 부가 정보를 조회합니다.
-     * @param id 레시피 식별자
+     * @param id 레시피 식별자.
      */
     public PagedResponse<RatingByUserResponseDto> findRatingsByUser(Long id, Integer currentPage, Integer pagingSize) {
         int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
