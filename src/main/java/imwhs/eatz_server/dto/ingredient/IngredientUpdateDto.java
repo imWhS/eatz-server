@@ -16,7 +16,7 @@ public class IngredientUpdateDto {
 
     private Long categoryId;
 
-    private List<Long> childIds = new ArrayList<>();
+    private List<Long> childIds;
 
     public IngredientUpdateDto(Long id, String name) {
         this.name = name;

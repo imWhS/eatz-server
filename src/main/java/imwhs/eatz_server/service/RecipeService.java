@@ -26,11 +26,11 @@ public class RecipeService {
     private EatzUserRepository userRepository;
 
     /**
-     * 새 레시피 등록.
-     * @param dto    등록할 레시피 정보를 담고 있는 CreateRecipeDto
-     * @param userId 새 레시피를 등록하려는 사용자의 ID
-     * @return 등록 완료된 레시피 정보를 담고 있는 RecipeResponseDto
-     * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우
+     * 새 레시피를 등록합니다.
+     * @param dto    등록할 레시피 정보를 담고 있는 CreateRecipeDto.
+     * @param userId 새 레시피를 등록하려는 사용자의 식별자.
+     * @return 등록 완료된 레시피 정보를 담고 있는 RecipeResponseDto.
+     * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
     @Transactional
     public Long registerRecipe(RecipeCreateDto dto, Long userId) {
@@ -41,12 +41,12 @@ public class RecipeService {
     }
 
     /**
-     * 레시피 수정.
-     * @param id 수정할 레시피 ID
-     * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto
-     * @param userId 레시피 수정을 요청한 사용자 ID
-     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
-     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 ID와 레시피를 등록한 사용자 ID가 다른 경우
+     * 레시피를 수정합니다.
+     * @param id 수정할 레시피 식별자.
+     * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto.
+     * @param userId 레시피 수정을 요청한 사용자 식별자.
+     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
+     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자와 레시피를 등록한 사용자 식별자가 다른 경우.
      */
     @Transactional
     public void updateRecipe(Long id, RecipeUpdateDto dto, Long userId) {
@@ -60,11 +60,11 @@ public class RecipeService {
     }
 
     /**
-     * 레시피 삭제 처리.
-     * @param id 삭제 처리할 레시피 ID
-     * @param userId 레시피 삭제 처리를 요청한 사용자 ID
-     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
-     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 ID와 레시피를 등록한 사용자 ID가 다른 경우
+     * 레시피를 삭제 처리합니다.
+     * @param id 삭제 처리할 레시피 식별자.
+     * @param userId 레시피 삭제 처리를 요청한 사용자 식별자.
+     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
+     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자.와 레시피를 등록한 사용자 식별자가 다른 경우.
      */
     @Transactional
     public void deleteRecipe(Long id, Long userId) {
