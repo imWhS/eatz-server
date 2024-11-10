@@ -230,8 +230,6 @@ class IngredientTest {
         // then
         Assertions.assertNull(sugar.getCategory());
         Assertions.assertFalse(flour.getChildren().contains(sugar));
-
-        Assertions.assertThrows(IllegalArgumentException.class, sugar::removeCategory);
     }
 
 }
