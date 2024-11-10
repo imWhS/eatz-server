@@ -110,11 +110,9 @@ public class Ingredient {
      * @throws IllegalArgumentException 유효하지 않은 카테고리를 지정한 경우.
      */
     public void setCategory(Ingredient category) {
-        // 카테고리로 설정할 재료의 유효성을 확인합니다.
-        if (category == null) {
-            throw new IllegalArgumentException("카테고리로 지정할 재료가 존재하지 않습니다.");
-        }
+        if (category == null) return;
 
+        // 카테고리로 설정할 재료의 유효성을 확인합니다.
         if (category == this) {
             throw new IllegalArgumentException("자신을 카테고리로 지정할 수 없습니다.");
         }
