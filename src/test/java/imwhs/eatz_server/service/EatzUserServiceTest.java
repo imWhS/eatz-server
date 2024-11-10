@@ -3,6 +3,7 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -275,6 +277,76 @@ public class EatzUserServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> userService.deleteUser(99999L)).isInstanceOf(EatzUserNotFoundException.class);
+    }
+
+
+    @Test
+    @DisplayName("등록된 사용자가 식별자로 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
+    void findUserByIdTest() {
+        // given
+        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(user);
+
+        // when
+        EatzUserResponseDto dto = userService.findUserById(user.getId());
+
+        // then
+        Assertions.assertThat(dto.getUsername()).isEqualTo(user.getUsername());
+        Assertions.assertThat(dto.getEmail()).isEqualTo(user.getEmail());
+        Assertions.assertThat(dto.getRole()).isEqualTo(user.getRole());
+    }
+
+    @Test
+    @DisplayName("등록되지 않은 사용자가 식별자로 조회되지 않는지 테스트합니다.")
+    @Transactional
+    void findInvalidUserByIdTest() {
+        // given
+        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(user);
+
+        // when, then
+        Assertions.assertThatThrownBy(() -> userService.findUserById(99999L)).isInstanceOf(EatzUserNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("등록된 사용자가 이메일로 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
+    void findUserByEmailTest() {
+        // given
+        String email = "heextory@icloud.com";
+        EatzUser user = EatzUser.create("heextory", email, "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(user);
+
+        // when
+        EatzUserResponseDto dto = userService.findUserByEmail(email);
+
+        // then
+        Assertions.assertThat(dto.getUsername()).isEqualTo(user.getUsername());
+        Assertions.assertThat(dto.getEmail()).isEqualTo(user.getEmail());
+        Assertions.assertThat(dto.getRole()).isEqualTo(user.getRole());
+    }
+
+    @Test
+    @DisplayName("등록된 모든 사용자가 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
+    void findAllUsersTest() {
+        // given
+        EatzUser user1 = EatzUser.create("1heextory", "1heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user2 = EatzUser.create("2heextory", "2heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user3 = EatzUser.create("3heextory", "3heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(user1);
+        userRepository.save(user2);
+        userRepository.save(user3);
+
+        // when
+        Page<EatzUserResponseDto> users = userService.findAllUsers(null, null);
+
+        // then
+        Assertions.assertThat(users.getTotalElements()).isEqualTo(3);
+        Assertions.assertThat(users.getContent().get(0).getUsername()).isEqualTo(user1.getUsername());
+        Assertions.assertThat(users.getContent().get(1).getUsername()).isEqualTo(user2.getUsername());
+        Assertions.assertThat(users.getContent().get(2).getUsername()).isEqualTo(user3.getUsername());
     }
 
 }

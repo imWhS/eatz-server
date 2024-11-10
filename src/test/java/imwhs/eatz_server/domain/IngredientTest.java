@@ -134,7 +134,7 @@ class IngredientTest {
     }
 
     @Test
-    @DisplayName("setCategory()를 통한 카테고리 지정이 정상적으로 진행되는지 확인합니다.")
+    @DisplayName("setCategory()를 통한 카테고리 설정이 정상적으로 진행되는지 확인합니다.")
     void setCategoryTest() {
         // when
         sugar.setCategory(flour);
@@ -155,13 +155,13 @@ class IngredientTest {
     }
 
     @Test
-    @DisplayName("setCategory()를 통해 자기 자신을 카테고리로 지정하려고 할 때 예외가 발생하는지 확인합니다.")
+    @DisplayName("setCategory()를 통해 자기 자신을 카테고리로 설정하려고 할 때 예외가 발생하는지 확인합니다.")
     void setCategoryFailTest() {
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> sugar.setCategory(sugar));
 
         // then
-        Assertions.assertEquals("자신을 카테고리로 지정할 수 없습니다.", exception.getMessage());
+        Assertions.assertEquals("자신을 카테고리로 설정할 수 없습니다.", exception.getMessage());
     }
 
     @Test
@@ -175,7 +175,7 @@ class IngredientTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> flour.setCategory(salt));
 
         // then
-        Assertions.assertEquals("현재 재료의 하위 계층에 존재하는 재료를 카테고리로 지정할 수 없습니다.", exception.getMessage());
+        Assertions.assertEquals("현재 재료의 하위 계층에 존재하는 재료를 카테고리로 설정할 수 없습니다.", exception.getMessage());
     }
 
     @Test
@@ -219,7 +219,7 @@ class IngredientTest {
     }
 
     @Test
-    @DisplayName("카테고리가 정상적으로 지정 해제되는지 확인합니다.")
+    @DisplayName("카테고리가 정상적으로 해제되는지 확인합니다.")
     void testRemoveCategory() {
         // given
         flour.addChild(sugar);

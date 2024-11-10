@@ -78,7 +78,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    @DisplayName("유효하지 않은 카테고리를 지정해 재료를 추가하려고 할 때, 예외가 발생하는지 테스트합니다.")
+    @DisplayName("유효하지 않은 카테고리를 설정해 재료를 추가하려고 할 때, 예외가 발생하는지 테스트합니다.")
     @Transactional
     void registerIngredientWithNonExistingCategoryTest() {
         // given
