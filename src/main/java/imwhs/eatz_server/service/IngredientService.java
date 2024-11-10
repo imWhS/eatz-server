@@ -66,7 +66,7 @@ public class IngredientService {
     @Transactional(rollbackFor = Exception.class)
     public void updateIngredient(IngredientUpdateDto dto) {
         if (dto.getId() == null) {
-            throw new IllegalArgumentException("수정할 재료의 ID는 필수 값입니다.");
+            throw new IllegalArgumentException("수정할 재료의 id는 필수 항목입니다.");
         }
 
         validateIngredientName(dto.getName());
