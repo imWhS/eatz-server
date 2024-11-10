@@ -67,22 +67,36 @@ public class Ingredient {
     }
 
     /**
-     * 재료의 정보를 수정합니다.
-     * @param name 변경할 재료의 이름. null인 경우 기존 이름을 계속 사용합니다.
-     * @param category 변경할 카테고리. null인 경우 카테고리 지정을 해제합니다.
-     * @param children 변경할 하위 재료 목록. 기존 하위 재료는 모두 제거됩니다. null인 경우 기존 하위 재료를 유지합니다.
+     * 재료 정보를 업데이트합니다.
+     * @param name 새 재료 이름. null이거나 빈 문자열이면 기존 이름을 계속 사용합니다.
+     * @param category 새 카테고리. null이면 카테고리 지정을 해제합니다.
+     * @param children 새 하위 재료 목록. 기존 하위 재료는 모두 제거됩니다. null이거나 비어있으면 기존 하위 재료를 유지합니다.
      */
     public void update(String name, Ingredient category, List<Ingredient> children) {
+        // 이름을 업데이트합니다.
+        // 이름은 필수 항목이기 때문에, name이 null이거나 빈 문자열이면 기존 이름을 유지합니다.
         this.name = (name == null || name.isEmpty()) ? this.name : name;
 
-        if (category == null && this.category != null) this.removeCategory();
-        else if (category != null) this.setCategory(category);
+        // 카테고리를 업데이트합니다.
+        // category가 null인 경우 카테고리를 해제합니다.
+        if (category == null) this.removeCategory();
+        else this.setCategory(category);
 
-        if (children != null) {
-            for (Ingredient child : this.children) {
+        // 하위 재료 목록을 업데이트합니다.
+        // children이 null이거나 비어있으면, 기존 하위 재료 목록을 유지합니다.
+        if (children != null && !children.isEmpty()) {
+            // 하위 재료와의 연관 관계를 해제함으로써, 순회 중인 하위 재료 목록이 수정되지 않도록 하기 위해 순회를 위한 임시 목록을 만듭니다.
+            List<Ingredient> tmpChildren = new ArrayList<>(this.children);
+
+            // 기존 하위 재료와의 연관 관계를 해제합니다.
+            for (Ingredient child : tmpChildren) {
                 child.removeCategory();
             }
 
+            // 기존 모든 하위 재료들의 연관 관계를 해제합니다.
+            this.children.clear();
+
+            // children을 하위 재료 목록에 반영하면서, 양방향 연관 관계를 설정합니다.
             for (Ingredient child : children) {
                 this.addChild(child);
             }
@@ -128,9 +142,6 @@ public class Ingredient {
      * 카테고리 지정을 해제합니다.
      */
     public void removeCategory() {
-        if (this.category == null) {
-            throw new IllegalArgumentException("현재 재료는 어떠한 카테고리에도 속해 있지 않습니다.");
-        }
         this.category.children.remove(this);
         this.category = null;
     }
