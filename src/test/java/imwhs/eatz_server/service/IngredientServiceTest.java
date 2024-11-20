@@ -1,15 +1,20 @@
 package imwhs.eatz_server.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.dto.ingredient.IngredientCreateDto;
+import imwhs.eatz_server.dto.ingredient.IngredientResponseDto;
+import imwhs.eatz_server.dto.ingredient.IngredientTreeResponseDto;
 import imwhs.eatz_server.dto.ingredient.IngredientUpdateDto;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -21,10 +26,15 @@ import java.util.Optional;
 class IngredientServiceTest {
 
     @Autowired
+    private EntityManager em;
+
+    @Autowired
     private IngredientService ingredientService;
 
     @Autowired
     private IngredientRepository ingredientRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("새 재료가 정상적으로 등록되는지 테스트합니다.")
@@ -137,6 +147,147 @@ class IngredientServiceTest {
         Assertions.assertEquals(updatedCategory.getId(), foundIngredient.get().getCategory().getId());
         Assertions.assertEquals(updatedCategory.getName(), foundIngredient.get().getCategory().getName());
         Assertions.assertEquals(updatedChildName, foundIngredient.get().getChildren().get(0).getName());
+    }
+
+    @Test
+    @DisplayName("카테고리에 속해 있고, 하위 재료를 가지는 단일 재료가 식별자로 정상적으로 조회되는지 테스트합니다.")
+    @Transactional
+    void findByIdTest() {
+        // given
+        String categoryName = "Category name";
+        Ingredient category = new Ingredient(categoryName);
+        ingredientRepository.save(category);
+
+        String child1Name = "Child1 name";
+        Ingredient child1 = new Ingredient(child1Name);
+        ingredientRepository.save(child1);
+
+        String child2Name = "Child2 name";
+        Ingredient child2 = new Ingredient(child2Name);
+        ingredientRepository.save(child2);
+
+        String ingredientName = "apple";
+        Ingredient ingredient = new Ingredient(ingredientName);
+        ingredientRepository.save(ingredient);
+        ingredient.setCategory(category);
+        ingredient.addChild(child1);
+        ingredient.addChild(child2);
+
+        // when
+        IngredientResponseDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+
+        // then
+        Assertions.assertNotNull(foundIngredient);
+        Assertions.assertEquals(ingredientName, foundIngredient.getName());
+        Assertions.assertNotNull(foundIngredient.getCategory());
+        Assertions.assertEquals(foundIngredient.getCategory().getCategoryName(), categoryName);
+        Assertions.assertFalse(foundIngredient.getChildren().isEmpty());
+        Assertions.assertEquals(2, foundIngredient.getChildren().size());
+        Assertions.assertEquals(child1Name, foundIngredient.getChildren().get(0).getChildName());
+        Assertions.assertEquals(child2Name, foundIngredient.getChildren().get(1).getChildName());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("어느 카테고리에도 속하지 않고, 하위 재료를 가지는 단일 재료가 식별자로 정상적으로 조회되는지 테스트합니다.")
+    void findByIdWithoutCategoryTest() {
+        // given
+        String child1Name = "Child1 name";
+        Ingredient child = new Ingredient(child1Name);
+        ingredientRepository.save(child);
+
+        String child2Name = "Child2 name";
+        Ingredient child2 = new Ingredient(child2Name);
+        ingredientRepository.save(child2);
+
+        String ingredientName = "apple";
+        Ingredient ingredient = new Ingredient(ingredientName);
+        ingredientRepository.save(ingredient);
+        ingredient.addChild(child);
+        ingredient.addChild(child2);
+
+        // when
+        IngredientResponseDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+
+        // then
+        Assertions.assertNotNull(foundIngredient);
+        Assertions.assertEquals(ingredientName, foundIngredient.getName());
+        Assertions.assertNull(foundIngredient.getCategory());
+        Assertions.assertFalse(foundIngredient.getChildren().isEmpty());
+        Assertions.assertEquals(2, foundIngredient.getChildren().size());
+        Assertions.assertEquals(child1Name, foundIngredient.getChildren().get(0).getChildName());
+        Assertions.assertEquals(child2Name, foundIngredient.getChildren().get(1).getChildName());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("어느 카테고리에도 속하지 않고, 하위 재료도 가지지 않는 단일 재료가 식별자로 정상적으로 조회되는지 테스트합니다.")
+    void findByIdWithoutCategoryChildrenTest() {
+        // given
+        String ingredientName = "apple";
+        Ingredient ingredient = new Ingredient(ingredientName);
+        ingredientRepository.save(ingredient);
+
+        // when
+        IngredientResponseDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+
+        // then
+        Assertions.assertNotNull(foundIngredient);
+        Assertions.assertEquals(ingredientName, foundIngredient.getName());
+        Assertions.assertNull(foundIngredient.getCategory());
+        Assertions.assertTrue(foundIngredient.getChildren().isEmpty());
+    }
+    
+    @Test
+    @Transactional
+    @DisplayName("모든 재료가 계층 구조로 조회되는지 테스트합니다.")
+    void findIngredientWithAllChildrenTreeTest() {
+        // given
+        Ingredient root = new Ingredient("모든 재료");
+        ingredientRepository.save(root);
+
+        Ingredient meat = new Ingredient("육류");
+        ingredientRepository.save(meat);
+        meat.setCategory(root);
+
+        Ingredient seafood = new Ingredient("해산물");
+        ingredientRepository.save(seafood);
+        seafood.setCategory(root);
+
+        Ingredient pork = new Ingredient("돼지고기");
+        ingredientRepository.save(pork);
+        pork.setCategory(meat);
+
+        Ingredient porkSub1 = new Ingredient("앞다리살");
+        ingredientRepository.save(porkSub1);
+        porkSub1.setCategory(pork);
+
+        Ingredient porkSub2 = new Ingredient("삼겹살");
+        ingredientRepository.save(porkSub2);
+        porkSub2.setCategory(pork);
+
+        Ingredient beef = new Ingredient("소고기");
+        ingredientRepository.save(beef);
+        beef.setCategory(meat);
+
+        Ingredient beefSub1 = new Ingredient("업진살");
+        ingredientRepository.save(beefSub1);
+        beefSub1.setCategory(beef);
+
+        // when
+        IngredientTreeResponseDto ingredientTree = ingredientService.findIngredientTree(root.getId());
+
+        // then
+        Assertions.assertEquals(8, ingredientRepository.findAll().size());
+        Assertions.assertNotNull(ingredientTree);
+
+        try {
+            String jsonResult = objectMapper.writeValueAsString(ingredientTree);
+            System.out.println("jsonResult = " + jsonResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assertions.fail("JSON 직렬화 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }
 
 }
