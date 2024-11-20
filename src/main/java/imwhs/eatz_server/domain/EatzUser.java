@@ -87,14 +87,12 @@ public class EatzUser extends BaseEntity {
     protected EatzUser() {}
 
     /**
-     * EatzUser 생성 메서드
-     * <p>
      * EatzUser 객체를 생성합니다.
-     * @param username 사용자 이름
-     * @param email 이메일 주소
-     * @param password 비밀 번호
+     * @param username 사용자 이름.
+     * @param email 이메일 주소.
+     * @param password 비밀 번호.
      * @param role 역할. 기본 값은 Role.MEMBER 입니다.
-     * @return 생성된 EatzUser 객체
+     * @return 생성된 EatzUser 객체.
      * </p>
      */
     public static EatzUser create(
