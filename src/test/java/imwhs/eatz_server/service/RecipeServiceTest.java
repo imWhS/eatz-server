@@ -3,8 +3,8 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
-import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
+import imwhs.eatz_server.dto.recipe.CreateRecipeDto;
+import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
@@ -36,21 +36,21 @@ public class RecipeServiceTest {
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        RecipeCreateDto recipeCreateDto = new RecipeCreateDto(
+        CreateRecipeDto createRecipeDto = new CreateRecipeDto(
                 "Kimchi pasta",
                 "https://www.naver.com",
                 "https://imgcdn.naver.com",
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        Long recipeId = recipeService.registerRecipe(recipeCreateDto, user.getId());
+        Long recipeId = recipeService.registerRecipe(createRecipeDto, user.getId());
 
         // then
         Recipe recipe = recipeRepository.findById(recipeId).get();
-        Assertions.assertThat(recipe.getTitle()).isEqualTo(recipeCreateDto.getTitle());
-        Assertions.assertThat(recipe.getDescription()).isEqualTo(recipeCreateDto.getDescription());
-        Assertions.assertThat(recipe.getUrl()).isEqualTo(recipeCreateDto.getUrl());
-        Assertions.assertThat(recipe.getImageUrl()).isEqualTo(recipeCreateDto.getImageUrl());
+        Assertions.assertThat(recipe.getTitle()).isEqualTo(createRecipeDto.getTitle());
+        Assertions.assertThat(recipe.getDescription()).isEqualTo(createRecipeDto.getDescription());
+        Assertions.assertThat(recipe.getUrl()).isEqualTo(createRecipeDto.getUrl());
+        Assertions.assertThat(recipe.getImageUrl()).isEqualTo(createRecipeDto.getImageUrl());
     }
 
     @Test
@@ -61,25 +61,25 @@ public class RecipeServiceTest {
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
-        RecipeUpdateDto recipeUpdateDto = new RecipeUpdateDto(
+        UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto(
                 "Kimchi pasta",
                 "https://www.naver.com",
                 "https://imgcdn.naver.com",
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        recipeService.updateRecipe(recipeId, recipeUpdateDto, user.getId());
+        recipeService.updateRecipe(recipeId, updateRecipeDto, user.getId());
         Recipe foundRecipe = recipeRepository.findById(recipeId).get();
 
         // then
-        Assertions.assertThat(foundRecipe.getTitle()).isEqualTo(recipeUpdateDto.getTitle());
-        Assertions.assertThat(foundRecipe.getDescription()).isEqualTo(recipeUpdateDto.getDescription());
-        Assertions.assertThat(foundRecipe.getUrl()).isEqualTo(recipeUpdateDto.getUrl());
-        Assertions.assertThat(foundRecipe.getImageUrl()).isEqualTo(recipeUpdateDto.getImageUrl());
+        Assertions.assertThat(foundRecipe.getTitle()).isEqualTo(updateRecipeDto.getTitle());
+        Assertions.assertThat(foundRecipe.getDescription()).isEqualTo(updateRecipeDto.getDescription());
+        Assertions.assertThat(foundRecipe.getUrl()).isEqualTo(updateRecipeDto.getUrl());
+        Assertions.assertThat(foundRecipe.getImageUrl()).isEqualTo(updateRecipeDto.getImageUrl());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class RecipeServiceTest {
         EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -111,18 +111,18 @@ public class RecipeServiceTest {
         EatzUser userB = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
 
-        Recipe recipe = Recipe.of(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.create(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
-        RecipeUpdateDto recipeUpdateDto = new RecipeUpdateDto(
+        UpdateRecipeDto updateRecipeDto = new UpdateRecipeDto(
                 "Kimchi pasta",
                 "https://www.naver.com",
                 "https://imgcdn.naver.com",
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, recipeUpdateDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, updateRecipeDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class RecipeServiceTest {
         EatzUser userB = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(userB);
 
-        Recipe recipe = Recipe.of(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.create(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 

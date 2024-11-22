@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
  * 클라이언트에 전달하기 위해 사용됩니다.
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class RatingSummaryDto {
 

@@ -1,18 +1,15 @@
-package imwhs.eatz_server.dto.eatzuser;
+package imwhs.eatz_server.repository.eatzuser.query;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-public class EatzUserResponseDto {
+public class EatzUserQueryDto {
 
     private Long id;
 
@@ -22,7 +19,7 @@ public class EatzUserResponseDto {
 
     private Role role;
 
-    private List<Recipe> recipeList;
+    private List<EatzUserRecipeQueryDto> recipeList;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
@@ -33,14 +30,14 @@ public class EatzUserResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
-    public EatzUserResponseDto(EatzUser user) {
-        this.id = user.getId();
-        this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.role = user.getRole();
-        this.recipeList = user.getRecipes();
-        this.createdAt = user.getCreatedAt();
-        this.updatedAt = user.getUpdatedAt();
-        this.deletedAt = user.getDeletedAt();
+    public EatzUserQueryDto(Long id, String username, String email, Role role, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.role = role;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
     }
+
 }

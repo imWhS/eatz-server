@@ -3,12 +3,9 @@ package imwhs.eatz_server.dto.recipe;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/**
- *
- */
 @Data
 @AllArgsConstructor
-public class RecipeUpdateDto {
+public class UpdateRecipeDto {
 
     private String title;
 
