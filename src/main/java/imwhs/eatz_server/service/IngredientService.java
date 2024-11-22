@@ -132,7 +132,7 @@ public class IngredientService {
     }
 
     /**
-     * 식별자에 해당하는 재료를 조회합니다. 재료의 모든 하위 재료도 Tree 형태로 함께 조회합니다.
+     * 식별자에 해당하는 재료와 하위 재료 계층을 구성하는 모든 재료 엔티티를 함께 조회합니다.
      * @param id 조회하려는 재료의 식별자.
      * @return IngredientTreeResponseDto.
      */
