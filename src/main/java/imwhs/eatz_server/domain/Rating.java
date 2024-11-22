@@ -71,8 +71,8 @@ public class Rating extends BaseEntity {
     }
 
     /**
-     * 평가 점수를 수정합니다.
-     * @param score 수정할 평가 점수
+     * 평가 점수를 업데이트합니다.
+     * @param score 업데이트할 평가 점수
      */
     public void updateScore(int score) {
         validateRating();
@@ -82,8 +82,8 @@ public class Rating extends BaseEntity {
     }
 
     /**
-     * 평가 내용을 수정합니다.
-     * @param content 수정할 평가 내용
+     * 평가 내용을 업데이트합니다.
+     * @param content 업데이트할 평가 내용
      */
     public void updateContent(String content) {
         validateRating();

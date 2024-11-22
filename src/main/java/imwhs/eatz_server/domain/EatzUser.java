@@ -109,7 +109,7 @@ public class EatzUser extends BaseEntity {
     }
 
     /**
-     * 사용자 수정 메서드
+     * 사용자 업데이트 메서드
      * <ul>
      * <li>사용자의 정보 중, 사용자 이름, 이메일, 비밀 번호를 변경합니다.</li>
      * <li>변경할 값이 null이거나 비어있는 필드는 기존 값을 유지합니다.</li>

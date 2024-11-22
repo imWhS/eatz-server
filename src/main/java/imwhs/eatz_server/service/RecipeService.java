@@ -41,10 +41,10 @@ public class RecipeService {
     }
 
     /**
-     * 레시피를 수정합니다.
-     * @param id 수정할 레시피 식별자.
-     * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto.
-     * @param userId 레시피 수정을 요청한 사용자 식별자.
+     * 레시피를 업데이트합니다.
+     * @param id 업데이트할 레시피 식별자.
+     * @param dto 업데이트할 레시피 정보를 담고 있는 UpdateRecipeDto.
+     * @param userId 레시피 업데이트를 요청한 사용자 식별자.
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자와 레시피를 등록한 사용자 식별자가 다른 경우.
      */
@@ -53,7 +53,7 @@ public class RecipeService {
         Recipe recipe = getRecipe(id);
         EatzUser user = getEatzUser(userId);
         if (!recipe.getUser().equals(user)) {
-            throw new UnauthorizedAccessException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 수정할 권한이 없습니다.");
+            throw new UnauthorizedAccessException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 업데이트할 권한이 없습니다.");
         }
 
         recipe.update(dto);
@@ -71,7 +71,7 @@ public class RecipeService {
         Recipe recipe = getRecipe(id);
         EatzUser user = getEatzUser(userId);
         if (!recipe.getUser().equals(user)) {
-            throw new UnauthorizedAccessException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 수정할 권한이 없습니다.");
+            throw new UnauthorizedAccessException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 업데이트할 권한이 없습니다.");
         }
 
         recipe.markAsDeleted();

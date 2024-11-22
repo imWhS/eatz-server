@@ -26,15 +26,10 @@ import java.util.Optional;
 class IngredientServiceTest {
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private IngredientService ingredientService;
 
     @Autowired
     private IngredientRepository ingredientRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("새 재료가 정상적으로 등록되는지 테스트합니다.")
@@ -147,6 +142,42 @@ class IngredientServiceTest {
         Assertions.assertEquals(updatedCategory.getId(), foundIngredient.get().getCategory().getId());
         Assertions.assertEquals(updatedCategory.getName(), foundIngredient.get().getCategory().getName());
         Assertions.assertEquals(updatedChildName, foundIngredient.get().getChildren().get(0).getName());
+    }
+
+    @Test
+    @DisplayName("재료가 정상적으로 삭제되는지 테스트합니다.")
+    @Transactional
+    void deleteIngredientTest() {
+        // given
+        String categoryName = "Category name";
+        Ingredient category = new Ingredient(categoryName);
+        ingredientRepository.save(category);
+
+        String child1Name = "Child1 name";
+        Ingredient child = new Ingredient(child1Name);
+        ingredientRepository.save(child);
+
+        String child2Name = "Child2 name";
+        Ingredient child2 = new Ingredient(child2Name);
+        ingredientRepository.save(child2);
+
+        String ingredientName = "apple";
+        Ingredient ingredient = new Ingredient(ingredientName);
+        ingredientRepository.save(ingredient);
+        Long ingredientId = ingredient.getId();
+        ingredient.setCategory(category);
+        ingredient.addChild(child);
+        ingredient.addChild(child2);
+
+        // when
+        ingredientService.deleteIngredient(ingredient.getId());
+
+        // then: category는 children이 없어야 하며, 각 child는 category가 지정되어 있지 않아야 합니다.
+        Assertions.assertTrue(category.getChildren().isEmpty());
+        Assertions.assertNull(child.getCategory());
+        Assertions.assertNull(child2.getCategory());
+        Assertions.assertFalse(ingredientRepository.existsById(ingredientId));
+        Assertions.assertEquals(3, ingredientRepository.count());
     }
 
     @Test
@@ -275,19 +306,39 @@ class IngredientServiceTest {
         beefSub1.setCategory(beef);
 
         // when
-        IngredientTreeResponseDto ingredientTree = ingredientService.findIngredientTree(root.getId());
+        IngredientTreeResponseDto rootOfIngredientTree = ingredientService.findIngredientTree(root.getId());
 
         // then
-        Assertions.assertEquals(8, ingredientRepository.findAll().size());
-        Assertions.assertNotNull(ingredientTree);
+        Assertions.assertNotNull(rootOfIngredientTree);
 
-        try {
-            String jsonResult = objectMapper.writeValueAsString(ingredientTree);
-            System.out.println("jsonResult = " + jsonResult);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assertions.fail("JSON 직렬화 중 오류가 발생했습니다: " + e.getMessage());
-        }
+        Assertions.assertNull(rootOfIngredientTree.getCategory());
+
+        List<IngredientTreeResponseDto> childrenOfRoot = rootOfIngredientTree.getChildren();
+        Assertions.assertTrue(childrenOfRoot.containsAll(
+                Arrays.asList(new IngredientTreeResponseDto(meat), new IngredientTreeResponseDto(seafood))));
+
+        IngredientTreeResponseDto meatInTree = childrenOfRoot.get(0);
+        Assertions.assertEquals(meat.getName(), meatInTree.getName());
+
+        IngredientTreeResponseDto seafoodInTree = childrenOfRoot.get(1);
+        Assertions.assertEquals(seafood.getName(), seafoodInTree.getName());
+
+        List<IngredientTreeResponseDto> childrenOfMeat = meatInTree.getChildren();
+        Assertions.assertTrue(childrenOfMeat.containsAll(
+                Arrays.asList(new IngredientTreeResponseDto(pork), new IngredientTreeResponseDto(beef))));
+
+        IngredientTreeResponseDto porkInTree = childrenOfMeat.get(0);
+        Assertions.assertEquals(pork.getName(), porkInTree.getName());
+
+        List<IngredientTreeResponseDto> childrenOfPork = porkInTree.getChildren();
+        Assertions.assertTrue(childrenOfPork.containsAll(
+                Arrays.asList(new IngredientTreeResponseDto(porkSub1), new IngredientTreeResponseDto(porkSub2))));
+
+        IngredientTreeResponseDto beefInTree = childrenOfMeat.get(1);
+        Assertions.assertEquals(beef.getName(), beefInTree.getName());
+
+        List<IngredientTreeResponseDto> childrenOfBeef = beefInTree.getChildren();
+        Assertions.assertTrue(childrenOfBeef.contains(new IngredientTreeResponseDto(beefSub1)));
     }
 
 }
