@@ -29,7 +29,8 @@ public class IngredientResponseDto {
         this.category = (ingredient.getCategory() != null)
                 ? new IngredientCategoryResponseDto(ingredient.getCategory())
                 : null;
-        this.children = ingredient.getChildren().stream().map(IngredientChildResponseDto::new).collect(Collectors.toList());
+        this.children = ingredient.getChildren()
+                .stream().map(IngredientChildResponseDto::new).collect(Collectors.toList());
     }
 
 }

@@ -57,10 +57,10 @@ public class CommentService {
     }
 
     /**
-     * 댓글을 수정합니다.
-     * @param commentId 수정할 댓글의 ID
-     * @param userId 댓글 수정을 요청한 사용자의 ID
-     * @param content 수정할 댓글의 내용
+     * 댓글을 업데이트합니다.
+     * @param commentId 업데이트할 댓글의 ID
+     * @param userId 댓글 업데이트를 요청한 사용자의 ID
+     * @param content 업데이트할 댓글의 내용
      */
     @Transactional
     public void updateComment(Long commentId, Long userId, String content) {
