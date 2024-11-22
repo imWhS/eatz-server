@@ -71,13 +71,13 @@ public class IngredientService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateIngredient(IngredientUpdateDto dto) {
-        // 수정할 재료의 식별자가 전달되지 않은 경우, 더 이상 진행하지 않습니다.
+        // 업데이트할 재료의 식별자가 전달되지 않은 경우, 더 이상 진행하지 않습니다.
         validateIngredientId(dto.getId());
 
         // 사용하려는 재료 이름의 유효성을 검증합니다.
         validateIngredientName(dto.getName(), dto.getCategoryId());
 
-        // 식별자로 수정할 재료의 엔티티를 조회합니다.
+        // 식별자로 업데이트할 재료의 엔티티를 조회합니다.
         Ingredient ingredient = getIngredient(dto.getId());
 
         // 카테고리로 설정할 재료의 엔티티를 조회합니다.
@@ -116,8 +116,6 @@ public class IngredientService {
         ingredientRepository.deleteById(id);
     }
 
-    // TODO: 다른 엔티티 삭제 시, 연관 관계인 엔티티에 대한 처리?
-
     /**
      * 재료와 이와 연관 관계인 카테고리를 함께 조회합니다.
      * <ul>
@@ -135,8 +133,8 @@ public class IngredientService {
 
     /**
      * 식별자에 해당하는 재료를 조회합니다. 재료의 모든 하위 재료도 Tree 형태로 함께 조회합니다.
-     * @param id 조회하려는 재료의 식별자
-     * @return IngredientTreeResponseDto DTO.
+     * @param id 조회하려는 재료의 식별자.
+     * @return IngredientTreeResponseDto.
      */
     public IngredientTreeResponseDto findIngredientTree(Long id) {
         List<Ingredient> ingredientWithAllChildren = ingredientRepository.findIngredientTree(id);
@@ -198,7 +196,7 @@ public class IngredientService {
     }
 
     /**
-     * 하위 재료가 Flat 형태로 저장되어 있는 재료 목록을 게층 구조의 트리 형태가 반영된 DTO로 변환합니다.
+     * 하위 재료가 flat 형태로 저장되어 있는 재료 목록을 게층 구조의 트리 형태가 반영된 DTO로 변환합니다.
      * 최상위 계층(Root)에 해당하는 재료는 카테고리에 포함되지 않은 것으로 간주합니다.
      * @param ingredients 트리 형태로 변환할 재료 목록
      * @return 트리 형태로 변환된 IngredientTreeResponseDto.
@@ -227,41 +225,31 @@ public class IngredientService {
 
         /**
          * 재료 별 카테고리, 하위 재료(부모 - 자식) 관계를 설정합니다.
-         * 재료의 IngredientTreeResponseDto를 가져와서 카테고리에 해당하는 재료의 IngredientTreeResponseDto.children 목록에 추가합니다.
+         * 재료의 정보를 담고 있는 DTO를 가져와서, 카테고리에 해당하는 재료의 IngredientTreeResponseDto.children 목록에 추가합니다.
          */
+        // 재료 목록(ingredients)에서 최상위 계층인 루트에 해당하는 재료가 1개 존재하는지에 대한 여부를 저장합니다.
         boolean existsRoot = false;
+
         for (Ingredient ingredient : ingredients) {
-            // 최상위 계층(Root)에 해당하는 재료인 경우, 목록의 다음 재료로 바로 넘어갑니다.
             if (ingredient.getCategory() == null) {
-                existsRoot = true;
-                continue;
+                // 현재 재료가 루트에 해당하는 재료인 경우: 먼저 최상위 계층에 해당하는 재료가 이미 존재하는지 확인합니다.
+                if (existsRoot) {
+                    // 루트에 해당하는 재료가 2개 이상이면, 단일 트리로 변환할 수 없어 실행을 중단합니다.
+                    throw new IllegalArgumentException("루트에 해당하는 재료가 2개 이상입니다.");
+                } else {
+                    // 유일하게 최상위 계층에 해당하는 재료인 경우, 카테고리가 지정돼있지 않기에 바로 목록의 다음 재료를 순회합니다.
+                    existsRoot = true;
+                    continue;
+                }
             }
 
-            System.out.println("현재 순회 중인 재료: " + ingredient.getName());
-            System.out.println("ingredient.getCategory().getName() = " + ingredient.getCategory().getName());
-            System.out.println("ingredient.getChildren().size() = " + ingredient.getChildren().size());
-
-            // 카테고리에 속하지 않은 재료인 경우, 하나의 트리로 변환할 수 없는, 올바르지 않은 재료 목록에 해당하기에 실행을 중단합니다.
-            if (ingredient.getCategory() == null && existsRoot) {
-                throw new IllegalArgumentException("최상위 계층(root)에 해당하는 재료가 2개 이상입니다.");
-            }
-
-            // 현재 재료와 현재 재료가 속한 카테고리의 IngredientTreeResponseDto를 가져옵니다.
+            // 현재 재료와 현재 재료가 속한 카테고리 정보를 담고 있는 DTO를 가져옵니다.
             IngredientTreeResponseDto current = ingredientsMap.get(ingredient.getId());
-            System.out.println("current.getName() = " + current.getName());
-            System.out.println("current.getChildren().size() = " + current.getChildren().size());
             IngredientTreeResponseDto category = ingredientsMap.get(current.getCategory().getCategoryId());
 
-            // 카테고리에 해당하는 IngredientTreeResponseDto.children에 현재 재료의 IngredientTreeResponseDto를 추가합니다.
+            // 카테고리 DTO의 children 필드에 현재 재료의 DTO를 설정합니다.
             category.getChildren().add(current);
         }
-
-        /**
-         *
-         * 이제 ingredients의 첫 번째(인덱스 0, top에 해당하는) 재료의 id를 key로 가지고 있는 ingredientsMap의 value에 해당하는 재료 DTO가
-         * children 필드를 통해 모든 하위 재료 DTO를 계층 트리 구조로 가집니다.
-         */
-
 
         /**
          * 최상위 계층(Root)에 해당하는 재료를 반환합니다.

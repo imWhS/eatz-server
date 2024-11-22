@@ -57,8 +57,8 @@ public class Comment extends BaseEntity {
     }
 
     /**
-     * 댓글 내용을 수정합니다.
-     * @param content 수정할 댓글 내용
+     * 댓글 내용을 업데이트합니다.
+     * @param content 업데이트할 댓글 내용
      */
     public void updateContent(String content) {
         validateComment();

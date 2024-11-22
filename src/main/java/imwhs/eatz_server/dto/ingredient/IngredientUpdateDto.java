@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * IngredientUpdateDto 클래스입니다.<br/>
- * 재료를 업데이트할 정보를 전달하기 위해 사용합니다.
+ * 재료를 업데이트 할 정보를 전달하기 위해 사용합니다.
  */
 @Data
 @NoArgsConstructor

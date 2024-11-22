@@ -64,23 +64,23 @@ public class RatingService {
     }
 
     /**
-     * 평가를 수정합니다.
-     * @param ratingId 수정할 평가의 식별자.
-     * @param userId 평가 수정을 요청한 사용자의 식별자.
-     * @param score 수정할 평가의 점수. null일 경우 수정하지 않습니다.
-     * @param content 수정할 평가의 내용. null일 경우 수정하지 않습니다.
+     * 평가를 업데이트합니다.
+     * @param ratingId 업데이트할 평가의 식별자.
+     * @param userId 평가 업데이트를 요청한 사용자의 식별자.
+     * @param score 업데이트할 평가의 점수. null일 경우 업데이트하지 않습니다.
+     * @param content 업데이트할 평가의 내용. null일 경우 업데이트하지 않습니다.
      */
     @Transactional
     public void updateRating(Long ratingId, Long userId, Integer score, String content) {
         Rating rating = getRating(ratingId, userId);
 
-        // 파라미터를 통해 수정할 평가의 점수를 전달받은 경우, 해당 점수로 수정합니다.
+        // 파라미터를 통해 업데이트할 평가의 점수를 전달받은 경우, 해당 점수로 업데이트합니다.
         if (score != null) {
             validateRatingScore(score);
             rating.updateScore(score);
         }
 
-        // 파라미터를 통해 수정할 평가의 내용을 전달받은 경우, 해당 내용으로 변경합니다.
+        // 파라미터를 통해 업데이트할 평가의 내용을 전달받은 경우, 해당 내용으로 변경합니다.
         if (content != null) {
             rating.updateContent(content);
         }
