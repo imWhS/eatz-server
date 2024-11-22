@@ -4,11 +4,18 @@ import imwhs.eatz_server.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+/**
+ * Rating 클래스입니다.
+ * <p>
+ *     평가 정보를 저장, 관리하는 엔티티 클래스입니다.
+ * </p>
+ */
 @Getter
 @Entity
 public class Rating extends BaseEntity {
 
     @Id @GeneratedValue
+    @Column(name = "rating_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,8 +71,8 @@ public class Rating extends BaseEntity {
     }
 
     /**
-     * 평가 점수를 수정합니다.
-     * @param score 수정할 평가 점수
+     * 평가 점수를 업데이트합니다.
+     * @param score 업데이트할 평가 점수
      */
     public void updateScore(int score) {
         validateRating();
@@ -75,8 +82,8 @@ public class Rating extends BaseEntity {
     }
 
     /**
-     * 평가 내용을 수정합니다.
-     * @param content 수정할 평가 내용
+     * 평가 내용을 업데이트합니다.
+     * @param content 업데이트할 평가 내용
      */
     public void updateContent(String content) {
         validateRating();

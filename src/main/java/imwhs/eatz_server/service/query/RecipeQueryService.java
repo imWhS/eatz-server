@@ -6,9 +6,8 @@ import imwhs.eatz_server.dto.recipe.RecipeResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.repository.recipe.query.RecipeQueryRepository;
+import imwhs.eatz_server.repository.recipe.RecipeQueryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,10 +30,10 @@ public class RecipeQueryService {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     /**
-     * ID로 레시피 조회.
-     * @param id 조회할 레시피의 ID
-     * @return 조회된 레시피 정보를 담고 있는 RecipeResponseDto
-     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
+     * 식별자로 레시피를 조회합니다.
+     * @param id 조회할 레시피의 식별자.
+     * @return 조회된 레시피 정보를 담고 있는 RecipeResponseDto.
+     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
     public RecipeResponseDto findRecipeById(Long id) {
         Recipe recipe = recipeRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(
@@ -44,11 +43,11 @@ public class RecipeQueryService {
     }
 
     /**
-     * ID로 레시피 상세 정보 조회.
-     * ID로 레시피와 해당 레시피를 등록한 사용자와 해당 레시피에 달린 댓글 및 평가의 요약 정보를 함께 조회합니다.
-     * @param id 조회할 레시피의 ID
-     * @return 조회된 레시피의 상세 정보를 담고 있는 RecipeDetailResponseDto
-     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우
+     * 식별자로 레시피의 상세 정보를 조회합니다.
+     * 식별자로 레시피와 해당 레시피를 등록한 사용자와 해당 레시피에 달린 댓글 및 평가의 요약 정보를 함께 조회합니다.
+     * @param id 조회할 레시피의 식별자.
+     * @return 조회된 레시피의 상세 정보를 담고 있는 RecipeDetailResponseDto.
+     * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
     public RecipeDetailResponseDto findRecipeDetailsById(Long id) {
         return recipeQueryRepository.findRecipeDetailById(id)
@@ -56,10 +55,10 @@ public class RecipeQueryService {
     }
 
     /**
-     * 모든 레시피 조회.
+     * 모든 레시피를 조회합니다.
      * @param pageNumber 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param pageSize 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
-     * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto
+     * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto.
      */
     public Page<RecipeResponseDto> findAllRecipes(Integer pageNumber, Integer pageSize) {
         int number = (pageNumber == null) ? DEFAULT_PAGE_NUMBER : pageNumber;
@@ -72,12 +71,12 @@ public class RecipeQueryService {
     }
 
     /**
-     * 특정 사용자가 등록한 모든 레시피 조회.
-     * @param userId 레시피를 등록한 사용자 ID
+     * 특정 사용자가 등록한 모든 레시피를 조회합니다.
+     * @param userId 레시피를 등록한 사용자의 식별자.
      * @param pageNumber 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param pageSize 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
-     * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto
-     * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우
+     * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto.
+     * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
     public Page<RecipeResponseDto> findAllRecipesByUser(Long userId, Integer pageNumber, Integer pageSize) {
         int number = (pageNumber == null) ? DEFAULT_PAGE_NUMBER : pageNumber;

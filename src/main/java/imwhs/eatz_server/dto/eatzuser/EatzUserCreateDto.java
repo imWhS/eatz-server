@@ -6,10 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * EatzUserCreateDto 클래스입니다.<br/>
+ * 사용자를 생성하기 위해 필요한 정보를 전달하기 위해 사용합니다.
+ */
 @Data
 @Builder
 @AllArgsConstructor
-public class CreateEatzUserDto {
+public class EatzUserCreateDto {
 
     private String username;
 
@@ -20,7 +24,7 @@ public class CreateEatzUserDto {
     private Role role;
 
     public EatzUser toEntity() {
-        return EatzUser.create(this.username, this.email, this.email, this.role);
+        return EatzUser.create(this.username, this.email, this.password, this.role);
     }
 
 }

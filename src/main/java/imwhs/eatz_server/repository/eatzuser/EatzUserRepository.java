@@ -1,40 +1,56 @@
 package imwhs.eatz_server.repository.eatzuser;
 
 import imwhs.eatz_server.domain.EatzUser;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 /**
- * EatzUserRepository 리포지토리.<br/>
- * <p>
- * EatzUser 엔티티에 대해 CRUD를 포함한 데이터 처리 작업을 수행합니다.
+ * EatzUserRepository 클래스입니다.<br/>
+ * EatzUser 엔티티의 기본적인 조회를 포함한 CRUD 쿼리 작업을 처리하는 Spring Data JPA 리포지토리입니다.
  */
 @Repository
 public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
 
     /**
-     * 사용자 이름으로 엔티티 조회.
+     * 사용자 이름으로 사용자 조회.
      * <p>
-     * 사용자 이름으로 단일 EatzUser 엔티티를 조회합니다.
-     * 조회할 엔티티가 없으면 Optional을 반환합니다.
-     *
-     * @param username 조회할 사용자 이름.
-     * @return 사용자 이름에 해당하는 EatzUser 엔티티(Optional).
+     *     사용자 이름으로 단일 EatzUser 엔티티를 조회합니다.
+     * <p>
+     * @param username 사용자 이름.
+     * @return Optional로 wrapping된 EatzUser 레시피.
      */
     Optional<EatzUser> findByUsername(String username);
 
-    boolean existsByUsername(String username);
-
-    boolean existsByEmail(String email);
-
+    /**
+     * 이메일 주소로 사용자 조회.
+     * <p>
+     *     이메일 주소로 단일 EatzUser 엔티티를 조회합니다.
+     * </p>
+     * @param email 이메일 주소.
+     * @return Optional로 wrapping된 EatzUser 레시피.
+     */
     Optional<EatzUser> findByEmail(String email);
 
-    @Query
-    Page<EatzUser> findWithRecipeById(Long id, Pageable pageable);
+    /**
+     * 사용자 이름에 해당하는 사용자의 존재 여부 조회.
+     * <p>
+     *     사용자 이름에 해당하는 단일 EatzUser 엔티티가 존재하는지에 대한 여부를 조회합니다.
+     * </p>
+     * @param username 사용자 이름.
+     * @return 엔티티의 존재 여부.
+     */
+    boolean existsByUsername(String username);
+
+    /**
+     * 이메일 주소에 해당하는 사용자의 존재 여부 조회.
+     * <p>
+     *     이메일 주소에 해당하는 단일 EatzUser 엔티티가 존재하는지에 대한 여부를 조회합니다.
+     * </p>
+     * @param email 사용자 이름.
+     * @return 엔티티의 존재 여부.
+     */
+    boolean existsByEmail(String email);
 
 }

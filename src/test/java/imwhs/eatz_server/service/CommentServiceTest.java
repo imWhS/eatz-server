@@ -4,16 +4,18 @@ import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
+import imwhs.eatz_server.dto.comment.CommentUserDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
-import imwhs.eatz_server.repository.CommentRepository;
+import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -40,7 +42,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -52,7 +54,11 @@ public class CommentServiceTest {
         // then
         boolean present = commentRepository.findById(commentId).isPresent();
         Assertions.assertThat(present).isTrue();
-        Assertions.assertThat(commentRepository.findById(commentId).get().getContent()).isEqualTo(commentContent);
+        Comment commentFound = commentRepository.findById(commentId).get();
+        Assertions.assertThat(commentFound.getContent()).isEqualTo(commentContent);
+        Assertions.assertThat(commentFound.getCreatedAt()).isNotNull();
+        Assertions.assertThat(commentFound.getUpdatedAt()).isEqualTo(commentFound.getCreatedAt());
+        Assertions.assertThat(commentFound.getDeletedAt()).isNull();
     }
 
     @Test
@@ -63,7 +69,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContentBefore = "내 맘 속에 저장~";
@@ -75,12 +81,16 @@ public class CommentServiceTest {
 
         // when
         commentService.updateComment(commentId, userId, commentContentAfter);
+        commentRepository.flush();
 
         // then
         Comment editedComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("댓글을 찾지 못했습니다."));
         Assertions.assertThat(editedComment.getContent()).isEqualTo(commentContentAfter);
         Assertions.assertThat(editedComment.getId()).isEqualTo(commentId);
+        Assertions.assertThat(editedComment.getCreatedAt()).isNotNull();
+        Assertions.assertThat(editedComment.getUpdatedAt()).isNotEqualTo(editedComment.getCreatedAt());
+        Assertions.assertThat(editedComment.getDeletedAt()).isNull();
     }
 
     @Test
@@ -92,7 +102,7 @@ public class CommentServiceTest {
 
         Long invalidUserId = 99999L;
 
-        Recipe recipe = Recipe.create(
+        Recipe recipe = Recipe.of(
                 user,
                 "Kimchi pasta",
                 "https://www.naver.com/",
@@ -121,7 +131,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContent = "내 맘 속에 저장~";
@@ -145,7 +155,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long invalidUserId = 99999L;
 
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContent = "내 맘 속에 저장~";
@@ -158,6 +168,66 @@ public class CommentServiceTest {
         Assertions.assertThatThrownBy(() ->
                 commentService.deleteComment(commentId, invalidUserId))
                 .isInstanceOf(UnauthorizedEatzUserException.class);
+    }
+
+    @Test
+    @Transactional
+    void findCommentByIdTest() {
+        // given
+        EatzUser user = EatzUser.create("heextoryAA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(user);
+
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe);
+
+        String content = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
+
+        Comment comment = new Comment(user, recipe, content);
+        commentRepository.save(comment);
+
+        // when
+        CommentByRecipeResponseDto commentDto = commentService.findComment(comment.getId());
+
+        // then
+        org.junit.jupiter.api.Assertions.assertNotNull(commentDto);
+        org.junit.jupiter.api.Assertions.assertEquals(comment.getId(), commentDto.getId());
+        org.junit.jupiter.api.Assertions.assertEquals(comment.getContent(), commentDto.getContent());
+        org.junit.jupiter.api.Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentDto.getUser());
+    }
+
+    @Test
+    @Transactional
+    void findCommentsByUserAndRecipeTest() {
+        // given
+        EatzUser user = EatzUser.create("heextoryBB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(user);
+
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe);
+
+        String content1 = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
+        Comment comment1 = new Comment(user, recipe, content1);
+        commentRepository.save(comment1);
+
+        String content2 = "이거 완전 별루.. 내 맘 속의 별루,,,,,,";
+        Comment comment2 = new Comment(user, recipe, content2);
+        commentRepository.save(comment2);
+
+        // when
+        Page<CommentByRecipeResponseDto> comments = commentService.findComments(user.getId(), recipe.getId(), null, null);
+
+        // then
+        org.junit.jupiter.api.Assertions.assertEquals(comments.getTotalElements(), 2);
     }
 
 }

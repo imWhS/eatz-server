@@ -4,12 +4,13 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Rating;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.rating.RatingRecipeDto;
-import imwhs.eatz_server.dto.rating.RatingResponseDto;
-import imwhs.eatz_server.dto.rating.RatingUserDto;
+import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
+import imwhs.eatz_server.dto.rating.*;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.RatingRepository;
+import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
+import imwhs.eatz_server.service.RatingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional(readOnly = true)
 @SpringBootTest
@@ -35,149 +38,146 @@ class RatingQueryServiceTest {
     @Autowired
     RecipeRepository recipeRepository;
 
-    @BeforeEach
-    void setUp() {
-        ratingRepository.deleteAll();
-        userRepository.deleteAll();
-        recipeRepository.deleteAll();
-    }
-
     @Test
-    @DisplayName("등록된 평가가 식별자로 정상적으로 조회되는지 테스트합니다.")
     @Transactional
-    void findRatingByIdTest() {
+    void findRatingDetailTest() {
         // given
-        EatzUser user = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(user);
+        EatzUser recipeWriter = EatzUser.create("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriter);
 
-        Recipe recipe = Recipe.create(
-                user,
+        Recipe recipe = Recipe.of(
+                recipeWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
 
-        int score = 4;
+        EatzUser ratingWriter = EatzUser.create("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(ratingWriter);
 
-        Rating rating = new Rating(user, recipe, score, null);
-        ratingRepository.save(rating);
-
-        // when
-        RatingResponseDto ratingDto = ratingQueryService.findRating(rating.getId());
-
-        // then
-        Assertions.assertNotNull(ratingDto);
-        Assertions.assertEquals(rating.getId(), ratingDto.getId());
-        Assertions.assertEquals(rating.getScore(), ratingDto.getScore());
-        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingDto.getUser());
-        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingDto.getRecipe());
-    }
-
-    @Test
-    @DisplayName("등록된 평가가 평가를 등록한 사용자의 식별자와 평가가 달린 레시피의 식별자로 정상적으로 조회되는지 테스트합니다.")
-    @Transactional
-    void findRatingByUserAndRecipeTest() {
-        // given
-        EatzUser user = EatzUser.create("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(user);
-        Long userId = user.getId();
-
-        Recipe recipe = Recipe.create(
-                user,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-        Long recipeId = recipe.getId();
-
-        int score = 4;
-
-        Rating rating = new Rating(user, recipe, score, null);
-        ratingRepository.save(rating);
-
-        // when
-        RatingResponseDto ratingDto = ratingQueryService.findRating(userId, recipeId);
-
-        // then
-        Assertions.assertNotNull(ratingDto);
-        Assertions.assertEquals(rating.getId(), ratingDto.getId());
-        Assertions.assertEquals(rating.getScore(), ratingDto.getScore());
-        Assertions.assertEquals(new RatingUserDto(rating.getUser()), ratingDto.getUser());
-        Assertions.assertEquals(new RatingRecipeDto(rating.getRecipe()), ratingDto.getRecipe());
-    }
-
-    @Test
-    @DisplayName("특정 레시피에 달린 모든 평가가 정상적으로 조회되는지 테스트합니다.")
-    @Transactional
-    void findRatingsOfRecipeTest() {
-        // given
-        EatzUser user = EatzUser.create("heextory3", "heextory3@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(user);
-
-        Recipe recipe = Recipe.create(
-                user,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-        Long recipeId = recipe.getId();
-
-        EatzUser reviewerA = EatzUser.create("awesome", "awesome@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(reviewerA);
-        ratingRepository.save(new Rating(reviewerA, recipe, 5, null));
-
-        EatzUser reviewerB = EatzUser.create("bullshit", "bullshit@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(reviewerB);
-        ratingRepository.save(new Rating(reviewerB, recipe, 1, null));
-
-        // when
-        Page<RatingResponseDto> allRatings = ratingQueryService.findRatings(recipeId, null, null);
-
-        // then
-        Assertions.assertEquals(allRatings.getTotalElements(), 2);
-    }
-
-    @Test
-    @DisplayName("특정 사용자가 남긴 모든 평가가 정상적으로 조회되는지 테스트합니다.")
-    @Transactional
-    void findRatingsByUserTest() {
-        // given
-        EatzUser userA = EatzUser.create("heextory4", "heextory4@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(userA);
-
-        Recipe recipeA = Recipe.create(
-                userA,
+        Recipe recipeA = Recipe.of(
+                ratingWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
                 "https://www.naver.com/test.jpg",
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
 
-        EatzUser userB = EatzUser.create("curve4403", "curve4403@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(userB);
+        Recipe recipeB = Recipe.of(
+                ratingWriter,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipeB);
 
-        Recipe recipeB = Recipe.create(
-                userB,
+        int ratingScore = 4;
+
+        Rating rating = new Rating(ratingWriter, recipe, ratingScore);
+        ratingRepository.save(rating);
+
+        // when
+        RatingDetailResponseDto ratingDetailResponseDto = ratingQueryService.findRatingDetail(rating.getId());
+
+        // then
+        Assertions.assertNotNull(ratingDetailResponseDto);
+        Assertions.assertEquals(rating.getId(), ratingDetailResponseDto.getId());
+        Assertions.assertEquals(ratingWriter.getId(), ratingDetailResponseDto.getUser().getId());
+        Assertions.assertEquals(2, ratingDetailResponseDto.getUser().getRecipeCount());
+        Assertions.assertEquals(recipe.getId(), ratingDetailResponseDto.getRecipe().getId());
+        Assertions.assertEquals(recipe.getTitle(), ratingDetailResponseDto.getRecipe().getTitle());
+        Assertions.assertEquals(rating.getScore(), ratingDetailResponseDto.getScore());
+    }
+
+    @Test
+    @Transactional
+    void findRatingsByRecipeTest() {
+        // given
+        EatzUser recipeWriter = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriter);
+
+        Recipe recipe = Recipe.of(
+                recipeWriter,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipe);
+        Long recipeId = recipe.getId();
+
+        EatzUser ratingWriterA = EatzUser.create("ratingWriterA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(ratingWriterA);
+
+        Rating ratingA = new Rating(ratingWriterA, recipe, 4);
+        ratingRepository.save(ratingA);
+        RatingByRecipeResponseDto ratingAResponseDto = new RatingByRecipeResponseDto(ratingA);
+
+        EatzUser ratingWriterB = EatzUser.create("ratingWriterB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(ratingWriterB);
+
+        Rating ratingB = new Rating(ratingWriterB, recipe, 4);
+        ratingRepository.save(ratingB);
+        RatingByRecipeResponseDto ratingBResponseDto = new RatingByRecipeResponseDto(ratingB);
+
+        // when
+        PagedResponse<RatingByRecipeResponseDto> pagedRatings = ratingQueryService.findRatingsByRecipe(recipeId, null, null);
+        Assertions.assertEquals(1, pagedRatings.getTotalPages());
+        Assertions.assertEquals(2, pagedRatings.getTotalItems());
+        List<RatingByRecipeResponseDto> ratings = pagedRatings.getData();
+        Assertions.assertEquals(2, ratings.size());
+        Assertions.assertTrue(ratings.contains(ratingAResponseDto));
+        Assertions.assertTrue(ratings.contains(ratingBResponseDto));
+    }
+
+    @Test
+    @Transactional
+    public void findRatingsByUserTest() {
+        // given
+        EatzUser recipeWriterA = EatzUser.create("heextoryA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriterA);
+
+        Recipe recipeKimchi = Recipe.of(
+                recipeWriterA,
+                "Kimchi Pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/test.jpg",
+                "맛있는 김치 파스타를 즐겨보세요!");
+        recipeRepository.save(recipeKimchi);
+
+        EatzUser recipeWriterB = EatzUser.create("heextoryB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(recipeWriterB);
+
+        Recipe recipeGarlic = Recipe.of(
+                recipeWriterB,
                 "Garlic BBOKKEUMBOB",
                 "https://www.naver.com/",
                 "https://www.naver.com/test.jpg",
                 "마늘 듬뿍 볶음밥입니당");
-        recipeRepository.save(recipeB);
+        recipeRepository.save(recipeGarlic);
 
-        EatzUser reviewer = EatzUser.create("awesome2", "awesome2@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        userRepository.save(reviewer);
+        EatzUser ratingWriter = EatzUser.create("ratingWriter", "writer@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        userRepository.save(ratingWriter);
+        Long ratingWriterId = ratingWriter.getId();
 
-        ratingRepository.save(new Rating(reviewer, recipeA, 5, null));
-        ratingRepository.save(new Rating(reviewer, recipeB, 3, null));
+        Rating ratingA = new Rating(ratingWriter, recipeKimchi, 4);
+        ratingRepository.save(ratingA);
+        RatingByUserResponseDto ratingAResponseDto = new RatingByUserResponseDto(ratingA);
+
+        Rating ratingB = new Rating(ratingWriter, recipeGarlic, 1);
+        ratingRepository.save(ratingB);
+        RatingByUserResponseDto ratingBResponseDto = new RatingByUserResponseDto(ratingB);
 
         // when
-        Page<RatingResponseDto> ratings = ratingQueryService.findRatingsByUser(reviewer.getId(), null, null);
+        PagedResponse<RatingByUserResponseDto> pagedRatings = ratingQueryService.findRatingsByUser(ratingWriterId, null, null);
 
         // then
-        Assertions.assertEquals(ratings.getTotalElements(), 2);
+        Assertions.assertEquals(1, pagedRatings.getTotalPages());
+        Assertions.assertEquals(2, pagedRatings.getTotalItems());
+        List<RatingByUserResponseDto> ratings = pagedRatings.getData();
+        Assertions.assertEquals(2, ratings.size());
+        Assertions.assertTrue(ratings.contains(ratingAResponseDto));
+        Assertions.assertTrue(ratings.contains(ratingBResponseDto));
     }
 
 }
