@@ -9,6 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * IngredientRepository 클래스입니다.<br/>
+ * Ingredient 엔티티의 기본적인 조회를 포함한 CRUD 쿼리 작업을 처리하는 Spring Data JPA 리포지토리입니다.
+ */
 @Repository
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
@@ -27,8 +31,12 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     Optional<Ingredient> findWithCategoryById(@Param("id") Long id);
 
     /**
-     * 식별자에 해당하는 재료를 기준으로 계층 구조에 속하는 모든 재료를 조회합니다.<br/>
-     * 식별자에 해당하는 재료의 기본 정보(식별자, 이름, 카테고리 식별자)를 시작으로, 하위 계층 구조에 속한 모든 재료까지 함께 재귀적으로 조회합니다.
+     * 식별자로 Ingredient 엔티티를 조회하고, 동시에 해당 엔티티의 하위 재료 계층에 속하는 모든 Ingredient 엔티티도 함께 조회합니다.
+     * <ul>
+     *     <li>식별자에 해당하는 재료를 기준으로 계층 구조에 속하는 모든 재료를 조회합니다.</li>
+     *     <li>식별자에 해당하는 재료의 기본 정보(식별자, 이름, 카테고리 식별자)를 시작으로,
+     *     하위 계층 구조에 속한 모든 재료까지 함께 재귀적으로 조회합니다.</li>
+     * </ul>
      * @param id 계층 구조의 기준이 될 Ingredient 엔티티의 식별자.
      * @return 계층 구조의 기준이 된 Ingredient 엔티티 및 이의 하위 재료로서 계층 구조에 속해 있는 모든 Ingredient 엔티티 객체 목록.
      */
