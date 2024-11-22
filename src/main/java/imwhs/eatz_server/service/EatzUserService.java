@@ -53,15 +53,15 @@ public class EatzUserService {
     }
 
     /**
-     * 사용자를 수정합니다.
+     * 사용자를 업데이트합니다.
      * <ul>
-     *     <li>기존 EatzUser 엔티티의 필드 별 데이터를 수정합니다.</li>
-     *     <li>EatzUser 엔티티에 수정 가능한 필드가 많기 때문에, 사용자 수정 DTO로 사용자 수정에 필요한 데이터를 전달 받습니다.</li>
+     *     <li>기존 EatzUser 엔티티의 필드 별 데이터를 업데이트합니다.</li>
+     *     <li>EatzUser 엔티티에 업데이트 가능한 필드가 많기 때문에, 사용자 업데이트 DTO로 사용자 업데이트에 필요한 데이터를 전달 받습니다.</li>
      * </ul>
      *
-     * @param id 수정할 사용자의 엔티티 ID 값.
-     * @param eatzUserUpdateDto 사용자 수정 DTO.
-     * @return 수정 완료된 사용자 엔티티 EatzUser의 식별자.
+     * @param id 업데이트할 사용자의 엔티티 ID 값.
+     * @param eatzUserUpdateDto 사용자 업데이트 DTO.
+     * @return 업데이트 완료된 사용자 엔티티 EatzUser의 식별자.
      */
     @Transactional
     public Long updateUser(Long id, EatzUserUpdateDto eatzUserUpdateDto) {

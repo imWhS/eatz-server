@@ -124,26 +124,26 @@ public class Recipe extends BaseEntity {
     }
 
     /**
-     * Recipe 통합 수정 메서드.
-     * @param dto 수정할 레시피 정보를 담고 있는 UpdateRecipeDto
+     * Recipe 통합 업데이트 메서드.
+     * @param dto 업데이트할 레시피 정보를 담고 있는 UpdateRecipeDto
      */
     public void update(RecipeUpdateDto dto) {
-        // 레시피 제목은 필수 항목이기에, null이거나 빈 값으로 수정 요청한 경우 예외를 발생시켜 수정을 진행하지 않습니다.
+        // 레시피 제목은 필수 항목이기에, null이거나 빈 값으로 업데이트 요청한 경우 예외를 발생시켜 업데이트를 진행하지 않습니다.
         if (Objects.isNull(dto.getTitle()) || dto.getTitle().isEmpty()) {
             throw new IllegalArgumentException("레시피 제목은 필수 항목입니다.");
         } else {
             this.title = dto.getTitle();
         }
 
-        // 레시피 URL은 필수 항목이기에, null이거나 빈 값으로 수정 요청한 경우 예외를 발생시켜 수정을 진행하지 않습니다.
+        // 레시피 URL은 필수 항목이기에, null이거나 빈 값으로 업데이트 요청한 경우 예외를 발생시켜 업데이트를 진행하지 않습니다.
         if (Objects.isNull(dto.getUrl()) || dto.getUrl().isEmpty()) {
             throw new IllegalArgumentException("레시피 URL은 필수 항목입니다.");
         } else {
             this.url = dto.getUrl();
         }
 
-        // 레시피 대표 이미지 URL, 레시피 설명은 선택 항목이기에, 빈 값으로 수정을 요청한 경우에 이를 반영합니다.
-        // 단, null로 수정 요청한 경우, 이전 값을 유지합니다.
+        // 레시피 대표 이미지 URL, 레시피 설명은 선택 항목이기에, 빈 값으로 업데이트를 요청한 경우에 이를 반영합니다.
+        // 단, null로 업데이트 요청한 경우, 이전 값을 유지합니다.
         this.imageUrl = dto.getImageUrl() != null ? dto.getImageUrl() : this.imageUrl;
         this.description = dto.getDescription() != null ? dto.getDescription() : this.description;
     }
