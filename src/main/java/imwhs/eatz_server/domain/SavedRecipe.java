@@ -69,4 +69,8 @@ public class SavedRecipe {
 
     // TODO: Collection 추가 및 Many-To-Many 연관 관계 설정
 
+    public void updateScheduledDate(LocalDate newScheduledDate) {
+        this.scheduledDate = newScheduledDate;
+    }
+
 }
