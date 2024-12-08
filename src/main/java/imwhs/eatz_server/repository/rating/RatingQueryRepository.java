@@ -22,14 +22,6 @@ public class RatingQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     /**
-     * 1. 평가 상세 조회
-     * 2. 레시피에 달린 모든 평가 조회
-     * 3. 레시피에 달린 총 평가 수 조회
-     * 4. 특정 사용자가 등록한 모든 평가 조회
-     * 5. 특정 사용자가 등록한 모든 평가 수 조회
-     */
-
-    /**
      * 식별자에 해당하는 평가의 기본 정보 및 평가를 등록한 사용자와 레시피 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 평가는 조회 대상에서 제외됩니다.
      * @param id 평가 식별자

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Ingredient 엔티티입니다.<br/>
+ * Ingredient 클래스입니다.<br/>
  * <ul>
      * <li>레시피를를 요리하기 위해 필요한 재료 정보를 저장, 관리하는 엔티티 클래스입니다.</li>
      * <li>재료는 상위 재료에 속할 수 있고, 하위 재료를 가질 수도 있습니다.</li>
