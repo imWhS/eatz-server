@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Recipe 엔티티 클래스입니다.
+ * Recipe 클래스입니다.
  * <p>
  *     레시피 정보를 저장, 관리하는 엔티티 클래스입니다.
  * </p>
@@ -29,7 +29,7 @@ public class Recipe extends BaseEntity {
      * 레시피를 등록한 사용자.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "eatz_user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private EatzUser user;
 
     /**
