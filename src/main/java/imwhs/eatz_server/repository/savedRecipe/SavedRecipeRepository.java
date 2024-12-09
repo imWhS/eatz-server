@@ -17,15 +17,6 @@ import java.util.Optional;
 @Repository
 public interface SavedRecipeRepository extends JpaRepository<SavedRecipe, Long> {
 
-    @Query("select s from SavedRecipe s " +
-            "left join fetch s.user u " +
-            "left join fetch s.recipe r " +
-            "where s.id = :id")
-    Optional<SavedRecipe> findWithUserAndRecipeById(@Param("id") Long id);
-
-    // 특정 회원이 특정 레시피를 저장했는지에 대한 여부를 조회합니다.
-    Optional<SavedRecipe> findByRecipeAndUser(Recipe recipe, EatzUser user);
-
     // 특정 회원이 특정 레시피에 대한 저장을 취소합니다.
     void deleteByRecipeAndUser(Recipe recipe, EatzUser user);
 

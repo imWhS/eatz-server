@@ -8,6 +8,7 @@ import imwhs.eatz_server.dto.savedRecipe.SavedRecipeCreateDto;
 import imwhs.eatz_server.dto.savedRecipe.SavedRecipeScheduledDateUpdateDto;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
+import imwhs.eatz_server.repository.savedRecipe.SavedRecipeQueryRepository;
 import imwhs.eatz_server.repository.savedRecipe.SavedRecipeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class SavedRecipeServiceTest {
 
     @Autowired
     private SavedRecipeRepository savedRecipeRepository;
+
+    @Autowired
+    private SavedRecipeQueryRepository savedRecipeQueryRepository;
 
     @Autowired
     private EatzUserRepository userRepository;
@@ -50,7 +54,7 @@ class SavedRecipeServiceTest {
         Long savedRecipeId = savedRecipeService.saveRecipe(dto);
 
         // then
-        Optional<SavedRecipe> foundSavedRecipeOpt = savedRecipeRepository.findByRecipeAndUser(recipe, user);
+        Optional<SavedRecipe> foundSavedRecipeOpt = savedRecipeQueryRepository.findByRecipeAndUser(recipe, user);
         Assertions.assertTrue(foundSavedRecipeOpt.isPresent());
 
         SavedRecipe foundSavedRecipe = foundSavedRecipeOpt.get();
@@ -80,7 +84,7 @@ class SavedRecipeServiceTest {
         savedRecipeService.updateScheduledDate(dto);
 
         // then
-        Optional<SavedRecipe> foundSavedRecipeOpt = savedRecipeRepository.findWithUserAndRecipeById(savedRecipeId);
+        Optional<SavedRecipe> foundSavedRecipeOpt = savedRecipeQueryRepository.findWithUserAndRecipeById(savedRecipeId);
         Assertions.assertTrue(foundSavedRecipeOpt.isPresent());
         SavedRecipe foundSavedRecipe = foundSavedRecipeOpt.get();
         Assertions.assertEquals(savedRecipeId, foundSavedRecipe.getId());
