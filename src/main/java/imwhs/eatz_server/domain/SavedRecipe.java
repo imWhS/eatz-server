@@ -1,5 +1,6 @@
 package imwhs.eatz_server.domain;
 
+import imwhs.eatz_server.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ import java.time.LocalDate;
  */
 @Entity
 @Getter
-public class SavedRecipe {
+public class SavedRecipe extends BaseEntity {
 
     /**
      * ID.

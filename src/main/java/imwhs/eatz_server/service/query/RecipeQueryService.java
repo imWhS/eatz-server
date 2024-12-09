@@ -13,6 +13,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 레시피(Recipe) 관련 정보를 조회하는 RecipeQueryService 클래스입니다.
+ * Recipe에 대한 읽기 전용 쿼리 메서드를 제공합니다.
+ */
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
