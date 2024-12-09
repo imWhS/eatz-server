@@ -14,11 +14,13 @@ import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.savedRecipe.SavedRecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class SavedRecipeService {
@@ -34,6 +36,7 @@ public class SavedRecipeService {
      * @param dto 레시피를 저장하기 위해 필요한 정보를 담고 있는 DTO
      * @return 저장된 레시피(SavedRecipe 엔티티) ID.
      */
+    @Transactional
     public Long saveRecipe(SavedRecipeCreateDto dto) {
         Long recipeId = dto.getRecipeId();
         Recipe recipe = getRecipe(recipeId);
@@ -61,6 +64,7 @@ public class SavedRecipeService {
      * 저장된 레시피에 설정되어 있던 날짜를 업데이트합니다.
      * @param dto 저장된 레시피의 날짜를 변경하기 위해 필요한 정보를 담고 있는 DTO
      */
+    @Transactional
     public void updateScheduledDate(SavedRecipeScheduledDateUpdateDto dto) {
         Long savedRecipeId = dto.getSavedRecipeId();
         SavedRecipe savedRecipe = savedRecipeRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
@@ -82,6 +86,7 @@ public class SavedRecipeService {
      * @param recipeId 더 이상 저장해두지 않으려고 하는 레시피 ID.
      * @param userId 저장된 레시피(SavedRecipe 엔티티)를 삭제 요청한 사용자 ID.
      */
+    @Transactional
     public void deleteSavedRecipeByRecipeId(Long recipeId, Long userId) {
         Recipe recipe = getRecipe(recipeId);
         EatzUser user = getEatzUser(userId);
@@ -95,17 +100,12 @@ public class SavedRecipeService {
         savedRecipeRepository.deleteByRecipeAndUser(recipe, user);
     }
 
-    private static void validateDeleteSavedRecipeAccessAuthorize(Long userId, SavedRecipe savedRecipe) {
-        if (!Objects.equals(savedRecipe.getUser().getId(), userId)) {
-            throw new UnauthorizedAccessException("레시피를 저장한 사용자가 아니어서, 권한이 없습니다.");
-        }
-    }
-
     /**
      * 저장된 레시피(SavedRecipe 엔티티)를 삭제합니다.
      * @param savedRecipeId 저장된 레시피(SavedRecipe 엔티티) ID.
      * @param userId 저장된 레시피(SavedRecipe 엔티티)를 삭제 요청한 사용자 ID.
      */
+    @Transactional
     public void deleteSavedRecipe(Long savedRecipeId, Long userId) {
         SavedRecipe savedRecipe = savedRecipeRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
                 () -> new SavedRecipeNotFoundException("id " + savedRecipeId + "에 해당하는 저장된 레시피를 찾을 수 없습니다."));
@@ -115,6 +115,12 @@ public class SavedRecipeService {
         validateDeleteSavedRecipeAccessAuthorize(userId, savedRecipe);
 
         savedRecipeRepository.deleteById(savedRecipe.getId());
+    }
+
+    private void validateDeleteSavedRecipeAccessAuthorize(Long userId, SavedRecipe savedRecipe) {
+        if (!Objects.equals(savedRecipe.getUser().getId(), userId)) {
+            throw new UnauthorizedAccessException("레시피를 저장한 사용자가 아니어서, 권한이 없습니다.");
+        }
     }
 
     private Recipe getRecipe(Long recipeId) {
