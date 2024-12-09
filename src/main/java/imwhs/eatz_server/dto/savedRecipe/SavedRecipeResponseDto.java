@@ -1,0 +1,34 @@
+package imwhs.eatz_server.dto.savedRecipe;
+
+import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.domain.SavedRecipe;
+import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+public class SavedRecipeResponseDto {
+
+    private Long id;
+
+    private RecipeSummaryDto recipe;
+
+    private LocalDate scheduledDate;
+
+    private Long userId;
+
+    private LocalDateTime createdAt;
+
+    public SavedRecipeResponseDto(SavedRecipe savedRecipe) {
+        this.id = savedRecipe.getId();
+        this.recipe = new RecipeSummaryDto(savedRecipe.getRecipe());
+        this.scheduledDate = savedRecipe.getScheduledDate();
+        this.userId = savedRecipe.getUser().getId();
+        this.createdAt = savedRecipe.getCreatedAt();
+    }
+
+}
