@@ -1,5 +1,6 @@
 package imwhs.eatz_server.dto.recipe;
 
+import imwhs.eatz_server.domain.Recipe;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,11 @@ public class RecipeSummaryDto {
     private String title;
 
     private String imageUrl;
+
+    public RecipeSummaryDto(Recipe recipe) {
+        this.id = recipe.getId();
+        this.title = recipe.getTitle();
+        this.imageUrl = recipe.getImageUrl();
+    }
 
 }

@@ -11,6 +11,7 @@ import imwhs.eatz_server.exception.SavedRecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
+import imwhs.eatz_server.repository.savedRecipe.SavedRecipeQueryRepository;
 import imwhs.eatz_server.repository.savedRecipe.SavedRecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class SavedRecipeService {
     private final RecipeRepository recipeRepository;
 
     private final EatzUserRepository userRepository;
+    private final SavedRecipeQueryRepository savedRecipeQueryRepository;
 
     /**
      * 레시피를 저장합니다.
@@ -47,7 +49,7 @@ public class SavedRecipeService {
         LocalDate scheduledDate = dto.getScheduledDate();
 
         // 레시피와 사용자 엔티티를 이용해, 이미 해당 사용자가 해당 레시피를 저장했는지 확인합니다.
-        Optional<SavedRecipe> existingSavedRecipe = savedRecipeRepository
+        Optional<SavedRecipe> existingSavedRecipe = savedRecipeQueryRepository
                 .findByRecipeAndUser(recipe, user);
         if (existingSavedRecipe.isPresent()) {
             // 이미 해당 사용자가 해당 레시피를 저장했다면, 추가 레시피 저장 로직을 더 이상 실행하지 않고 기존의 저장된 레시피 ID를 반환합니다.
@@ -67,7 +69,7 @@ public class SavedRecipeService {
     @Transactional
     public void updateScheduledDate(SavedRecipeScheduledDateUpdateDto dto) {
         Long savedRecipeId = dto.getSavedRecipeId();
-        SavedRecipe savedRecipe = savedRecipeRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
+        SavedRecipe savedRecipe = savedRecipeQueryRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
                 () -> new SavedRecipeNotFoundException("id " + savedRecipeId + "에 해당하는 저장된 레시피를 찾을 수 없습니다."));
 
         Long userId = dto.getUserId();
@@ -91,7 +93,7 @@ public class SavedRecipeService {
         Recipe recipe = getRecipe(recipeId);
         EatzUser user = getEatzUser(userId);
 
-        SavedRecipe savedRecipe = savedRecipeRepository.findByRecipeAndUser(recipe, user)
+        SavedRecipe savedRecipe = savedRecipeQueryRepository.findByRecipeAndUser(recipe, user)
                 .orElseThrow(() -> new SavedRecipeNotFoundException(
                         "올바르지 않은 요청입니다. " +
                                 "ID가 " + userId + "인 사용자가 ID가 " + recipeId + " 인 레시피를 저장하지 않았습니다."));
@@ -107,7 +109,7 @@ public class SavedRecipeService {
      */
     @Transactional
     public void deleteSavedRecipe(Long savedRecipeId, Long userId) {
-        SavedRecipe savedRecipe = savedRecipeRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
+        SavedRecipe savedRecipe = savedRecipeQueryRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
                 () -> new SavedRecipeNotFoundException("id " + savedRecipeId + "에 해당하는 저장된 레시피를 찾을 수 없습니다."));
         EatzUser user = getEatzUser(userId);
 
