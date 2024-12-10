@@ -22,11 +22,22 @@ public class QSavedRecipe extends EntityPathBase<SavedRecipe> {
 
     public static final QSavedRecipe savedRecipe = new QSavedRecipe("savedRecipe");
 
+    public final imwhs.eatz_server.common.QBaseEntity _super = new imwhs.eatz_server.common.QBaseEntity(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> deletedAt = _super.deletedAt;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QRecipe recipe;
 
-    public final DatePath<java.time.LocalDate> scheduledDate = createDate("scheduledDate", java.time.LocalDate.class);
+    public final ListPath<SavedRecipeSchedule, QSavedRecipeSchedule> schedules = this.<SavedRecipeSchedule, QSavedRecipeSchedule>createList("schedules", SavedRecipeSchedule.class, QSavedRecipeSchedule.class, PathInits.DIRECT2);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final QEatzUser user;
 

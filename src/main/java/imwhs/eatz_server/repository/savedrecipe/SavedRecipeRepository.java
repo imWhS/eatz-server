@@ -1,14 +1,10 @@
-package imwhs.eatz_server.repository.savedRecipe;
+package imwhs.eatz_server.repository.savedrecipe;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.SavedRecipe;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 /**
  * SavedRecipeRepository 클래스입니다.<br/>
