@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EatzUser 엔티티입니다.
+ * EatzUser 클래스입니다.
  * <ul>
  *     <li>사용자 정보를 저장, 관리하는 엔티티 클래스입니다.</li>
  *     <li>사용자의 기본적인 정보와 사용자가 등록한 레시피 등과 같은 연관 정보를 저장, 관리합니다.</li>
@@ -42,7 +42,7 @@ public class EatzUser extends BaseEntity {
     private String username;
 
     /**
-     * 이메일 주소
+     * 이메일 주소.
      *     <ul>
      *         <li>필수 값입니다.</li>
      *         <li>다른 사용자의 이메일 주소와 중복되지 않는, 고유한 값이어야 합니다.</li>
@@ -53,7 +53,7 @@ public class EatzUser extends BaseEntity {
     private String email;
 
     /**
-     * 비밀 번호
+     * 비밀 번호.
      * <p>
      *     필수 값입니다.
      * </p>
@@ -62,7 +62,7 @@ public class EatzUser extends BaseEntity {
     private String password;
 
     /**
-     * 사용자 역할
+     * 사용자 역할.
      * <ul>
      *     <li>필수 값입니다.</li>
      *     <li>기본적으로 회원 역할로 설정됩니다.</li>
@@ -73,7 +73,7 @@ public class EatzUser extends BaseEntity {
     private Role role = Role.MEMBER;
 
     /**
-     * 사용자가 등록한 모든 레시피 목록
+     * 사용자가 등록한 모든 레시피 목록.
      * <ul>
      *     <li>사용자는 레시피와 1:N(One-To-Many) 연관 관계를 가질 수 있습니다.</li>
      *     <li>EATZ_USER 테이블의 행을 참조하는 외래 키 필드가 RECIPE 테이블에 존재하기에,
@@ -83,6 +83,12 @@ public class EatzUser extends BaseEntity {
      */
     @OneToMany(mappedBy = "user")
     private List<Recipe> recipes = new ArrayList<>();
+
+    /**
+     * 사용자가 저장한 모든 레시피 목록.
+     */
+    @OneToMany(mappedBy = "user")
+    private List<SavedRecipe> savedRecipes = new ArrayList<>();
 
     protected EatzUser() {}
 
@@ -123,5 +129,16 @@ public class EatzUser extends BaseEntity {
         if (email != null && !email.isEmpty()) this.email = email;
         if (password != null && !password.isEmpty()) this.password = password;
     }
+
+//    /**
+//     * 사용자의 플래너를 가져옵니다.<br/>
+//     * 플래너가 생성되어 있지 않은 경우
+//     * @return 플래너.
+//     */
+//    // TODO: PlannerService, EatzUser 중 어디에 플래너 엔티티 생성 역할을 부여해여 할지 결정
+//    public Planner getPlanner() {
+//        if (this.planner != null) return this.planner;
+//        return null;
+//    }
 
 }

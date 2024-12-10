@@ -38,6 +38,8 @@ public class QEatzUser extends EntityPathBase<EatzUser> {
 
     public final EnumPath<Role> role = createEnum("role", Role.class);
 
+    public final ListPath<SavedRecipe, QSavedRecipe> savedRecipes = this.<SavedRecipe, QSavedRecipe>createList("savedRecipes", SavedRecipe.class, QSavedRecipe.class, PathInits.DIRECT2);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
