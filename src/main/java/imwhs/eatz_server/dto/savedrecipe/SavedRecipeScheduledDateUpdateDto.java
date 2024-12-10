@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto.savedRecipe;
+package imwhs.eatz_server.dto.savedrecipe;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

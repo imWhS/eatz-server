@@ -83,7 +83,7 @@ public class Rating extends BaseEntity {
 
     /**
      * 평가 내용을 업데이트합니다.
-     * @param content 업데이트할 평가 내용
+     * @param content 업데이트 할 평가 내용
      */
     public void updateContent(String content) {
         validateRating();
