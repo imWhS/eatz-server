@@ -11,11 +11,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 사용자(EatzUser) 관련 정보를 조회하는 클래스입니다.
+ * 사용자(EatzUser) 관련 정보를 조회하는 EatzUserQueryService 클래스입니다.
  * EatzUser에 대한 읽기 전용 쿼리 메서드를 제공합니다.
  */
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class EatzUserQueryService {
