@@ -35,13 +35,6 @@ public class RatingServiceTest {
     @Autowired
     private RecipeRepository recipeRepository;
 
-//    @BeforeEach
-//    void setUp() {
-//        ratingRepository.deleteAll();
-//        userRepository.deleteAll();
-//        recipeRepository.deleteAll();
-//    }
-
     @Test
     @DisplayName("레시피에 새 평가가 정상적으로 등록되는지 테스트합니다.")
     @Transactional
