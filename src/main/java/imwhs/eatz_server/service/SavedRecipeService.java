@@ -3,21 +3,22 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.SavedRecipe;
-import imwhs.eatz_server.dto.savedRecipe.SavedRecipeCreateDto;
-import imwhs.eatz_server.dto.savedRecipe.SavedRecipeScheduledDateUpdateDto;
+import imwhs.eatz_server.dto.savedrecipe.SavedRecipeCreateDto;
+import imwhs.eatz_server.dto.savedrecipe.SavedRecipeScheduledDateUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.exception.SavedRecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.repository.savedRecipe.SavedRecipeQueryRepository;
-import imwhs.eatz_server.repository.savedRecipe.SavedRecipeRepository;
+import imwhs.eatz_server.repository.savedrecipe.SavedRecipeQueryRepository;
+import imwhs.eatz_server.repository.savedrecipe.SavedRecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -46,17 +47,16 @@ public class SavedRecipeService {
         Long userId = dto.getUserId();
         EatzUser user = getEatzUser(userId);
 
-        LocalDate scheduledDate = dto.getScheduledDate();
+        List<LocalDate> schedules = dto.getSchedules();
 
         // 레시피와 사용자 엔티티를 이용해, 이미 해당 사용자가 해당 레시피를 저장했는지 확인합니다.
-        Optional<SavedRecipe> existingSavedRecipe = savedRecipeQueryRepository
-                .findByRecipeAndUser(recipe, user);
+        Optional<SavedRecipe> existingSavedRecipe = savedRecipeQueryRepository.findByRecipeAndUser(recipe, user);
         if (existingSavedRecipe.isPresent()) {
             // 이미 해당 사용자가 해당 레시피를 저장했다면, 추가 레시피 저장 로직을 더 이상 실행하지 않고 기존의 저장된 레시피 ID를 반환합니다.
             return existingSavedRecipe.get().getId();
         }
 
-        SavedRecipe savedRecipe = new SavedRecipe(recipe, user, scheduledDate);
+        SavedRecipe savedRecipe = new SavedRecipe(recipe, user, schedules);
         savedRecipeRepository.save(savedRecipe);
 
         return savedRecipe.getId();
@@ -79,7 +79,7 @@ public class SavedRecipeService {
         // SavedRecipe를 생성한 사용자가 업데이트 요청을 했는지에 대한 유효성을 검증합니다.
         validateDeleteSavedRecipeAccessAuthorize(userId, savedRecipe);
 
-        savedRecipe.updateScheduledDate(scheduledDate);
+//        savedRecipe.updateScheduledDate(scheduledDate);
     }
 
     /**

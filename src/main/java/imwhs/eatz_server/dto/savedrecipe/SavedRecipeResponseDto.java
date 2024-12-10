@@ -1,6 +1,5 @@
-package imwhs.eatz_server.dto.savedRecipe;
+package imwhs.eatz_server.dto.savedrecipe;
 
-import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.SavedRecipe;
 import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
 import lombok.AllArgsConstructor;
@@ -26,7 +25,6 @@ public class SavedRecipeResponseDto {
     public SavedRecipeResponseDto(SavedRecipe savedRecipe) {
         this.id = savedRecipe.getId();
         this.recipe = new RecipeSummaryDto(savedRecipe.getRecipe());
-        this.scheduledDate = savedRecipe.getScheduledDate();
         this.userId = savedRecipe.getUser().getId();
         this.createdAt = savedRecipe.getCreatedAt();
     }

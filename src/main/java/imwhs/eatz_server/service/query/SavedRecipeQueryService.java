@@ -2,11 +2,10 @@ package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.SavedRecipe;
-import imwhs.eatz_server.dto.savedRecipe.SavedRecipeResponseDto;
+import imwhs.eatz_server.dto.savedrecipe.SavedRecipeResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.savedRecipe.SavedRecipeQueryRepository;
-import imwhs.eatz_server.repository.savedRecipe.SavedRecipeRepository;
+import imwhs.eatz_server.repository.savedrecipe.SavedRecipeQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +42,7 @@ public class SavedRecipeQueryService {
 
         pageable = Optional.ofNullable(pageable).orElse(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE));
 
-        List<SavedRecipe> foundSavedRecipes = savedRecipeQueryRepository.findByUserIdOrderByCreatedAtDesc(user, pageable);
+        List<SavedRecipe> foundSavedRecipes = savedRecipeQueryRepository.findByUserOrderByCreatedAtDesc(user, pageable);
         return foundSavedRecipes.stream()
                 .map(savedRecipe -> new SavedRecipeResponseDto(savedRecipe)).toList();
     }
