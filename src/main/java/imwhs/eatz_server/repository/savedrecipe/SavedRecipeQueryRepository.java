@@ -1,4 +1,4 @@
-package imwhs.eatz_server.repository.savedRecipe;
+package imwhs.eatz_server.repository.savedrecipe;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,15 @@ public interface SavedRecipeQueryRepository extends JpaRepository<SavedRecipe, L
      * @return 저장한 모든 레시피 목록.
      */
     @Query("select s from SavedRecipe s where s.user = :user order by s.createdAt desc ")
-    List<SavedRecipe> findByUserIdOrderByCreatedAtDesc(@Param("user") EatzUser user, Pageable pageable);
+    List<SavedRecipe> findByUserOrderByCreatedAtDesc(@Param("user") EatzUser user, Pageable pageable);
+
+    /**
+     * 특정 사용자가 특정 날짜를 설정한 후 저장한 모든 레시피 목록을 날짜 기준 내림차순으로 조회합니다.
+     */
+    @Query("select s from SavedRecipe s where s.user = :user")
+    List<SavedRecipe> findByUserAndScheduledDateOrderByCreatedAtDesc(@Param("user") EatzUser user, Pageable pageable);
+
+    @Query("select sr from SavedRecipe sr left join fetch sr.schedules s where sr.user = :user and s.date = :date")
+    List<SavedRecipe> findByUserAndScheduledDate(@Param("user") EatzUser user, @Param("date") LocalDate date);
 
 }
