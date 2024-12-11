@@ -8,7 +8,7 @@ import lombok.Data;
 
 /**
  * EatzUserCreateDto 클래스입니다.<br/>
- * 사용자를 생성하기 위해 필요한 정보를 전달하기 위해 사용합니다.
+ * 사용자 생성에 필요한 정보를 전달하기 위해 사용합니다.
  */
 @Data
 @Builder
