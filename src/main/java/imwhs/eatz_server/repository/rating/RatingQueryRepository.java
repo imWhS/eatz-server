@@ -27,14 +27,14 @@ public class RatingQueryRepository {
      * @param id 평가 식별자
      * @return Optional로 wrapping된 RatingDetailResponseDto. 평가의 상세 정보를 담은 DTO입니다.
      */
-    public Optional<RatingDetailResponseDto> findRatingDetailById(Long id) {
+    public Optional<RatingDetailDto> findRatingDetailById(Long id) {
         QRating rating = QRating.rating;
         QEatzUser user = QEatzUser.eatzUser;
         QRecipe recipe = QRecipe.recipe;
 
         return Optional.ofNullable(queryFactory
                 .select(
-                        Projections.constructor(RatingDetailResponseDto.class,
+                        Projections.constructor(RatingDetailDto.class,
                                 rating.id,
                                 Projections.constructor(EatzUserSummaryDto.class,
                                         user.id,
@@ -70,12 +70,12 @@ public class RatingQueryRepository {
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      */
-    public List<RatingByRecipeResponseDto> findRatingsByRecipe(Long id, int page, int size) {
+    public List<RatingByRecipeDto> findRatingsByRecipe(Long id, int page, int size) {
         QRating rating = QRating.rating;
         QEatzUser user = QEatzUser.eatzUser;
 
         return queryFactory.select(
-                Projections.constructor(RatingByRecipeResponseDto.class,
+                Projections.constructor(RatingByRecipeDto.class,
                         rating.id,
                         Projections.constructor(RatingUserDto.class,
                                 user.id,
@@ -123,12 +123,12 @@ public class RatingQueryRepository {
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      */
-    public List<RatingByUserResponseDto> findRatingsByUser(Long id, int page, int size) {
+    public List<RatingByUserDto> findRatingsByUser(Long id, int page, int size) {
         QRating rating = QRating.rating;
         QRecipe recipe = QRecipe.recipe;
 
         return queryFactory.select(
-                Projections.constructor(RatingByUserResponseDto.class,
+                Projections.constructor(RatingByUserDto.class,
                         rating.id,
                         Projections.constructor(RatingRecipeDto.class,
                                 recipe.id,

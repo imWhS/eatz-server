@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class RatingDetailResponseDto {
+public class RatingDetailDto {
 
     private Long id;
 
