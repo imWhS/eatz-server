@@ -1,0 +1,57 @@
+package imwhs.eatz_server.controller;
+
+import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.Paged;
+import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
+import imwhs.eatz_server.service.EatzUserService;
+import imwhs.eatz_server.service.query.EatzUserQueryService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+public class EatzUserController {
+
+    private final EatzUserService userService;
+
+    private final EatzUserQueryService userQueryService;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid EatzUserCreateDto dto) {
+        Long userId = userService.registerUser(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Paged<EatzUserDto>>> getAllUsers(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<EatzUserDto> allUsers = userQueryService.findAllUsers(pageable);
+        return ResponseEntity.ok(ApiResponse.success(allUsers));
+    }
+
+    // TODO: PATCH, 요청 파라미터를 통해 비밀 번호 등에 대한 부분 업데이트 API 추가
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateUser(
+            @PathVariable Long id,
+            @RequestBody @Valid EatzUserUpdateDto dto) {
+        userService.updateUser(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
+
+}

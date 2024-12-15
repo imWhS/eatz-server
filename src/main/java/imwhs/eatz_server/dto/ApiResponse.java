@@ -1,6 +1,7 @@
-package imwhs.eatz_server.common;
+package imwhs.eatz_server.dto;
 
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 
@@ -61,6 +62,11 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> success(T data, String message) {
         return new ApiResponse<>("success", data, message);
     }
+
+    public static <T> ApiResponse<Paged<T>> success(Page<T> page) {
+        return ApiResponse.success(new Paged<>(page));
+    }
+
     /**
      * 요청 처리를 실패한 공통 API 응답 데이터를 생성합니다.
      * @param message 메시지.

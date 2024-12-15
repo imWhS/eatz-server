@@ -1,9 +1,9 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.dto.PagedResponse;
-import imwhs.eatz_server.dto.rating.RatingByRecipeResponseDto;
-import imwhs.eatz_server.dto.rating.RatingByUserResponseDto;
-import imwhs.eatz_server.dto.rating.RatingDetailResponseDto;
+import imwhs.eatz_server.dto.PagedApiResponse;
+import imwhs.eatz_server.dto.rating.RatingByRecipeDto;
+import imwhs.eatz_server.dto.rating.RatingByUserDto;
+import imwhs.eatz_server.dto.rating.RatingDetailDto;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import imwhs.eatz_server.repository.rating.RatingQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class RatingQueryService {
      * 식별자에 해당하는 평가의 기본 정보와 평가를 등록한 사용자, 평가가 달린 레시피의 부가 정보를 조회합니다.
      * @param id 평가 식별자.
      */
-    public RatingDetailResponseDto findRatingDetail(Long id) {
+    public RatingDetailDto findRatingDetail(Long id) {
         return ratingQueryRepository.findRatingDetailById(id)
                 .orElseThrow(() -> new RatingNotFoundException("id " + id + "에 해당하는 평가가 존재하지 않습니다."));
     }
@@ -47,13 +47,13 @@ public class RatingQueryService {
      * 레시피에 달린 모든 평가 별 기본 정보와 해당 평가를 등록한 사용자의 부가 정보를 조회합니다.
      * @param id 레시피 식별자.
      */
-    public PagedResponse<RatingByRecipeResponseDto> findRatingsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
+    public PagedApiResponse<RatingByRecipeDto> findRatingsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
         int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
         int size = pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize;
 
-        List<RatingByRecipeResponseDto> data = ratingQueryRepository.findRatingsByRecipe(id, page, size);
+        List<RatingByRecipeDto> data = ratingQueryRepository.findRatingsByRecipe(id, page, size);
         Long totalItems = ratingQueryRepository.countRatingsByRecipe(id);
-        return PagedResponse.of(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
+        return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
     }
 
     /**
@@ -61,13 +61,13 @@ public class RatingQueryService {
      * 사용자가 등록한 모든 댓글 별 기본 정보와 해당 댓글이 달린 레시피의 부가 정보를 조회합니다.
      * @param id 레시피 식별자.
      */
-    public PagedResponse<RatingByUserResponseDto> findRatingsByUser(Long id, Integer currentPage, Integer pagingSize) {
+    public PagedApiResponse<RatingByUserDto> findRatingsByUser(Long id, Integer currentPage, Integer pagingSize) {
         int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
         int size = pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize;
 
-        List<RatingByUserResponseDto> data = ratingQueryRepository.findRatingsByUser(id, page, size);
+        List<RatingByUserDto> data = ratingQueryRepository.findRatingsByUser(id, page, size);
         Long totalItems = ratingQueryRepository.countRatingsByUser(id);
-        return PagedResponse.of(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
+        return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
     }
 
 

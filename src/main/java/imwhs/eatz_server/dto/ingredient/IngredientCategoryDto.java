@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class IngredientCategoryResponseDto {
+public class IngredientCategoryDto {
 
     private Long categoryId;
 
     private String categoryName;
 
-    public IngredientCategoryResponseDto(Ingredient category) {
+    public IngredientCategoryDto(Ingredient category) {
         this.categoryId = category.getId();
         this.categoryName = category.getName();
     }

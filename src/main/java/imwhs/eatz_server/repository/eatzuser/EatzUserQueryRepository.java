@@ -4,9 +4,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.QEatzUser;
 import imwhs.eatz_server.domain.QRecipe;
-import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class EatzUserQueryRepository {
      * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      * @return 페이징 처리된 EatzUserSummaryDto.
      */
-    public PagedResponse<EatzUserSummaryDto> findAllWithActivity(int page, int size) {
+    public PagedApiResponse<EatzUserSummaryDto> findAllWithActivity(Pageable pageable) {
         QEatzUser eatzUser = QEatzUser.eatzUser;
         QRecipe recipe = QRecipe.recipe;
 
@@ -49,8 +50,8 @@ public class EatzUserQueryRepository {
                 .from(eatzUser)
                 .leftJoin(eatzUser.recipes, recipe)
                 .groupBy(eatzUser.id)
-                .offset((long) page * size)
-                .limit(size)
+                .offset((long) pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         // 총 사용자 수를 조회해 totalItems에 할당합니다.
@@ -62,10 +63,15 @@ public class EatzUserQueryRepository {
 
         // 데이터 페이징 시 필요한 총 페이지 수를 계산합니다.
         // 소수점 이하 값에 대한 반올림 처리를 위해 totalItems를 double로 변환한 값을 계산에 사용합니다.
-        int totalPages = (int) Math.ceil((double) totalItems / size);
+        int totalPages = (int) Math.ceil((double) totalItems / pageable.getPageSize());
 
         // 페이징 정보를 포함하는 PagedResponse로 감싼 후 데이터를 반환합니다.
-        return PagedResponse.of(items, totalItems, totalPages, page, size);
+        return PagedApiResponse.success(
+                items,
+                totalItems,
+                totalPages,
+                pageable.getPageNumber(),
+                pageable.getPageSize());
     }
 
 }

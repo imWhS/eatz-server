@@ -3,7 +3,7 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Rating;
 import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.dto.rating.RatingResponseDto;
+import imwhs.eatz_server.dto.rating.RatingDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
@@ -100,27 +100,27 @@ public class RatingService {
     /**
      * 식별자로 평가를 조회합니다.
      */
-    public RatingResponseDto findRating(Long id) {
+    public RatingDto findRating(Long id) {
         Rating rating = ratingRepository.findJoinUserRecipeById(id)
                 .orElseThrow(() -> new RatingNotFoundException("id " + id + "에 해당하는 평가가 존재하지 않습니다."));
-        return new RatingResponseDto(rating);
+        return new RatingDto(rating);
     }
 
     /**
      * 시용자 식별자, 레시피 식별자로 평가를 조회합니다.
      */
-    public RatingResponseDto findRating(Long userId, Long recipeId) {
+    public RatingDto findRating(Long userId, Long recipeId) {
         validateUser(userId);
         validateRecipe(recipeId);
         Rating rating = ratingRepository.findJoinUserRecipeByUserIdAndRecipeId(userId, recipeId)
                 .orElseThrow(() -> new RatingNotFoundException("평가가 존재하지 않습니다."));
-        return new RatingResponseDto(rating);
+        return new RatingDto(rating);
     }
 
     /**
      * 특정 레시피에 달린 평가를 모두 조회합니다.
      */
-    public Page<RatingResponseDto> findRatings(Long recipeId, Integer currentPage, Integer pagingSize) {
+    public Page<RatingDto> findRatings(Long recipeId, Integer currentPage, Integer pagingSize) {
         validateRecipe(recipeId);
 
         int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
@@ -129,13 +129,13 @@ public class RatingService {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Rating> ratings = ratingRepository.findJoinUserRecipeByRecipeId(recipeId, pageRequest);
 
-        return ratings.map(RatingResponseDto::new);
+        return ratings.map(RatingDto::new);
     }
 
     /**
      * 특정 사용자가 등록한 평가를 모두 조회합니다.
      */
-    public Page<RatingResponseDto> findRatingsByUser(Long userId, Integer currentPage, Integer pagingSize) {
+    public Page<RatingDto> findRatingsByUser(Long userId, Integer currentPage, Integer pagingSize) {
         validateUser(userId);
 
         int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
@@ -144,7 +144,7 @@ public class RatingService {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Rating> ratings = ratingRepository.findJoinUserRecipeByUserId(userId, pageRequest);
 
-        return ratings.map(RatingResponseDto::new);
+        return ratings.map(RatingDto::new);
     }
 
     /**
