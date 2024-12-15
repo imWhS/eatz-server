@@ -4,7 +4,6 @@ import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * RecipeDetailResponseDto 클래스입니다.
@@ -16,7 +15,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @AllArgsConstructor
-public class RecipeDetailResponseDto {
+public class RecipeDetailDto {
 
     private Long id;
 
