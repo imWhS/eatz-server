@@ -1,7 +1,7 @@
 package imwhs.eatz_server.repository.recipe.query;
 
 import imwhs.eatz_server.domain.*;
-import imwhs.eatz_server.dto.recipe.RecipeDetailResponseDto;
+import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -71,13 +71,13 @@ class RecipeQueryRepositoryTest {
         ratingRepository.save(new Rating(userD, recipe1, 3, "무난한 맛이네요."));
 
         // when
-        Optional<RecipeDetailResponseDto> recipeDetailOptional = recipeQueryRepository.findRecipeDetailById(recipeId);
+        Optional<RecipeDetailDto> recipeDetailOptional = recipeQueryRepository.findRecipeDetailById(recipeId);
 
         // then
         assertNotNull(recipeDetailOptional);
         assertTrue(recipeDetailOptional.isPresent());
 
-        RecipeDetailResponseDto recipeDetail = recipeDetailOptional.get();
+        RecipeDetailDto recipeDetail = recipeDetailOptional.get();
         assertEquals(recipeId, recipeDetail.getId());
         assertEquals("Pasta", recipeDetail.getTitle());
         assertEquals(6, recipeDetail.getCommentCount());

@@ -3,10 +3,8 @@ package imwhs.eatz_server.service.query;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserResponseDto;
-import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import org.assertj.core.api.Assertions;
@@ -14,7 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -57,7 +56,7 @@ class EatzUserQueryServiceTest {
         userRepository.save(user4);
 
         // when
-        PagedResponse<EatzUserSummaryDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(null, null);
+        PagedApiResponse<EatzUserSummaryDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(PageRequest.of(0, 10));
 
         // then
         Assertions.assertThat(foundUsersWithActivities.getTotalItems()).isEqualTo(4);
@@ -90,7 +89,8 @@ class EatzUserQueryServiceTest {
         // when
         int page = 0;
         int size = 2;
-        PagedResponse<EatzUserSummaryDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        PagedApiResponse<EatzUserSummaryDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(pageable);
 
         // then
         Assertions.assertThat(foundUsersWithActivities.getData().size()).isEqualTo(2);
