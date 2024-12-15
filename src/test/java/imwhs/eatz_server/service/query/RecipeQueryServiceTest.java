@@ -3,7 +3,7 @@ package imwhs.eatz_server.service.query;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.recipe.RecipeResponseDto;
+import imwhs.eatz_server.dto.recipe.RecipeDto;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.service.RecipeService;
@@ -51,7 +51,7 @@ class RecipeQueryServiceTest {
         Long recipeId = recipe.getId();
 
         // when
-        RecipeResponseDto foundRecipe = recipeQueryService.findRecipeById(recipeId);
+        RecipeDto foundRecipe = recipeQueryService.findRecipeById(recipeId);
 
         // then
         Assertions.assertThat(foundRecipe.getId()).isEqualTo(recipeId);
@@ -81,7 +81,7 @@ class RecipeQueryServiceTest {
         recipeService.deleteRecipe(deletedRecipe.getId(), user.getId());
 
         // when
-        Page<RecipeResponseDto> recipes = recipeQueryService.findAllRecipes(null, null);
+        Page<RecipeDto> recipes = recipeQueryService.findAllRecipes(null, null);
 
         // then
         Assertions.assertThat(recipes.get().count()).isEqualTo(3);
@@ -110,7 +110,7 @@ class RecipeQueryServiceTest {
         recipeRepository.save(anotherRecipe);
 
         // when
-        Page<RecipeResponseDto> recipes = recipeQueryService.findAllRecipesByUser(userId, null, null);
+        Page<RecipeDto> recipes = recipeQueryService.findAllRecipesByUser(userId, null, null);
 
         // then
         Assertions.assertThat(recipes.get().count()).isEqualTo(3);
