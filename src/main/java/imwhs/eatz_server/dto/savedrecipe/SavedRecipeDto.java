@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class SavedRecipeResponseDto {
+public class SavedRecipeDto {
 
     private Long id;
 
@@ -22,7 +22,7 @@ public class SavedRecipeResponseDto {
 
     private LocalDateTime createdAt;
 
-    public SavedRecipeResponseDto(SavedRecipe savedRecipe) {
+    public SavedRecipeDto(SavedRecipe savedRecipe) {
         this.id = savedRecipe.getId();
         this.recipe = new RecipeSummaryDto(savedRecipe.getRecipe());
         this.userId = savedRecipe.getUser().getId();

@@ -6,7 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
-import imwhs.eatz_server.dto.recipe.RecipeDetailResponseDto;
+import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +31,7 @@ public class RecipeQueryRepository {
      * @param id 레시피 식별자.
      * @return Optional로 wrapping된 RecipeDetailResponseDto. 레시피의 상세 정보를 담은 DTO입니다.
      */
-    public Optional<RecipeDetailResponseDto> findRecipeDetailById(Long id) {
+    public Optional<RecipeDetailDto> findRecipeDetailById(Long id) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
         QComment comment = QComment.comment;
@@ -39,7 +39,7 @@ public class RecipeQueryRepository {
 
         return Optional.ofNullable(queryFactory
                 .select(
-                        Projections.constructor(RecipeDetailResponseDto.class,
+                        Projections.constructor(RecipeDetailDto.class,
                                 recipe.id,
                                 Projections.constructor(EatzUserSummaryDto.class,
                                         user.id,
