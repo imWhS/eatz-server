@@ -4,20 +4,15 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Rating;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.PagedResponse;
-import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
+import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.rating.*;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.service.RatingService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -78,16 +73,16 @@ class RatingQueryServiceTest {
         ratingRepository.save(rating);
 
         // when
-        RatingDetailResponseDto ratingDetailResponseDto = ratingQueryService.findRatingDetail(rating.getId());
+        RatingDetailDto ratingDetailDto = ratingQueryService.findRatingDetail(rating.getId());
 
         // then
-        Assertions.assertNotNull(ratingDetailResponseDto);
-        Assertions.assertEquals(rating.getId(), ratingDetailResponseDto.getId());
-        Assertions.assertEquals(ratingWriter.getId(), ratingDetailResponseDto.getUser().getId());
-        Assertions.assertEquals(2, ratingDetailResponseDto.getUser().getRecipeCount());
-        Assertions.assertEquals(recipe.getId(), ratingDetailResponseDto.getRecipe().getId());
-        Assertions.assertEquals(recipe.getTitle(), ratingDetailResponseDto.getRecipe().getTitle());
-        Assertions.assertEquals(rating.getScore(), ratingDetailResponseDto.getScore());
+        Assertions.assertNotNull(ratingDetailDto);
+        Assertions.assertEquals(rating.getId(), ratingDetailDto.getId());
+        Assertions.assertEquals(ratingWriter.getId(), ratingDetailDto.getUser().getId());
+        Assertions.assertEquals(2, ratingDetailDto.getUser().getRecipeCount());
+        Assertions.assertEquals(recipe.getId(), ratingDetailDto.getRecipe().getId());
+        Assertions.assertEquals(recipe.getTitle(), ratingDetailDto.getRecipe().getTitle());
+        Assertions.assertEquals(rating.getScore(), ratingDetailDto.getScore());
     }
 
     @Test
@@ -111,20 +106,20 @@ class RatingQueryServiceTest {
 
         Rating ratingA = new Rating(ratingWriterA, recipe, 4);
         ratingRepository.save(ratingA);
-        RatingByRecipeResponseDto ratingAResponseDto = new RatingByRecipeResponseDto(ratingA);
+        RatingByRecipeDto ratingAResponseDto = new RatingByRecipeDto(ratingA);
 
         EatzUser ratingWriterB = EatzUser.create("ratingWriterB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(ratingWriterB);
 
         Rating ratingB = new Rating(ratingWriterB, recipe, 4);
         ratingRepository.save(ratingB);
-        RatingByRecipeResponseDto ratingBResponseDto = new RatingByRecipeResponseDto(ratingB);
+        RatingByRecipeDto ratingBResponseDto = new RatingByRecipeDto(ratingB);
 
         // when
-        PagedResponse<RatingByRecipeResponseDto> pagedRatings = ratingQueryService.findRatingsByRecipe(recipeId, null, null);
+        PagedApiResponse<RatingByRecipeDto> pagedRatings = ratingQueryService.findRatingsByRecipe(recipeId, null, null);
         Assertions.assertEquals(1, pagedRatings.getTotalPages());
         Assertions.assertEquals(2, pagedRatings.getTotalItems());
-        List<RatingByRecipeResponseDto> ratings = pagedRatings.getData();
+        List<RatingByRecipeDto> ratings = pagedRatings.getData();
         Assertions.assertEquals(2, ratings.size());
         Assertions.assertTrue(ratings.contains(ratingAResponseDto));
         Assertions.assertTrue(ratings.contains(ratingBResponseDto));
@@ -162,19 +157,19 @@ class RatingQueryServiceTest {
 
         Rating ratingA = new Rating(ratingWriter, recipeKimchi, 4);
         ratingRepository.save(ratingA);
-        RatingByUserResponseDto ratingAResponseDto = new RatingByUserResponseDto(ratingA);
+        RatingByUserDto ratingAResponseDto = new RatingByUserDto(ratingA);
 
         Rating ratingB = new Rating(ratingWriter, recipeGarlic, 1);
         ratingRepository.save(ratingB);
-        RatingByUserResponseDto ratingBResponseDto = new RatingByUserResponseDto(ratingB);
+        RatingByUserDto ratingBResponseDto = new RatingByUserDto(ratingB);
 
         // when
-        PagedResponse<RatingByUserResponseDto> pagedRatings = ratingQueryService.findRatingsByUser(ratingWriterId, null, null);
+        PagedApiResponse<RatingByUserDto> pagedRatings = ratingQueryService.findRatingsByUser(ratingWriterId, null, null);
 
         // then
         Assertions.assertEquals(1, pagedRatings.getTotalPages());
         Assertions.assertEquals(2, pagedRatings.getTotalItems());
-        List<RatingByUserResponseDto> ratings = pagedRatings.getData();
+        List<RatingByUserDto> ratings = pagedRatings.getData();
         Assertions.assertEquals(2, ratings.size());
         Assertions.assertTrue(ratings.contains(ratingAResponseDto));
         Assertions.assertTrue(ratings.contains(ratingBResponseDto));

@@ -2,7 +2,7 @@ package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.SavedRecipe;
-import imwhs.eatz_server.dto.savedrecipe.SavedRecipeResponseDto;
+import imwhs.eatz_server.dto.savedrecipe.SavedRecipeDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.savedrecipe.SavedRecipeQueryRepository;
@@ -36,7 +36,7 @@ public class SavedRecipeQueryService {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     @Transactional
-    public List<SavedRecipeResponseDto> findSavedRecipesByUser(Long userId, Pageable pageable) {
+    public List<SavedRecipeDto> findSavedRecipesByUser(Long userId, Pageable pageable) {
         EatzUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new EatzUserNotFoundException("id " + userId + "에 해당하는 사용자가 존재하지 않습니다."));
 
@@ -44,7 +44,7 @@ public class SavedRecipeQueryService {
 
         List<SavedRecipe> foundSavedRecipes = savedRecipeQueryRepository.findByUserOrderByCreatedAtDesc(user, pageable);
         return foundSavedRecipes.stream()
-                .map(savedRecipe -> new SavedRecipeResponseDto(savedRecipe)).toList();
+                .map(savedRecipe -> new SavedRecipeDto(savedRecipe)).toList();
     }
 
 }

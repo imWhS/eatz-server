@@ -125,10 +125,10 @@ public class IngredientService {
      * @param id 조회하려는 재료의 식별자.
      * @return 조회된 재료의 정보를 담고 있는 IngredientResponseDto.
      */
-    public IngredientResponseDto findIngredient(Long id) {
+    public IngredientDto findIngredient(Long id) {
         Ingredient ingredient = ingredientRepository.findWithCategoryById(id)
                 .orElseThrow(() -> new IngredientNotFoundException("id " + id + "에 해당하는 재료를 찾을 수 없습니다."));
-        return new IngredientResponseDto(ingredient);
+        return new IngredientDto(ingredient);
     }
 
     /**
@@ -136,7 +136,7 @@ public class IngredientService {
      * @param id 조회하려는 재료의 식별자.
      * @return IngredientTreeResponseDto.
      */
-    public IngredientTreeResponseDto findIngredientTree(Long id) {
+    public IngredientTreeDto findIngredientTree(Long id) {
         List<Ingredient> ingredientWithAllChildren = ingredientRepository.findIngredientTree(id);
         return toTreeResponseDto(ingredientWithAllChildren);
     }
@@ -201,22 +201,22 @@ public class IngredientService {
      * @param ingredients 트리 형태로 변환할 재료 목록
      * @return 트리 형태로 변환된 IngredientTreeResponseDto.
      */
-    private IngredientTreeResponseDto toTreeResponseDto(List<Ingredient> ingredients) {
+    private IngredientTreeDto toTreeResponseDto(List<Ingredient> ingredients) {
         if (ingredients == null || ingredients.isEmpty()) return null;
 
         /**
          * 각 재료의 ID를 key로, 재료를 IngredientTreeResponseDto로 변환한 객체를 value로 가지는 Map을 생성합니다.
          * 재료 별 카테고리 또는 하위 재료 정보를 빠르게 참조하기 위해 사용됩니다.
          */
-        Map<Long, IngredientTreeResponseDto> ingredientsMap = new HashMap<>();
+        Map<Long, IngredientTreeDto> ingredientsMap = new HashMap<>();
         ingredients.forEach(ingredient ->
                 ingredientsMap.put(
                         ingredient.getId(),
-                        new IngredientTreeResponseDto(
+                        new IngredientTreeDto(
                                 ingredient.getId(),
                                 ingredient.getName(),
                                 (ingredient.getCategory() != null)
-                                        ? new IngredientCategoryResponseDto(ingredient.getCategory())
+                                        ? new IngredientCategoryDto(ingredient.getCategory())
                                         : null,
                                 new ArrayList<>()
                         )
@@ -244,8 +244,8 @@ public class IngredientService {
             }
 
             // 현재 재료와 현재 재료가 속한 카테고리 정보를 담고 있는 DTO를 가져옵니다.
-            IngredientTreeResponseDto current = ingredientsMap.get(ingredient.getId());
-            IngredientTreeResponseDto category = ingredientsMap.get(current.getCategory().getCategoryId());
+            IngredientTreeDto current = ingredientsMap.get(ingredient.getId());
+            IngredientTreeDto category = ingredientsMap.get(current.getCategory().getCategoryId());
 
             // 카테고리 DTO의 children 필드에 현재 재료의 DTO를 설정합니다.
             category.getChildren().add(current);
