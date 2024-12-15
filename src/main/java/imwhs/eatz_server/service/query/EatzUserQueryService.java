@@ -1,7 +1,6 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
@@ -13,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.regex.Pattern;
+
 /**
  * 사용자(EatzUser) 관련 정보를 조회하는 EatzUserQueryService 클래스입니다.
  * EatzUser에 대한 읽기 전용 쿼리 메서드를 제공합니다.
@@ -21,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class EatzUserQueryService {
+
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
     private final EatzUserRepository userRepository;
 
@@ -54,8 +57,9 @@ public class EatzUserQueryService {
      *     <li>페이징을 적용할 수 있습니다.</li>
      * </ul>
      */
-    public PagedApiResponse<EatzUserSummaryDto> findAllUsersWithActivity(Pageable pageable) {
-        return userQueryRepository.findAllWithActivity(pageable);
+    public Page<EatzUserSummaryDto> findAllUsersWithActivity(Pageable pageable) {
+        Page<EatzUserSummaryDto> foundUsers = userQueryRepository.findAllWithActivity(pageable);
+        return foundUsers;
     }
 
     /**
@@ -78,10 +82,18 @@ public class EatzUserQueryService {
      * </p>
      */
     public EatzUserDto findUserByEmail(String email) {
+        validateEmail(email);
+
         EatzUser user = userRepository.findByEmail(email).orElseThrow(
                 () -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾지 못했습니다."));
 
         return new EatzUserDto(user);
+    }
+
+    private void validateEmail(String email) {
+        if (!Pattern.matches(EMAIL_REGEX, email)) {
+            throw new IllegalArgumentException("이메일 주소(" + email + ")가 올바른 형식이 아닙니다.");
+        }
     }
 
 }
