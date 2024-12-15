@@ -20,6 +20,12 @@ public class GlobalExceptionAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ApiResponse<Object> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ApiResponse.error(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ApiResponse<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         return ApiResponse.error("경로 변수 " + e.getName() + "의 타입은 "
