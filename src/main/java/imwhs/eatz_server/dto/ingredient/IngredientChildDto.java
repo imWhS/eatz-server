@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class IngredientChildResponseDto {
+public class IngredientChildDto {
 
     /**
      * 재료의 식별자.
@@ -22,7 +22,7 @@ public class IngredientChildResponseDto {
      */
     private String childName;
 
-    public IngredientChildResponseDto(Ingredient child) {
+    public IngredientChildDto(Ingredient child) {
         this.childId = child.getId();
         this.childName = child.getName();
     }

@@ -7,42 +7,42 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * IngredientResponseDto 클래스입니다.<br/>
+ * IngredientTreeDto 클래스입니다.<br/>
  * 재료 정보를 전달하기 위해 사용합니다. 해당 재료의 모든 하위 계층(hierarchy) 재료의 정보도 포함합니다.
  */
 @Data
-public class IngredientTreeResponseDto {
+public class IngredientTreeDto {
 
     private Long id;
 
     private String name;
 
-    private IngredientCategoryResponseDto category;
+    private IngredientCategoryDto category;
 
-    private List<IngredientTreeResponseDto> children;
+    private List<IngredientTreeDto> children;
 
-    public IngredientTreeResponseDto(Ingredient ingredient) {
+    public IngredientTreeDto(Ingredient ingredient) {
         this.id = ingredient.getId();
         this.name = ingredient.getName();
-        this.category = new IngredientCategoryResponseDto(ingredient.getCategory());
-        this.children = ingredient.getChildren().stream().map(IngredientTreeResponseDto::new).collect(Collectors.toList());
+        this.category = new IngredientCategoryDto(ingredient.getCategory());
+        this.children = ingredient.getChildren().stream().map(IngredientTreeDto::new).collect(Collectors.toList());
     }
 
-    public IngredientTreeResponseDto(
+    public IngredientTreeDto(
             Long id,
             String name,
-            IngredientCategoryResponseDto category,
-            List<IngredientTreeResponseDto> children) {
+            IngredientCategoryDto category,
+            List<IngredientTreeDto> children) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.children = children;
     }
 
-    public IngredientTreeResponseDto(
+    public IngredientTreeDto(
             Long id,
             String name,
-            IngredientCategoryResponseDto category) {
+            IngredientCategoryDto category) {
         this.id = id;
         this.name = name;
         this.category = category;

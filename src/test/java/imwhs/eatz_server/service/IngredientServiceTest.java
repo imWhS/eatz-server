@@ -1,20 +1,17 @@
 package imwhs.eatz_server.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.dto.ingredient.IngredientCreateDto;
-import imwhs.eatz_server.dto.ingredient.IngredientResponseDto;
-import imwhs.eatz_server.dto.ingredient.IngredientTreeResponseDto;
+import imwhs.eatz_server.dto.ingredient.IngredientDto;
+import imwhs.eatz_server.dto.ingredient.IngredientTreeDto;
 import imwhs.eatz_server.dto.ingredient.IngredientUpdateDto;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -205,7 +202,7 @@ class IngredientServiceTest {
         ingredient.addChild(child2);
 
         // when
-        IngredientResponseDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -238,7 +235,7 @@ class IngredientServiceTest {
         ingredient.addChild(child2);
 
         // when
-        IngredientResponseDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -260,7 +257,7 @@ class IngredientServiceTest {
         ingredientRepository.save(ingredient);
 
         // when
-        IngredientResponseDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -306,39 +303,39 @@ class IngredientServiceTest {
         beefSub1.setCategory(beef);
 
         // when
-        IngredientTreeResponseDto rootOfIngredientTree = ingredientService.findIngredientTree(root.getId());
+        IngredientTreeDto rootOfIngredientTree = ingredientService.findIngredientTree(root.getId());
 
         // then
         Assertions.assertNotNull(rootOfIngredientTree);
 
         Assertions.assertNull(rootOfIngredientTree.getCategory());
 
-        List<IngredientTreeResponseDto> childrenOfRoot = rootOfIngredientTree.getChildren();
+        List<IngredientTreeDto> childrenOfRoot = rootOfIngredientTree.getChildren();
         Assertions.assertTrue(childrenOfRoot.containsAll(
-                Arrays.asList(new IngredientTreeResponseDto(meat), new IngredientTreeResponseDto(seafood))));
+                Arrays.asList(new IngredientTreeDto(meat), new IngredientTreeDto(seafood))));
 
-        IngredientTreeResponseDto meatInTree = childrenOfRoot.get(0);
+        IngredientTreeDto meatInTree = childrenOfRoot.get(0);
         Assertions.assertEquals(meat.getName(), meatInTree.getName());
 
-        IngredientTreeResponseDto seafoodInTree = childrenOfRoot.get(1);
+        IngredientTreeDto seafoodInTree = childrenOfRoot.get(1);
         Assertions.assertEquals(seafood.getName(), seafoodInTree.getName());
 
-        List<IngredientTreeResponseDto> childrenOfMeat = meatInTree.getChildren();
+        List<IngredientTreeDto> childrenOfMeat = meatInTree.getChildren();
         Assertions.assertTrue(childrenOfMeat.containsAll(
-                Arrays.asList(new IngredientTreeResponseDto(pork), new IngredientTreeResponseDto(beef))));
+                Arrays.asList(new IngredientTreeDto(pork), new IngredientTreeDto(beef))));
 
-        IngredientTreeResponseDto porkInTree = childrenOfMeat.get(0);
+        IngredientTreeDto porkInTree = childrenOfMeat.get(0);
         Assertions.assertEquals(pork.getName(), porkInTree.getName());
 
-        List<IngredientTreeResponseDto> childrenOfPork = porkInTree.getChildren();
+        List<IngredientTreeDto> childrenOfPork = porkInTree.getChildren();
         Assertions.assertTrue(childrenOfPork.containsAll(
-                Arrays.asList(new IngredientTreeResponseDto(porkSub1), new IngredientTreeResponseDto(porkSub2))));
+                Arrays.asList(new IngredientTreeDto(porkSub1), new IngredientTreeDto(porkSub2))));
 
-        IngredientTreeResponseDto beefInTree = childrenOfMeat.get(1);
+        IngredientTreeDto beefInTree = childrenOfMeat.get(1);
         Assertions.assertEquals(beef.getName(), beefInTree.getName());
 
-        List<IngredientTreeResponseDto> childrenOfBeef = beefInTree.getChildren();
-        Assertions.assertTrue(childrenOfBeef.contains(new IngredientTreeResponseDto(beefSub1)));
+        List<IngredientTreeDto> childrenOfBeef = beefInTree.getChildren();
+        Assertions.assertTrue(childrenOfBeef.contains(new IngredientTreeDto(beefSub1)));
     }
 
 }

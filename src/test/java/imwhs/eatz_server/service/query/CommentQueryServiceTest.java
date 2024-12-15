@@ -1,21 +1,17 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.*;
-import imwhs.eatz_server.dto.PagedResponse;
+import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.comment.CommentByUserResponseDto;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
 import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
-import imwhs.eatz_server.dto.comment.CommentUserDto;
-import imwhs.eatz_server.repository.comment.CommentQueryRepository;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.service.CommentService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -119,7 +115,7 @@ public class CommentQueryServiceTest {
         CommentByRecipeResponseDto commentBResponseDto = new CommentByRecipeResponseDto(commentB);
 
         // when
-        PagedResponse<CommentByRecipeResponseDto> pagedComments = commentQueryService.findCommentsByRecipe(recipeId, null, null);
+        PagedApiResponse<CommentByRecipeResponseDto> pagedComments = commentQueryService.findCommentsByRecipe(recipeId, null, null);
 
         // then
         Assertions.assertEquals(1, pagedComments.getTotalPages());
@@ -169,7 +165,7 @@ public class CommentQueryServiceTest {
         CommentByUserResponseDto commentBResponseDto = new CommentByUserResponseDto(commentB);
 
         // when
-        PagedResponse<CommentByUserResponseDto> pagedComments = commentQueryService.findCommentsByUser(commentWriterId, null, null);
+        PagedApiResponse<CommentByUserResponseDto> pagedComments = commentQueryService.findCommentsByUser(commentWriterId, null, null);
 
         // then
         Assertions.assertEquals(1, pagedComments.getTotalPages());

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 // TODO: EatzUser의 DTO 필드 추가
 @Data
-public class RecipeResponseDto {
+public class RecipeDto {
 
     private Long id;
 
@@ -29,7 +29,7 @@ public class RecipeResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
-    public RecipeResponseDto(Recipe recipe) {
+    public RecipeDto(Recipe recipe) {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
         this.description = recipe.getDescription();
