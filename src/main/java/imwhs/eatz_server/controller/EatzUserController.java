@@ -4,6 +4,7 @@ import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
 import imwhs.eatz_server.service.EatzUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
@@ -31,14 +32,6 @@ public class EatzUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<Paged<EatzUserDto>>> getAllUsers(
-            @PageableDefault(page = 0, size = 10) Pageable pageable
-    ) {
-        Page<EatzUserDto> allUsers = userQueryService.findAllUsers(pageable);
-        return ResponseEntity.ok(ApiResponse.success(allUsers));
-    }
-
     // TODO: PATCH, 요청 파라미터를 통해 비밀 번호 등에 대한 부분 업데이트 API 추가
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -52,6 +45,38 @@ public class EatzUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Paged<EatzUserDto>>> getAllUsers(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<EatzUserDto> allUsers = userQueryService.findAllUsers(pageable);
+        return ResponseEntity.ok(ApiResponse.success(allUsers));
+    }
+
+    @GetMapping("/activity")
+    public ResponseEntity<ApiResponse<Paged<EatzUserSummaryDto>>> getAllUsersWithActivity(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<EatzUserSummaryDto> allUsers = userQueryService.findAllUsersWithActivity(pageable);
+        return ResponseEntity.ok(ApiResponse.success(allUsers));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<EatzUserDto>> getUserById(
+            @PathVariable Long id
+    ) {
+        EatzUserDto user = userQueryService.findUserById(id);
+        return ResponseEntity.ok(ApiResponse.success(user));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<EatzUserDto>> getUserByEmail(
+            @RequestParam String email
+    ) {
+        EatzUserDto user = userQueryService.findUserByEmail(email);
+        return ResponseEntity.ok(ApiResponse.success(user));
     }
 
 }
