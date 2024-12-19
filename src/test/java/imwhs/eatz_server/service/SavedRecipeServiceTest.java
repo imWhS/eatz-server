@@ -44,7 +44,7 @@ class SavedRecipeServiceTest {
     @Transactional
     void saveRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -73,11 +73,11 @@ class SavedRecipeServiceTest {
     @Transactional
     void findSavedRecipeByUserAndScheduledDateTest() {
         // given
-        EatzUser recipeWriter = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriter = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriter);
         Long recipeWriterId = recipeWriter.getId();
 
-        EatzUser recipeSaveUser = EatzUser.create("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeSaveUser = EatzUser.createMember("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeSaveUser);
         Long recipeSaveUserId = recipeSaveUser.getId();
 
@@ -127,7 +127,7 @@ class SavedRecipeServiceTest {
     @Transactional
     void updateScheduledDateTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -156,7 +156,7 @@ class SavedRecipeServiceTest {
     @Transactional
     void deleteSavedRecipeByRecipeIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -181,7 +181,7 @@ class SavedRecipeServiceTest {
     @Transactional
     void deleteSavedRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 

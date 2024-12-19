@@ -6,6 +6,7 @@ import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
+import imwhs.eatz_server.service.AuthService;
 import imwhs.eatz_server.service.EatzUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
 import jakarta.validation.Valid;
@@ -18,17 +19,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v0/users")
 @RequiredArgsConstructor
 public class EatzUserController {
 
     private final EatzUserService userService;
 
     private final EatzUserQueryService userQueryService;
+    private final AuthService authService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid EatzUserCreateDto dto) {
-        Long userId = userService.registerUser(dto);
+        Long userId = authService.signUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
     }
 
