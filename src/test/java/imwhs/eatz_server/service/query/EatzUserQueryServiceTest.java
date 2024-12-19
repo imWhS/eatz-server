@@ -34,12 +34,12 @@ class EatzUserQueryServiceTest {
     @Transactional
     void findAllUsersWithActivityTest() {
         // given
-        EatzUser user1 = EatzUser.create("1heextory", "1heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user1 = EatzUser.createMember("1heextory", "1heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         Recipe recipe1 = Recipe.of(user1, "Apple Cake", "https://www.recipe.com/", "https://www.recipe.com/apple.png", "");
         userRepository.save(user1);
         recipeRepository.save(recipe1);
 
-        EatzUser user2 = EatzUser.create("2heextory", "2heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user2 = EatzUser.createMember("2heextory", "2heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         Recipe recipe2 = Recipe.of(user2, "Banana Cake", "https://www.recipe.com/", "https://www.recipe.com/banana.png", "");
         userRepository.save(user2);
         recipeRepository.save(recipe2);
@@ -47,12 +47,12 @@ class EatzUserQueryServiceTest {
         userRepository.save(user2);
         recipeRepository.save(recipe3);
 
-        EatzUser user3 = EatzUser.create("3heextory", "3heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user3 = EatzUser.createMember("3heextory", "3heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         Recipe recipe4 = Recipe.of(user3, "Mango Cake", "https://www.recipe.com/", "https://www.recipe.com/mango.png", "");
         userRepository.save(user3);
         recipeRepository.save(recipe4);
 
-        EatzUser user4 = EatzUser.create("4heextory", "4heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user4 = EatzUser.createMember("4heextory", "4heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user4);
 
         // when
@@ -71,15 +71,15 @@ class EatzUserQueryServiceTest {
     @Transactional
     void findAllUsersWithActivity_PagingTest() {
         // given
-        EatzUser user1 = EatzUser.create("user1", "user1@icloud.com", "password1", Role.MEMBER);
+        EatzUser user1 = EatzUser.createMember("user1", "user1@icloud.com", "password1", Role.MEMBER);
         Recipe recipe1 = Recipe.of(user1, "Recipe 1", "https://www.recipe.com/", "https://www.recipe.com/img1.png", "");
         userRepository.save(user1);
         recipeRepository.save(recipe1);
 
-        EatzUser user2 = EatzUser.create("user2", "user2@icloud.com", "password2", Role.MEMBER);
+        EatzUser user2 = EatzUser.createMember("user2", "user2@icloud.com", "password2", Role.MEMBER);
         userRepository.save(user2);
 
-        EatzUser user3 = EatzUser.create("user3", "user3@icloud.com", "password3", Role.MEMBER);
+        EatzUser user3 = EatzUser.createMember("user3", "user3@icloud.com", "password3", Role.MEMBER);
         Recipe recipe2 = Recipe.of(user3, "Recipe 2", "https://www.recipe.com/", "https://www.recipe.com/img2.png", "");
         Recipe recipe3 = Recipe.of(user3, "Recipe 3", "https://www.recipe.com/", "https://www.recipe.com/img3.png", "");
         userRepository.save(user3);

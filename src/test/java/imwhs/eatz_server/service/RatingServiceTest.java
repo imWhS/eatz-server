@@ -40,7 +40,7 @@ public class RatingServiceTest {
     @Transactional
     void ratingRegisterTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -71,7 +71,7 @@ public class RatingServiceTest {
     @Transactional
     void ratingDuplicatedRegisterTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -100,7 +100,7 @@ public class RatingServiceTest {
     @Transactional
     void ratingUpdateTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -133,7 +133,7 @@ public class RatingServiceTest {
     @Transactional
     void ratingDeleteTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -163,7 +163,7 @@ public class RatingServiceTest {
     @Transactional
     void findRatingByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.of(
@@ -195,7 +195,7 @@ public class RatingServiceTest {
     @Transactional
     void findRatingByUserAndRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
