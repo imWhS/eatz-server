@@ -1,7 +1,5 @@
 package imwhs.eatz_server.dto.eatzuser;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -28,13 +26,5 @@ public class EatzUserCreateDto {
 
     @NotBlank(message = "비밀 번호는 필수 항목입니다.")
     private String password;
-
-    /**
-     * 회원 역할을 가지는 사용자 엔티티를 생성합니다.
-     * @return EatzUser 사용자 엔티티.
-     */
-    public EatzUser toMemberEntity() {
-        return EatzUser.create(this.username, this.email, this.password, Role.MEMBER);
-    }
 
 }

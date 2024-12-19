@@ -36,7 +36,7 @@ public class CommentQueryServiceTest {
     @Transactional
     void findCommentDetailTest() {
         // given
-        EatzUser recipeWriter = EatzUser.create("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriter = EatzUser.createMember("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriter);
 
         Recipe recipe = Recipe.of(
@@ -47,7 +47,7 @@ public class CommentQueryServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
 
-        EatzUser commentWriter = EatzUser.create("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser commentWriter = EatzUser.createMember("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(commentWriter);
 
         Recipe recipeA = Recipe.of(
@@ -88,7 +88,7 @@ public class CommentQueryServiceTest {
     @Transactional
     void findCommentsByRecipeTest() {
         // given
-        EatzUser recipeWriter = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriter = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriter);
 
         Recipe recipe = Recipe.of(
@@ -100,14 +100,14 @@ public class CommentQueryServiceTest {
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
-        EatzUser commentWriterA = EatzUser.create("commentWriterA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser commentWriterA = EatzUser.createMember("commentWriterA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(commentWriterA);
 
         Comment commentA = new Comment(commentWriterA, recipe, "이런 존맛 레시피 발견한 나 럭키비키쟌앙~");
         commentRepository.save(commentA);
         CommentByRecipeResponseDto commentAResponseDto = new CommentByRecipeResponseDto(commentA);
 
-        EatzUser commentWriterB = EatzUser.create("commentWriterB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser commentWriterB = EatzUser.createMember("commentWriterB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(commentWriterB);
 
         Comment commentB = new Comment(commentWriterB, recipe, "헉 이거 뭐야?");
@@ -130,7 +130,7 @@ public class CommentQueryServiceTest {
     @Transactional
     void findCommentsByUserTest() {
         // given
-        EatzUser recipeWriterA = EatzUser.create("heextoryA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriterA = EatzUser.createMember("heextoryA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriterA);
 
         Recipe recipeKimchi = Recipe.of(
@@ -141,7 +141,7 @@ public class CommentQueryServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeKimchi);
 
-        EatzUser recipeWriterB = EatzUser.create("heextoryB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriterB = EatzUser.createMember("heextoryB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriterB);
 
         Recipe recipeGarlic = Recipe.of(
@@ -152,7 +152,7 @@ public class CommentQueryServiceTest {
                 "마늘 듬뿍 볶음밥입니당");
         recipeRepository.save(recipeGarlic);
 
-        EatzUser commentWriter = EatzUser.create("commentWriter", "writer@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser commentWriter = EatzUser.createMember("commentWriter", "writer@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(commentWriter);
         Long commentWriterId = commentWriter.getId();
 

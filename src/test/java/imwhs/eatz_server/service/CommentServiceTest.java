@@ -38,7 +38,7 @@ public class CommentServiceTest {
     @Transactional
     void commentRegisterTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -65,7 +65,7 @@ public class CommentServiceTest {
     @Transactional
     void updateCommentTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -97,7 +97,7 @@ public class CommentServiceTest {
     @Transactional
     void updateCommentByInvalidUserTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Long invalidUserId = 99999L;
@@ -127,7 +127,7 @@ public class CommentServiceTest {
     @Transactional
     void deleteCommentTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -151,7 +151,7 @@ public class CommentServiceTest {
     @Transactional
     void deleteCommentByInvalidUserTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryC", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryC", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
         Long invalidUserId = 99999L;
 
@@ -174,7 +174,7 @@ public class CommentServiceTest {
     @Transactional
     void findCommentByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryAA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryAA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.of(
@@ -204,7 +204,7 @@ public class CommentServiceTest {
     @Transactional
     void findCommentsByUserAndRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryBB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryBB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(user);
 
         Recipe recipe = Recipe.of(

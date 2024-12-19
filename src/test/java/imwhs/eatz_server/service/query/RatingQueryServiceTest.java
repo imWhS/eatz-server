@@ -37,7 +37,7 @@ class RatingQueryServiceTest {
     @Transactional
     void findRatingDetailTest() {
         // given
-        EatzUser recipeWriter = EatzUser.create("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriter = EatzUser.createMember("heextoryAA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriter);
 
         Recipe recipe = Recipe.of(
@@ -48,7 +48,7 @@ class RatingQueryServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
 
-        EatzUser ratingWriter = EatzUser.create("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser ratingWriter = EatzUser.createMember("heextoryBBB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(ratingWriter);
 
         Recipe recipeA = Recipe.of(
@@ -89,7 +89,7 @@ class RatingQueryServiceTest {
     @Transactional
     void findRatingsByRecipeTest() {
         // given
-        EatzUser recipeWriter = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriter = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriter);
 
         Recipe recipe = Recipe.of(
@@ -101,14 +101,14 @@ class RatingQueryServiceTest {
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
-        EatzUser ratingWriterA = EatzUser.create("ratingWriterA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser ratingWriterA = EatzUser.createMember("ratingWriterA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(ratingWriterA);
 
         Rating ratingA = new Rating(ratingWriterA, recipe, 4);
         ratingRepository.save(ratingA);
         RatingByRecipeDto ratingAResponseDto = new RatingByRecipeDto(ratingA);
 
-        EatzUser ratingWriterB = EatzUser.create("ratingWriterB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser ratingWriterB = EatzUser.createMember("ratingWriterB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(ratingWriterB);
 
         Rating ratingB = new Rating(ratingWriterB, recipe, 4);
@@ -129,7 +129,7 @@ class RatingQueryServiceTest {
     @Transactional
     public void findRatingsByUserTest() {
         // given
-        EatzUser recipeWriterA = EatzUser.create("heextoryA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriterA = EatzUser.createMember("heextoryA", "heextoryA@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriterA);
 
         Recipe recipeKimchi = Recipe.of(
@@ -140,7 +140,7 @@ class RatingQueryServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeKimchi);
 
-        EatzUser recipeWriterB = EatzUser.create("heextoryB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriterB = EatzUser.createMember("heextoryB", "heextoryB@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(recipeWriterB);
 
         Recipe recipeGarlic = Recipe.of(
@@ -151,7 +151,7 @@ class RatingQueryServiceTest {
                 "마늘 듬뿍 볶음밥입니당");
         recipeRepository.save(recipeGarlic);
 
-        EatzUser ratingWriter = EatzUser.create("ratingWriter", "writer@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser ratingWriter = EatzUser.createMember("ratingWriter", "writer@icloud.com", "1q2w3e4r!", Role.MEMBER);
         userRepository.save(ratingWriter);
         Long ratingWriterId = ratingWriter.getId();
 
