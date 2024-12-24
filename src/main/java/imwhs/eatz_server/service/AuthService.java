@@ -17,7 +17,6 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-
     /**
      * 회원 권한을 가진 새 사용자를 등록합니다.
      * <ul>
@@ -26,6 +25,7 @@ public class AuthService {
      * </ul>
      * @param dto 사용자 생성 DTO.
      * @return 등록 완료된 사용자 엔티티 EatzUser의 ID.
+     * TODO: UUID
      */
     @Transactional
     public Long signUp(EatzUserCreateDto dto) {

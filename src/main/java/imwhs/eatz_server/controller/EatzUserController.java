@@ -2,10 +2,7 @@ package imwhs.eatz_server.controller;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
+import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.service.AuthService;
 import imwhs.eatz_server.service.EatzUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
@@ -37,16 +34,19 @@ public class EatzUserController {
     // TODO: PATCH, 요청 파라미터를 통해 비밀 번호 등에 대한 부분 업데이트 API 추가
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(
+    public ResponseEntity<?> updateUser(
             @PathVariable Long id,
             @RequestBody @Valid EatzUserUpdateDto dto) {
         userService.updateUser(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자를 업데이트했습니다."));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public void deleteUser(
+            @PathVariable Long id,
+            @RequestBody @Valid EatzUserDeleteDto dto) {
+        userService.deleteUser(id, dto);
     }
 
     @GetMapping
