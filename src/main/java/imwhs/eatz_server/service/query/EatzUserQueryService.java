@@ -30,15 +30,6 @@ public class EatzUserQueryService {
     private final EatzUserQueryRepository userQueryRepository;
 
     /**
-     * 페이지 번호 및 크기 기본 값.
-     * <p>
-     *     컬렉션 조회 결과에 대한 페이징 처리 시 기본으로 설정, 사용되는 값입니다.
-     * </p>
-     */
-    private static final int DEFAULT_CURRENT_PAGE = 0;
-    private static final int DEFAULT_PAGING_SIZE = 10;
-
-    /**
      * 모든 사용자를 조회합니다.
      * <ul>
      *     <li>등록된 모든 사용자의 엔티티를 조회합니다.</li>
@@ -53,7 +44,6 @@ public class EatzUserQueryService {
     /**
      * 모든 사용자와 사용자 별 활동 요약을 함께 조회합니다.
      * <ul>
-     *     <li>등록된 모든 사용자를 활동 요약과 함께 조회합니다.</li>
      *     <li>페이징을 적용할 수 있습니다.</li>
      * </ul>
      */

@@ -1,9 +1,8 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserDeleteDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
-import imwhs.eatz_server.exception.DuplicatedEatzUserException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,9 @@ public class EatzUserService {
     public void updateUser(Long id, EatzUserUpdateDto dto) {
         EatzUser user = userRepository.findById(id).orElseThrow(() ->
                 new EatzUserNotFoundException("ID가 " + id + "인 사용자를 찾을 수 없습니다."));
-        user.update(dto.getUsername(), dto.getEmail(), dto.getPassword());
+        validateExistingPassword(dto.getExistingPassword(), user);
+        String newPassword = passwordEncoder.encode(dto.getNewPassword());
+        user.update(dto.getUsername(), dto.getEmail(), newPassword);
     }
 
     /**
@@ -46,10 +47,17 @@ public class EatzUserService {
      */
     // TODO: 삭제 처리 여부 결정
     @Transactional
-    public void deleteUser(Long id) {
-        if (!userRepository.existsById(id))
-            throw new EatzUserNotFoundException("ID가 " + id + "인 사용자를 찾을 수 없습니다.");
-        else userRepository.deleteById(id);
+    public void deleteUser(Long id, EatzUserDeleteDto dto) {
+        EatzUser user = userRepository.findById(id).orElseThrow(() ->
+                new EatzUserNotFoundException("ID가 " + id + "인 사용자를 찾을 수 없습니다."));
+        validateExistingPassword(dto.getExistingPassword(), user);
+        userRepository.deleteById(id);
+    }
+
+    private void validateExistingPassword(String existingPassword, EatzUser user) {
+        if (!passwordEncoder.matches(existingPassword, user.getPassword())) {
+            throw new IllegalArgumentException("기존 사용 중이던 비밀 번호가 올바르지 않습니다.");
+        }
     }
 
 }
