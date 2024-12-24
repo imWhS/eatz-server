@@ -39,7 +39,7 @@ class RecipeQueryRepositoryTest {
     @Transactional
     void findRecipeDetailById() {
         // given: 사용자 A가 레시피를 등록합니다.
-        EatzUser userA = EatzUser.createMember("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userA = EatzUser.createMember("heextory1", "heextory1@icloud.com", "1q2w3e4r!");
         userRepository.save(userA);
 
         Recipe recipe1 = Recipe.of(userA, "Pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 파스타를 즐겨보세요!");
@@ -47,11 +47,11 @@ class RecipeQueryRepositoryTest {
         Long recipeId = recipe1.getId();
 
         // given: 사용자 B, C, D가 여러 댓글과 평가를 남깁니다.
-        EatzUser userB = EatzUser.createMember("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userB = EatzUser.createMember("heextory2", "heextory2@icloud.com", "1q2w3e4r!");
         userRepository.save(userB);
-        EatzUser userC = EatzUser.createMember("heextory3", "heextory3@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userC = EatzUser.createMember("heextory3", "heextory3@icloud.com", "1q2w3e4r!");
         userRepository.save(userC);
-        EatzUser userD = EatzUser.createMember("heextory4", "heextory4@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userD = EatzUser.createMember("heextory4", "heextory4@icloud.com", "1q2w3e4r!");
         userRepository.save(userD);
 
         // given: 사용자 B가 3개의 댓글과 2개의 평점을 남깁니다.
