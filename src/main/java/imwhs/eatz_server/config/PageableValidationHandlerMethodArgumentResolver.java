@@ -22,7 +22,9 @@ public class PageableValidationHandlerMethodArgumentResolver extends PageableHan
 
     private static final String ERROR_PAGE_SIZE = "페이징 크기는 1부터 " + MAX_PAGE_SIZE + " 사이의 정수여야 합니다.";
 
-    private static final String ERROR_INVALID_FORMAT = "페이지 번호와 페이징 크기는 숫자 형태여야 합니다.";
+    private static final String ERROR_INVALID_FORMAT_PAGE_NUMBER = "페이지 번호는 숫자 형태여야 합니다.";
+
+    private static final String ERROR_INVALID_FORMAT_PAGE_SIZE = "페이징 크기는 숫자 형태여야 합니다.";
 
     @Override
     public Pageable resolveArgument(
@@ -31,8 +33,15 @@ public class PageableValidationHandlerMethodArgumentResolver extends PageableHan
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) {
         // Pageable 생성 전, 유효성을 검증합니다.
-        int page = parseIntOfParameter(webRequest.getParameter("page"), DEFAULT_PAGE, ERROR_INVALID_FORMAT);
-        int size = parseIntOfParameter(webRequest.getParameter("size"), DEFAULT_SIZE, ERROR_INVALID_FORMAT);
+        int page = parseIntFromParameter(
+                webRequest.getParameter("page"),
+                DEFAULT_PAGE,
+                ERROR_INVALID_FORMAT_PAGE_NUMBER);
+
+        int size = parseIntFromParameter(
+                webRequest.getParameter("size"),
+                DEFAULT_SIZE,
+                ERROR_INVALID_FORMAT_PAGE_SIZE);
 
         // 페이징 크기 값의 유효성을 검증합니다.
         if (size < 1 || size > MAX_PAGE_SIZE) {
@@ -48,17 +57,17 @@ public class PageableValidationHandlerMethodArgumentResolver extends PageableHan
     }
 
     /**
-     * 파라미터 값을 정수로 변환합니다. 파라미터가 null이면 기본 값을 반환합니다.
+     * 파라미터 값을 정수로 변환합니다. 파라미터 값이 null이면 기본으로 설정된 값을 반환합니다.
      *
-     * @param parameter 파라미터
-     * @param defaultVal 파라미터가 null일 경우 반환할 기본 값
-     * @param message 변환 실패 시 예외와 함께 전달할 에러 메시지
-     * @return 변환된 값
+     * @param parameter 파라미터 값.
+     * @param defaultValue 파라미터 값이 null일 경우 반환할 기본 값.
+     * @param message 변환 실패 시 예외와 함께 전달할 에러 메시지.
+     * @return 변환된 정수 값.
      */
-    private int parseIntOfParameter(String parameter, int defaultVal, String message) {
+    private int parseIntFromParameter(String parameter, int defaultValue, String message) {
         // 파라미터가 null이면 기본 값을 반환합니다.
         if (parameter == null) {
-            return defaultVal;
+            return defaultValue;
         }
 
         // 파라미터를 정수로 변환 시도합니다.
