@@ -2,6 +2,7 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.exception.DuplicatedEatzUserException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import org.assertj.core.api.Assertions;
@@ -56,7 +57,7 @@ public class AuthServiceTest {
         // when, then
         authService.signUp(user1Dto);
         Assertions.assertThatThrownBy(() -> authService.signUp(user2Dto))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(DuplicatedEatzUserException.class);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class AuthServiceTest {
         // when, then
         authService.signUp(user1Dto);
         Assertions.assertThatThrownBy(() -> authService.signUp(user2Dto))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(DuplicatedEatzUserException.class);
     }
 
 }

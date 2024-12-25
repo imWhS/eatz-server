@@ -69,7 +69,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser).isNotNull();
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(newUsername);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(newEmail);
-        Assertions.assertThat(passwordEncoder.matches(encodedNewPassword, updatedUser.getPassword())).isTrue();
+        Assertions.assertThat(passwordEncoder.matches(newPassword, updatedUser.getPassword())).isTrue();
 
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
@@ -104,7 +104,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser).isNotNull();
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(username);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(newEmail);
-        Assertions.assertThat(passwordEncoder.matches(encodedPassword, updatedUser.getPassword())).isTrue();
+        Assertions.assertThat(passwordEncoder.matches(password, updatedUser.getPassword())).isTrue();
 
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
@@ -128,7 +128,6 @@ public class EatzUserServiceTest {
         Long userId = user.getId();
 
         String newPassword = "21q2w3e4r!";
-        String encodedNewPassword = passwordEncoder.encode(newPassword);
         EatzUserUpdateDto updateDto = new EatzUserUpdateDto(username, email, originalPassword, newPassword);
 
         // when
@@ -140,7 +139,7 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser).isNotNull();
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(username);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(email);
-        Assertions.assertThat(passwordEncoder.matches(encodedNewPassword, updatedUser.getPassword())).isTrue();
+        Assertions.assertThat(passwordEncoder.matches(newPassword, updatedUser.getPassword())).isTrue();
 
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
@@ -173,7 +172,8 @@ public class EatzUserServiceTest {
         Assertions.assertThat(updatedUser).isNotNull();
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(newUsername);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(email);
-        Assertions.assertThat(passwordEncoder.matches(encodedPassword, updatedUser.getPassword())).isTrue();
+        Assertions.assertThat(passwordEncoder.matches(password, updatedUser.getPassword())).isTrue();
+
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
