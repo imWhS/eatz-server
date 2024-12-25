@@ -34,8 +34,9 @@ public class EatzUserService {
         EatzUser user = userRepository.findById(id).orElseThrow(() ->
                 new EatzUserNotFoundException("ID가 " + id + "인 사용자를 찾을 수 없습니다."));
         validateExistingPassword(dto.getExistingPassword(), user);
-        String newPassword = passwordEncoder.encode(dto.getNewPassword());
-        user.update(dto.getUsername(), dto.getEmail(), newPassword);
+
+        String password = dto.getNewPassword() == null ? null : passwordEncoder.encode(dto.getNewPassword());
+        user.update(dto.getUsername(), dto.getEmail(), password);
     }
 
     /**

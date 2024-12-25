@@ -4,6 +4,7 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.dto.PagedApiResponse;
+import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -88,6 +89,8 @@ class EatzUserQueryServiceTest {
                 "1q2w3e4r!");
         userRepository.save(user4);
 
+
+        System.out.println("expected call: findAllUsersWithActivityTest()");
         // when
         Page<EatzUserSummaryDto> usersWithActivities = userQueryService.findAllUsersWithActivity(Pageable.unpaged());
 
@@ -122,8 +125,8 @@ class EatzUserQueryServiceTest {
         // when
         int page = 0;
         int size = 2;
-        Page<EatzUserSummaryDto> foundUsersWithActivities = userQueryService.findAllUsersWithActivity(
-                PageRequest.of(page, size));
+        Page<EatzUserSummaryDto> foundUsersWithActivities = userQueryService
+                .findAllUsersWithActivity(PageRequest.of(page, size));
 
         // then
         Assertions.assertThat(foundUsersWithActivities.getContent().size()).isEqualTo(2);
