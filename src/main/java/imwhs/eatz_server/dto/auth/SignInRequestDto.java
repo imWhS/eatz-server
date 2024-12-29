@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto.eatzuser;
+package imwhs.eatz_server.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,17 +8,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * EatzUserCreateDto 클래스입니다.<br/>
- * 사용자 생성에 필요한 정보를 전달하기 위해 사용합니다.
+ * SignInRequestDto 클래스입니다.<br/>
+ * 로그인에 필요한 정보를 전달하기 위해 사용합니다.
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EatzUserCreateDto {
-
-    @NotBlank(message = "사용자 이름은 필수 항목입니다.")
-    private String username;
+public class SignInRequestDto {
 
     @NotBlank(message = "이메일은 필수 항목입니다.")
     @Email(message = "이메일 주소 형식이 올바르지 않습니다.")
@@ -28,3 +25,4 @@ public class EatzUserCreateDto {
     private String password;
 
 }
+
