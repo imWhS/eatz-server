@@ -1,7 +1,7 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -26,7 +26,7 @@ public class AuthServiceTest {
     @Transactional
     void userRegisterTest() {
         // given
-        EatzUserCreateDto dto = new EatzUserCreateDto(
+        SignUpRequestDto dto = new SignUpRequestDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!");
@@ -51,8 +51,8 @@ public class AuthServiceTest {
         String username = "heextory";
 
         // given
-        EatzUserCreateDto user1Dto = new EatzUserCreateDto(username, "imwhs1@icloud.com", "1q2w3e4r!");
-        EatzUserCreateDto user2Dto = new EatzUserCreateDto(username, "imwhs2@icloud.com", "1q2w3e4r!");
+        SignUpRequestDto user1Dto = new SignUpRequestDto(username, "imwhs1@icloud.com", "1q2w3e4r!");
+        SignUpRequestDto user2Dto = new SignUpRequestDto(username, "imwhs2@icloud.com", "1q2w3e4r!");
 
         // when, then
         authService.signUp(user1Dto);
@@ -66,8 +66,8 @@ public class AuthServiceTest {
     void duplicatedEmailUserRegisterTest() {
         // given
         String email = "imwhs@icloud.com";
-        EatzUserCreateDto user1Dto = new EatzUserCreateDto("hee1xtory", email, "1q2w3e4r!");
-        EatzUserCreateDto user2Dto = new EatzUserCreateDto("hee2xtory", email, "1q2w3e4r!");
+        SignUpRequestDto user1Dto = new SignUpRequestDto("hee1xtory", email, "1q2w3e4r!");
+        SignUpRequestDto user2Dto = new SignUpRequestDto("hee2xtory", email, "1q2w3e4r!");
 
         // when, then
         authService.signUp(user1Dto);

@@ -2,6 +2,7 @@ package imwhs.eatz_server.controller;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
+import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.service.AuthService;
 import imwhs.eatz_server.service.EatzUserService;
@@ -26,7 +27,7 @@ public class EatzUserController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid EatzUserCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid SignUpRequestDto dto) {
         Long userId = authService.signUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
     }
