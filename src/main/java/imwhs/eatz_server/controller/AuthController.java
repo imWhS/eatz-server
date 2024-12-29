@@ -1,9 +1,11 @@
 package imwhs.eatz_server.controller;
 
 import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.auth.SignInRequestDto;
+import imwhs.eatz_server.dto.auth.SignInResponseDto;
+import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.service.AuthService;
-import imwhs.eatz_server.service.EatzUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,13 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v0")
 public class AuthController {
 
-    private final EatzUserService userService;
     private final AuthService authService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid EatzUserCreateDto dto) {
+    @PostMapping("/sign-up")
+    public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid SignUpRequestDto dto) {
         Long userId = authService.signUp(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(userId));
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<ApiResponse<?>> signIn(@RequestBody @Valid SignInRequestDto dto) {
+        SignInResponseDto responseDto = authService.signIn(dto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success(responseDto));
     }
 
 }

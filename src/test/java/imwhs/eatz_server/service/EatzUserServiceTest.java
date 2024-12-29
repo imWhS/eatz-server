@@ -1,8 +1,7 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDeleteDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
@@ -185,7 +184,7 @@ public class EatzUserServiceTest {
     @Transactional
     void invalidUserUpdateTest() {
         // given
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
+        SignUpRequestDto createDto = new SignUpRequestDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!");
@@ -227,7 +226,7 @@ public class EatzUserServiceTest {
     @Transactional
     void invalidUserDeleteTest() {
         // given
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
+        SignUpRequestDto createDto = new SignUpRequestDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!");
