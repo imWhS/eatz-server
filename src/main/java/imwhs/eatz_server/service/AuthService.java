@@ -66,8 +66,6 @@ public class AuthService {
         // 이메일 주소로 유효한 사용자인지 확인합니다.
         EatzUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾을 수 없습니다."));
-
-        String username = user.getUsername();
         Role role = user.getRole();
 
         // 로그인 요청 시 전달한 비밀 번호의 유효성을 검증합니다.
@@ -82,7 +80,7 @@ public class AuthService {
 
     @Transactional
     public void signOut(Long id) {
-        
+
     }
 
 }
