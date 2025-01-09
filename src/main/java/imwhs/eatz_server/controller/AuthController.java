@@ -29,12 +29,12 @@ public class AuthController {
                 .body(ApiResponse.success(userId));
     }
 
-    @PostMapping("/sign-in")
-    public ResponseEntity<ApiResponse<?>> signIn(@RequestBody @Valid SignInRequestDto dto) {
-        SignInResponseDto responseDto = authService.signIn(dto);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.success(responseDto));
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<ApiResponse<?>> signIn(@RequestBody @Valid SignInRequestDto dto) {
+//        SignInResponseDto responseDto = authService.signIn(dto);
+//
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(ApiResponse.success(responseDto));
+//    }
 
 }
