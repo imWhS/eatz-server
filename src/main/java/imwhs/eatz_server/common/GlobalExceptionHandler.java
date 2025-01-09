@@ -2,6 +2,9 @@ package imwhs.eatz_server.common;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
+import imwhs.eatz_server.exception.token.InvalidTokenException;
+import imwhs.eatz_server.exception.token.MissingTokenException;
+import imwhs.eatz_server.exception.token.TokenExpiredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -11,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
-public class GlobalExceptionAdvice {
+public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
@@ -47,6 +50,27 @@ public class GlobalExceptionAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicatedEatzUserException.class)
     public ApiResponse<Object> handleDuplicatedEatzUserException(DuplicatedEatzUserException e) {
+        return ApiResponse.error(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(MissingTokenException.class)
+    public ApiResponse<Object> handleMissingTokenException(MissingTokenException e) {
+        System.out.println("GlobalExceptionHandler.handleMissingTokenException");
+        return ApiResponse.error(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(TokenExpiredException.class)
+    public ApiResponse<Object> handleTokenExpiredException(TokenExpiredException e) {
+        System.out.println("GlobalExceptionHandler.handleTokenExpiredException");
+        return ApiResponse.error(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidTokenException.class)
+    public ApiResponse<Object> handleInvalidTokenException(InvalidTokenException e) {
+        System.out.println("GlobalExceptionHandler.handleInvalidTokenException");
         return ApiResponse.error(e.getMessage());
     }
 

@@ -1,41 +1,69 @@
 package imwhs.eatz_server.config;
 
-import imwhs.eatz_server.auth.JwtAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import imwhs.eatz_server.auth.JsonAuthenticationFilter;
+import imwhs.eatz_server.auth.TokenFilter;
+import imwhs.eatz_server.auth.TokenManager;
+import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.service.EatzUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@EnableMethodSecurity(securedEnabled = true)
+@EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     private final String[] publicUrls = {
             "/",
-            "/login",
-            "/register",
             "/api/v0/sign-up",
-            "/api/v0/sign-in",
+            "/login",
     };
+
+    private final AuthenticationConfiguration authenticationConfiguration;
+
+    private final ObjectMapper objectMapper;
+
+    private final TokenManager tokenManager;
+
+    private final EatzUserDetailsService userDetailsService;
+
+    @Bean
+    protected AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicUrls).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
+                        .requestMatchers("/admin").hasRole(Role.ADMIN.name())
+                        .anyRequest().authenticated())
+                .addFilterBefore(new TokenFilter(tokenManager, userDetailsService), JsonAuthenticationFilter.class)
+                .addFilterAt(
+                        new JsonAuthenticationFilter(
+                                objectMapper,
+                                tokenManager,
+                                authenticationManager(authenticationConfiguration)
+                        ),
+                        UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         ;
 
         return http.build();

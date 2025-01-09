@@ -1,13 +1,8 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.auth.SignInRequestDto;
-import imwhs.eatz_server.dto.auth.SignInResponseDto;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
-import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +17,7 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final TokenManager tokenManager;
+//    private final TokenManager tokenManager;
 
     /**
      * 회원 권한을 가진 새 사용자를 등록합니다.
@@ -53,30 +48,32 @@ public class AuthService {
         return member.getId();
     }
 
-    /**
-     * 사용자를 로그인 처리합니다.
-     * @param dto 로그인 요청 DTO.
-     * @return 사용자의 로그인 정보를 담은 DTO.
-     * TODO: UUID
-     */
-    @Transactional
-    public SignInResponseDto signIn(SignInRequestDto dto) {
-        String email = dto.getEmail();
-
-        // 이메일 주소로 유효한 사용자인지 확인합니다.
-        EatzUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾을 수 없습니다."));
-        Role role = user.getRole();
-
-        // 로그인 요청 시 전달한 비밀 번호의 유효성을 검증합니다.
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀 번호가 올바르지 않습니다. 로그인 정보를 확인해주세요.");
-        }
-
-        String token = tokenManager.createToken(email, role);
-
-        return new SignInResponseDto(email, role.name(), token);
-    }
+//    /**
+//     * 사용자를 로그인 처리합니다.
+//     * @param dto 로그인 요청 DTO.
+//     * @return 사용자의 로그인 정보를 담은 DTO.
+//     * TODO: UUID
+//     */
+//    @Transactional
+//    public SignInResponseDto signIn(SignInRequestDto dto) {
+//        String email = dto.getEmail();
+//
+//        // 이메일 주소로 유효한 사용자인지 확인합니다.
+//        EatzUser user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾을 수 없습니다."));
+//        Role role = user.getRole();
+//
+//        // 로그인 요청 시 전달한 비밀 번호의 유효성을 검증합니다.
+//        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+//            throw new IllegalArgumentException("비밀 번호가 올바르지 않습니다. 로그인 정보를 확인해주세요.");
+//        }
+//
+//        return null;
+//
+////        String token = tokenManager.createToken(email, role);
+////
+////        return new SignInResponseDto(email, role.name(), token);
+//    }
 
     @Transactional
     public void signOut(Long id) {
