@@ -86,6 +86,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         response.addCookie(refreshTokenCookie);
 
         response.setStatus(HttpStatus.OK.value());
+        System.out.println("accessToken = " + accessToken);
         System.out.println("JsonAuthenticationFilter.successfulAuthentication");
     }
 
