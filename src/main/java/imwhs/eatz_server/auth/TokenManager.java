@@ -31,7 +31,6 @@ public class TokenManager {
     }
 
     public Boolean isExpired(String token) {
-        System.out.println("TokenManager.isExpired");
         return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload()
                 .getExpiration().before(new Date());
     }
