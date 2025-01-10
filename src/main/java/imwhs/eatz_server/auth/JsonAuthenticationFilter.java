@@ -31,6 +31,8 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
     private final TokenManager tokenManager;
 
+    private final JwtProperties jwtProperties;
+
     // SRP를 준수하기 위해 SecurityConfig에서 스프링 빈으로 등록한 AuthenticationManager를 생성자로 주입 받습니다.
     private final AuthenticationManager authenticationManager;
 
@@ -42,6 +44,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("JsonAuthenticationFilter.attemptAuthentication: ㅎㅇㅎㅇ!!");
         try {
             // HTTP 요청에서 로그인 정보를 추출합니다.
             LoginRequest loginRequest = parseLoginRequest(request);
@@ -66,6 +69,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+        System.out.println("JsonAuthenticationFilter.successfulAuthentication");
         EatzUserDetails eatzUserDetails = (EatzUserDetails) authentication.getPrincipal();
         String email = eatzUserDetails.getUsername();
 
@@ -82,12 +86,10 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
         Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 유효 기간: 7일
+        refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
         response.addCookie(refreshTokenCookie);
 
         response.setStatus(HttpStatus.OK.value());
-        System.out.println("accessToken = " + accessToken);
-        System.out.println("JsonAuthenticationFilter.successfulAuthentication");
     }
 
      /**
@@ -99,6 +101,10 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         System.out.println("JsonAuthenticationFilter.unsuccessfulAuthentication");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        ApiResponse<Map<String, String>> responseBody = ApiResponse.error(failed.getMessage());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(responseBody));
     }
 
     /**
