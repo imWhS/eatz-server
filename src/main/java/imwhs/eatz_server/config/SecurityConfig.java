@@ -2,7 +2,8 @@ package imwhs.eatz_server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.auth.JsonAuthenticationFilter;
-import imwhs.eatz_server.auth.TokenFilter;
+import imwhs.eatz_server.auth.JwtProperties;
+import imwhs.eatz_server.auth.AccessTokenFilter;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.service.EatzUserDetailsService;
@@ -26,8 +27,10 @@ public class SecurityConfig {
 
     private final String[] publicUrls = {
             "/",
-            "/api/v0/sign-up",
+            "/auth",
             "/login",
+            "/auth/sign-up",
+            "/auth/refresh"
     };
 
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -35,6 +38,8 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
 
     private final TokenManager tokenManager;
+
+    private final JwtProperties jwtProperties;
 
     private final EatzUserDetailsService userDetailsService;
 
@@ -54,11 +59,12 @@ public class SecurityConfig {
                         .requestMatchers(publicUrls).permitAll()
                         .requestMatchers("/admin").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated())
-                .addFilterBefore(new TokenFilter(tokenManager, userDetailsService), JsonAuthenticationFilter.class)
+                .addFilterBefore(new AccessTokenFilter(tokenManager, userDetailsService), JsonAuthenticationFilter.class)
                 .addFilterAt(
                         new JsonAuthenticationFilter(
                                 objectMapper,
                                 tokenManager,
+                                jwtProperties,
                                 authenticationManager(authenticationConfiguration)
                         ),
                         UsernamePasswordAuthenticationFilter.class)
