@@ -49,7 +49,7 @@ public class TokenManager {
                 .claim("type", "access")
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpirationTime()))
+                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessExpirationTime()))
                 .signWith(getSecretKey())
                 .compact();
     }
@@ -63,7 +63,7 @@ public class TokenManager {
                 .claim("type", "refresh")
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpirationTime()))
+                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshExpirationTime()))
                 .signWith(getSecretKey())
                 .compact();
     }
