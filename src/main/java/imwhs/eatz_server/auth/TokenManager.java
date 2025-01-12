@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -38,6 +40,12 @@ public class TokenManager {
     public String getType(String token) {
         return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload()
                 .get("type", String.class);
+    }
+
+    public LocalDateTime getExpiration(String token) {
+        Date expiration = Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload()
+                .getExpiration();
+        return expiration.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     /**
