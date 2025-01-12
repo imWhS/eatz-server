@@ -48,7 +48,6 @@ public class EatzUserQueryService {
      * </ul>
      */
     public Page<EatzUserSummaryDto> findAllUsersWithActivity(Pageable pageable) {
-        System.out.println("called findAllUsersWithActivity");
         return userQueryRepository.findAllWithActivity(pageable);
     }
 

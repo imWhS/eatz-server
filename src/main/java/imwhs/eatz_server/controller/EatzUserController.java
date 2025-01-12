@@ -24,6 +24,7 @@ public class EatzUserController {
     private final EatzUserService userService;
 
     private final EatzUserQueryService userQueryService;
+    
     private final AuthService authService;
 
     @PostMapping
