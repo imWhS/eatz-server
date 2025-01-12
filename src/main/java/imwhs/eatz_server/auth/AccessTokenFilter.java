@@ -38,13 +38,10 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
-        System.out.println("ㅎㅇㅎㅇ 나 토큰 필터임!");
-
         // HTTP 요청에 JWT 형식의 액세스 토큰을 담은 Authorization 헤더가 존재하는지 확인합니다.
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             // 액세스 토큰 값을 가진 헤더가 없거나, 올바른 JWT 형식의 토큰이 아닌 경우
             // 요청을 필터 체인에 넘기고 필터 실행을 종료합니다.
-            System.out.println("액세스 토큰이 없어용,,");
             filterChain.doFilter(request, response);
             return;
         }
@@ -76,7 +73,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             // 요청을 필터 체인에 넘깁니다.
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException e) {
-            System.out.println("사용자 없는디요,,");
             // 유효한 액세스 토큰이지만, 액세스 토큰을 발급한 사용자 정보가 존재하지 않는 경우 더 이상 요청을 필터 체인에 넘기지 않습니다.
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ApiResponse<Map<String, String>> responseBody = ApiResponse.error("액세스 토큰을 발급한 사용자 정보가 존재하지 않습니다.");
@@ -85,19 +81,18 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             response.getWriter().write(objectMapper.writeValueAsString(responseBody));
         } catch (AuthenticationException e) {
             // 유효하지 않은 액세스 토큰인 경우 더 이상 요청을 필터 체인에 넘기지 않습니다.
-            System.out.println("유효하지 않은 토큰인디요,,,");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ApiResponse<Map<String, String>> responseBody = ApiResponse.error(e.getMessage());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(responseBody));
         } catch (JwtException e) {
-            System.out.println("whw 같은 토큰을 보냈소? ");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ApiResponse<Map<String, String>> responseBody = ApiResponse.error(e.getMessage());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(responseBody));
+            throw e;
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             ApiResponse<Map<String, String>> responseBody = ApiResponse.error(e.getMessage());

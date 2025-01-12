@@ -89,8 +89,6 @@ class EatzUserQueryServiceTest {
                 "1q2w3e4r!");
         userRepository.save(user4);
 
-
-        System.out.println("expected call: findAllUsersWithActivityTest()");
         // when
         Page<EatzUserSummaryDto> usersWithActivities = userQueryService.findAllUsersWithActivity(Pageable.unpaged());
 

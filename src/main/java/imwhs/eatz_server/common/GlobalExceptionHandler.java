@@ -56,21 +56,18 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(MissingTokenException.class)
     public ApiResponse<Object> handleMissingTokenException(MissingTokenException e) {
-        System.out.println("GlobalExceptionHandler.handleMissingTokenException");
         return ApiResponse.error(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(TokenExpiredException.class)
     public ApiResponse<Object> handleTokenExpiredException(TokenExpiredException e) {
-        System.out.println("GlobalExceptionHandler.handleTokenExpiredException");
         return ApiResponse.error(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
     public ApiResponse<Object> handleInvalidTokenException(InvalidTokenException e) {
-        System.out.println("GlobalExceptionHandler.handleInvalidTokenException");
         return ApiResponse.error(e.getMessage());
     }
 

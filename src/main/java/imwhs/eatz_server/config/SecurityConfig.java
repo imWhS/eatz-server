@@ -1,10 +1,7 @@
 package imwhs.eatz_server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import imwhs.eatz_server.auth.JsonAuthenticationFilter;
-import imwhs.eatz_server.auth.JwtProperties;
-import imwhs.eatz_server.auth.AccessTokenFilter;
-import imwhs.eatz_server.auth.TokenManager;
+import imwhs.eatz_server.auth.*;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.service.EatzUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] publicUrls = {
-            "/",
-            "/auth",
-            "/login",
-            "/auth/sign-up",
-            "/auth/refresh"
-    };
-
     private final AuthenticationConfiguration authenticationConfiguration;
 
     private final ObjectMapper objectMapper;
@@ -43,6 +32,14 @@ public class SecurityConfig {
 
     private final EatzUserDetailsService userDetailsService;
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    private final String[] publicUrls = {
+            "/",
+            "/auth/public/**",
+            "/login"
+    };
+
     @Bean
     protected AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -51,6 +48,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        JsonAuthenticationFilter jsonAuthenticationfilter = new JsonAuthenticationFilter(
+                objectMapper,
+                tokenManager,
+                jwtProperties,
+                authenticationManager(authenticationConfiguration)
+        );
+
         http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
@@ -61,13 +65,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(new AccessTokenFilter(tokenManager, userDetailsService), JsonAuthenticationFilter.class)
                 .addFilterAt(
-                        new JsonAuthenticationFilter(
-                                objectMapper,
-                                tokenManager,
-                                jwtProperties,
-                                authenticationManager(authenticationConfiguration)
-                        ),
+                        jsonAuthenticationfilter,
                         UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         ;
