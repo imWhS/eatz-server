@@ -1,8 +1,11 @@
 package imwhs.eatz_server.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import imwhs.eatz_server.domain.RefreshToken;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDetails;
+import imwhs.eatz_server.exception.token.InvalidTokenException;
+import imwhs.eatz_server.repository.RefreshTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -19,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +39,8 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
     // SRP를 준수하기 위해 SecurityConfig에서 스프링 빈으로 등록한 AuthenticationManager를 생성자로 주입 받습니다.
     private final AuthenticationManager authenticationManager;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * HTTP 요청에서 로그인 정보를 추출한 후, 인증을 시도합니다.
@@ -76,15 +82,21 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         GrantedAuthority authority = iterator.next();
         String role = authority.getAuthority();
 
-        // HTTP 응답 헤더를 통해 토큰을 발급합니다.
+        // HTTP 응답 헤더를 통해 액세스 토큰을 발급합니다.
         String accessToken = tokenManager.createAccessToken(email, role);
         response.setHeader("Authorization", "Bearer " + accessToken);
 
+        // HTTP Only 쿠키를 통해 리프레시 토큰을 발급합니다.
         String refreshToken = tokenManager.createRefreshToken(email, role);
         Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
         response.addCookie(refreshTokenCookie);
+
+        // 클라이언트에 발급한 리프레시 토큰을 저장합니다.
+        LocalDateTime expiration = tokenManager.getExpiration(refreshToken);
+        RefreshToken refreshTokenEntity = new RefreshToken(email, expiration, refreshToken);
+        refreshTokenRepository.save(refreshTokenEntity);
 
         response.setStatus(HttpStatus.OK.value());
     }
