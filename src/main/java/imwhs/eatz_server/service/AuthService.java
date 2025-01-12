@@ -1,13 +1,20 @@
 package imwhs.eatz_server.service;
 
+import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.RefreshToken;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
+import imwhs.eatz_server.exception.token.InvalidTokenException;
+import imwhs.eatz_server.repository.RefreshTokenRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -17,7 +24,9 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-//    private final TokenManager tokenManager;
+    private final TokenManager tokenManager;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 회원 권한을 가진 새 사용자를 등록합니다.
@@ -48,32 +57,37 @@ public class AuthService {
         return member.getId();
     }
 
-//    /**
-//     * 사용자를 로그인 처리합니다.
-//     * @param dto 로그인 요청 DTO.
-//     * @return 사용자의 로그인 정보를 담은 DTO.
-//     * TODO: UUID
-//     */
-//    @Transactional
-//    public SignInResponseDto signIn(SignInRequestDto dto) {
-//        String email = dto.getEmail();
-//
-//        // 이메일 주소로 유효한 사용자인지 확인합니다.
-//        EatzUser user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾을 수 없습니다."));
-//        Role role = user.getRole();
-//
-//        // 로그인 요청 시 전달한 비밀 번호의 유효성을 검증합니다.
-//        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-//            throw new IllegalArgumentException("비밀 번호가 올바르지 않습니다. 로그인 정보를 확인해주세요.");
-//        }
-//
-//        return null;
-//
-////        String token = tokenManager.createToken(email, role);
-////
-////        return new SignInResponseDto(email, role.name(), token);
-//    }
+    public String reissueAccessToken(String refreshToken, String email, String password) {
+        String type = tokenManager.getType(refreshToken);
+
+        if (!Objects.equals(type, "refresh")) {
+            throw new InvalidTokenException("토큰의 종류가 리프레시 토큰이 아닙니다.");
+        }
+
+        return tokenManager.createAccessToken(email, password);
+    }
+
+    @Transactional
+    public String reissueRefreshToken(String refreshToken, String email, String role) {
+        deleteExistingRefreshToken(refreshToken);
+
+        String newRefreshToken = tokenManager.createRefreshToken(email, role);
+        LocalDateTime expiration = tokenManager.getExpiration(newRefreshToken);
+        RefreshToken refreshTokenEntity = new RefreshToken(email, expiration, refreshToken);
+        refreshTokenRepository.save(refreshTokenEntity);
+        return newRefreshToken;
+    }
+
+    private void deleteExistingRefreshToken(String refreshToken) {
+        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+
+        if (!isExist) {
+            throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+    }
+
 
     @Transactional
     public void signOut(Long id) {

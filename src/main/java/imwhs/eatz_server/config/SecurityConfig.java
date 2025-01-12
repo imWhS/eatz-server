@@ -3,6 +3,7 @@ package imwhs.eatz_server.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.auth.*;
 import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.repository.RefreshTokenRepository;
 import imwhs.eatz_server.service.EatzUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -33,6 +35,8 @@ public class SecurityConfig {
     private final EatzUserDetailsService userDetailsService;
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final String[] publicUrls = {
             "/",
@@ -52,8 +56,11 @@ public class SecurityConfig {
                 objectMapper,
                 tokenManager,
                 jwtProperties,
-                authenticationManager(authenticationConfiguration)
+                authenticationManager(authenticationConfiguration),
+                refreshTokenRepository
         );
+
+        JwtLogoutFilter jwtLogoutFilter = new JwtLogoutFilter(tokenManager, objectMapper, refreshTokenRepository);
 
         http
                 .csrf(csrf -> csrf.disable())
@@ -67,6 +74,7 @@ public class SecurityConfig {
                 .addFilterAt(
                         jsonAuthenticationfilter,
                         UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtLogoutFilter, LogoutFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session
