@@ -44,7 +44,6 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("JsonAuthenticationFilter.attemptAuthentication: ㅎㅇㅎㅇ!!");
         try {
             // HTTP 요청에서 로그인 정보를 추출합니다.
             LoginRequest loginRequest = parseLoginRequest(request);
@@ -69,7 +68,6 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        System.out.println("JsonAuthenticationFilter.successfulAuthentication");
         EatzUserDetails eatzUserDetails = (EatzUserDetails) authentication.getPrincipal();
         String email = eatzUserDetails.getUsername();
 
@@ -80,10 +78,9 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
         // HTTP 응답 헤더를 통해 토큰을 발급합니다.
         String accessToken = tokenManager.createAccessToken(email, role);
-        String refreshToken = tokenManager.createRefreshToken(email, role);
-
         response.setHeader("Authorization", "Bearer " + accessToken);
 
+        String refreshToken = tokenManager.createRefreshToken(email, role);
         Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
@@ -99,7 +96,6 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
      */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        System.out.println("JsonAuthenticationFilter.unsuccessfulAuthentication");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ApiResponse<Map<String, String>> responseBody = ApiResponse.error(failed.getMessage());
         response.setContentType("application/json");

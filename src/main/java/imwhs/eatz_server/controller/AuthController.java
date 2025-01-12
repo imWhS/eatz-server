@@ -1,14 +1,12 @@
 package imwhs.eatz_server.controller;
 
+import imwhs.eatz_server.auth.JwtProperties;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.dto.auth.SignInRequestDto;
-import imwhs.eatz_server.dto.auth.SignInResponseDto;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.exception.token.InvalidTokenException;
-import imwhs.eatz_server.exception.token.MissingTokenException;
-import imwhs.eatz_server.exception.token.TokenExpiredException;
 import imwhs.eatz_server.service.AuthService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 @RestController
@@ -31,43 +28,36 @@ public class AuthController {
 
     private final TokenManager tokenManager;
 
-    @PostMapping("/sign-up")
+    private final JwtProperties jwtProperties;
+
+    @PostMapping("/public/sign-up")
     public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid SignUpRequestDto dto) {
         Long userId = authService.signUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(userId));
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<?>> reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
-
+    @PostMapping("/public/reissue")
+    public ResponseEntity<ApiResponse<?>> reauthorization(HttpServletRequest request, HttpServletResponse response) {
         try {
+            // TODO: 이전 리프레시 토큰 블랙리스트로 관리
             String refreshToken = getRefreshToken(request);
-
-            String type = tokenManager.getType(refreshToken);
             String username = tokenManager.getUsername(refreshToken);
             String role = tokenManager.getRole(refreshToken);
 
-            if (!Objects.equals(type, "refresh")) {
-                throw new InvalidTokenException("리프레시 토큰이 존재하지 않습니다.");
-            }
+            reissueAccessToken(response, refreshToken, username, role);
+            reissueRefreshToken(response, username, role);
 
-            if (tokenManager.isExpired(refreshToken)) {
-                throw new TokenExpiredException("리프레시 토큰이 만료되었습니다.");
-            }
-
-            String accessToken = tokenManager.createAccessToken(username, role);
-            response.setHeader("Authorization", "Bearer " + accessToken);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error(e.getMessage()));
-        } catch (TokenExpiredException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(e.getMessage()));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error(e.getMessage()));
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("리프레시 토큰이 만료됐습니다."));
         }
     }
 
@@ -85,6 +75,25 @@ public class AuthController {
         }
 
         throw new InvalidTokenException("리프레시 토큰이 존재하지 않습니다.");
+    }
+
+    private void reissueAccessToken(HttpServletResponse response, String refreshToken, String username, String role) {
+        String type = tokenManager.getType(refreshToken);
+
+        if (!Objects.equals(type, "refresh")) {
+            throw new InvalidTokenException("토큰의 종류가 리프레시 토큰이 아닙니다.");
+        }
+
+        String accessToken = tokenManager.createAccessToken(username, role);
+        response.setHeader("Authorization", "Bearer " + accessToken);
+    }
+
+    private void reissueRefreshToken(HttpServletResponse response, String username, String role) {
+        String newRefreshToken = tokenManager.createRefreshToken(username, role);
+        Cookie refreshTokenCookie = new Cookie("RefreshToken", newRefreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
+        response.addCookie(refreshTokenCookie);
     }
 
 }

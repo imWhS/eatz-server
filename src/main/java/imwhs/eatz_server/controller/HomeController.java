@@ -12,10 +12,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(@AuthenticationPrincipal EatzUserDetails userDetails) {
-        System.out.println("userDetails.getUsername() = " + userDetails.getUsername());
-        System.out.println("userDetails.getEmail() = " + userDetails.getEmail());
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        System.out.println("userDetails.getAuthorities() = " + authorities);
 
         return "Eatz RESTful API 서버입니다.";
     }
