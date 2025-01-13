@@ -17,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -60,8 +59,6 @@ public class SecurityConfig {
                 refreshTokenRepository
         );
 
-        JwtLogoutFilter jwtLogoutFilter = new JwtLogoutFilter(tokenManager, objectMapper, refreshTokenRepository);
-
         http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
@@ -70,11 +67,13 @@ public class SecurityConfig {
                         .requestMatchers(publicUrls).permitAll()
                         .requestMatchers("/admin").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated())
-                .addFilterBefore(new AccessTokenFilter(tokenManager, userDetailsService), JsonAuthenticationFilter.class)
+                .logout(logout -> logout.disable())
+                .addFilterBefore(
+                        new AccessTokenFilter(tokenManager, userDetailsService),
+                        JsonAuthenticationFilter.class)
                 .addFilterAt(
                         jsonAuthenticationfilter,
                         UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtLogoutFilter, LogoutFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session

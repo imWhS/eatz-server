@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.exception.token.InvalidTokenException;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
+import imwhs.eatz_server.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -13,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -23,13 +24,12 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class JwtLogoutFilter extends GenericFilterBean {
 
-    private final TokenManager tokenManager;
-
     private final ObjectMapper objectMapper;
 
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
+    @Transactional
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         doFilter((HttpServletRequest) request, (HttpServletResponse) response, filterChain);
     }
@@ -37,19 +37,20 @@ public class JwtLogoutFilter extends GenericFilterBean {
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        if (!requestURI.matches("\\/logout$") || !method.equals("POST")) {
+
+        if (!(requestURI.matches("/logout$") && method.equals("POST"))) {
+            // 로그아웃 요청이 아닌 경우, 필터 체인을 실행합니다.
             filterChain.doFilter(request, response);
+            return;
         }
 
         try {
             String refreshToken = getRefreshToken(request);
-            Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+            Boolean isExist = refreshTokenRepository.existsByToken(refreshToken);
 
-            if (isExist) {
+            if (!isExist) {
                 throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
             }
-
-            refreshTokenRepository.deleteByRefreshToken(refreshToken);
 
             Cookie cookie = new Cookie("refresh", null);
             cookie.setMaxAge(0);
@@ -62,9 +63,6 @@ public class JwtLogoutFilter extends GenericFilterBean {
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(responseBody));
         }
-
-
-
     }
 
     private String getRefreshToken(HttpServletRequest request) {
