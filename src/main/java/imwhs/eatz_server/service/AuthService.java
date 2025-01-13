@@ -61,7 +61,7 @@ public class AuthService {
         String type = tokenManager.getType(refreshToken);
 
         if (!Objects.equals(type, "refresh")) {
-            throw new InvalidTokenException("토큰의 종류가 리프레시 토큰이 아닙니다.");
+            throw new InvalidTokenException("리프레시 토큰이 없습니다.");
         }
 
         return tokenManager.createAccessToken(email, password);
@@ -69,7 +69,7 @@ public class AuthService {
 
     @Transactional
     public String reissueRefreshToken(String refreshToken, String email, String role) {
-        deleteExistingRefreshToken(refreshToken);
+        deleteRefreshToken(refreshToken);
 
         String newRefreshToken = tokenManager.createRefreshToken(email, role);
         LocalDateTime expiration = tokenManager.getExpiration(newRefreshToken);
@@ -78,16 +78,20 @@ public class AuthService {
         return newRefreshToken;
     }
 
-    private void deleteExistingRefreshToken(String refreshToken) {
-        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+    @Transactional
+    public void logout(String refreshToken) {
+        deleteRefreshToken(refreshToken);
+    }
+
+    private void deleteRefreshToken(String refreshToken) {
+        Boolean isExist = refreshTokenRepository.existsByToken(refreshToken);
 
         if (!isExist) {
             throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
         }
 
-        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+        refreshTokenRepository.deleteByToken(refreshToken);
     }
-
 
     @Transactional
     public void signOut(Long id) {

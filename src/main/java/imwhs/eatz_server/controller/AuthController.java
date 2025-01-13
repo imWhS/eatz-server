@@ -30,7 +30,6 @@ public class AuthController {
     private final TokenManager tokenManager;
 
     private final JwtProperties jwtProperties;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/public/sign-up")
     public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid SignUpRequestDto dto) {
@@ -65,7 +64,13 @@ public class AuthController {
         }
     }
 
-
+    @PostMapping("/public/logout")
+    public ResponseEntity<ApiResponse<?>> logout(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = getRefreshToken(request);
+        authService.logout(refreshToken);
+        addRefreshTokenToCookie(response, null);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
     private String getRefreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -85,9 +90,15 @@ public class AuthController {
 
     private void addRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
         Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
+
+        if (refreshToken != null) {
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setSecure(true);
+            refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
+        } else {
+            refreshTokenCookie.setMaxAge(0);
+        }
+
         response.addCookie(refreshTokenCookie);
     }
 
