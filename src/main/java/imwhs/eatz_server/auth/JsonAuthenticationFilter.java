@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.domain.RefreshToken;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDetails;
-import imwhs.eatz_server.exception.token.InvalidTokenException;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
