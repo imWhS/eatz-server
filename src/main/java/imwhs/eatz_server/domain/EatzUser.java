@@ -92,26 +92,26 @@ public class EatzUser extends BaseEntity {
 
     protected EatzUser() {}
 
+    public EatzUser(String username, String email, String password, Role role) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role == null ? Role.MEMBER : role;
+    }
+
     /**
-     * EatzUser 객체를 생성합니다.
+     * 회원 권한을 가지는 EatzUser 객체를 생성합니다.
      * @param username 사용자 이름.
      * @param email 이메일 주소.
      * @param password 비밀 번호.
-     * @param role 역할. 기본 값은 Role.MEMBER 입니다.
      * @return 생성된 EatzUser 객체.
      * </p>
      */
-    public static EatzUser create(
+    public static EatzUser createMember(
             String username,
             String email,
-            String password, // TODO: 암호화된 password 설정 메서드 별도로 분리
-            Role role) {
-        EatzUser user = new EatzUser();
-        user.username = username;
-        user.email = email;
-        user.password = password;
-        user.role = role == null ? Role.MEMBER : role;
-        return user;
+            String password) { // TODO: 암호화된 password 설정 메서드 별도로 분리
+        return new EatzUser(username, email, password, Role.MEMBER);
     }
 
     /**
@@ -129,16 +129,5 @@ public class EatzUser extends BaseEntity {
         if (email != null && !email.isEmpty()) this.email = email;
         if (password != null && !password.isEmpty()) this.password = password;
     }
-
-//    /**
-//     * 사용자의 플래너를 가져옵니다.<br/>
-//     * 플래너가 생성되어 있지 않은 경우
-//     * @return 플래너.
-//     */
-//    // TODO: PlannerService, EatzUser 중 어디에 플래너 엔티티 생성 역할을 부여해여 할지 결정
-//    public Planner getPlanner() {
-//        if (this.planner != null) return this.planner;
-//        return null;
-//    }
 
 }

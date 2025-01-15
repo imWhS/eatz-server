@@ -9,12 +9,12 @@ package imwhs.eatz_server.domain;
 public enum Role {
 
     /**
-     * 회원 역할
+     * 회원 권한
      */
     MEMBER,
 
     /**
-     * 관리자 역할
+     * 관리자 권한
      */
     ADMIN
 

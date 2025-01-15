@@ -1,8 +1,8 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.eatzuser.EatzUserCreateDto;
+import imwhs.eatz_server.dto.auth.SignUpRequestDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserDeleteDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -30,88 +31,45 @@ public class EatzUserServiceTest {
     @Autowired
     private EatzUserQueryService userQueryService;
 
-    @Test
-    @DisplayName("새 사용자가 정상적으로 등록되는지 테스트합니다.")
-    @Transactional
-    void userRegisterTest() {
-        // given
-        EatzUserCreateDto dto = new EatzUserCreateDto(
-                "heextory",
-                "imwhs@icloud.com",
-                "1q2w3e4r!");
-
-        Long userId = userService.registerUser(dto);
-
-        // when
-        EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
-
-        // then
-        Assertions.assertThat(user).isNotNull();
-        Assertions.assertThat(user.getUsername()).isEqualTo("heextory");
-        Assertions.assertThat(user.getEmail()).isEqualTo("imwhs@icloud.com");
-        Assertions.assertThat(user.getCreatedAt()).isNotNull();
-        Assertions.assertThat(user.getUpdatedAt()).isEqualTo(user.getCreatedAt());
-        Assertions.assertThat(user.getDeletedAt()).isNull();
-    }
-
-    @Test
-    @DisplayName("중복된 사용자 이름으로 새 사용자를 등록하려고 할 때 등록이 실패하는지 테스트합니다.")
-    @Transactional
-    void duplicatedNameUserRegisterTest() {
-        String username = "heextory";
-
-        // given
-        EatzUserCreateDto user1Dto = new EatzUserCreateDto(username, "imwhs1@icloud.com", "1q2w3e4r!");
-        EatzUserCreateDto user2Dto = new EatzUserCreateDto(username, "imwhs2@icloud.com", "1q2w3e4r!");
-
-        // when, then
-        userService.registerUser(user1Dto);
-        Assertions.assertThatThrownBy(() -> userService.registerUser(user2Dto))
-                .isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
-    @DisplayName("중복된 이메일로 새 사용자를 등록하려고 할 때 등록이 실패하는지 테스트합니다.")
-    @Transactional
-    void duplicatedEmailUserRegisterTest() {
-        // given
-        String email = "imwhs@icloud.com";
-        EatzUserCreateDto user1Dto = new EatzUserCreateDto("hee1xtory", email, "1q2w3e4r!");
-        EatzUserCreateDto user2Dto = new EatzUserCreateDto("hee2xtory", email, "1q2w3e4r!");
-
-        // when, then
-        userService.registerUser(user1Dto);
-        Assertions.assertThatThrownBy(() -> userService.registerUser(user2Dto))
-                .isInstanceOf(IllegalStateException.class);
-    }
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("사용자의 정보가 정상적으로 수정되는지 테스트합니다.")
     @Transactional
     void userUpdateTest() {
         // given
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
+        String originalPassword = "1q2w3e4r!";
+        EatzUser user = EatzUser.createMember(
                 "heextory",
                 "imwhs@icloud.com",
-                "1q2w3e4r!");
-        Long userId = userService.registerUser(createDto);
-        EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
+                passwordEncoder.encode(originalPassword));
+        userRepository.save(user);
+        Long userId = user.getId();
 
-        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
-        updateDto.setUsername("2heextory");
-        updateDto.setEmail("2imwhs@icloud.com");
-        updateDto.setPassword("21q2w3e4r!");
+        String newPassword = "21q2w3e4r!";
+        String newUsername = "2heextory";
+        String newEmail = "2imwhs@icloud.com";
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto(
+                newUsername,
+                newEmail,
+                originalPassword,
+                newPassword);
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
 
         // when
-        userService.updateUser(user.getId(), updateDto);
+        userService.updateUser(userId, updateDto);
         userRepository.flush();
-        EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
         // then
+        EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
         Assertions.assertThat(updatedUser).isNotNull();
-        Assertions.assertThat(updatedUser.getUsername()).isEqualTo("2heextory");
-        Assertions.assertThat(updatedUser.getEmail()).isEqualTo("2imwhs@icloud.com");
-        Assertions.assertThat(updatedUser.getPassword()).isEqualTo("21q2w3e4r!");
+        Assertions.assertThat(updatedUser.getUsername()).isEqualTo(newUsername);
+        Assertions.assertThat(updatedUser.getEmail()).isEqualTo(newEmail);
+        Assertions.assertThat(passwordEncoder.matches(newPassword, updatedUser.getPassword())).isTrue();
+
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
@@ -125,27 +83,28 @@ public class EatzUserServiceTest {
         // given
         String username = "heextory";
         String password = "1q2w3e4r!";
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
+        String encodedPassword = passwordEncoder.encode(password);
+        EatzUser user = EatzUser.createMember(
                 username,
                 "imwhs@icloud.com",
-                password);
-        Long userId = userService.registerUser(createDto);
-        EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
+                passwordEncoder.encode(password));
+        userRepository.save(user);
+        Long userId = user.getId();
 
-        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
-        String updatedEmail = "2imwhs@icloud.com";
-        updateDto.setEmail(updatedEmail);
+        String newEmail = "2imwhs@icloud.com";
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto(username, newEmail, password, null);
 
         // when
         userService.updateUser(user.getId(), updateDto);
         userRepository.flush();
-        EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
         // then
+        EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
         Assertions.assertThat(updatedUser).isNotNull();
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(username);
-        Assertions.assertThat(updatedUser.getEmail()).isEqualTo(updatedEmail);
-        Assertions.assertThat(updatedUser.getPassword()).isEqualTo(password);
+        Assertions.assertThat(updatedUser.getEmail()).isEqualTo(newEmail);
+        Assertions.assertThat(passwordEncoder.matches(password, updatedUser.getPassword())).isTrue();
+
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
@@ -158,28 +117,29 @@ public class EatzUserServiceTest {
     void passwordUpdateTest() {
         // given
         String username = "heextory";
+        String originalPassword = "1q2w3e4r!";
         String email = "imwhs@icloud.com";
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
+        EatzUser user = EatzUser.createMember(
                 username,
                 email,
-                "1q2w3e4r!");
-        Long userId = userService.registerUser(createDto);
-        EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
+                passwordEncoder.encode(originalPassword));
+        userRepository.save(user);
+        Long userId = user.getId();
 
-        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
-        String updatedPassword = "2q2w3e4r!";
-        updateDto.setPassword(updatedPassword);
+        String newPassword = "21q2w3e4r!";
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto(username, email, originalPassword, newPassword);
 
         // when
         userService.updateUser(user.getId(), updateDto);
         userRepository.flush();
-        EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
 
         // then
+        EatzUser updatedUser = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
         Assertions.assertThat(updatedUser).isNotNull();
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo(username);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(email);
-        Assertions.assertThat(updatedUser.getPassword()).isEqualTo(updatedPassword);
+        Assertions.assertThat(passwordEncoder.matches(newPassword, updatedUser.getPassword())).isTrue();
+
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
@@ -191,18 +151,16 @@ public class EatzUserServiceTest {
     @Transactional
     void usernameUpdateTest() {
         // given
+        String username = "heextory";
         String password = "1q2w3e4r!";
         String email = "imwhs@icloud.com";
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
-                "heextory",
-                email,
-                password);
-        Long userId = userService.registerUser(createDto);
-        EatzUser user = userRepository.findById(userId).orElseThrow(EatzUserNotFoundException::new);
+        String encodedPassword = passwordEncoder.encode(password);
+        EatzUser user = EatzUser.createMember(username, email, encodedPassword);
+        userRepository.save(user);
+        Long userId = user.getId();
 
-        EatzUserUpdateDto updateDto = new EatzUserUpdateDto();
-        String updatedUsername = "heextory2";
-        updateDto.setUsername(updatedUsername);
+        String newUsername = "2heextory";
+        EatzUserUpdateDto updateDto = new EatzUserUpdateDto(newUsername, email, password, null);
 
         // when
         userService.updateUser(user.getId(), updateDto);
@@ -211,9 +169,10 @@ public class EatzUserServiceTest {
 
         // then
         Assertions.assertThat(updatedUser).isNotNull();
-        Assertions.assertThat(updatedUser.getUsername()).isEqualTo(updatedUsername);
+        Assertions.assertThat(updatedUser.getUsername()).isEqualTo(newUsername);
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo(email);
-        Assertions.assertThat(updatedUser.getPassword()).isEqualTo(password);
+        Assertions.assertThat(passwordEncoder.matches(password, updatedUser.getPassword())).isTrue();
+
         Assertions.assertThat(updatedUser.getCreatedAt()).isNotNull();
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(updatedUser.getCreatedAt());
         Assertions.assertThat(updatedUser.getUpdatedAt()).isNotNull();
@@ -225,15 +184,23 @@ public class EatzUserServiceTest {
     @Transactional
     void invalidUserUpdateTest() {
         // given
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
+        SignUpRequestDto createDto = new SignUpRequestDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!");
 
-        userService.registerUser(createDto);
+        authService.signUp(createDto);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> userService.updateUser(99999L, new EatzUserUpdateDto())).isInstanceOf(EatzUserNotFoundException.class);
+        Assertions.assertThatThrownBy(() ->
+                userService.updateUser(
+                        99999L,
+                        new EatzUserUpdateDto(
+                                "test",
+                                "test@com",
+                                "1q",
+                                null))
+        ).isInstanceOf(EatzUserNotFoundException.class);
     }
 
     @Test
@@ -241,18 +208,17 @@ public class EatzUserServiceTest {
     @Transactional
     void userDeleteTest() {
         // given
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
-                "heextory",
-                "imwhs@icloud.com",
-                "1q2w3e4r!");
-
-        Long userId = userService.registerUser(createDto);
+        String rawPassword = "1q2w3e4r!";
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", encodedPassword);
+        userRepository.save(user);
+        EatzUserDeleteDto deleteDto = new EatzUserDeleteDto(rawPassword);
 
         // when
-        userService.deleteUser(userId);
+        userService.deleteUser(user.getId(), deleteDto);
 
         // then
-        Assertions.assertThat(userRepository.findById(userId).isPresent()).isFalse();
+        Assertions.assertThat(userRepository.findById(user.getId()).isPresent()).isFalse();
     }
 
     @Test
@@ -260,24 +226,27 @@ public class EatzUserServiceTest {
     @Transactional
     void invalidUserDeleteTest() {
         // given
-        EatzUserCreateDto createDto = new EatzUserCreateDto(
+        SignUpRequestDto createDto = new SignUpRequestDto(
                 "heextory",
                 "imwhs@icloud.com",
                 "1q2w3e4r!");
 
-        userService.registerUser(createDto);
+        authService.signUp(createDto);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> userService.deleteUser(99999L)).isInstanceOf(EatzUserNotFoundException.class);
+        Assertions.assertThatThrownBy(() ->
+                userService.deleteUser(
+                        99999L,
+                        new EatzUserDeleteDto("test"))
+        ).isInstanceOf(EatzUserNotFoundException.class);
     }
-
 
     @Test
     @DisplayName("등록된 사용자가 식별자로 정상적으로 조회되는지 테스트합니다.")
     @Transactional
     void findUserByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
 
         // when
@@ -294,11 +263,13 @@ public class EatzUserServiceTest {
     @Transactional
     void findInvalidUserByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> userQueryService.findUserById(99999L)).isInstanceOf(EatzUserNotFoundException.class);
+        Assertions.assertThatThrownBy(() ->
+                userQueryService.findUserById(99999L)
+        ).isInstanceOf(EatzUserNotFoundException.class);
     }
 
     @Test
@@ -307,7 +278,7 @@ public class EatzUserServiceTest {
     void findUserByEmailTest() {
         // given
         String email = "heextory@icloud.com";
-        EatzUser user = EatzUser.create("heextory", email, "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", email, "1q2w3e4r!");
         userRepository.save(user);
 
         // when
@@ -324,9 +295,18 @@ public class EatzUserServiceTest {
     @Transactional
     void findAllUsersTest() {
         // given
-        EatzUser user1 = EatzUser.create("1heextory", "1heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        EatzUser user2 = EatzUser.create("2heextory", "2heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
-        EatzUser user3 = EatzUser.create("3heextory", "3heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user1 = EatzUser.createMember(
+                "1heextory",
+                "1heextory@icloud.com",
+                "1q2w3e4r!");
+        EatzUser user2 = EatzUser.createMember(
+                "2heextory",
+                "2heextory@icloud.com",
+                "1q2w3e4r!");
+        EatzUser user3 = EatzUser.createMember(
+                "3heextory",
+                "3heextory@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
