@@ -1,6 +1,7 @@
 package imwhs.eatz_server.repository.eatzuser;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.QEatzUser;
 import imwhs.eatz_server.domain.QRecipe;
@@ -42,7 +43,7 @@ public class EatzUserQueryRepository {
 
         // 모든 사용자를 조회하며, 동시에 각 사용자마다 등록한 레시피 수를 함께 집계한 데이터를 포함해
         // EatzUserSummaryDto로 반환합니다.
-        List<EatzUserSummaryDto> items = queryFactory
+        JPAQuery<EatzUserSummaryDto> query = queryFactory
                 .select(
                         Projections.constructor(EatzUserSummaryDto.class,
                                 eatzUser.id,
@@ -51,24 +52,26 @@ public class EatzUserQueryRepository {
                         ))
                 .from(eatzUser)
                 .leftJoin(eatzUser.recipes, recipe)
-                .groupBy(eatzUser.id)
-                .offset((long) pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                .groupBy(eatzUser.id);
+
+        // 페이징 적용이 필요한 경우에만 offset, limit를 쿼리에 적용합니다.
+        if (!pageable.isUnpaged()) {
+            query.offset(pageable.getOffset())
+                    .limit(pageable.getPageSize());
+        }
+
+        List<EatzUserSummaryDto> items = query.fetch();
 
         // 총 사용자 수를 조회해 totalItems에 할당합니다.
-        Long totalItems = Optional.ofNullable(queryFactory
+        Long totalItems =
+                Optional.ofNullable(queryFactory
                         .select(eatzUser.count())
                         .from(eatzUser)
                         .fetchOne())
                 .orElse(0L);
 
-        // 데이터 페이징 시 필요한 총 페이지 수를 계산합니다.
-        // 소수점 이하 값에 대한 반올림 처리를 위해 totalItems를 double로 변환한 값을 계산에 사용합니다.
-        int totalPages = (int) Math.ceil((double) totalItems / pageable.getPageSize());
-
         // 페이징 정보를 포함하는 Page로 감싼 후 데이터를 반환합니다.
-        return new PageImpl<>(items, pageable, totalPages);
+        return new PageImpl<>(items, pageable, totalItems);
     }
 
 }

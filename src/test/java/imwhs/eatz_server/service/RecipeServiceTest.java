@@ -33,7 +33,7 @@ public class RecipeServiceTest {
     @Transactional
     void registerRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
 
         RecipeCreateDto recipeCreateDto = new RecipeCreateDto(
@@ -58,10 +58,15 @@ public class RecipeServiceTest {
     @Transactional
     void updateRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -87,10 +92,15 @@ public class RecipeServiceTest {
     @Transactional
     void deleteRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -106,12 +116,17 @@ public class RecipeServiceTest {
     @Transactional
     void updateRecipeByUnauthorizedUserTest() {
         // given
-        EatzUser userA = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userA = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(userA);
-        EatzUser userB = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userB = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(userB);
 
-        Recipe recipe = Recipe.of(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(
+                userA,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -122,7 +137,8 @@ public class RecipeServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, recipeUpdateDto, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeService.updateRecipe(recipeId, recipeUpdateDto, userB.getId()))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test
@@ -130,17 +146,23 @@ public class RecipeServiceTest {
     @Transactional
     void deleteRecipeByUnauthorizedUserTest() {
         // given
-        EatzUser userA = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userA = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(userA);
-        EatzUser userB = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser userB = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(userB);
 
-        Recipe recipe = Recipe.of(userA, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipe = Recipe.of(
+                userA,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
         // when, then
-        Assertions.assertThatThrownBy(() -> recipeService.deleteRecipe(recipeId, userB.getId())).isInstanceOf(UnauthorizedAccessException.class);
+        Assertions.assertThatThrownBy(() -> recipeService.deleteRecipe(recipeId, userB.getId()))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
 }

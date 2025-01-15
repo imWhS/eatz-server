@@ -44,11 +44,16 @@ class SavedRecipeServiceTest {
     @Transactional
     void saveRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -73,23 +78,44 @@ class SavedRecipeServiceTest {
     @Transactional
     void findSavedRecipeByUserAndScheduledDateTest() {
         // given
-        EatzUser recipeWriter = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeWriter = EatzUser.createMember(
+                "heextory",
+                "heextory@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(recipeWriter);
         Long recipeWriterId = recipeWriter.getId();
 
-        EatzUser recipeSaveUser = EatzUser.create("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser recipeSaveUser = EatzUser.createMember(
+                "heextory2",
+                "heextory2@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(recipeSaveUser);
         Long recipeSaveUserId = recipeSaveUser.getId();
 
-        Recipe recipeA = Recipe.of(recipeWriter, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipeA = Recipe.of(
+                recipeWriter,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipeA);
         Long recipeAId = recipeA.getId();
 
-        Recipe recipeB = Recipe.of(recipeWriter, "Kimchi2 pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipeB = Recipe.of(
+                recipeWriter,
+                "Kimchi2 pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipeB);
         Long recipeBId = recipeB.getId();
 
-        Recipe recipeC = Recipe.of(recipeWriter, "Kimchi3 pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipeC = Recipe.of(
+                recipeWriter,
+                "Kimchi3 pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipeC);
         Long recipeCId = recipeC.getId();
 
@@ -118,20 +144,29 @@ class SavedRecipeServiceTest {
         long savedRecipeCount = savedRecipeRepository.count();
         Assertions.assertEquals(3, savedRecipeCount);
 
-        List<SavedRecipe> foundSavedRecipeOpt = savedRecipeQueryRepository.findByUserAndScheduledDate(recipeSaveUser, now);
+        List<SavedRecipe> foundSavedRecipeOpt = savedRecipeQueryRepository.findByUserAndScheduledDate(
+                recipeSaveUser,
+                now);
         Assertions.assertEquals(2, foundSavedRecipeOpt.size());
-        Assertions.assertTrue(foundSavedRecipeOpt.containsAll(Arrays.asList(foundSavedRecipeA.get(), foundSavedRecipeB.get())));
+        Assertions.assertTrue(foundSavedRecipeOpt.containsAll(
+                Arrays.asList(foundSavedRecipeA.get(), foundSavedRecipeB.get()))
+        );
     }
 
     @Test
     @Transactional
     void updateScheduledDateTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         SavedRecipe savedRecipe = new SavedRecipe(recipe, user, List.of(LocalDate.now()));
@@ -139,7 +174,10 @@ class SavedRecipeServiceTest {
         Long savedRecipeId = savedRecipe.getId();
 
         LocalDate updateScheduledDate = LocalDate.now().minusDays(7);
-        SavedRecipeScheduledDateUpdateDto dto = new SavedRecipeScheduledDateUpdateDto(savedRecipeId, userId, updateScheduledDate);
+        SavedRecipeScheduledDateUpdateDto dto = new SavedRecipeScheduledDateUpdateDto(
+                savedRecipeId,
+                userId,
+                updateScheduledDate);
 
         // when
         savedRecipeService.updateScheduledDate(dto);
@@ -156,11 +194,16 @@ class SavedRecipeServiceTest {
     @Transactional
     void deleteSavedRecipeByRecipeIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -181,11 +224,16 @@ class SavedRecipeServiceTest {
     @Transactional
     void deleteSavedRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
