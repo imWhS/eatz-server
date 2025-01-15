@@ -1,5 +1,6 @@
 package imwhs.eatz_server.auth;
 
+import imwhs.eatz_server.config.JwtProperties;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
