@@ -38,7 +38,7 @@ public class CommentServiceTest {
     @Transactional
     void commentRegisterTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
@@ -65,11 +65,16 @@ public class CommentServiceTest {
     @Transactional
     void updateCommentTest() {
         // given
-        EatzUser user = EatzUser.create("heextory", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContentBefore = "내 맘 속에 저장~";
@@ -97,7 +102,7 @@ public class CommentServiceTest {
     @Transactional
     void updateCommentByInvalidUserTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryA", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
 
         Long invalidUserId = 99999L;
@@ -127,11 +132,16 @@ public class CommentServiceTest {
     @Transactional
     void deleteCommentTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryB", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContent = "내 맘 속에 저장~";
@@ -151,11 +161,16 @@ public class CommentServiceTest {
     @Transactional
     void deleteCommentByInvalidUserTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryC", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember("heextoryC", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
         Long invalidUserId = 99999L;
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com/",
+                "https://www.naver.com/img.png",
+                "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
 
         String commentContent = "내 맘 속에 저장~";
@@ -174,7 +189,10 @@ public class CommentServiceTest {
     @Transactional
     void findCommentByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryAA", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember(
+                "heextoryAA",
+                "heextory@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(user);
 
         Recipe recipe = Recipe.of(
@@ -194,17 +212,20 @@ public class CommentServiceTest {
         CommentByRecipeResponseDto commentDto = commentService.findComment(comment.getId());
 
         // then
-        org.junit.jupiter.api.Assertions.assertNotNull(commentDto);
-        org.junit.jupiter.api.Assertions.assertEquals(comment.getId(), commentDto.getId());
-        org.junit.jupiter.api.Assertions.assertEquals(comment.getContent(), commentDto.getContent());
-        org.junit.jupiter.api.Assertions.assertEquals(new CommentUserDto(comment.getUser()), commentDto.getUser());
+        Assertions.assertThat(commentDto).isNotNull();
+        Assertions.assertThat(commentDto.getId()).isEqualTo(comment.getId());
+        Assertions.assertThat(commentDto.getContent()).isEqualTo(comment.getContent());
+        Assertions.assertThat(commentDto.getUser()).isEqualTo(new CommentUserDto(comment.getUser()));
     }
 
     @Test
     @Transactional
     void findCommentsByUserAndRecipeTest() {
         // given
-        EatzUser user = EatzUser.create("heextoryBB", "heextory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember(
+                "heextoryBB",
+                "heextory@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(user);
 
         Recipe recipe = Recipe.of(
@@ -224,10 +245,14 @@ public class CommentServiceTest {
         commentRepository.save(comment2);
 
         // when
-        Page<CommentByRecipeResponseDto> comments = commentService.findComments(user.getId(), recipe.getId(), null, null);
+        Page<CommentByRecipeResponseDto> comments = commentService.findComments(
+                user.getId(),
+                recipe.getId(),
+                null,
+                null);
 
         // then
-        org.junit.jupiter.api.Assertions.assertEquals(comments.getTotalElements(), 2);
+        Assertions.assertThat(comments.getTotalElements()).isEqualTo(2);
     }
 
 }
