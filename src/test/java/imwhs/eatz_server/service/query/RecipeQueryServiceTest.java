@@ -43,7 +43,10 @@ class RecipeQueryServiceTest {
     @Transactional
     void findRecipeByIdTest() {
         // given
-        EatzUser user = EatzUser.create("heextory1", "heextory1@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember(
+                "heextory1",
+                "heextory1@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(user);
 
         Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
@@ -66,17 +69,40 @@ class RecipeQueryServiceTest {
     @Transactional
     void findAllRecipesTest() {
         // given
-        EatzUser user = EatzUser.create("heextory2", "heextory2@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember(
+                "heextory2",
+                "heextory2@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(user);
 
-        Recipe recipeA = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeA = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
-        Recipe recipeB = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeB = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeB);
-        Recipe recipeC = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeC = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeC);
 
-        Recipe deletedRecipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe deletedRecipe = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(deletedRecipe);
         recipeService.deleteRecipe(deletedRecipe.getId(), user.getId());
 
@@ -92,21 +118,47 @@ class RecipeQueryServiceTest {
     @Transactional
     void findAllRecipesByUserTest() {
         // given
-        EatzUser user = EatzUser.create("heextory3", "heextory3@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser user = EatzUser.createMember(
+                "heextory3",
+                "heextory3@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(user);
         Long userId = user.getId();
 
-        EatzUser anotherUser = EatzUser.create("yourstory", "mystory@icloud.com", "1q2w3e4r!", Role.MEMBER);
+        EatzUser anotherUser = EatzUser.createMember(
+                "yourstory",
+                "mystory@icloud.com",
+                "1q2w3e4r!");
         userRepository.save(anotherUser);
 
-        Recipe recipeA = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeA = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
-        Recipe recipeB = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeB = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeB);
-        Recipe recipeC = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe recipeC = Recipe.of(
+                user,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeC);
 
-        Recipe anotherRecipe = Recipe.of(anotherUser, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
+        Recipe anotherRecipe = Recipe.of(
+                anotherUser,
+                "Kimchi pasta",
+                "https://www.naver.com",
+                "https://imgcdn.naver.com",
+                "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(anotherRecipe);
 
         // when
