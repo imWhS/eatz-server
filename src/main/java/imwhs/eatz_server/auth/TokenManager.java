@@ -24,10 +24,12 @@ public class TokenManager {
     }
 
     public String getUsername(String token) {
+        System.out.println("TokenManager.getUsername");
         return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload().getSubject();
     }
 
     public String getRole(String token) {
+        System.out.println("TokenManager.getRole");
         return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload()
                 .get("role", String.class);
     }

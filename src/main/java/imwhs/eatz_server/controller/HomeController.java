@@ -10,10 +10,15 @@ import java.util.Collection;
 @RestController
 public class HomeController {
 
-    @GetMapping("/")
+//    @GetMapping("/")
     public String home(@AuthenticationPrincipal EatzUserDetails userDetails) {
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
+        return "Eatz RESTful API 서버입니다.";
+    }
+
+    @GetMapping("/")
+    public String home() {
         return "Eatz RESTful API 서버입니다.";
     }
 

@@ -1,4 +1,4 @@
-package imwhs.eatz_server.exception.token;
+package imwhs.eatz_server.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

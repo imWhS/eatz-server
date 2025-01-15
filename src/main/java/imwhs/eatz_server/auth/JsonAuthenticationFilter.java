@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -48,6 +49,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("JsonAuthenticationFilter.attemptAuthentication");
         try {
             // HTTP 요청에서 로그인 정보를 추출합니다.
             LoginRequest loginRequest = parseLoginRequest(request);
@@ -107,7 +109,18 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        System.out.println("failed.getClass().getName() = " + failed.getClass().getName());
+
+
         ApiResponse<Map<String, String>> responseBody = ApiResponse.error(failed.getMessage());
+
+
+        if (failed instanceof BadCredentialsException) {
+
+            responseBody = ApiResponse.error("아이디, 비밀 번호 좀 똑띠 입력하쇼 ");
+
+        }
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(responseBody));
