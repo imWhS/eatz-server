@@ -1,6 +1,6 @@
 package imwhs.eatz_server.controller;
 
-import imwhs.eatz_server.auth.JwtProperties;
+import imwhs.eatz_server.config.JwtProperties;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
