@@ -5,7 +5,7 @@ import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.RefreshToken;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
-import imwhs.eatz_server.exception.token.InvalidTokenException;
+import imwhs.eatz_server.exception.InvalidTokenException;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;

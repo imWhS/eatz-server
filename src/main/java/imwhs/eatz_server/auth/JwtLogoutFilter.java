@@ -2,9 +2,8 @@ package imwhs.eatz_server.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.exception.token.InvalidTokenException;
+import imwhs.eatz_server.exception.InvalidTokenException;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
-import imwhs.eatz_server.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -35,6 +34,7 @@ public class JwtLogoutFilter extends GenericFilterBean {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        System.out.println("JwtLogoutFilter.doFilter");
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 

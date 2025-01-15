@@ -2,9 +2,6 @@ package imwhs.eatz_server.common;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
-import imwhs.eatz_server.exception.token.InvalidTokenException;
-import imwhs.eatz_server.exception.token.MissingTokenException;
-import imwhs.eatz_server.exception.token.TokenExpiredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -50,24 +47,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicatedEatzUserException.class)
     public ApiResponse<Object> handleDuplicatedEatzUserException(DuplicatedEatzUserException e) {
-        return ApiResponse.error(e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(MissingTokenException.class)
-    public ApiResponse<Object> handleMissingTokenException(MissingTokenException e) {
-        return ApiResponse.error(e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(TokenExpiredException.class)
-    public ApiResponse<Object> handleTokenExpiredException(TokenExpiredException e) {
-        return ApiResponse.error(e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(InvalidTokenException.class)
-    public ApiResponse<Object> handleInvalidTokenException(InvalidTokenException e) {
         return ApiResponse.error(e.getMessage());
     }
 
