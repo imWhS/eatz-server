@@ -1,4 +1,4 @@
-package imwhs.eatz_server.config;
+package imwhs.eatz_server.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
