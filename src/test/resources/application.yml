@@ -11,6 +11,13 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
+  web:
+    resources:
+          static-locations: file:/Users/son-wonhui/Library/Mobile Documents/com~apple~CloudDocs/dev_whs/Eatz/uploads/
 
 logging.level:
   org.hibernate.SQL: debug
+
+eatz:
+  image:
+    base-directory: /test/path

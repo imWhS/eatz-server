@@ -1,5 +1,6 @@
 package imwhs.eatz_server.config;
 
+import imwhs.eatz_server.config.properties.AdminProperties;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
