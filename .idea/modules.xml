@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/eatz-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/eatz-server.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eatz-server.test.iml" filepath="$PROJECT_DIR$/.idea/modules/eatz-server.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/imwhs.eatz-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/imwhs.eatz-server.main.iml" />
     </modules>
   </component>
