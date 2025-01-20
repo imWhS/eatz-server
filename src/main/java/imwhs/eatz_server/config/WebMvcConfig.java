@@ -1,6 +1,7 @@
 package imwhs.eatz_server.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -12,6 +13,9 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    @Value("${eatz.storage.base-directory}")
+    private String storageBaseDirectory;
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new PageableValidationHandlerMethodArgumentResolver());
@@ -19,8 +23,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        log.info("addResourceHandlers가 호출됐어요!");
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:/Users/son-wonhui/Library/Mobile Documents/com~apple~CloudDocs/dev_whs/Eatz/uploads/");
+        registry.addResourceHandler("/api/v0/uploads/**")
+                .addResourceLocations("file:/Users/son-wonhui/Library/Mobile Documents/com~apple~CloudDocs/dev_whs/Eatz/eatz-server/" + storageBaseDirectory + "/");
     }
+
 }
