@@ -2,6 +2,7 @@ package imwhs.eatz_server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.auth.*;
+import imwhs.eatz_server.config.properties.JwtProperties;
 import imwhs.eatz_server.domain.Role;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
 import imwhs.eatz_server.service.EatzUserDetailsService;
