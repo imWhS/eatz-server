@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class EatzUserDetails implements UserDetails {
@@ -24,8 +23,8 @@ public class EatzUserDetails implements UserDetails {
         return this.user.getPassword();
     }
 
-    public String getEmail() {
-        return this.user.getEmail();
+    public String getEatzUsername() {
+        return this.user.getUsername();
     }
 
     @Override
