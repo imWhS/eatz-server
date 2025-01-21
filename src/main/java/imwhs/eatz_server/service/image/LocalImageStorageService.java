@@ -57,7 +57,7 @@ public class LocalImageStorageService implements ImageStorageService {
      * 로컬 파일 시스템의 특정 디렉터리에 이미지를 저장합니다.
      * @param file 저장하려는 이미지
      * @param directory 이미지를 저장하려는 디렉터리
-     * @return 업로드된 이미지의 URL 주소. 서버 외부에서 클라이언트가 접근할 수 있는 경로에 해당합니다.
+     * @return 업로드된 이미지의 URL. 서버 외부에서 클라이언트가 접근할 수 있는 경로에 해당합니다.
      */
 //    @Override
     public String upload_old(MultipartFile file, String directory) {
