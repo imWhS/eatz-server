@@ -26,7 +26,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/api/v0/" + storageBaseDirectory + "/**")
+        registry.addResourceHandler("/admin/api/v0/" + storageBaseDirectory + "/**")
                 .addResourceLocations(localStorageDirectory + storageBaseDirectory + "/");
     }
 

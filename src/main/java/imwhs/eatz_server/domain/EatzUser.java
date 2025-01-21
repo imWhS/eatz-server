@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class EatzUser extends BaseEntity {
      *     </ul>
      * TODO: 데이터베이스에 인덱스 추가 고려
      */
+    @Email(message = "유효한 이메일 주소가 아닙니다.")
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -70,7 +72,12 @@ public class EatzUser extends BaseEntity {
      *
      */
     @Enumerated(EnumType.STRING)
-    private Role role = Role.MEMBER;
+    private Role role = Role.ROLE_MEMBER;
+
+    /**
+     * 사용자 대표(프로필) 이미지 URL.
+     */
+    private String imageUrl;
 
     /**
      * 사용자가 등록한 모든 레시피 목록.
@@ -96,7 +103,7 @@ public class EatzUser extends BaseEntity {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.role = role == null ? Role.MEMBER : role;
+        this.role = role == null ? Role.ROLE_MEMBER : role;
     }
 
     /**
@@ -111,11 +118,11 @@ public class EatzUser extends BaseEntity {
             String username,
             String email,
             String password) { // TODO: 암호화된 password 설정 메서드 별도로 분리
-        return new EatzUser(username, email, password, Role.MEMBER);
+        return new EatzUser(username, email, password, Role.ROLE_MEMBER);
     }
 
     /**
-     * 사용자 업데이트 메서드
+     * 사용자 주요 정보 업데이트 메서드.
      * <ul>
      * <li>사용자의 정보 중, 사용자 이름, 이메일, 비밀 번호를 변경합니다.</li>
      * <li>변경할 값이 null이거나 비어있는 필드는 기존 값을 유지합니다.</li>
@@ -128,6 +135,22 @@ public class EatzUser extends BaseEntity {
         if (username != null && !username.isEmpty()) this.username = username;
         if (email != null && !email.isEmpty()) this.email = email;
         if (password != null && !password.isEmpty()) this.password = password;
+    }
+
+    /**
+     * 사용자 대표 이미지 업데이트 메서드.
+     * <p>사용자의 대표 이미지를 등록, 수정합니다.</p>
+     * @param imageUrl
+     */
+    public void updateImageUrl(String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) this.imageUrl = imageUrl;
+    }
+
+    /**
+     * 사용자 대표 이미지 삭제 메서드.
+     */
+    public void deleteImageUrl() {
+        this.imageUrl = null;
     }
 
 }

@@ -11,12 +11,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -25,6 +28,7 @@ import java.util.Objects;
  * 액세스 토큰이 존재하지 않는다면, 요청을 필터 체인에 넘깁니다. 즉, 인증이 필요 없는 API를 요청한 경우 액세스 토큰 관련 검증을 진행하지 않습니다.<br/>
  * 액세스 토큰이 유효하다면, Spring Security에게 인증된 사용자임을 인식시키기 위해 SecurityContext에 인증 정보를 저장합니다.
  */
+@Slf4j
 @RequiredArgsConstructor
 public class AccessTokenFilter extends OncePerRequestFilter {
 
@@ -35,6 +39,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
+        log.info("doFilterInternal이 호출됐어요.");
 
         // HTTP 요청에 JWT 형식의 액세스 토큰을 담은 Authorization 헤더가 존재하는지 확인합니다.
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -58,7 +63,14 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
             // 유효한 액세스 토큰인 경우, 사용자 인증 정보를 해당 클라이언트 요청에 대해서만 일시적으로 세선에 설정합니다.
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+            for (GrantedAuthority authority : authorities) {
+                log.info("authority: {}", authority.getAuthority());
+            }
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } catch (ExpiredJwtException e) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "만료된 액세스 토큰입니다.");
