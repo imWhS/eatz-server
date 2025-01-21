@@ -17,9 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class ImageController {
 
-    private final ImageStorageService imageStorageService;
     private final ImageService imageService;
 
+    /**
+     * 프로필 이미지로 사용할 파일을 업로드합니다.
+     * @param file 업로드하려는 파일.
+     * @return 업로드된 파일의 경로를 포함하는 ApiResponse.
+     */
     @PostMapping("/profiles")
     public ResponseEntity<ApiResponse<String>> uploadProfileImage(@RequestParam("file") MultipartFile file) {
         String result = imageService.saveProfileImage(file);
@@ -29,8 +33,8 @@ public class ImageController {
     @GetMapping("/uploads/images/{imageName}")
     public ResponseEntity<ApiResponse<String>> getImage(@PathVariable String folder, @PathVariable String imageName) {
         log.info("{} 디렉터리의 {} 이미지를 갖고올게요!", folder, imageName);
-        String imagePath = imageStorageService.getImagePath(folder, imageName);
-        return ResponseEntity.ok(ApiResponse.success(imagePath));
+//        String imagePath = imageStorageService.getImagePath(folder, imageName);
+        return ResponseEntity.ok(ApiResponse.success(""));
     }
 
 }
