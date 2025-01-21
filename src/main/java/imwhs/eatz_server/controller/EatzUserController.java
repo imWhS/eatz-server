@@ -1,5 +1,6 @@
 package imwhs.eatz_server.controller;
 
+import imwhs.eatz_server.common.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
@@ -9,13 +10,16 @@ import imwhs.eatz_server.service.EatzUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v0/users")
 @RequiredArgsConstructor
@@ -34,16 +38,29 @@ public class EatzUserController {
     }
 
     // TODO: PATCH, 요청 파라미터를 통해 비밀 번호 등에 대한 부분 업데이트 API 추가
-    @PutMapping("/{id}")
+    @PutMapping("/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> updateUser(
             @PathVariable Long id,
             @RequestBody @Valid EatzUserUpdateDto dto) {
         userService.updateUser(id, dto);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자를 업데이트했습니다."));
+        return ResponseEntity.ok().body(ApiResponse.success("사용자의 주요 정보를 업데이트했어요."));
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/image")
+    public ResponseEntity<ApiResponse<String>> updateImage(@RequestParam("file") MultipartFile file) {
+        userService.updateImage(file);
+        return ResponseEntity.ok(ApiResponse.success("사용자 대표 이미지를 업데이트했어요."));
+    }
+
+    @DeleteMapping("/image")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteImage() {
+        log.info("/image URL에 매핑된 deleteImage()가 호출됐어요");
+        userService.deleteImage();
+    }
+
+    @DeleteMapping("/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(
             @PathVariable Long id,

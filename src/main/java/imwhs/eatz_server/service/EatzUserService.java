@@ -1,15 +1,20 @@
 package imwhs.eatz_server.service;
 
+import imwhs.eatz_server.common.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDeleteDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
+import imwhs.eatz_server.exception.InvalidPasswordException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -18,6 +23,8 @@ public class EatzUserService {
     private final EatzUserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final ImageService imageService;
 
     /**
      * 사용자를 업데이트합니다.
@@ -40,6 +47,33 @@ public class EatzUserService {
     }
 
     /**
+     * 사용자의 프로필 이미지를 업데이트합니다.
+     */
+    @Transactional
+    public void updateImage(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("업로드하려는 이미지 파일이 유효하지 않습니다.");
+        }
+
+        String username = EatzUserAuthUtil.getUsername();
+        EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
+                new EatzUserNotFoundException("사용자 이름이 " + username + "인 사용자를 찾을 수 없습니다."));
+
+        String imageUrl = imageService.uploadProfileImage(user.getUsername(), file);
+        user.updateImageUrl(imageUrl);
+    }
+
+    @Transactional
+    public void deleteImage() {
+        String username = EatzUserAuthUtil.getUsername();
+        EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
+                new EatzUserNotFoundException("사용자 이름이 " + username + "인 사용자를 찾을 수 없습니다."));
+        log.info("deleteImage()가 사용자 이름으로 사용자가 유효한지 검증했어요.");
+        imageService.deleteImage(user.getImageUrl());
+    }
+
+
+    /**
      * 사용자를 삭제합니다.
      * <p>
      * ID에 해당하는 사용자 엔티티를 삭제합니다.
@@ -57,7 +91,7 @@ public class EatzUserService {
 
     private void validateExistingPassword(String existingPassword, EatzUser user) {
         if (!passwordEncoder.matches(existingPassword, user.getPassword())) {
-            throw new IllegalArgumentException("기존 사용 중이던 비밀 번호가 올바르지 않습니다.");
+            throw new InvalidPasswordException("기존 사용 중이던 비밀 번호가 올바르지 않습니다.");
         }
     }
 

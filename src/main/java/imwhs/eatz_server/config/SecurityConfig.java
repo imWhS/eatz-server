@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicUrls).permitAll()
-                        .requestMatchers("/admin").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .logout(logout -> logout.disable())
                 .addFilterBefore(
