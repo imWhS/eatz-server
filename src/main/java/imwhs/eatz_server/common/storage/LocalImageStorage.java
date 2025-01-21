@@ -11,11 +11,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * LocalImageStorage 클래스입니다.
+ * 이미지 파일 저장소로 로컬 파일 시스템을 사용합니다.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class LocalImageStorage implements ImageStorage {
 
+    // 현재 애플리케이션이 실행되고 있는 디렉터리 경로.
     private final String applicationDirectory = System.getProperty("user.dir");
 
     @Value("${eatz.storage.base-directory}")
@@ -25,11 +30,7 @@ public class LocalImageStorage implements ImageStorage {
     private String imageBaseDirectory;
 
     /**
-     * 로컬 파일 시스템에 이미지 타입의 파일을 저장합니다.
-     * @param directory 파일을 저장할 폴더 경로
-     * @param fileName 로컬 파일 시스템에 저장할 파일의 이름
-     * @param file 이미지 타입의 파일
-     * @return 저장된 파일의 상대 경로
+     * {@inheritDoc}
      */
     @Override
     public String save(String directory, String fileName, MultipartFile file) {

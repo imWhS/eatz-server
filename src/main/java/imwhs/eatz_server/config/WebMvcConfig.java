@@ -13,6 +13,9 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    @Value("${eatz.local-storage-directory}")
+    private String localStorageDirectory;
+
     @Value("${eatz.storage.base-directory}")
     private String storageBaseDirectory;
 
@@ -23,8 +26,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/api/v0/uploads/**")
-                .addResourceLocations("file:/Users/son-wonhui/Library/Mobile Documents/com~apple~CloudDocs/dev_whs/Eatz/eatz-server/" + storageBaseDirectory + "/");
+        registry.addResourceHandler("/api/v0/" + storageBaseDirectory + "/**")
+                .addResourceLocations(localStorageDirectory + storageBaseDirectory + "/");
     }
 
 }
