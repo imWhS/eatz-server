@@ -11,11 +11,11 @@ public enum Role {
     /**
      * 회원 권한
      */
-    MEMBER,
+    ROLE_MEMBER,
 
     /**
      * 관리자 권한
      */
-    ADMIN
+    ROLE_ADMIN
 
 }
