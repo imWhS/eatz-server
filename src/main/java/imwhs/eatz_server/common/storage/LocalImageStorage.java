@@ -73,22 +73,20 @@ public class LocalImageStorage implements ImageStorage {
     @Override
     public void delete(String file) {
         Path rootPath = Paths.get(applicationDirectory);
-        log.info("{}을 삭제할게요.", file);
         Path filePath = rootPath.resolve(Paths.get(file));
-        log.info("FilePath to Delete: {}", filePath);
+        log.info("로컬 파일 시스템에서 {}을 삭제할게요. ({})", file, filePath);
 
         try {
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
-                log.info("{} 파일을 삭제했어요.", filePath);
+                log.info("로컬 파일 시스템에서 '{}' 파일을 삭제했어요. ({})", file, filePath);
             } else {
-                log.warn("{} 파일이 존재하지 않아 삭제하지 못했어요.", filePath);
+                log.info("로컬 파일 시스템에서 '{}' 파일이 존재하지 않아 삭제하지 못했어요. ({})", file, filePath);
             }
         } catch (IOException e) {
-            log.error("{} 파일을 삭제하는 도중 오류가 발생했어요: {}", filePath, e.getMessage());
+            log.error("'{}' 파일을 삭제하는 도중 오류가 발생했어요: {}", filePath, e.getMessage());
             throw new RuntimeException("이미지 삭제 처리를 실패했어요: " + e.getLocalizedMessage());
         }
-
     }
 
 }

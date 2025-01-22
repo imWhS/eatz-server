@@ -19,7 +19,7 @@ public class EatzUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("{}에 해당하는 사용자를 조회할게요.", username);
+        log.info("이메일 주소 '{}'에 해당하는 사용자를 조회할게요!", username);
         EatzUser user = userRepository.findByEmail(username).orElseThrow(
                 () -> new UsernameNotFoundException(username));
         return new EatzUserDetails(user);

@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.common.EatzUserAuthUtil;
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.common.storage.ImageStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

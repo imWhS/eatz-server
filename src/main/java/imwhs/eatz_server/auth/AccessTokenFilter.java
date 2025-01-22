@@ -39,10 +39,10 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
-        log.info("doFilterInternal이 호출됐어요.");
 
         // HTTP 요청에 JWT 형식의 액세스 토큰을 담은 Authorization 헤더가 존재하는지 확인합니다.
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            log.info("HTTP 요청에 Authorization 헤더가 존재하지 않아서 인증을 진행하지 않을게요!");
             // 액세스 토큰 값을 가진 헤더가 없거나, JWT 형식의 토큰이 올바르지 않은 경우
             // 요청을 필터 체인에 넘기고 인증 절차를 더 이상 진행하지 않습니다.
             filterChain.doFilter(request, response);
@@ -63,15 +63,10 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
             // 유효한 액세스 토큰인 경우, 사용자 인증 정보를 해당 클라이언트 요청에 대해서만 일시적으로 세선에 설정합니다.
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-            for (GrantedAuthority authority : authorities) {
-                log.info("authority: {}", authority.getAuthority());
-            }
-
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            log.info("해당 요청의 세션에 사용자 '{}'의 인증 정보를 성공적으로 저장했어요!", username);
         } catch (ExpiredJwtException e) {
             writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "만료된 액세스 토큰입니다.");
             return;
@@ -91,7 +86,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
         ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
+        log.error("해당 HTTP 요청에 대한 액세스 토큰의 유효성 검증을 실패했어요: {}", message);
         response.setContentType("application/json");
         response.setStatus(status);
         ApiResponse<Object> body = ApiResponse.error(message);
