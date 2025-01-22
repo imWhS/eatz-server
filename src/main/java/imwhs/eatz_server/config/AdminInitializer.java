@@ -29,11 +29,9 @@ public class AdminInitializer {
             String password = adminProperties.getPassword();
 
             if (userRepository.findByEmail(email).isEmpty()) {
-                EatzUser admin = new EatzUser("admin", email, passwordEncoder.encode(password), Role.ADMIN);
+                EatzUser admin = new EatzUser("admin", email, passwordEncoder.encode(password), Role.ROLE_ADMIN);
                 userRepository.save(admin);
                 log.info("관리자 계정을 생성했어요!");
-            } else {
-                log.info("관리자 계정이 이미 존재해서 생성하지 않았어요!");
             }
         };
     }

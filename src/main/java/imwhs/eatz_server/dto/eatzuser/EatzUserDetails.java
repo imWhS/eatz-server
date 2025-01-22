@@ -27,6 +27,8 @@ public class EatzUserDetails implements UserDetails {
         return this.user.getUsername();
     }
 
+    public Long getId() { return this.user.getId(); }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -50,7 +52,6 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("JsonAuthenticationFilter.attemptAuthentication");
         try {
             // HTTP 요청에서 로그인 정보를 추출합니다.
             LoginRequest loginRequest = parseLoginRequest(request);
@@ -77,6 +78,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         EatzUserDetails eatzUserDetails = (EatzUserDetails) authentication.getPrincipal();
         String email = eatzUserDetails.getUsername();
+        Long id = eatzUserDetails.getId();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -99,6 +101,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         RefreshToken refreshTokenEntity = new RefreshToken(email, expiration, refreshToken);
         refreshTokenRepository.save(refreshTokenEntity);
 
+        log.info("'{}' 이메일 주소에 해당하는 사용자가 성공적으로 로그인됐어요. (ID: {})", email, id);
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -110,16 +113,11 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        System.out.println("failed.getClass().getName() = " + failed.getClass().getName());
-
-
         ApiResponse<Map<String, String>> responseBody = ApiResponse.error(failed.getMessage());
-
+        log.error("성공적으로 로그인하지 못했어요: {} ({})", failed.getMessage(), failed.getClass().getName());
 
         if (failed instanceof BadCredentialsException) {
-
-            responseBody = ApiResponse.error("아이디, 비밀 번호 좀 똑띠 입력하쇼 ");
-
+            responseBody = ApiResponse.error("이메일 주소 또는 비밀 번호가 올바르지 않아 로그인할 수 없어요.");
         }
 
         response.setContentType("application/json");

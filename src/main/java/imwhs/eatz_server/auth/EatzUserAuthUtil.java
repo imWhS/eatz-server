@@ -1,4 +1,4 @@
-package imwhs.eatz_server.common;
+package imwhs.eatz_server.auth;
 
 import imwhs.eatz_server.dto.eatzuser.EatzUserDetails;
 import org.springframework.security.core.Authentication;

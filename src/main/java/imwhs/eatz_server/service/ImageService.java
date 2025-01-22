@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.common.EatzUserAuthUtil;
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.common.storage.ImageStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,16 +15,38 @@ public class ImageService {
     private final ImageStorage imageStorage;
 
     /**
-     * 파일을 프로필 이미지로 저장합니다.
-     * @param file 저장하려는 파일.
-     * @return 저장된 파일의 경로.
+     * 파일을 프로필 이미지로 업로드합니다.
+     * @param file 업로드하려는 파일.
+     * @return 업로드된 파일의 경로.
      */
-    public String saveProfileImage(MultipartFile file) {
+    public String uploadProfileImage(MultipartFile file) {
         log.info("HTTP 요청 데이터로 전송 받은 이미지({})를 저장합니다.", file.getOriginalFilename());
         return imageStorage.save(
                 "profiles",
                 EatzUserAuthUtil.getUsername() + getExtension(file),
                 file);
+    }
+
+    /**
+     * 파일을 프로필 이미지로 업로드합니다.
+     * @param username 프로필 이미지를 업데이트할 사용자의 사용자 이름.
+     * @param file 업로드하려는 파일.
+     * @return 업로드된 파일의 경로.
+     */
+    public String uploadProfileImage(String username, MultipartFile file) {
+        log.info("이미지({})를 {} 사용자의 프로필 이미지로 저장합니다.", file.getOriginalFilename(), username);
+        return imageStorage.save(
+                "profiles",
+                username + getExtension(file),
+                file);
+    }
+
+    /**
+     * 이미지 베이스 디렉터리 하위 계층에 저장된 이미지를 삭제합니다.
+     * @param filePath 삭제할 이미지가 저장되어 있는 경로. 일반적으로 uploads/images/로 시작합니다.
+     */
+    public void deleteImage(String filePath) {
+        imageStorage.delete(filePath);
     }
 
     /**
