@@ -2,7 +2,9 @@ package imwhs.eatz_server.common;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -44,10 +47,19 @@ public class GlobalExceptionHandler {
         return ApiResponse.error(e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ApiResponse<Object> handleUsernameNotFoundException(MethodArgumentNotValidException e) {
+        log.error(e.getBindingResult().getFieldError().getDefaultMessage());
+        return ApiResponse.error("유효하지 않은 사용자 이름입니다.");
+    }
+
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicatedEatzUserException.class)
     public ApiResponse<Object> handleDuplicatedEatzUserException(DuplicatedEatzUserException e) {
         return ApiResponse.error(e.getMessage());
     }
+
+
 
 }

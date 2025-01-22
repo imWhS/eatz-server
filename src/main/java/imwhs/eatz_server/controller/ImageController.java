@@ -28,11 +28,4 @@ public class ImageController {
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
-    @GetMapping("/uploads/images/{imageName}")
-    public ResponseEntity<ApiResponse<String>> getImage(@PathVariable String folder, @PathVariable String imageName) {
-        log.info("{} 디렉터리의 {} 이미지를 갖고올게요!", folder, imageName);
-//        String imagePath = imageStorageService.getImagePath(folder, imageName);
-        return ResponseEntity.ok(ApiResponse.success(""));
-    }
-
 }
