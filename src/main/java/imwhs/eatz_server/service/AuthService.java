@@ -93,9 +93,4 @@ public class AuthService {
         refreshTokenRepository.deleteByToken(refreshToken);
     }
 
-    @Transactional
-    public void signOut(Long id) {
-
-    }
-
 }
