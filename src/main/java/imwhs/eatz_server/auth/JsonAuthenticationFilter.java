@@ -101,7 +101,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         RefreshToken refreshTokenEntity = new RefreshToken(email, expiration, refreshToken);
         refreshTokenRepository.save(refreshTokenEntity);
 
-        log.info("사용자가 {} 이메일 주소로 성공적으로 로그인됐어요. 이 사용자의 id는 {}이에요.", email, id);
+        log.info("'{}' 이메일 주소에 해당하는 사용자가 성공적으로 로그인됐어요. (ID: {})", email, id);
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -114,6 +114,8 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ApiResponse<Map<String, String>> responseBody = ApiResponse.error(failed.getMessage());
+        log.error("성공적으로 로그인하지 못했어요: {} ({})", failed.getMessage(), failed.getClass().getName());
+
         if (failed instanceof BadCredentialsException) {
             responseBody = ApiResponse.error("이메일 주소 또는 비밀 번호가 올바르지 않아 로그인할 수 없어요.");
         }

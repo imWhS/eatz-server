@@ -1,6 +1,5 @@
 package imwhs.eatz_server.controller;
 
-import imwhs.eatz_server.common.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
@@ -56,7 +55,6 @@ public class EatzUserController {
     @DeleteMapping("/image")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteImage() {
-        log.info("/image URL에 매핑된 deleteImage()가 호출됐어요");
         userService.deleteImage();
     }
 
