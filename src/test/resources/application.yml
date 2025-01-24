@@ -16,5 +16,14 @@ logging.level:
   org.hibernate.SQL: debug
 
 eatz:
-  image:
-    base-directory: images
+  local-storage-directory: file:/Users/son-wonhui/Library/Mobile Documents/com~apple~CloudDocs/dev_whs/Eatz/eatz-server/
+  storage:
+    base-directory: uploads
+    image:
+      base-directory: images
+    etc:
+      base-directory: etc
+
+admin:
+  email: admin@eatz.io
+  password: 1q2w3e4r!
