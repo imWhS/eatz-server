@@ -1,0 +1,21 @@
+package imwhs.eatz_server.exception;
+
+public class LikeNotFoundException extends RuntimeException {
+
+    public LikeNotFoundException() {
+        super();
+    }
+
+    public LikeNotFoundException(String message) {
+        super(message);
+    }
+
+    public LikeNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public LikeNotFoundException(Throwable cause) {
+        super(cause);
+    }
+
+}

@@ -1,5 +1,6 @@
 package imwhs.eatz_server.service;
 
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Recipe;
 import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
@@ -28,13 +29,13 @@ public class RecipeService {
     /**
      * 새 레시피를 등록합니다.
      * @param dto    등록할 레시피 정보를 담고 있는 CreateRecipeDto.
-     * @param userId 새 레시피를 등록하려는 사용자의 식별자.
      * @return 등록 완료된 레시피 정보를 담고 있는 RecipeResponseDto.
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
     @Transactional
-    public Long registerRecipe(RecipeCreateDto dto, Long userId) {
-        EatzUser user = getEatzUser(userId);
+    public Long registerRecipe(RecipeCreateDto dto) {
+        String username = EatzUserAuthUtil.getUsername();
+        EatzUser user = getEatzUserByUsername(username);
         Recipe recipe = dto.toEntity(user);
         recipeRepository.save(recipe);
         return recipe.getId();
@@ -80,6 +81,11 @@ public class RecipeService {
     private EatzUser getEatzUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자를 찾을 수 없습니다."));
+    }
+
+    private EatzUser getEatzUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EatzUserNotFoundException("사용자 이름이 " + username + "인 사용자를 찾지 못했어요."));
     }
 
     private Recipe getRecipe(Long id) {
