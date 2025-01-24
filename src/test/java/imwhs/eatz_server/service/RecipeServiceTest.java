@@ -43,7 +43,7 @@ public class RecipeServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
 
         // when
-        Long recipeId = recipeService.registerRecipe(recipeCreateDto, user.getId());
+        Long recipeId = recipeService.registerRecipe(recipeCreateDto);
 
         // then
         Recipe recipe = recipeRepository.findById(recipeId).get();
