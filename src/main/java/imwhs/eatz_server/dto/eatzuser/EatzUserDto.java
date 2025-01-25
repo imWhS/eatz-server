@@ -22,6 +22,8 @@ public class EatzUserDto {
 
     private Role role;
 
+    private String imageUrl;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
@@ -39,6 +41,7 @@ public class EatzUserDto {
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
         this.deletedAt = user.getDeletedAt();
+        this.imageUrl = user.getImageUrl();
     }
 
 }

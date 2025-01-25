@@ -36,6 +36,7 @@ public class RecipeQueryRepository {
         QEatzUser user = QEatzUser.eatzUser;
         QComment comment = QComment.comment;
         QRating rating = QRating.rating;
+        QLikes likes = QLikes.likes;
 
         return Optional.ofNullable(queryFactory
                 .select(
@@ -56,7 +57,11 @@ public class RecipeQueryRepository {
                                 Projections.constructor(RatingSummaryDto.class,
                                         // 사용자는 레시피에 하나의 평가만 남길 수 있기 때문에, 평가 식별자 값 기준으로 distinct를 적용합니다.
                                         rating.id.countDistinct().intValue(),
-                                        rating.score.avg().doubleValue())
+                                        rating.score.avg().doubleValue()),
+                                JPAExpressions
+                                        .select(likes.count().longValue())
+                                        .from(likes)
+                                        .where(likes.entityId.eq(recipe.id))
                         )
                 )
                 .from(recipe)
