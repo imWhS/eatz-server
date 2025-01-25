@@ -4,7 +4,9 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Likes;
 import imwhs.eatz_server.domain.LikesType;
+import imwhs.eatz_server.dto.LikeDetailDto;
 import imwhs.eatz_server.dto.LikeDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -68,7 +71,16 @@ public class LikeService {
         }
 
         validateEntityById(entityId, type);
-        return likeRepository.existsByUserIdAndEntityIdAndType(userId, entityId, type);
+        return likeRepository.existsByUserIdAndEntityIdAndTypeAndIsLikedIsTrue(userId, entityId, type);
+    }
+
+    public LikeDetailDto getLikeDetails(Long entityId, LikesType type) {
+        validateEntityById(entityId, type);
+
+        LikeDetailDto dto = likeRepository.findAllByEntityIdAndType(entityId, type);
+        List<EatzUserDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
+        dto.setLikedUsers(likedUsersDto);
+        return dto;
     }
 
     private void validateEntityById(Long entityId, LikesType type) {

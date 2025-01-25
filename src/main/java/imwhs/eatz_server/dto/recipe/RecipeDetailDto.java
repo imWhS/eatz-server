@@ -42,4 +42,9 @@ public class RecipeDetailDto {
      */
     private RatingSummaryDto ratingSummary;
 
+    /**
+     * 좋아하는 사용자 수
+     */
+    private Long likeCount;
+
 }

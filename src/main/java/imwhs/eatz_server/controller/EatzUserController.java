@@ -58,7 +58,7 @@ public class EatzUserController {
         userService.deleteImage();
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(
             @PathVariable Long id,
