@@ -19,14 +19,14 @@ import java.util.Optional;
  *     QueryDSL을 기반으로 조회 쿼리를 생성, 실행합니다.
  * </p>
  */
-@Repository
 @RequiredArgsConstructor
+@Repository
 public class RecipeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
     /**
-     * 식별자에 해당하는 레시피의 상세 정보를 조회합니다.
+     * ID에 해당하는 레시피의 상세 정보를 조회합니다.
      * 삭제 처리된 레시피는 조회 대상에서 제외됩니다.
      * @param id 레시피 식별자.
      * @return Optional로 wrapping된 RecipeDetailResponseDto. 레시피의 상세 정보를 담은 DTO입니다.

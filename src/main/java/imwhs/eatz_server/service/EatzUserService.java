@@ -43,7 +43,7 @@ public class EatzUserService {
         validateExistingPassword(dto.getExistingPassword(), user);
 
         String password = dto.getNewPassword() == null ? null : passwordEncoder.encode(dto.getNewPassword());
-        user.update(dto.getUsername(), dto.getEmail(), password);
+        user.update(dto.getUsername(), password);
     }
 
     /**

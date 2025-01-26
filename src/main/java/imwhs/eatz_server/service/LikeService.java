@@ -10,6 +10,7 @@ import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
+import imwhs.eatz_server.repository.like.LikeQueryRepository;
 import imwhs.eatz_server.repository.like.LikeRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;

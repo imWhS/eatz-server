@@ -37,7 +37,7 @@ public class EatzUserController {
     }
 
     // TODO: PATCH, 요청 파라미터를 통해 비밀 번호 등에 대한 부분 업데이트 API 추가
-    @PutMapping("/")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> updateUser(
             @PathVariable Long id,
