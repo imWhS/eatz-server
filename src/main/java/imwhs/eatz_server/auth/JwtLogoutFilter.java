@@ -34,7 +34,6 @@ public class JwtLogoutFilter extends GenericFilterBean {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        System.out.println("JwtLogoutFilter.doFilter");
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 

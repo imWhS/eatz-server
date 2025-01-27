@@ -4,6 +4,7 @@ import imwhs.eatz_server.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  *     <li>사용자의 기본적인 정보와 사용자가 등록한 레시피 등과 같은 연관 정보를 저장, 관리합니다.</li>
  * </ul>
  */
+@Slf4j
 @Table(name = "eatz_user")
 @Getter
 @EqualsAndHashCode(of = "id")
@@ -124,17 +126,20 @@ public class EatzUser extends BaseEntity {
     /**
      * 사용자 주요 정보 업데이트 메서드.
      * <ul>
-     * <li>사용자의 정보 중, 사용자 이름, 이메일, 비밀 번호를 변경합니다.</li>
+     * <li>사용자의 정보 중, 사용자 이름, 비밀 번호를 변경합니다.</li>
      * <li>변경할 값이 null이거나 비어있는 필드는 기존 값을 유지합니다.</li>
      * </ul>
      * @param username 변경할 사용자 이름
-     * @param email 변경할 이메일
      * @param password 변경할 비밀 번호
      */
-    public void update(String username, String email, String password) {
+    public void update(String username, String password) {
         if (username != null && !username.isEmpty()) this.username = username;
-        if (email != null && !email.isEmpty()) this.email = email;
-        if (password != null && !password.isEmpty()) this.password = password;
+        if (password != null && !password.isEmpty()) {
+            log.info("{}의 비밀 번호를 재설정했어요.", username);
+            this.password = password;
+        } else {
+            log.info("{}의 비밀 번호를 유지할게요.", username);
+        }
     }
 
     /**

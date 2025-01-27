@@ -13,8 +13,6 @@ public class EatzUserUpdateDto {
 
     private String username;
 
-    private String email;
-
     /**
      * 기존 비밀 번호. Encoding 되지 않은 비밀 번호입니다.
      */

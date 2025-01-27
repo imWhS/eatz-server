@@ -1,9 +1,12 @@
 package imwhs.eatz_server.repository.recipe;
 
 import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.dto.recipe.RecipeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -25,7 +28,11 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
      * @param id 레시피 식별자.
      * @return Optional로 wrapping된 Recipe 엔티티.
      */
-    Optional<Recipe> findByIdAndDeletedAtIsNull(Long id);
+    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, COUNT(l.id)) " +
+            "from Recipe r left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+            "where r.id = :id and r.deletedAt IS NULL " +
+            "group by r")
+    Optional<RecipeDto> findByIdAndDeletedAtIsNull(@Param("id") Long id);
 
     /**
      * 모든 레시피 조회.
@@ -36,7 +43,11 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
      * @param pageable 페이징 설정 정보.
      * @return 페이징 적용된 모든 Recipe 컬렉션.
      */
-    Page<Recipe> findAllByDeletedAtIsNull(Pageable pageable);
+    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, COUNT(l.id)) " +
+            "from Recipe r left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+            "where r.deletedAt IS NULL " +
+            "group by r")
+    Page<RecipeDto> findAllByDeletedAtIsNull(Pageable pageable);
 
     /**
      * 특정 사용자가 등록한 모든 레시피 조회.
