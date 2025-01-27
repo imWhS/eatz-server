@@ -17,7 +17,7 @@ public class LikeDetailDto {
 
     private Long count;
 
-    private List<EatzUserDto> likedUsers;
+    private List<LikedUserDto> likedUsers;
 
     public LikeDetailDto(Long entityId, LikesType type, Long count) {
         this.entityId = entityId;
