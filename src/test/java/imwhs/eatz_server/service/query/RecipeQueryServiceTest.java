@@ -107,7 +107,7 @@ class RecipeQueryServiceTest {
         recipeService.deleteRecipe(deletedRecipe.getId(), user.getId());
 
         // when
-        Page<RecipeDto> recipes = recipeQueryService.findAllRecipes(null, null);
+        Page<RecipeDto> recipes = recipeQueryService.findAllRecipes(null);
 
         // then
         Assertions.assertThat(recipes.get().count()).isEqualTo(3);

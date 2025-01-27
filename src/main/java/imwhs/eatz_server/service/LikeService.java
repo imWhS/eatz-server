@@ -1,13 +1,17 @@
 package imwhs.eatz_server.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Likes;
 import imwhs.eatz_server.domain.LikesType;
+import imwhs.eatz_server.dto.LikeDetailDto;
 import imwhs.eatz_server.dto.LikeDto;
+import imwhs.eatz_server.dto.LikedUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
+import imwhs.eatz_server.repository.like.LikeQueryRepository;
 import imwhs.eatz_server.repository.like.LikeRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -23,6 +28,8 @@ import java.util.Optional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
+
+    private final LikeQueryRepository likeQueryRepository;
 
     private final EatzUserRepository userRepository;
 
@@ -68,7 +75,16 @@ public class LikeService {
         }
 
         validateEntityById(entityId, type);
-        return likeRepository.existsByUserIdAndEntityIdAndType(userId, entityId, type);
+        return likeRepository.existsByUserIdAndEntityIdAndTypeAndIsLikedIsTrue(userId, entityId, type);
+    }
+
+    public LikeDetailDto getLikeDetails(Long entityId, LikesType type) {
+        validateEntityById(entityId, type);
+
+        LikeDetailDto dto = likeRepository.findAllByEntityIdAndType(entityId, type);
+        List<LikedUserDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
+        dto.setLikedUsers(likedUsersDto);
+        return dto;
     }
 
     private void validateEntityById(Long entityId, LikesType type) {
