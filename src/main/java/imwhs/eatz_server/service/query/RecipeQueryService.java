@@ -28,13 +28,6 @@ public class RecipeQueryService {
     private final RecipeQueryRepository recipeQueryRepository;
 
     /**
-     * 페이지 번호 및 크기 기본 값.
-     * 응답 메시지에 포함시킬 레시피에 대해 페이징 처리를 하기 위해 정의합니다.
-     */
-    private static final int DEFAULT_PAGE_NUMBER = 0;
-    private static final int DEFAULT_PAGE_SIZE = 10;
-
-    /**
      * 식별자로 레시피를 조회합니다.
      * @param id 조회할 레시피의 식별자.
      * @return 조회된 레시피 정보를 담고 있는 RecipeResponseDto.
@@ -73,8 +66,8 @@ public class RecipeQueryService {
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
     public Page<RecipeDto> findAllRecipesByUser(Long userId, Pageable pageable) {
-        Page<Recipe> foundRecipes = recipeRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
-        return foundRecipes.map(RecipeDto::new);
+        Page<RecipeDto> foundRecipes = recipeRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
+        return foundRecipes;
     }
 
 }

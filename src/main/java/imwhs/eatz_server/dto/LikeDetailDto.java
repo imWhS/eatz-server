@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto;
 
 import imwhs.eatz_server.domain.LikesType;
-import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserMinimumDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,7 +17,7 @@ public class LikeDetailDto {
 
     private Long count;
 
-    private List<LikedUserDto> likedUsers;
+    private List<EatzUserMinimumDto> likedUsers;
 
     public LikeDetailDto(Long entityId, LikesType type, Long count) {
         this.entityId = entityId;
