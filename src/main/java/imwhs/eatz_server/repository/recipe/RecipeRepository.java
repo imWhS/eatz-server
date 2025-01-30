@@ -28,8 +28,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
      * @param id 레시피 식별자.
      * @return Optional로 wrapping된 Recipe 엔티티.
      */
-    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, COUNT(l.id)) " +
-            "from Recipe r left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
+            "from Recipe r " +
+            "left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+            "left join EatzUser u on r.user.id = u.id " +
             "where r.id = :id and r.deletedAt IS NULL " +
             "group by r")
     Optional<RecipeDto> findByIdAndDeletedAtIsNull(@Param("id") Long id);
@@ -43,8 +45,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
      * @param pageable 페이징 설정 정보.
      * @return 페이징 적용된 모든 Recipe 컬렉션.
      */
-    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, COUNT(l.id)) " +
-            "from Recipe r left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
+            "from Recipe r " +
+            "left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+            "left join EatzUser u on r.user.id = u.id " +
             "where r.deletedAt IS NULL " +
             "group by r")
     Page<RecipeDto> findAllByDeletedAtIsNull(Pageable pageable);
@@ -59,6 +63,12 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
      * @param pageable 페이징 설정 정보.
      * @return 페이징 적용된 모든 Recipe 컬렉션.
      */
-    Page<Recipe> findAllByUserIdAndDeletedAtIsNull(Long userId, Pageable pageable);
+    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
+            "from Recipe r " +
+            "left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+            "left join EatzUser u on r.user.id = u.id " +
+            "where r.user.id = :userId and r.deletedAt IS NULL " +
+            "group by r")
+    Page<RecipeDto> findAllByUserIdAndDeletedAtIsNull(@Param("userId") Long userId, Pageable pageable);
 
 }
