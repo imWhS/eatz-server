@@ -1,13 +1,12 @@
 package imwhs.eatz_server.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.EatzUser;
 import imwhs.eatz_server.domain.Likes;
 import imwhs.eatz_server.domain.LikesType;
 import imwhs.eatz_server.dto.LikeDetailDto;
 import imwhs.eatz_server.dto.LikeDto;
-import imwhs.eatz_server.dto.LikedUserDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserMinimumDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -82,7 +81,7 @@ public class LikeService {
         validateEntityById(entityId, type);
 
         LikeDetailDto dto = likeRepository.findAllByEntityIdAndType(entityId, type);
-        List<LikedUserDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
+        List<EatzUserMinimumDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
         dto.setLikedUsers(likedUsersDto);
         return dto;
     }
