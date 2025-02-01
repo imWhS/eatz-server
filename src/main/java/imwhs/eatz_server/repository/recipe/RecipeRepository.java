@@ -1,6 +1,6 @@
 package imwhs.eatz_server.repository.recipe;
 
-import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * Recipe 엔티티의 기본적인 조회를 포함한 CRUD 쿼리 작업을 처리하는 Spring Data JPA 리포지토리입니다.
  */
 @Repository
-public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+public interface RecipeRepository extends JpaRepository<Recipe, Long>, NRecipeCustomRepository {
 
     /**
      * 식별자로 레시피 조회.

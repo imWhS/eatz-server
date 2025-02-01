@@ -1,6 +1,9 @@
 package imwhs.eatz_server.repository.recipe.query;
 
-import imwhs.eatz_server.domain.*;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Comment;
+import imwhs.eatz_server.domain.recipe.Rating;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;

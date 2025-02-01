@@ -1,11 +1,11 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Likes;
-import imwhs.eatz_server.domain.LikesType;
-import imwhs.eatz_server.dto.LikeDetailDto;
-import imwhs.eatz_server.dto.LikeDto;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.likes.Likes;
+import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.dto.likes.LikesDetailDto;
+import imwhs.eatz_server.dto.likes.LikesDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserMinimumDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
@@ -37,7 +37,7 @@ public class LikeService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public LikeDto toggleLikeOf(Long entityId, LikesType type) {
+    public LikesDto toggleLikeOf(Long entityId, LikesType type) {
         String username = EatzUserAuthUtil.getUsername();
         EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
                 new EatzUserNotFoundException(username + "에 해당하는 사용자가 존재하지 않아요."));
@@ -65,7 +65,7 @@ public class LikeService {
 
         long likesCount = likeRepository.countAllLikes(entityId, type);
 
-        return new LikeDto(likeId, entityId, type, isLiked, likesCount);
+        return new LikesDto(likeId, entityId, type, isLiked, likesCount);
     }
 
     public boolean isLikedByUser(Long userId, Long entityId, LikesType type) {
@@ -77,10 +77,10 @@ public class LikeService {
         return likeRepository.existsByUserIdAndEntityIdAndTypeAndIsLikedIsTrue(userId, entityId, type);
     }
 
-    public LikeDetailDto getLikeDetails(Long entityId, LikesType type) {
+    public LikesDetailDto getLikeDetails(Long entityId, LikesType type) {
         validateEntityById(entityId, type);
 
-        LikeDetailDto dto = likeRepository.findAllByEntityIdAndType(entityId, type);
+        LikesDetailDto dto = likeRepository.findAllByEntityIdAndType(entityId, type);
         List<EatzUserMinimumDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
         dto.setLikedUsers(likedUsersDto);
         return dto;

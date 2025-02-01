@@ -3,9 +3,9 @@ package imwhs.eatz_server.repository.rating;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import imwhs.eatz_server.domain.QEatzUser;
-import imwhs.eatz_server.domain.QRating;
-import imwhs.eatz_server.domain.QRecipe;
+import imwhs.eatz_server.domain.eatzuser.QEatzUser;
+import imwhs.eatz_server.domain.recipe.QRating;
+import imwhs.eatz_server.domain.recipe.QRecipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.rating.*;
 import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
@@ -27,14 +27,14 @@ public class RatingQueryRepository {
      * @param id 평가 식별자
      * @return Optional로 wrapping된 RatingDetailResponseDto. 평가의 상세 정보를 담은 DTO입니다.
      */
-    public Optional<RatingDetailDto> findRatingDetailById(Long id) {
+    public Optional<RatingDetailDtoOld> findRatingDetailById(Long id) {
         QRating rating = QRating.rating;
         QEatzUser user = QEatzUser.eatzUser;
         QRecipe recipe = QRecipe.recipe;
 
         return Optional.ofNullable(queryFactory
                 .select(
-                        Projections.constructor(RatingDetailDto.class,
+                        Projections.constructor(RatingDetailDtoOld.class,
                                 rating.id,
                                 Projections.constructor(EatzUserSummaryDto.class,
                                         user.id,

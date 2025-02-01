@@ -1,8 +1,8 @@
 package imwhs.eatz_server.config;
 
 import imwhs.eatz_server.config.properties.AdminProperties;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.Role;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

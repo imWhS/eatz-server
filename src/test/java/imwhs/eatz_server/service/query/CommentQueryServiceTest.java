@@ -1,6 +1,8 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.*;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Comment;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.comment.CommentByUserResponseDto;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;

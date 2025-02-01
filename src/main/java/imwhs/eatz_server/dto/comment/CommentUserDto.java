@@ -1,9 +1,8 @@
 package imwhs.eatz_server.dto.comment;
 
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * CommentUserDto 클래스입니다.<br/>

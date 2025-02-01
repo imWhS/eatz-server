@@ -1,8 +1,8 @@
 package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserMinimumDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package imwhs.eatz_server.repository.rating;
 
-import imwhs.eatz_server.domain.Rating;
+import imwhs.eatz_server.domain.recipe.Rating;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

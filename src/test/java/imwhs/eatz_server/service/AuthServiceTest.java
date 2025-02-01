@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;

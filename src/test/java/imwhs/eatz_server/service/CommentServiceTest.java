@@ -1,9 +1,8 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.Comment;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.domain.recipe.Comment;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
 import imwhs.eatz_server.dto.comment.CommentUserDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
@@ -49,7 +48,7 @@ public class CommentServiceTest {
         String commentContent = "내 맘 속에 저장~";
 
         // when
-        Long commentId = commentService.registerComment(recipeId, userId, commentContent);
+        Long commentId = commentService.registerComment(recipeId, commentContent);
 
         // then
         boolean present = commentRepository.findById(commentId).isPresent();

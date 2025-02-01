@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.rating;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.Rating;
+import imwhs.eatz_server.domain.recipe.Rating;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

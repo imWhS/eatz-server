@@ -1,11 +1,11 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.SavedRecipe;
-import imwhs.eatz_server.dto.savedrecipe.SavedRecipeDto;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.SavedRecipe;
+import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.savedrecipe.SavedRecipeQueryRepository;
+import imwhs.eatz_server.repository.recipe.savedrecipe.SavedRecipeQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

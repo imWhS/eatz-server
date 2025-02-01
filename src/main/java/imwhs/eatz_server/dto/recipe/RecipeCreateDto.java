@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.recipe;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;

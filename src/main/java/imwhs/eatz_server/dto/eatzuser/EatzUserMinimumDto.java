@@ -1,6 +1,6 @@
 package imwhs.eatz_server.dto.eatzuser;
 
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import lombok.Data;
 
 /**

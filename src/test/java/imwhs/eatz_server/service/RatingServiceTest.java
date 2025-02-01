@@ -1,11 +1,10 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Rating;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Rating;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.rating.RatingRecipeDto;
-import imwhs.eatz_server.dto.rating.RatingDto;
+import imwhs.eatz_server.dto.rating.RatingDtoOld;
 import imwhs.eatz_server.dto.rating.RatingUserDto;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
@@ -182,7 +181,7 @@ public class RatingServiceTest {
         ratingRepository.save(rating);
 
         // when
-        RatingDto ratingDto = ratingService.findRating(rating.getId());
+        RatingDtoOld ratingDto = ratingService.findRating(rating.getId());
 
         // then
         org.junit.jupiter.api.Assertions.assertNotNull(ratingDto);
@@ -219,7 +218,7 @@ public class RatingServiceTest {
         ratingRepository.save(rating);
 
         // when
-        RatingDto ratingDto = ratingService.findRating(userId, recipeId);
+        RatingDtoOld ratingDto = ratingService.findRating(userId, recipeId);
 
         // then
         org.junit.jupiter.api.Assertions.assertNotNull(ratingDto);
