@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.Comment;
+import imwhs.eatz_server.domain.recipe.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

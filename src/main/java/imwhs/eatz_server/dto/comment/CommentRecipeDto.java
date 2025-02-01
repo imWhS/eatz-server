@@ -1,8 +1,6 @@
 package imwhs.eatz_server.dto.comment;
 
-import imwhs.eatz_server.domain.Comment;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

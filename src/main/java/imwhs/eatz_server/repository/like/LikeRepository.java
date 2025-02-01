@@ -1,8 +1,8 @@
 package imwhs.eatz_server.repository.like;
 
-import imwhs.eatz_server.domain.Likes;
-import imwhs.eatz_server.domain.LikesType;
-import imwhs.eatz_server.dto.LikeDetailDto;
+import imwhs.eatz_server.domain.likes.Likes;
+import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.dto.likes.LikesDetailDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserMinimumDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -41,10 +41,10 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
      * @param type 조회할 항목의 유형. RECIPE 또는 COMMENT가 될 수 있습니다.
      * @return 좋아요 여부.
      */
-    @Query("select new imwhs.eatz_server.dto.LikeDetailDto(l.entityId, l.type, count(l)) " +
+    @Query("select new imwhs.eatz_server.dto.likes.LikesDetailDto(l.entityId, l.type, count(l)) " +
             "from Likes l " +
             "where l.entityId = :entityId and l.type = :type and l.isLiked = true")
-    LikeDetailDto findAllByEntityIdAndType(@Param("entityId") Long entityId, @Param("type") LikesType type);
+    LikesDetailDto findAllByEntityIdAndType(@Param("entityId") Long entityId, @Param("type") LikesType type);
 
     /**
      * 특정 항목을 좋아하는 모든 사용자에 대한 요약 정보 목록을 조회합니다.

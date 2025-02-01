@@ -1,12 +1,11 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.service.RecipeService;
+import imwhs.eatz_server.service.recipe.RecipeService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +40,7 @@ class RecipeQueryServiceTest {
     @Test
     @DisplayName("등록된 레시피가 식별자로 정상적으로 조회되는지 테스트합니다.")
     @Transactional
-    void findRecipeByIdTest() {
+    void findRecipeByIdOldTest() {
         // given
         EatzUser user = EatzUser.createMember(
                 "heextory1",
@@ -54,7 +53,7 @@ class RecipeQueryServiceTest {
         Long recipeId = recipe.getId();
 
         // when
-        RecipeDto foundRecipe = recipeQueryService.findRecipeById(recipeId);
+        RecipeDto foundRecipe = recipeQueryService.findRecipeByIdOld(recipeId);
 
         // then
         Assertions.assertThat(foundRecipe.getId()).isEqualTo(recipeId);

@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
@@ -8,8 +8,8 @@ import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.recipe.RecipeQueryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 레시피(Recipe) 관련 정보를 조회하는 RecipeQueryService 클래스입니다.
  * Recipe에 대한 읽기 전용 쿼리 메서드를 제공합니다.
  */
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -33,8 +34,13 @@ public class RecipeQueryService {
      * @return 조회된 레시피 정보를 담고 있는 RecipeResponseDto.
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
-    public RecipeDto findRecipeById(Long id) {
+    public RecipeDto findRecipeByIdOld(Long id) {
         return recipeRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(
+                () -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
+    }
+
+    public NRecipeDto findRecipeById(Long id) {
+        return recipeRepository.findRecipeById(id).orElseThrow(
                 () -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
     }
 
@@ -46,7 +52,8 @@ public class RecipeQueryService {
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
     public RecipeDetailDto findRecipeDetailsById(Long id) {
-        return recipeQueryRepository.findRecipeDetailById(id)
+        log.info("findRecipeDetailsById called");
+        return recipeQueryRepository.testFindById(id)
                 .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
     }
 

@@ -1,6 +1,6 @@
 package imwhs.eatz_server.repository.comment;
 
-import imwhs.eatz_server.domain.Comment;
+import imwhs.eatz_server.domain.recipe.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

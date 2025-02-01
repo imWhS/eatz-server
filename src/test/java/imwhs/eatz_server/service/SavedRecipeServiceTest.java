@@ -1,15 +1,15 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.domain.SavedRecipe;
-import imwhs.eatz_server.dto.savedrecipe.SavedRecipeCreateDto;
-import imwhs.eatz_server.dto.savedrecipe.SavedRecipeScheduledDateUpdateDto;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.domain.recipe.SavedRecipe;
+import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeCreateDto;
+import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeScheduledDateUpdateDto;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.repository.savedrecipe.SavedRecipeQueryRepository;
-import imwhs.eatz_server.repository.savedrecipe.SavedRecipeRepository;
+import imwhs.eatz_server.repository.recipe.savedrecipe.SavedRecipeQueryRepository;
+import imwhs.eatz_server.repository.recipe.savedrecipe.SavedRecipeRepository;
+import imwhs.eatz_server.service.recipe.SavedRecipeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

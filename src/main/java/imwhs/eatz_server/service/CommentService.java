@@ -1,8 +1,9 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.Comment;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
+import imwhs.eatz_server.domain.recipe.Comment;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.comment.CommentRepository;
@@ -38,17 +39,19 @@ public class CommentService {
 
     /**
      * 새 댓글을 등록합니다.
+     *
      * @param recipeId 댓글을 달 레시피의 ID
-     * @param userId 댓글 등록을 요청한 사용자의 ID
-     * @param content 등록할 댓글의 내용
-     * @return 등록 완료된 댓글의 ID
+     * @param content  등록할 댓글의 내용
+     * @return 등록 완료된 댓글의 ID.
      */
     @Transactional
-    public Long registerComment(Long recipeId, Long userId, String content) {
+    public Long registerComment(Long recipeId, String content) {
+        String username = EatzUserAuthUtil.getUsername();
+
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다."));
-        EatzUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
+        EatzUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EatzUserNotFoundException("사용자 이름이 " + username + "인 사용자가 존재하지 않습니다."));
 
         Comment comment = new Comment(user, recipe, content);
         commentRepository.save(comment);

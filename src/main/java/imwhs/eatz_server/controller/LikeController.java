@@ -1,10 +1,10 @@
 package imwhs.eatz_server.controller;
 
-import imwhs.eatz_server.domain.LikesType;
+import imwhs.eatz_server.domain.likes.LikesType;
 import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.dto.LikeDetailDto;
-import imwhs.eatz_server.dto.LikeDto;
-import imwhs.eatz_server.dto.LikeRequestDto;
+import imwhs.eatz_server.dto.likes.LikesDetailDto;
+import imwhs.eatz_server.dto.likes.LikesDto;
+import imwhs.eatz_server.dto.likes.LikesRequestDto;
 import imwhs.eatz_server.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +20,9 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<LikeDto>> toggleLikeOf(@RequestBody LikeRequestDto dto) {
-        LikeDto likeDto = likeService.toggleLikeOf(dto.getEntityId(), dto.getType());
-        return ResponseEntity.ok(ApiResponse.success(likeDto));
+    public ResponseEntity<ApiResponse<LikesDto>> toggleLikeOf(@RequestBody LikesRequestDto dto) {
+        LikesDto likesDto = likeService.toggleLikeOf(dto.getEntityId(), dto.getType());
+        return ResponseEntity.ok(ApiResponse.success(likesDto));
     }
 
     @GetMapping
@@ -35,9 +35,9 @@ public class LikeController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity<ApiResponse<LikeDetailDto>> getLikeDetails(@RequestParam Long entityId,
-                                                      @RequestParam LikesType type) {
-        LikeDetailDto dto = likeService.getLikeDetails(entityId, type);
+    public ResponseEntity<ApiResponse<LikesDetailDto>> getLikeDetails(@RequestParam Long entityId,
+                                                                      @RequestParam LikesType type) {
+        LikesDetailDto dto = likeService.getLikeDetails(entityId, type);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 

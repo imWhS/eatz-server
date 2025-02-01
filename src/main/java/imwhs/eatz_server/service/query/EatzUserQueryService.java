@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;

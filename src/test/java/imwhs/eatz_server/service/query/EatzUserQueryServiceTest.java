@@ -1,10 +1,7 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.domain.Role;
-import imwhs.eatz_server.dto.PagedApiResponse;
-import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;

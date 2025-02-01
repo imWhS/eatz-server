@@ -1,9 +1,8 @@
 package imwhs.eatz_server.dto.recipe;
 
-import imwhs.eatz_server.domain.Recipe;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * RecipeSummaryDto 클래스입니다.

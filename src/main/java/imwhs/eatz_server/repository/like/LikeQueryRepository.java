@@ -4,28 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import imwhs.eatz_server.domain.LikesType;
-import imwhs.eatz_server.domain.QEatzUser;
-import imwhs.eatz_server.domain.QLikes;
-import imwhs.eatz_server.dto.LikeDetailDto;
+import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.domain.eatzuser.QEatzUser;
+import imwhs.eatz_server.domain.likes.QLikes;
+import imwhs.eatz_server.dto.likes.LikesDetailDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import static com.querydsl.core.types.Projections.list;
-
-/*
-        try {
-            // ObjectMapper를 사용해 JSON 형식으로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonOutput = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transform);
-
-            // JSON 출력
-            System.out.println(jsonOutput);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
- */
 
 @RequiredArgsConstructor
 @Repository
@@ -41,8 +28,8 @@ public class LikeQueryRepository {
         QLikes likes = QLikes.likes;
         QEatzUser user = QEatzUser.eatzUser;
 
-        LikeDetailDto likeDetailDto = queryFactory
-                .select(Projections.constructor(LikeDetailDto.class,
+        LikesDetailDto likesDetailDto = queryFactory
+                .select(Projections.constructor(LikesDetailDto.class,
                         likes.entityId,
                         likes.type,
                         likes.user.count(),
@@ -56,7 +43,7 @@ public class LikeQueryRepository {
                 .fetchOne();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String output = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(likeDetailDto);
+        String output = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(likesDetailDto);
     }
 
 

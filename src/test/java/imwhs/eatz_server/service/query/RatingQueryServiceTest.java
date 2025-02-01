@@ -1,9 +1,8 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Rating;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Rating;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.rating.*;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -79,7 +78,7 @@ class RatingQueryServiceTest {
         ratingRepository.save(rating);
 
         // when
-        RatingDetailDto ratingDetailDto = ratingQueryService.findRatingDetail(rating.getId());
+        RatingDetailDtoOld ratingDetailDto = ratingQueryService.findRatingDetail(rating.getId());
 
         // then
         Assertions.assertNotNull(ratingDetailDto);

@@ -1,7 +1,7 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.auth.TokenManager;
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.RefreshToken;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;

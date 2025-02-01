@@ -1,7 +1,7 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDeleteDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
