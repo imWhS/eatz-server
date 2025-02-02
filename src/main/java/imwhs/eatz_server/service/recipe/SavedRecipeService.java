@@ -1,9 +1,9 @@
 package imwhs.eatz_server.service.recipe;
 
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.domain.recipe.SavedRecipe;
-import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeCreateDto;
 import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeScheduledDateUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
@@ -11,7 +11,7 @@ import imwhs.eatz_server.exception.SavedRecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.repository.recipe.savedrecipe.SavedRecipeQueryRepository;
+import imwhs.eatz_server.repository.recipe.savedrecipe.SavedRecipeCustomRepositoryImpl;
 import imwhs.eatz_server.repository.recipe.savedrecipe.SavedRecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,25 +32,22 @@ public class SavedRecipeService {
     private final RecipeRepository recipeRepository;
 
     private final EatzUserRepository userRepository;
-    private final SavedRecipeQueryRepository savedRecipeQueryRepository;
+
+    private final SavedRecipeCustomRepositoryImpl savedRecipeCustomRepositoryImpl;
 
     /**
      * 레시피를 저장합니다.
-     * @param dto 레시피를 저장하기 위해 필요한 정보를 담고 있는 DTO
-     * @return 저장된 레시피(SavedRecipe 엔티티) ID.
+     * @param recipeId 저장하려는 레시피 ID.
+     * @param schedules 일정 정보.
+     * @return 저장된 레시피 ID.
      */
     @Transactional
-    public Long saveRecipe(SavedRecipeCreateDto dto) {
-        Long recipeId = dto.getRecipeId();
+    public Long saveRecipe(Long recipeId, List<LocalDate> schedules) {
+        EatzUser user = getUser();
         Recipe recipe = getRecipe(recipeId);
 
-        Long userId = dto.getUserId();
-        EatzUser user = getEatzUser(userId);
-
-        List<LocalDate> schedules = dto.getSchedules();
-
         // 레시피와 사용자 엔티티를 이용해, 이미 해당 사용자가 해당 레시피를 저장했는지 확인합니다.
-        Optional<SavedRecipe> existingSavedRecipe = savedRecipeQueryRepository.findByRecipeAndUser(recipe, user);
+        Optional<SavedRecipe> existingSavedRecipe = savedRecipeRepository.findByRecipeAndUser(recipe, user);
         if (existingSavedRecipe.isPresent()) {
             // 이미 해당 사용자가 해당 레시피를 저장했다면, 추가 레시피 저장 로직을 더 이상 실행하지 않고 기존의 저장된 레시피 ID를 반환합니다.
             return existingSavedRecipe.get().getId();
@@ -68,16 +65,16 @@ public class SavedRecipeService {
      */
     @Transactional
     public void updateScheduledDate(SavedRecipeScheduledDateUpdateDto dto) {
+        EatzUser user = getUser();
         Long savedRecipeId = dto.getSavedRecipeId();
-        SavedRecipe savedRecipe = savedRecipeQueryRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
+
+        SavedRecipe savedRecipe = savedRecipeRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
                 () -> new SavedRecipeNotFoundException("id " + savedRecipeId + "에 해당하는 저장된 레시피를 찾을 수 없습니다."));
 
-        Long userId = dto.getUserId();
-        EatzUser user = getEatzUser(userId);
-        LocalDate scheduledDate = dto.getScheduledDate();
-
         // SavedRecipe를 생성한 사용자가 업데이트 요청을 했는지에 대한 유효성을 검증합니다.
-        validateDeleteSavedRecipeAccessAuthorize(userId, savedRecipe);
+        validateDeleteSavedRecipeAccessAuthorize(user, savedRecipe);
+
+        LocalDate scheduledDate = dto.getScheduledDate();
 
 //        savedRecipe.updateScheduledDate(scheduledDate);
     }
@@ -90,15 +87,16 @@ public class SavedRecipeService {
      */
     @Transactional
     public void deleteSavedRecipeByRecipeId(Long recipeId, Long userId) {
-        Recipe recipe = getRecipe(recipeId);
-        EatzUser user = getEatzUser(userId);
+        EatzUser user = getUser();
 
-        SavedRecipe savedRecipe = savedRecipeQueryRepository.findByRecipeAndUser(recipe, user)
+        Recipe recipe = getRecipe(recipeId);
+
+        SavedRecipe savedRecipe = savedRecipeRepository.findByRecipeAndUser(recipe, user)
                 .orElseThrow(() -> new SavedRecipeNotFoundException(
                         "올바르지 않은 요청입니다. " +
                                 "ID가 " + userId + "인 사용자가 ID가 " + recipeId + " 인 레시피를 저장하지 않았습니다."));
 
-        validateDeleteSavedRecipeAccessAuthorize(userId, savedRecipe);
+        validateDeleteSavedRecipeAccessAuthorize(user, savedRecipe);
         savedRecipeRepository.deleteByRecipeAndUser(recipe, user);
     }
 
@@ -109,18 +107,24 @@ public class SavedRecipeService {
      */
     @Transactional
     public void deleteSavedRecipe(Long savedRecipeId, Long userId) {
-        SavedRecipe savedRecipe = savedRecipeQueryRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
+        EatzUser user = getUser();
+        SavedRecipe savedRecipe = savedRecipeRepository.findWithUserAndRecipeById(savedRecipeId).orElseThrow(
                 () -> new SavedRecipeNotFoundException("id " + savedRecipeId + "에 해당하는 저장된 레시피를 찾을 수 없습니다."));
-        EatzUser user = getEatzUser(userId);
 
         // SavedRecipe를 생성한 사용자가 삭제 요청을 했는지에 대한 유효성을 검증합니다.
-        validateDeleteSavedRecipeAccessAuthorize(userId, savedRecipe);
+        validateDeleteSavedRecipeAccessAuthorize(user, savedRecipe);
 
         savedRecipeRepository.deleteById(savedRecipe.getId());
     }
 
-    private void validateDeleteSavedRecipeAccessAuthorize(Long userId, SavedRecipe savedRecipe) {
-        if (!Objects.equals(savedRecipe.getUser().getId(), userId)) {
+    private EatzUser getUser() {
+        String username = EatzUserAuthUtil.getUsername();
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new EatzUserNotFoundException("사용자 이름 '" + username + "'에 해당하는 사용자가 존재하지 않아요."));
+    }
+
+    private void validateDeleteSavedRecipeAccessAuthorize(EatzUser user, SavedRecipe savedRecipe) {
+        if (!Objects.equals(savedRecipe.getUser().getId(), user.getId())) {
             throw new UnauthorizedAccessException("레시피를 저장한 사용자가 아니어서, 권한이 없습니다.");
         }
     }

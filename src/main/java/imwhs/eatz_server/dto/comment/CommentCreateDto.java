@@ -5,8 +5,6 @@ import lombok.Data;
 @Data
 public class CommentCreateDto {
 
-    private Long recipeId;
-
     private String content;
 
 }

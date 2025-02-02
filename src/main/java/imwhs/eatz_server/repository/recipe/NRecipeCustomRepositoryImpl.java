@@ -8,8 +8,10 @@ import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.likes.LikesType;
 import imwhs.eatz_server.domain.likes.QLikes;
 import imwhs.eatz_server.domain.recipe.QComment;
+import imwhs.eatz_server.domain.recipe.QRating;
 import imwhs.eatz_server.domain.recipe.QRecipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserWithRecipeSummaryDto;
+import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
         QEatzUser user = QEatzUser.eatzUser;
         QComment comment = QComment.comment;
         QLikes likes = QLikes.likes;
+        QRating rating = QRating.rating;
 
         // Recipe와 xToOne 관계인 EatzUser를 조인해 필요한 정보만 조회합니다.
         NRecipeDto recipeDto = queryFactory
@@ -64,7 +67,7 @@ public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
 
         if (recipeDto == null) return Optional.empty();
 
-        // Recipe와 xToMany 관계인 Comment를 조인해 필요한 정보를 조회합니다.
+        // Recipe와 xToMany 관계인 Comment를 조인해 필요한 정보만 조회합니다.
         Long commentCount = queryFactory
                 .select(comment.count())
                 .from(comment)
@@ -73,7 +76,7 @@ public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
 
         recipeDto.setCommentCount(commentCount);
 
-        // Recipe와 xToMany 관계인 Like를 조인해 필요한 정보를 조회합니다.
+        // Recipe와 xToMany 관계인 Like를 조인해 필요한 정보만 조회합니다.
         Long likeCount = queryFactory
                 .select(likes.count())
                 .from(likes)
@@ -81,6 +84,19 @@ public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
                 .fetchOne();
 
         recipeDto.setLikeCount(likeCount);
+
+        // Recipe와 xToMany 관계인 Rating을 조인해 필요한 정보만 조회합니다.
+        RatingSummaryDto ratingSummaryDto = queryFactory
+                .select(Projections.constructor(RatingSummaryDto.class,
+                        rating.count(),
+                        rating.score.avg()))
+                .from(rating)
+                .where(rating.recipe.id.eq(id))
+                .fetchOne();
+
+        recipeDto.setRating(ratingSummaryDto);
+
+        // Recipe와 xToMany
 
 
         return Optional.of(recipeDto);

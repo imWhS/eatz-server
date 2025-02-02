@@ -9,10 +9,12 @@ import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
 import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
+import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeCreateDto;
 import imwhs.eatz_server.service.CommentService;
 import imwhs.eatz_server.service.LikeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
+import imwhs.eatz_server.service.recipe.SavedRecipeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +33,7 @@ public class RecipeController {
 
     private final RecipeQueryService recipeQueryService;
     private final CommentService commentService;
-    private final LikeService likeService;
+    private final SavedRecipeService savedRecipeService;
 
     @PostMapping
     public @ResponseBody ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
@@ -60,8 +62,8 @@ public class RecipeController {
     }
 
     @PostMapping("/{id}/comments")
-    public @ResponseBody ResponseEntity<ApiResponse<Long>> registerComment(@RequestBody CommentCreateDto dto) {
-        Long commentId = commentService.registerComment(dto.getRecipeId(), dto.getContent());
+    public @ResponseBody ResponseEntity<ApiResponse<Long>> registerComment(@PathVariable Long id, @RequestBody CommentCreateDto dto) {
+        Long commentId = commentService.registerComment(id, dto.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(commentId));
     }
 

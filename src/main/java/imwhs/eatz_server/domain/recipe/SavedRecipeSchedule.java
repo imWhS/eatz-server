@@ -32,6 +32,8 @@ public class SavedRecipeSchedule {
     @JoinColumn(name = "saved_recipe_id")
     private SavedRecipe savedRecipe;
 
+    // TODO: 특정 사용자의 모든 저장된 레시피를 날짜 별로 조회할 때 성능 이슈 발생 시 EatzUser 연관 관계 설정 필드 추가 고려
+
     /**
      * 날짜.<br/>
      * 사용자가 레시피를 저장할 때 설정한 날짜입니다.

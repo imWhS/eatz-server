@@ -13,7 +13,7 @@ import java.util.List;
  * SavedRecipe 클래스입니다.
  * <ul>
  *     <li>사용자에 의해 '저장된 레시피'에 대한 정보를 저장, 관리하는 엔티티 클래스입니다.</li>
- *      <li>사용자에 의해 '저장된 레시피'를 나타냅니다. 저장된 레시피 인스턴스가 생성됐다는 것은,
+ *      <li>사용자에 의해 '저장된 레시피'를 나타냅니다. 저장된 레시피 인스턴스가 생성됐다는 것은
  *      특정 사용자가 특정 엔티티를 저장했음을 의미합니다. 저장된 레시피는 이에 대한 정보를 담습니다.</li>
  * </ul>
  */
@@ -57,16 +57,6 @@ public class SavedRecipe extends BaseEntity {
     private EatzUser user;
 
     /**
-     * 사용자가 설정한 날짜.
-     * <ul>
-     *     <li>사용자가 게시물을 저장할 때, 직접 설정한 날짜를 나타냅니다.</li>
-     *     <li>사용자가 아무 날짜도 설정하지 않은 경우, null을 가집니다.</li>
-     * </ul>
-     */
-//    private LocalDate scheduledDate;
-    // TODO: 날짜 별 우선 순위
-
-    /**
      * 일정.
      * <ul>
      *     <li>사용자가 레시피를 저장할 때 설정한 날짜 별 정보입니다.</li>
@@ -86,6 +76,10 @@ public class SavedRecipe extends BaseEntity {
         for (LocalDate date : scheduledDates) {
             this.schedules.add(new SavedRecipeSchedule(this, date));
         }
+    }
+
+    public void updateScheduledDate() {
+
     }
 
     // TODO: Collection 추가 및 Many-To-Many 연관 관계 설정
