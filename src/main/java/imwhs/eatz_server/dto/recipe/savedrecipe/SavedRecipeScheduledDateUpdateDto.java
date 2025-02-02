@@ -17,9 +17,6 @@ public class SavedRecipeScheduledDateUpdateDto {
     @NotNull(message = "업데이트하려는 저장된 레시피(SavedRecipe 엔티티) ID는 필수 항목입니다.")
     private Long savedRecipeId;
 
-    @NotNull(message = "저장된 레시피를 업데이트하려는 사용자 ID는 필수 항목입니다.")
-    private Long userId;
-
     @NotNull(message = "업데이트하려는 날짜는 필수 항목입니다.")
     private LocalDate scheduledDate;
 

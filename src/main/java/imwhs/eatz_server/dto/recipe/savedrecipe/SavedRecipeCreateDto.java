@@ -18,9 +18,6 @@ public class SavedRecipeCreateDto {
     @NotNull(message = "저장하려는 레시피 ID는 필수 항목입니다.")
     private Long recipeId;
 
-    @NotNull(message = "레시피를 저장하려는 사용자 ID는 필수 항목입니다.")
-    private Long userId;
-
     private List<LocalDate> schedules;
 
 }
