@@ -3,7 +3,7 @@ package imwhs.eatz_server.dto.recipe;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.eatzuser.EatzUserMinimumDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -26,7 +26,7 @@ public class RecipeDto {
 
     private Long likeCount = null;
 
-    private EatzUserMinimumDto user;
+    private EatzUserBasicDto user;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
@@ -54,7 +54,20 @@ public class RecipeDto {
         this.description = recipe.getDescription();
         this.url = recipe.getUrl();
         this.imageUrl = recipe.getImageUrl();
-        this.user = new EatzUserMinimumDto(user);
+        this.user = new EatzUserBasicDto(user);
+        this.likeCount = likeCount;
+        this.createdAt = recipe.getCreatedAt();
+        this.updatedAt = recipe.getUpdatedAt();
+        this.deletedAt = recipe.getDeletedAt();
+    }
+
+    public RecipeDto(Recipe recipe, EatzUser user) {
+        this.id = recipe.getId();
+        this.title = recipe.getTitle();
+        this.description = recipe.getDescription();
+        this.url = recipe.getUrl();
+        this.imageUrl = recipe.getImageUrl();
+        this.user = new EatzUserBasicDto(user);
         this.likeCount = likeCount;
         this.createdAt = recipe.getCreatedAt();
         this.updatedAt = recipe.getUpdatedAt();

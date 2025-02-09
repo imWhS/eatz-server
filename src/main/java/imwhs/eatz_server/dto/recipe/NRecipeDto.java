@@ -3,6 +3,7 @@ package imwhs.eatz_server.dto.recipe;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.dto.eatzuser.EatzUserWithRecipeSummaryDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
  * </p>
  */
 @Data
+@AllArgsConstructor
 public class NRecipeDto {
 
     /**

@@ -6,6 +6,7 @@ import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
 import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentQueryRepository;
+import imwhs.eatz_server.repository.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class CommentQueryService {
     private static final int DEFAULT_PAGING_SIZE = 10;
 
     private final CommentQueryRepository commentQueryRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * 식별자로 댓글과 관련된 상세 정보를 조회합니다.<br/>
@@ -67,6 +69,10 @@ public class CommentQueryService {
         List<CommentByUserResponseDto> data = commentQueryRepository.findCommentsByUser(id, page, size);
         Long totalItems = commentQueryRepository.countCommentsByUser(id);
         return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
+    }
+
+    public Long countCommentByRecipeId(Long id) {
+        return commentRepository.countByRecipeIdAndDeletedAtIsNull(id);
     }
 
 }

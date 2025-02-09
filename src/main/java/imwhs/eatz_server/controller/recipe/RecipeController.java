@@ -1,5 +1,6 @@
 package imwhs.eatz_server.controller.recipe;
 
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.likes.LikesType;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
@@ -12,6 +13,7 @@ import imwhs.eatz_server.dto.recipe.RecipeDto;
 import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeCreateDto;
 import imwhs.eatz_server.service.CommentService;
 import imwhs.eatz_server.service.LikeService;
+import imwhs.eatz_server.service.query.NSavedRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
 import imwhs.eatz_server.service.recipe.SavedRecipeService;
@@ -26,14 +28,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v0/recipes")
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class RecipeController {
 
     private final RecipeService recipeService;
 
     private final RecipeQueryService recipeQueryService;
+
     private final CommentService commentService;
-    private final SavedRecipeService savedRecipeService;
+
+    private final NSavedRecipeService savedRecipeService;
 
     @PostMapping
     public @ResponseBody ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {

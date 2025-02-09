@@ -1,6 +1,8 @@
 package imwhs.eatz_server.repository.rating;
 
 import imwhs.eatz_server.domain.recipe.Rating;
+import imwhs.eatz_server.dto.rating.RatingRecipeDto;
+import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,5 +42,11 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "join fetch r.recipe rc " +
             "where u.id = :userId")
     Page<Rating> findJoinUserRecipeByUserId(@Param("userId") Long userId, Pageable pageRequest);
-    
+
+    @Query("select new imwhs.eatz_server.dto.rating.RatingSummaryDto(COUNT(r), AVG(r.score)) from Rating r " +
+            "where r.recipe.id = :recipeId")
+    RatingSummaryDto findRatingSummaryByRecipeId(@Param("recipeId") Long recipeId);
+
+
+
 }

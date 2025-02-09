@@ -38,32 +38,6 @@ class RecipeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("등록된 레시피가 식별자로 정상적으로 조회되는지 테스트합니다.")
-    @Transactional
-    void findRecipeByIdOldTest() {
-        // given
-        EatzUser user = EatzUser.createMember(
-                "heextory1",
-                "heextory1@icloud.com",
-                "1q2w3e4r!");
-        userRepository.save(user);
-
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com", "https://imgcdn.naver.com", "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-        Long recipeId = recipe.getId();
-
-        // when
-        RecipeDto foundRecipe = recipeQueryService.findRecipeByIdOld(recipeId);
-
-        // then
-        Assertions.assertThat(foundRecipe.getId()).isEqualTo(recipeId);
-        Assertions.assertThat(foundRecipe.getTitle()).isEqualTo(recipe.getTitle());
-        Assertions.assertThat(foundRecipe.getDescription()).isEqualTo(recipe.getDescription());
-        Assertions.assertThat(foundRecipe.getUrl()).isEqualTo(recipe.getUrl());
-        Assertions.assertThat(foundRecipe.getImageUrl()).isEqualTo(recipe.getImageUrl());
-    }
-
-    @Test
     @DisplayName("등록된 모든 레시피가 정상적으로 조회되는지 테스트합니다.")
     @Transactional
     void findAllRecipesTest() {

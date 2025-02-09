@@ -15,9 +15,11 @@ import java.util.Optional;
  * Comment 엔티티의 기본적인 조회를 포함한 CRUD 쿼리 작업을 처리하는 Spring Data JPA 리포지토리입니다.
  */
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentCustomRepository {
 
     Optional<Comment> findByIdAndDeletedAtIsNull(Long id);
+
+    long countByRecipeIdAndDeletedAtIsNull(Long id);
 
     @Query("select c from Comment c " +
             "join fetch c.recipe r " +
@@ -47,4 +49,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "where u.id = :userId")
     Page<Comment> findWithUserRecipeByUserId(@Param("userId") Long userId, Pageable pageable);
 
+    long countAllById(Long id);
 }

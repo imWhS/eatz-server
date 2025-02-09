@@ -6,7 +6,7 @@ import imwhs.eatz_server.domain.likes.Likes;
 import imwhs.eatz_server.domain.likes.LikesType;
 import imwhs.eatz_server.dto.likes.LikesDetailDto;
 import imwhs.eatz_server.dto.likes.LikesDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserMinimumDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -81,7 +81,7 @@ public class LikeService {
         validateEntityById(entityId, type);
 
         LikesDetailDto dto = likeRepository.findAllByEntityIdAndType(entityId, type);
-        List<EatzUserMinimumDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
+        List<EatzUserBasicDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
         dto.setLikedUsers(likedUsersDto);
         return dto;
     }
