@@ -131,7 +131,7 @@ public class SavedRecipeService {
 
     private Recipe getRecipe(Long recipeId) {
         return recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new RecipeNotFoundException("id가 " + recipeId + "인 레시피를 찾지 못했습니다."));
+                .orElseThrow(() -> new RecipeNotFoundException(recipeId));
     }
 
     private EatzUser getEatzUser(Long userId) {

@@ -49,7 +49,7 @@ public class CategoryService {
 
     private Recipe findRecipe(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(
-                () -> new RecipeNotFoundException("id '" + recipeId + "'에 해당하는 레시피가 존재하지 않아요."));
+                () -> new RecipeNotFoundException(recipeId));
         return recipe;
     }
 
@@ -58,5 +58,7 @@ public class CategoryService {
         category.addRecipeCategory(recipeCategory);
         categoryRepository.save(category);
     }
+
+
 
 }

@@ -57,11 +57,10 @@ public class Recipe extends BaseEntity {
     private String imageUrl;
 
     /**
-     * 카테고리
+     * 카테고리.
      */
     @OneToMany(mappedBy = "recipe")
     private List<RecipeCategory> recipeCategories = new ArrayList<>();
-
 
     /**
      * 설명.

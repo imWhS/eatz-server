@@ -4,8 +4,10 @@ import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.rating.RatingByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingByUserDto;
 import imwhs.eatz_server.dto.rating.RatingDetailDtoOld;
+import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import imwhs.eatz_server.repository.rating.RatingQueryRepository;
+import imwhs.eatz_server.repository.rating.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class RatingQueryService {
     private static final int DEFAULT_PAGING_SIZE = 10;
 
     private final RatingQueryRepository ratingQueryRepository;
+    private final RatingRepository ratingRepository;
 
     /**
      * 식별자로 평가와 관련된 상세 정보를 조회합니다.<br/>
@@ -69,6 +72,11 @@ public class RatingQueryService {
         Long totalItems = ratingQueryRepository.countRatingsByUser(id);
         return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
     }
+
+    public RatingSummaryDto findRatingSummaryByRecipeId(Long id) {
+        return ratingRepository.findRatingSummaryByRecipeId(id);
+    }
+
 
 
 }

@@ -1,12 +1,19 @@
 package imwhs.eatz_server.service.query;
 
+import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
+import imwhs.eatz_server.repository.comment.CommentRepository;
+import imwhs.eatz_server.repository.like.LikeRepository;
+import imwhs.eatz_server.repository.recipe.CategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.recipe.RecipeQueryRepository;
+import imwhs.eatz_server.service.recipe.CategoryService;
+import imwhs.eatz_server.service.recipe.RecipeCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,20 +35,32 @@ public class RecipeQueryService {
 
     private final RecipeQueryRepository recipeQueryRepository;
 
+    private final CommentRepository commentRepository;
+
+    private final LikeRepository likeRepository;
+
+    private final RecipeCategoryService recipeCategoryService;
+    private final CommentQueryService commentQueryService;
+    private final LikeQueryService likeQueryService;
+    private final RatingQueryService ratingQueryService;
+
     /**
      * 식별자로 레시피를 조회합니다.
      * @param id 조회할 레시피의 식별자.
      * @return 조회된 레시피 정보를 담고 있는 RecipeResponseDto.
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
-    public RecipeDto findRecipeByIdOld(Long id) {
-        return recipeRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(
-                () -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
-    }
-
     public NRecipeDto findRecipeById(Long id) {
-        return recipeRepository.findRecipeById(id).orElseThrow(
-                () -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
+        NRecipeDto recipeDto = recipeRepository.findRecipeWithAuthor(id).orElseThrow(
+                () -> new RecipeNotFoundException(id));
+
+        recipeDto.setCommentCount(commentQueryService.countCommentByRecipeId(id));
+        recipeDto.setLikeCount(likeQueryService.countLikeOfRecipe(id));
+        recipeDto.setRating(ratingQueryService.findRatingSummaryByRecipeId(id));
+        recipeDto.setCategories(recipeCategoryService.findCategoryByRecipe(id));
+        // TODO: 재료
+
+        return recipeDto;
     }
 
     /**
@@ -52,9 +71,8 @@ public class RecipeQueryService {
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
     public RecipeDetailDto findRecipeDetailsById(Long id) {
-        log.info("findRecipeDetailsById called");
         return recipeQueryRepository.testFindById(id)
-                .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RecipeNotFoundException(id));
     }
 
     /**

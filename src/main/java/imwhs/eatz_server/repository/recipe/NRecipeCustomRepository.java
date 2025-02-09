@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface NRecipeCustomRepository {
 
-    Optional<NRecipeDto> findRecipeById(Long id);
+    Optional<NRecipeDto> findRecipeWithAuthor(Long id);
 
 //    List<NRecipePreviewDto> findAllRecipes(Pageable pageable);
 

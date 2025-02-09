@@ -80,17 +80,17 @@ public class RecipeService {
 
     private EatzUser getEatzUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new EatzUserNotFoundException(userId));
     }
 
     private EatzUser getEatzUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new EatzUserNotFoundException("사용자 이름이 " + username + "인 사용자를 찾지 못했어요."));
+                .orElseThrow(() -> new EatzUserNotFoundException(username));
     }
 
     private Recipe getRecipe(Long id) {
         return recipeRepository.findById(id)
-                .orElseThrow(() -> new RecipeNotFoundException("id가 " + id + "인 레시피를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RecipeNotFoundException(id));
     }
 
 }

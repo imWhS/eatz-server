@@ -49,9 +49,9 @@ public class CommentService {
         String username = EatzUserAuthUtil.getUsername();
 
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다."));
+                .orElseThrow(() -> new RecipeNotFoundException(recipeId));
         EatzUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EatzUserNotFoundException("사용자 이름이 " + username + "인 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new EatzUserNotFoundException(username));
 
         Comment comment = new Comment(user, recipe, content);
         commentRepository.save(comment);
@@ -136,13 +136,13 @@ public class CommentService {
 
     private void validateUser(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다.");
+            throw new EatzUserNotFoundException(userId);
         }
     }
 
     private void validateRecipe(Long recipeId) {
         if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
+            throw new RecipeNotFoundException(recipeId);
         }
     }
 

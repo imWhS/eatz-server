@@ -1,6 +1,7 @@
 package imwhs.eatz_server.repository.recipe;
 
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

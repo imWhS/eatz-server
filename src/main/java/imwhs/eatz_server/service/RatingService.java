@@ -53,9 +53,9 @@ public class RatingService {
         validateDuplicates(recipeId, userId);
 
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다."));
+                .orElseThrow(() -> new RecipeNotFoundException(recipeId));
         EatzUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new EatzUserNotFoundException(userId));
 
         Rating rating = new Rating(user, recipe, score, content);
         ratingRepository.save(rating);
@@ -194,13 +194,13 @@ public class RatingService {
 
     private void validateUser(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다.");
+            throw new EatzUserNotFoundException(userId);
         }
     }
 
     private void validateRecipe(Long recipeId) {
         if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
+            throw new RecipeNotFoundException(recipeId);
         }
     }
 
