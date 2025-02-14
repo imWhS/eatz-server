@@ -2,7 +2,7 @@ package imwhs.eatz_server.dto.recipe.savedrecipe;
 
 import imwhs.eatz_server.domain.recipe.SavedRecipe;
 import imwhs.eatz_server.domain.recipe.SavedRecipeSchedule;
-import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -20,7 +20,7 @@ public class SavedRecipeDto {
 
     private LocalDateTime createdAt;
 
-    private RecipeSummaryDto recipe;
+    private RecipeBasicDto recipe;
 
     private List<LocalDate> scheduledDates;
 
@@ -28,7 +28,7 @@ public class SavedRecipeDto {
         this.id = savedRecipe.getId();
         this.userId = savedRecipe.getUser().getId();
         this.createdAt = savedRecipe.getCreatedAt();
-        this.recipe = new RecipeSummaryDto(savedRecipe.getRecipe());
+        this.recipe = new RecipeBasicDto(savedRecipe.getRecipe());
         this.scheduledDates = savedRecipe.getSchedules().stream().map(SavedRecipeSchedule::getDate).toList();
     }
 

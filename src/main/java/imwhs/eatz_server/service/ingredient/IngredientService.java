@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.ingredient;
 
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.dto.ingredient.*;
@@ -22,23 +22,34 @@ public class IngredientService {
      * <p>
      *     Ingredient 엔티티를 생성하고, 리포지토리를 통해 저장합니다.
      * </p>
-     * @param dto 재료 생성 DTO.
+     * @param name 재료 이름.
+     *
      * @return 생성된 재료의 식별자.
      * @throws IngredientNotFoundException 유효하지 않은 식별자의 재료를 카테고리 또는 하위 재료로서 추가하려는 경우.
      * TODO: 같은 이름을 가진 재료에 대한 처리
      */
+
+    /**
+     * 새 재료를 등록합니다.
+     * @param name 재료 이름.
+     * @param categoryId 재료를 포함시킬 카테고리의 ID.
+     * @param childIds 하위에 포함시킬 재료들의 ID 목록.
+     * @return 등록 완료된 재료의 ID.
+     * @throws IngredientNotFoundException 유효하지 않은 식별자의 재료를 카테고리 또는 하위 재료로서 추가하려는 경우.
+     */
     @Transactional
-    public Long registerIngredient(IngredientCreateDto dto) {
+    public Long registerIngredient(String name, Long categoryId, List<Long> childIds) {
+        // String name, Long categoryId, List<Long> childIds
+
         // 사용하려는 재료 이름의 유효성을 검증합니다.
-        validateIngredientName(dto.getName(), dto.getCategoryId());
+        validateIngredientName(name, categoryId);
 
         // DTO로 재료 엔티티를 생성하고 저장합니다.
-        Ingredient ingredient = new Ingredient(dto.getName());
+        Ingredient ingredient = new Ingredient(name);
         ingredientRepository.save(ingredient);
 
         // 재료에 설정할 카테고리 정보가 DTO에 포함되어 있는 경우: 카테고리를 설정합니다.
-        if (dto.getCategoryId() != null) {
-            Long categoryId = dto.getCategoryId();
+        if (categoryId != null) {
 
             if (Objects.equals(categoryId, ingredient.getId())) {
                 throw new IllegalArgumentException("재료 자신을 카테고리로 설정할 수 없습니다.");
@@ -50,8 +61,7 @@ public class IngredientService {
         }
 
         // 재료에 설정할 하위 재료 정보가 DTO에 포함되어 있는 경우: 하위 재료를 추가합니다.
-        if (dto.getChildIds() != null && !dto.getChildIds().isEmpty()) {
-            List<Long> childIds = dto.getChildIds();
+        if (childIds != null && !childIds.isEmpty()) {
             List<Ingredient> children = toEntities(childIds);
 
             // 재료와 하위 재료 간 양방향 연관 관계를 설정합니다.
@@ -120,15 +130,15 @@ public class IngredientService {
      * 재료와 이와 연관 관계인 카테고리를 함께 조회합니다.
      * <ul>
      *     <li>Ingredient와 이와 연관 관계인 Ingredient.category를 페치 조인한 데이터를 조회합니다.</li>
-     *     <li>Ingredient.children은 IngredientResponseDto의 생성자에서 지연 로딩됩니다.</li>
+     *     <li>Ingredient.children은 IngredientDto 생성자에서 지연 로딩됩니다.</li>
      * </ul>
      * @param id 조회하려는 재료의 식별자.
      * @return 조회된 재료의 정보를 담고 있는 IngredientResponseDto.
      */
-    public IngredientDto findIngredient(Long id) {
+    public IngredientWithCategoryChildDto findIngredient(Long id) {
         Ingredient ingredient = ingredientRepository.findWithCategoryById(id)
                 .orElseThrow(() -> new IngredientNotFoundException("id " + id + "에 해당하는 재료를 찾을 수 없습니다."));
-        return new IngredientDto(ingredient);
+        return new IngredientWithCategoryChildDto(ingredient);
     }
 
     /**
@@ -151,7 +161,7 @@ public class IngredientService {
     private Ingredient getIngredient(Long id) {
         if (id == null) return null;
         else return ingredientRepository.findById(id)
-                .orElseThrow(() -> new IngredientNotFoundException("id가 " + id + "인 재료 엔티티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IngredientNotFoundException("id가 " + id + "인 재료를 찾을 수 없습니다."));
     }
 
     /**

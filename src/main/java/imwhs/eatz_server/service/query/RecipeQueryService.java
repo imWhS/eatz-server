@@ -1,7 +1,5 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.likes.LikesType;
-import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
@@ -9,10 +7,9 @@ import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.like.LikeRepository;
-import imwhs.eatz_server.repository.recipe.CategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.recipe.RecipeQueryRepository;
-import imwhs.eatz_server.service.recipe.CategoryService;
+import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,14 +32,15 @@ public class RecipeQueryService {
 
     private final RecipeQueryRepository recipeQueryRepository;
 
-    private final CommentRepository commentRepository;
-
-    private final LikeRepository likeRepository;
-
     private final RecipeCategoryService recipeCategoryService;
+
     private final CommentQueryService commentQueryService;
+
     private final LikeQueryService likeQueryService;
+
     private final RatingQueryService ratingQueryService;
+
+    private final IngredientRecipeService ingredientRecipeService;
 
     /**
      * 식별자로 레시피를 조회합니다.
@@ -57,8 +55,8 @@ public class RecipeQueryService {
         recipeDto.setCommentCount(commentQueryService.countCommentByRecipeId(id));
         recipeDto.setLikeCount(likeQueryService.countLikeOfRecipe(id));
         recipeDto.setRating(ratingQueryService.findRatingSummaryByRecipeId(id));
-        recipeDto.setCategories(recipeCategoryService.findCategoryByRecipe(id));
-        // TODO: 재료
+        recipeDto.setCategories(recipeCategoryService.categoriesOfRecipe(id));
+        recipeDto.setIngredients(ingredientRecipeService.ingredientsOfRecipe(id));
 
         return recipeDto;
     }
@@ -70,10 +68,10 @@ public class RecipeQueryService {
      * @return 조회된 레시피의 상세 정보를 담고 있는 RecipeDetailResponseDto.
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
-    public RecipeDetailDto findRecipeDetailsById(Long id) {
-        return recipeQueryRepository.testFindById(id)
-                .orElseThrow(() -> new RecipeNotFoundException(id));
-    }
+//    public RecipeDetailDto findRecipeDetailsById(Long id) {
+//        return recipeQueryRepository.testFindById(id)
+//                .orElseThrow(() -> new RecipeNotFoundException(id));
+//    }
 
     /**
      * 모든 레시피를 조회합니다.

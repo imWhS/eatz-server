@@ -77,6 +77,4 @@ public class RatingQueryService {
         return ratingRepository.findRatingSummaryByRecipeId(id);
     }
 
-
-
 }

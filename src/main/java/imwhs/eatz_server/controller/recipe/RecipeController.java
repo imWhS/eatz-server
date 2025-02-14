@@ -1,30 +1,25 @@
 package imwhs.eatz_server.controller.recipe;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
-import imwhs.eatz_server.domain.likes.LikesType;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.comment.CommentCreateDto;
-import imwhs.eatz_server.dto.likes.LikesDto;
-import imwhs.eatz_server.dto.recipe.NRecipeDto;
-import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
-import imwhs.eatz_server.dto.recipe.RecipeDetailDto;
-import imwhs.eatz_server.dto.recipe.RecipeDto;
-import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeCreateDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
+import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.service.CommentService;
-import imwhs.eatz_server.service.LikeService;
+import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
 import imwhs.eatz_server.service.query.NSavedRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
-import imwhs.eatz_server.service.recipe.SavedRecipeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api/v0/recipes")
 @RequiredArgsConstructor
@@ -37,16 +32,37 @@ public class RecipeController {
 
     private final CommentService commentService;
 
+    private final IngredientRecipeService ingredientRecipeService;
+
     private final NSavedRecipeService savedRecipeService;
 
+    /**
+     * 새 레시피를 등록합니다.
+     * @param dto
+     * @return
+     */
     @PostMapping
-    public @ResponseBody ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
         Long recipeId = recipeService.registerRecipe(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(recipeId));
     }
 
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<?> updateRecipe(@PathVariable Long id, @RequestBody RecipeUpdateDto dto) {
+        recipeService.updateRecipe(id, dto, EatzUserAuthUtil.getUsername());
+        return ResponseEntity.ok().body(ApiResponse.success("레시피를 성공적으로 업데이트했어요."));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<?> deleteRecipe(@PathVariable Long id) {
+        recipeService.deleteRecipe(id, EatzUserAuthUtil.getUsername());
+        return ResponseEntity.ok().body(ApiResponse.success("레시피를 성공적으로 삭제했어요."));
+    }
+
     @GetMapping
-    public @ResponseBody ResponseEntity<ApiResponse<Paged<RecipeDto>>> getAllRecipes(
+    public ResponseEntity<ApiResponse<Paged<RecipeDto>>> getAllRecipes(
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         Page<RecipeDto> allRecipes = recipeQueryService.findAllRecipes(pageable);
@@ -54,21 +70,43 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
-    public @ResponseBody ResponseEntity<ApiResponse<NRecipeDto>> getRecipe(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<NRecipeDto>> getRecipe(@PathVariable Long id) {
         NRecipeDto dto = recipeQueryService.findRecipeById(id);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
-    @GetMapping("/{id}/details")
-    public @ResponseBody ResponseEntity<ApiResponse<RecipeDetailDto>> getRecipeDetails(@PathVariable Long id) {
-        RecipeDetailDto dto = recipeQueryService.findRecipeDetailsById(id);
-        return ResponseEntity.ok(ApiResponse.success(dto));
-    }
+//    @GetMapping("/{id}/details")
+//    public @ResponseBody ResponseEntity<ApiResponse<RecipeDetailDto>> getRecipeDetails(@PathVariable Long id) {
+//        RecipeDetailDto dto = recipeQueryService.findRecipeDetailsById(id);
+//        return ResponseEntity.ok(ApiResponse.success(dto));
+//    }
 
     @PostMapping("/{id}/comments")
-    public @ResponseBody ResponseEntity<ApiResponse<Long>> registerComment(@PathVariable Long id, @RequestBody CommentCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> addComment(@PathVariable Long id, @RequestBody CommentCreateDto dto) {
         Long commentId = commentService.registerComment(id, dto.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(commentId));
+    }
+
+    @PostMapping("/{id}/ingredients")
+    public ResponseEntity<?> addIngredient(@PathVariable Long id, @RequestBody RecipeAddIngredientDto dto) {
+        List<Long> addedIngredients = ingredientRecipeService.addAllIngredientsToRecipe(dto.getIngredientIds(), id);
+        if (addedIngredients.size() != dto.getIngredientIds().size()) {
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(ApiResponse.success(addedIngredients));
+        } else if (addedIngredients.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("레시피에 모든 재료를 추가하지 못했어요. 레시피에 추가하려는 재료를 다시 확인해보세요."));
+        }
+        return ResponseEntity.ok().body(ApiResponse.success(addedIngredients));
+    }
+
+    @GetMapping("/{id}/saveds")
+    public ResponseEntity<ApiResponse<List<EatzUserBasicDto>>> getSavedUsers(@PathVariable Long id) {
+        return ResponseEntity.ok().body(ApiResponse.success(savedRecipeService.getSavedUsersByRecipe(id)));
+    }
+
+    @GetMapping("/{id}/saveds/count")
+    public @ResponseBody ResponseEntity<ApiResponse<Long>> getSavedUserCount(@PathVariable Long id) {
+        Long savedUserCount = savedRecipeService.countSaveds(id);
+        return ResponseEntity.ok(ApiResponse.success(savedUserCount));
     }
 
 }

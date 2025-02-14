@@ -9,6 +9,7 @@ import imwhs.eatz_server.repository.recipe.CategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -18,6 +19,7 @@ public class CategoryService {
 
     private final RecipeRepository recipeRepository;
 
+    @Transactional
     public Category registerCategory(String name, String description) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("카테고리 이름은 필수 항목이에요.");
@@ -27,12 +29,13 @@ public class CategoryService {
             throw new CategoryNotFoundException("'" + name + "' 이름을 가진 카테고리가 이미 존재해요.");
         }
 
-        Category category = Category.of(name, description);
+        Category category = Category.create(name, description);
         categoryRepository.save(category);
 
         return category;
     }
 
+    @Transactional
     public Category registerCategory(String name, String description, Long recipeId) {
         Category category = registerCategory(name, description);
         Recipe recipe = findRecipe(recipeId);
@@ -40,6 +43,13 @@ public class CategoryService {
         return category;
     }
 
+//    @Transactional
+//    public void addRecipe(List<Long> categoryIds, Long) {
+//
+//    }
+
+
+    @Transactional
     public void addRecipe(Long categoryId, Long recipeId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new CategoryNotFoundException("id '" + categoryId + "'에 해당하는 카테고리가 존재하지 않아요."));
@@ -58,7 +68,5 @@ public class CategoryService {
         category.addRecipeCategory(recipeCategory);
         categoryRepository.save(category);
     }
-
-
 
 }

@@ -8,7 +8,7 @@ import imwhs.eatz_server.domain.recipe.QRating;
 import imwhs.eatz_server.domain.recipe.QRecipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.rating.*;
-import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -44,7 +44,7 @@ public class RatingQueryRepository {
                                                 .from(recipe)
                                                 .where(recipe.user.eq(user))
                                 ),
-                                Projections.constructor(RecipeSummaryDto.class,
+                                Projections.constructor(RecipeBasicDto.class,
                                         recipe.id,
                                         recipe.title,
                                         recipe.imageUrl

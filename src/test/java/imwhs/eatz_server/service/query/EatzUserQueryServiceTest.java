@@ -37,7 +37,7 @@ class EatzUserQueryServiceTest {
                 "1heextory",
                 "1heextory@icloud.com",
                 "1q2w3e4r!");
-        Recipe recipe1 = Recipe.of(
+        Recipe recipe1 = Recipe.create(
                 user1,
                 "Apple Cake",
                 "https://www.recipe.com/",
@@ -50,7 +50,7 @@ class EatzUserQueryServiceTest {
                 "2heextory",
                 "2heextory@icloud.com",
                 "1q2w3e4r!");
-        Recipe recipe2 = Recipe.of(
+        Recipe recipe2 = Recipe.create(
                 user2,
                 "Banana Cake",
                 "https://www.recipe.com/",
@@ -58,7 +58,7 @@ class EatzUserQueryServiceTest {
                 "");
         userRepository.save(user2);
         recipeRepository.save(recipe2);
-        Recipe recipe3 = Recipe.of(
+        Recipe recipe3 = Recipe.create(
                 user2,
                 "Watermelon Cake",
                 "https://www.recipe.com/",
@@ -71,7 +71,7 @@ class EatzUserQueryServiceTest {
                 "3heextory",
                 "3heextory@icloud.com",
                 "1q2w3e4r!");
-        Recipe recipe4 = Recipe.of(
+        Recipe recipe4 = Recipe.create(
                 user3,
                 "Mango Cake",
                 "https://www.recipe.com/",
@@ -103,7 +103,7 @@ class EatzUserQueryServiceTest {
     void findAllUsersWithActivity_PagingTest() {
         // given
         EatzUser user1 = EatzUser.createMember("user1", "user1@icloud.com", "password1");
-        Recipe recipe1 = Recipe.of(user1, "Recipe 1", "https://www.recipe.com/", "https://www.recipe.com/img1.png", "");
+        Recipe recipe1 = Recipe.create(user1, "Recipe 1", "https://www.recipe.com/", "https://www.recipe.com/img1.png", "");
         userRepository.save(user1);
         recipeRepository.save(recipe1);
 
@@ -111,8 +111,8 @@ class EatzUserQueryServiceTest {
         userRepository.save(user2);
 
         EatzUser user3 = EatzUser.createMember("user3", "user3@icloud.com", "password3");
-        Recipe recipe2 = Recipe.of(user3, "Recipe 2", "https://www.recipe.com/", "https://www.recipe.com/img2.png", "");
-        Recipe recipe3 = Recipe.of(user3, "Recipe 3", "https://www.recipe.com/", "https://www.recipe.com/img3.png", "");
+        Recipe recipe2 = Recipe.create(user3, "Recipe 2", "https://www.recipe.com/", "https://www.recipe.com/img2.png", "");
+        Recipe recipe3 = Recipe.create(user3, "Recipe 3", "https://www.recipe.com/", "https://www.recipe.com/img3.png", "");
         userRepository.save(user3);
         recipeRepository.save(recipe2);
         recipeRepository.save(recipe3);

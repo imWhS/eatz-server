@@ -4,7 +4,6 @@ import imwhs.eatz_server.domain.recipe.Category;
 import imwhs.eatz_server.domain.recipe.RecipeCategory;
 import imwhs.eatz_server.dto.recipe.CategoryDto;
 import imwhs.eatz_server.repository.recipe.RecipeCategoryRepository;
-import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ public class RecipeCategoryService {
 
     private final RecipeCategoryRepository recipeCategoryRepository;
 
-    public List<CategoryDto> findCategoryByRecipe(Long recipeId) {
+    public List<CategoryDto> categoriesOfRecipe(Long recipeId) {
         List<RecipeCategory> recipeCategories = recipeCategoryRepository.findByRecipeIdWithCategory(recipeId);
 
         return recipeCategories.stream().map(
