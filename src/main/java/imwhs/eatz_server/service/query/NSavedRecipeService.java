@@ -4,7 +4,8 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.NSavedRecipe;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
-import imwhs.eatz_server.dto.recipe.RecipeDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
+import imwhs.eatz_server.exception.DuplicatedSavedRecipeException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -30,11 +31,12 @@ public class NSavedRecipeService {
 
     @Transactional
     public Long save(Long id, String username) {
-        Recipe recipe = recipeRepository.findById(id).orElseThrow(
-                () -> new RecipeNotFoundException(id));
+        Recipe recipe = getRecipe(id);
+        EatzUser user = getUser(username);
 
-        EatzUser user = userRepository.findByUsername(username).orElseThrow(
-                () -> new EatzUserNotFoundException(id));
+        if (savedRecipeRepository.existsByRecipeIdAndUserUsername(id, username)) {
+            throw new DuplicatedSavedRecipeException(id, username);
+        }
 
         NSavedRecipe savedRecipe = NSavedRecipe.of(recipe, user);
         savedRecipeRepository.save(savedRecipe);
@@ -43,51 +45,57 @@ public class NSavedRecipeService {
 
     @Transactional
     public Boolean unsave(Long id, String username) {
-        if (!recipeRepository.existsById(id)) {
-            throw new RecipeNotFoundException(id);
-        }
-
-        EatzUser user = userRepository.findByUsername(username).orElseThrow(
-                () -> new EatzUserNotFoundException(id));
-
-        return savedRecipeRepository.deleteSavedRecipe(user.getId(), id);
+        validateRecipe(id);
+        return savedRecipeRepository.deleteSavedRecipe(username, id);
     }
 
-    public List<RecipeDto> getSavedRecipesByUser(String username) {
-        if (!userRepository.existsByUsername(username)) {
-            throw new EatzUserNotFoundException(username);
-        }
-
-        return savedRecipeRepository.findSavedRecipesByUsername(username);
+    public List<RecipeBasicDto> getSavedRecipesByUser(Long id) {
+        validateUser(id);
+        return savedRecipeRepository.findRecipesByUserId(id);
     }
 
-    public List<EatzUserBasicDto> getSavedUsersByRecipeId(Long id) {
-        if (!recipeRepository.existsById(id)) {
-            throw new RecipeNotFoundException(id);
-        }
-        return savedRecipeRepository.findSavedUsersByRecipeId(id);
+    public List<EatzUserBasicDto> getSavedUsersByRecipe(Long id) {
+        validateRecipe(id);
+        return savedRecipeRepository.findUsersByRecipeId(id);
     }
 
     public Long countSaveds(Long id) {
-        if (!recipeRepository.existsById(id)) {
-            throw new RecipeNotFoundException(id);
-        }
-
-        long count = savedRecipeRepository.countByRecipeId(id);
-        System.out.println("count = " + count);
-        return count;
+        validateRecipe(id);
+        return savedRecipeRepository.countByRecipeId(id);
     }
 
     public boolean isRecipeSaved(Long id, String username) {
-        if (!recipeRepository.existsById(id)) {
-            throw new RecipeNotFoundException(id);
-        }
+        validateRecipe(id);
 
         if (!userRepository.existsByUsername(username)) {
             throw new EatzUserNotFoundException(username);
         }
 
-        return savedRecipeRepository.existsByUserUsernameAndRecipeId(username, id);
+        return savedRecipeRepository.existsByRecipeIdAndUserUsername(id, username);
+    }
+
+    private EatzUser getUser(String username) {
+        EatzUser user = userRepository.findByUsername(username).orElseThrow(
+                () -> new EatzUserNotFoundException(username));
+        return user;
+    }
+
+    private Recipe getRecipe(Long id) {
+        Recipe recipe = recipeRepository.findById(id).orElseThrow(
+                () -> new RecipeNotFoundException(id));
+        return recipe;
+    }
+
+    private void validateUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EatzUserNotFoundException(id);
+        }
+    }
+
+    private void validateRecipe(Long id) {
+        if (!recipeRepository.existsById(id)) {
+            throw new RecipeNotFoundException(id);
+        }
     }
 
 }

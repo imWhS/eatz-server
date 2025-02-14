@@ -47,6 +47,4 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "where r.recipe.id = :recipeId")
     RatingSummaryDto findRatingSummaryByRecipeId(@Param("recipeId") Long recipeId);
 
-
-
 }

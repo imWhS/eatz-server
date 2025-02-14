@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.rating;
 
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
-import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -20,7 +20,7 @@ public class RatingDetailDtoOld {
 
     private EatzUserSummaryDto user;
 
-    private RecipeSummaryDto recipe;
+    private RecipeBasicDto recipe;
 
     private Integer score;
 

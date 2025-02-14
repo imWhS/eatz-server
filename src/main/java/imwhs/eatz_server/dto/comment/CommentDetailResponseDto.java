@@ -1,10 +1,9 @@
 package imwhs.eatz_server.dto.comment;
 
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
-import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * CommentDetailResponseDto 클래스입니다.
@@ -21,7 +20,7 @@ public class CommentDetailResponseDto {
 
     private EatzUserSummaryDto user;
 
-    private RecipeSummaryDto recipe;
+    private RecipeBasicDto recipe;
 
     private String content;
 

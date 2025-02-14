@@ -17,51 +17,6 @@
                   <option name="pins">
                     <list>
                       <Pin>
-                        <option name="consoleUUID" value="7f4833ef-345f-4dcc-966d-22504f07e2e4" />
-                        <option name="contentType" value="ConsoleContent" />
-                        <option name="grepCompositeModel">
-                          <GrepCompositeModel>
-                            <option name="models">
-                              <list>
-                                <GrepModel>
-                                  <option name="expression" value="INFO" />
-                                </GrepModel>
-                              </list>
-                            </option>
-                          </GrepCompositeModel>
-                        </option>
-                      </Pin>
-                      <Pin>
-                        <option name="consoleUUID" value="a38d41dd-642e-4a4c-8a68-ae20e2cad776" />
-                        <option name="contentType" value="ConsoleContent" />
-                        <option name="grepCompositeModel">
-                          <GrepCompositeModel>
-                            <option name="models">
-                              <list>
-                                <GrepModel>
-                                  <option name="expression" value="INFO" />
-                                </GrepModel>
-                              </list>
-                            </option>
-                          </GrepCompositeModel>
-                        </option>
-                      </Pin>
-                      <Pin>
-                        <option name="consoleUUID" value="95a34c25-c3ee-47a7-b909-98f89abeb199" />
-                        <option name="contentType" value="ConsoleContent" />
-                        <option name="grepCompositeModel">
-                          <GrepCompositeModel>
-                            <option name="models">
-                              <list>
-                                <GrepModel>
-                                  <option name="expression" value="INFO" />
-                                </GrepModel>
-                              </list>
-                            </option>
-                          </GrepCompositeModel>
-                        </option>
-                      </Pin>
-                      <Pin>
                         <option name="consoleUUID" value="639e7ab2-0bce-487c-b92d-06af5d2f0cc4" />
                         <option name="contentType" value="ConsoleContent" />
                         <option name="grepCompositeModel">
@@ -70,21 +25,6 @@
                               <list>
                                 <GrepModel>
                                   <option name="expression" value="p6spy" />
-                                </GrepModel>
-                              </list>
-                            </option>
-                          </GrepCompositeModel>
-                        </option>
-                      </Pin>
-                      <Pin>
-                        <option name="consoleUUID" value="c9e49d1d-7af4-4e74-a561-90cfd0814322" />
-                        <option name="contentType" value="ConsoleContent" />
-                        <option name="grepCompositeModel">
-                          <GrepCompositeModel>
-                            <option name="models">
-                              <list>
-                                <GrepModel>
-                                  <option name="expression" value="INFO" />
                                 </GrepModel>
                               </list>
                             </option>

@@ -1,0 +1,22 @@
+package imwhs.eatz_server.repository.ingredient;
+
+import imwhs.eatz_server.domain.IngredientRecipe;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface IngredientRecipeRepository extends JpaRepository<IngredientRecipe, Long> {
+
+    @Query("select ir from IngredientRecipe ir join fetch ir.ingredient where ir.recipe.id = :id")
+    List<IngredientRecipe> findByRecipeIdWithIngredient(@Param("id") Long id);
+
+    @Query("select i.id from IngredientRecipe ir join ir.ingredient i where ir.recipe.id = :id")
+    List<Long> findIngredientIdsByRecipeId(@Param("id") Long id);
+
+    boolean existsByRecipeIdAndIngredientId(Long recipeId, Long ingredientId);
+
+}

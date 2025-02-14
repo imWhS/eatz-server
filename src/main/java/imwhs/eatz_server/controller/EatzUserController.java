@@ -5,9 +5,11 @@ import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import imwhs.eatz_server.service.AuthService;
 import imwhs.eatz_server.service.EatzUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
+import imwhs.eatz_server.service.query.NSavedRecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v0/users")
@@ -31,7 +35,10 @@ public class EatzUserController {
     private final EatzUserQueryService userQueryService;
     
     private final AuthService authService;
+
     private final RecipeQueryService recipeQueryService;
+
+    private final NSavedRecipeService savedRecipeService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid SignUpRequestDto dto) {
@@ -107,6 +114,12 @@ public class EatzUserController {
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<RecipeDto> recipes = recipeQueryService.findAllRecipesByUser(id, pageable);
         return ResponseEntity.ok(ApiResponse.success(recipes));
+    }
+
+    @GetMapping("/{id}/saveds")
+    public ResponseEntity<ApiResponse<List<RecipeBasicDto>>> getSavedRecipes(@PathVariable Long id) {
+        List<RecipeBasicDto> savedRecipes = savedRecipeService.getSavedRecipesByUser(id);
+        return ResponseEntity.ok(ApiResponse.success(savedRecipes));
     }
 
 }

@@ -41,7 +41,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
         recipeRepository.save(recipe);
         Long recipeId = recipe.getId();
 
@@ -68,7 +68,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi pasta",
                 "https://www.naver.com/",
@@ -106,7 +106,7 @@ public class CommentServiceTest {
 
         Long invalidUserId = 99999L;
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi pasta",
                 "https://www.naver.com/",
@@ -135,7 +135,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi pasta",
                 "https://www.naver.com/",
@@ -164,7 +164,7 @@ public class CommentServiceTest {
         userRepository.save(user);
         Long invalidUserId = 99999L;
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi pasta",
                 "https://www.naver.com/",
@@ -194,7 +194,7 @@ public class CommentServiceTest {
                 "1q2w3e4r!");
         userRepository.save(user);
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -227,7 +227,7 @@ public class CommentServiceTest {
                 "1q2w3e4r!");
         userRepository.save(user);
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",

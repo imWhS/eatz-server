@@ -4,7 +4,7 @@ import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.*;
-import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -68,7 +68,7 @@ public class SavedRecipeCustomRepositoryImpl implements SavedRecipeCustomReposit
                     sr.getId(),
                     sr.getUser().getId(),
                     sr.getCreatedAt(),
-                    new RecipeSummaryDto(recipe.getId(), recipe.getTitle(), recipe.getImageUrl()),
+                    new RecipeBasicDto(recipe.getId(), recipe.getTitle(), recipe.getImageUrl()),
                     dates.getOrDefault(sr.getId(), Collections.emptyList())
             );
         }).toList();

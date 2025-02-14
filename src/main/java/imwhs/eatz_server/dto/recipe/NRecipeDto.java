@@ -2,6 +2,8 @@ package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.dto.eatzuser.EatzUserWithRecipeSummaryDto;
+import imwhs.eatz_server.dto.ingredient.IngredientDto;
+import imwhs.eatz_server.dto.ingredient.IngredientWithCategoryChildDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -80,10 +82,16 @@ public class NRecipeDto {
      */
     private RatingSummaryDto rating;
 
-    /**
-     * TODO: 사용자들의 레시피 저장 수. (from SavedRecipe)
+    /*
+    TODO: 재료 목록.
+     */
+    private List<IngredientDto> ingredients;
+
+    /*
+    TODO: 사용자들의 레시피 저장 수. (from SavedRecipe)
      */
 //    private Long savedCount;
+
 
     public NRecipeDto(
             Long id,

@@ -6,11 +6,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.recipe.QComment;
 import imwhs.eatz_server.domain.recipe.QRecipe;
-import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
-import imwhs.eatz_server.dto.comment.CommentUserDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
-import imwhs.eatz_server.dto.recipe.RecipeSummaryDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +37,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                                                 .select(recipe.count().intValue())
                                                 .from(recipe)
                                                 .where(recipe.user.eq(user))),
-                                Projections.constructor(RecipeSummaryDto.class,
+                                Projections.constructor(RecipeBasicDto.class,
                                         recipe.id,
                                         recipe.title,
                                         recipe.imageUrl),

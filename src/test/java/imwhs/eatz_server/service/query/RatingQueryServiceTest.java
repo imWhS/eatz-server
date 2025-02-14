@@ -42,7 +42,7 @@ class RatingQueryServiceTest {
                 "1q2w3e4r!");
         userRepository.save(recipeWriter);
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 recipeWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -56,7 +56,7 @@ class RatingQueryServiceTest {
                 "1q2w3e4r!");
         userRepository.save(ratingWriter);
 
-        Recipe recipeA = Recipe.of(
+        Recipe recipeA = Recipe.create(
                 ratingWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -64,7 +64,7 @@ class RatingQueryServiceTest {
                 "맛있는 김치 파스타를 즐겨보세요!");
         recipeRepository.save(recipeA);
 
-        Recipe recipeB = Recipe.of(
+        Recipe recipeB = Recipe.create(
                 ratingWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -100,7 +100,7 @@ class RatingQueryServiceTest {
                 "1q2w3e4r!");
         userRepository.save(recipeWriter);
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 recipeWriter,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -152,7 +152,7 @@ class RatingQueryServiceTest {
                 "1q2w3e4r!");
         userRepository.save(recipeWriterA);
 
-        Recipe recipeKimchi = Recipe.of(
+        Recipe recipeKimchi = Recipe.create(
                 recipeWriterA,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -166,7 +166,7 @@ class RatingQueryServiceTest {
                 "1q2w3e4r!");
         userRepository.save(recipeWriterB);
 
-        Recipe recipeGarlic = Recipe.of(
+        Recipe recipeGarlic = Recipe.create(
                 recipeWriterB,
                 "Garlic BBOKKEUMBOB",
                 "https://www.naver.com/",

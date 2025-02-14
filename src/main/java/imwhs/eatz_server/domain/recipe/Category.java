@@ -27,19 +27,22 @@ public class Category extends BaseEntity {
      * @param description 카테고리 설명.
      * @return 카테고리 인스턴스.
      */
-    public static Category of(String name, String description) {
+    public static Category create(String name) {
         Category category = new Category();
         category.name = name;
-        category.description = description;
         return category;
     }
 
-    public static Category of(String name, String description, RecipeCategory... recipeCategories) {
-        Category category = Category.of(name, description);
-        for (RecipeCategory recipeCategory : recipeCategories) {
-            category.addRecipeCategory(recipeCategory);
-        }
-
+    /**
+     * 카테고리를 생성합니다.
+     * @param name 카테고리 이름.
+     * @param description 카테고리 설명.
+     * @return 카테고리 인스턴스.
+     */
+    public static Category create(String name, String description) {
+        Category category = new Category();
+        category.name = name;
+        category.description = description;
         return category;
     }
 

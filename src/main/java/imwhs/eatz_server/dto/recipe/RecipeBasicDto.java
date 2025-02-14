@@ -5,14 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * RecipeSummaryDto 클래스입니다.
+ * RecipeBasicDto 클래스입니다.
  * <ul>
- *     <li>레시피의 기본 정보를 포함하는 DTO입니다.</li>
+ *     <li>레시피에 대한 간략한 정보를 전달하기 위해 사용하는 DTO입니다..</li>
  * </ul>
  */
 @Data
 @AllArgsConstructor
-public class RecipeSummaryDto {
+public class RecipeBasicDto {
 
     private Long id;
 
@@ -20,7 +20,7 @@ public class RecipeSummaryDto {
 
     private String imageUrl;
 
-    public RecipeSummaryDto(Recipe recipe) {
+    public RecipeBasicDto(Recipe recipe) {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
         this.imageUrl = recipe.getImageUrl();

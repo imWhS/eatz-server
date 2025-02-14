@@ -1,7 +1,10 @@
 package imwhs.eatz_server.dto.recipe;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * RecipeUpdateDto 클래스입니다.<br/>
@@ -11,12 +14,19 @@ import lombok.Data;
 @AllArgsConstructor
 public class RecipeUpdateDto {
 
+    @NotNull
     private String title;
 
+    @NotNull
     private String url;
 
+    @NotNull
     private String imageUrl;
 
     private String description;
+
+    private List<Long> ingredientIds;
+
+    private List<String> categoryNames;
 
 }

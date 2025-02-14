@@ -13,9 +13,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Optional<Category> findByName(String name);
 
-    /*
-    레시피로 카테고리 조회하기
-     */
+    List<Category> findByNameIn(List<String> names);
 
 
 }

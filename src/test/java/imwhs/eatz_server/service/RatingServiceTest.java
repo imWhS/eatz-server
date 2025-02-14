@@ -43,7 +43,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -73,7 +73,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -102,7 +102,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -135,7 +135,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -167,7 +167,7 @@ public class RatingServiceTest {
                 "1q2w3e4r!");
         userRepository.save(user);
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
@@ -203,7 +203,7 @@ public class RatingServiceTest {
         userRepository.save(user);
         Long userId = user.getId();
 
-        Recipe recipe = Recipe.of(
+        Recipe recipe = Recipe.create(
                 user,
                 "Kimchi Pasta",
                 "https://www.naver.com/",
