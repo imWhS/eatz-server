@@ -1,11 +1,16 @@
 package imwhs.eatz_server.service.query;
 
+import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.dto.comment.CommentCountByRecipeDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.ingredient.IngredientRecipeDto;
+import imwhs.eatz_server.dto.likes.LikeCountByEntityDto;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
+import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRecipeRepository;
+import imwhs.eatz_server.repository.like.LikeRepository;
 import imwhs.eatz_server.repository.recipe.RecipeCategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.recipe.RecipeQueryRepository;
@@ -18,10 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +52,8 @@ public class RecipeQueryService {
 
     private final IngredientRecipeRepository ingredientRecipeRepository;
     private final RecipeCategoryRepository recipeCategoryRepository;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     /**
      * 식별자로 레시피를 조회합니다.
@@ -101,6 +105,24 @@ public class RecipeQueryService {
         Map<Long, List<RecipeCategoryDto>> categoriesByRecipeIdMap = categoriesByRecipeIds.stream()
                 .collect(Collectors.groupingBy(RecipeCategoryDto::getRecipeId));
 
+        // 레시피 별 댓글 수를 조회합니다.
+        List<CommentCountByRecipeDto> commentCountsByRecipeIds = commentRepository.countByRecipeIds(recipeIds);
+        Map<Long, Long> commentCountsByRecipeIdMap = commentCountsByRecipeIds.stream()
+                .collect(Collectors.toMap(
+                        CommentCountByRecipeDto::getRecipeId,
+                        CommentCountByRecipeDto::getCommentCount
+                ));
+
+        // 레시피 별 좋아요 수를 조회합니다.
+        List<LikeCountByEntityDto> likeCountsByEntityDtos = likeRepository.countByEntityIdsAndType(recipeIds, LikesType.RECIPE);
+        Map<Long, Long> likeCountsByRecipeIdMap = likeCountsByEntityDtos.stream()
+                .collect(Collectors.toMap(
+                        LikeCountByEntityDto::getEntityId,
+                        LikeCountByEntityDto::getLikeCount
+                ));
+
+        // 요청한 사용자의 레시피 별 좋아요 여부를 조회합니다.
+        Set<Long> likedRecipeIds = new HashSet<>(likeRepository.findLikesByEntityIdsAndTypeAndUserUsername(recipeIds, LikesType.RECIPE, username));
 
         // 각 레시피에 대해 조회한 상세 정보를 결합합니다.
         for (NRecipeItemDto item : items) {
@@ -120,6 +142,9 @@ public class RecipeQueryService {
 
             item.setIngredients(ingredientDtos);
             item.setCategories(categoryDtos);
+            item.setCommentCount(commentCountsByRecipeIdMap.get(recipeId));
+            item.setLikeCount(likeCountsByRecipeIdMap.get(recipeId));
+            item.setLikedByUser(likedRecipeIds.contains(recipeId));
         }
 
         return items;

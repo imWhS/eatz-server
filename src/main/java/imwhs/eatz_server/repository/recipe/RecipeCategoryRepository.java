@@ -17,4 +17,5 @@ public interface RecipeCategoryRepository extends JpaRepository<RecipeCategory, 
             "from RecipeCategory rc " +
             "where rc.recipe.id in :recipeIds")
     List<RecipeCategoryDto> findCategoriesByRecipeIds(@Param("recipeIds") List<Long> recipeIds);
+
 }
