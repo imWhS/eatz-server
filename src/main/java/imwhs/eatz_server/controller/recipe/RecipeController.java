@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * RecipeController 클래스입니다.
+ */
 @RequestMapping("/api/v0/recipes")
 @RequiredArgsConstructor
 @RestController
@@ -36,14 +39,9 @@ public class RecipeController {
 
     private final NSavedRecipeService savedRecipeService;
 
-    /**
-     * 새 레시피를 등록합니다.
-     * @param dto
-     * @return
-     */
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
-        Long recipeId = recipeService.registerRecipe(dto);
+        Long recipeId = recipeService.registerRecipe(dto, EatzUserAuthUtil.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(recipeId));
     }
 
@@ -57,16 +55,8 @@ public class RecipeController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> deleteRecipe(@PathVariable Long id) {
-        recipeService.deleteRecipe(id, EatzUserAuthUtil.getUsername());
+        recipeService.markRecipeAsDeleted(id, EatzUserAuthUtil.getUsername());
         return ResponseEntity.ok().body(ApiResponse.success("레시피를 성공적으로 삭제했어요."));
-    }
-
-    @GetMapping
-    public ResponseEntity<ApiResponse<Paged<RecipeDto>>> getAllRecipes(
-            @PageableDefault(page = 0, size = 10) Pageable pageable
-    ) {
-        Page<RecipeDto> allRecipes = recipeQueryService.findAllRecipes(pageable);
-        return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 
     @GetMapping("/{id}")
@@ -74,6 +64,15 @@ public class RecipeController {
         NRecipeDto dto = recipeQueryService.findRecipeById(id);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Paged<NRecipeItemDto>>> getAllRecipeList(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItems(EatzUserAuthUtil.getUsername(), pageable);
+        return ResponseEntity.ok(ApiResponse.success(allRecipes));
+    }
+
 
 //    @GetMapping("/{id}/details")
 //    public @ResponseBody ResponseEntity<ApiResponse<RecipeDetailDto>> getRecipeDetails(@PathVariable Long id) {

@@ -1,7 +1,7 @@
 package imwhs.eatz_server.repository.recipe;
 
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.recipe.NRecipeDto;
+import imwhs.eatz_server.dto.recipe.NRecipeItemDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 
 /**
@@ -20,22 +18,12 @@ import java.util.Optional;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long>, NRecipeCustomRepository {
 
-    /**
-     * 식별자로 레시피 조회.
-     * <p>
-     *     식별자로 단일 Recipe 엔티티를 조회합니다.
-     *     삭제 처리된 레시피는 조회 대상에서 제외됩니다.
-     * </p>
-     * @param id 레시피 식별자.
-     * @return Optional로 wrapping된 Recipe 엔티티.
-     */
-    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
+    @Query("select new imwhs.eatz_server.dto.recipe.NRecipeItemDto(" +
+            "r.id, r.title, r.imageUrl, r.createdAt, r.updatedAt, " +
+            "new imwhs.eatz_server.dto.eatzuser.NEatzUserEssentialsDto(u.id, u.username, u.imageUrl)) " +
             "from Recipe r " +
-            "left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
-            "left join EatzUser u on r.user.id = u.id " +
-            "where r.id = :id and r.deletedAt IS NULL " +
-            "group by r")
-    Optional<RecipeDto> findByIdAndDeletedAtIsNull(@Param("id") Long id);
+            "join r.user u ")
+    Page<NRecipeItemDto> findAllItemsWithUser(Pageable pageable);
 
     /**
      * 모든 레시피 조회.
