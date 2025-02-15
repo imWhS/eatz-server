@@ -98,9 +98,6 @@ public class RecipeQueryService {
 
         // 레시피 별 카테고리 정보를 조회합니다.
         List<RecipeCategoryDto> categoriesByRecipeIds = recipeCategoryRepository.findCategoriesByRecipeIds(recipeIds);
-        for (RecipeCategoryDto categoriesByRecipeId : categoriesByRecipeIds) {
-            System.out.println("recipeId = " + categoriesByRecipeId.getRecipeId() + " categoryName = " + categoriesByRecipeId.getCategoryName());
-        }
         Map<Long, List<RecipeCategoryDto>> categoriesByRecipeIdMap = categoriesByRecipeIds.stream()
                 .collect(Collectors.groupingBy(RecipeCategoryDto::getRecipeId));
 
