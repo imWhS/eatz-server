@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class IngredientDto {
+public class IngredientRecipeDto {
 
-    private Long id;
+    Long recipeId;
 
-    private String name;
+    Long ingredientId;
+
+    String ingredientName;
 
 }

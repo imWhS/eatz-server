@@ -9,6 +9,7 @@ import imwhs.eatz_server.domain.likes.QLikes;
 import imwhs.eatz_server.domain.recipe.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserWithRecipeSummaryDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
+import imwhs.eatz_server.dto.recipe.CategoryDto;
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<NRecipeDto> findRecipeWithAuthor(Long id) {
+    public Optional<NRecipeDto> findRecipeWithUser(Long id) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
 
@@ -37,7 +38,7 @@ public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(EatzUserWithRecipeSummaryDto.class,
+                                Projections.constructor(NRecipeDto.UserDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl,
@@ -47,76 +48,75 @@ public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
                                                 .where(recipe.user.eq(user))
                                 )
                         ))
-                .from(recipe) // 레시피 테이블 레코드가 1개로 필터링
+                .from(recipe)
                 .join(recipe.user, user)
-                .where(recipe.id.eq(id))
+                .where(recipe.id.eq(id).and(recipe.deletedAt.isNull()))
                 .fetchOne();
 
         return Optional.ofNullable(recipeDto);
     }
 
-//    @Override
-//    public Optional<NRecipeDto> findRecipe(Long id) {
-//        QRecipe recipe = QRecipe.recipe;
-//        QRecipe subRecipe = new QRecipe("subRecipe");
-//        QEatzUser user = QEatzUser.eatzUser;
-//        QComment comment = QComment.comment;
-//        QRating rating = QRating.rating;
-//        QLikes likes = QLikes.likes;
-//        QRecipeCategory recipeCategory = QRecipeCategory.recipeCategory;
-//
-//        NRecipeDto recipeDto = queryFactory
-//                .select(Projections.constructor(NRecipeDto.class,
-//                        recipe.id,
-//                        recipe.title,
-//                        recipe.description,
-//                        recipe.imageUrl,
-//                        recipe.createdAt,
-//                        recipe.updatedAt,
-//
-//                        // Recipe와 xToOne 연관 관계인 EatzUser 관련 데이터를 가져옵니다.
-//                        Projections.constructor(EatzUserWithRecipeSummaryDto.class,
-//                                user.id,
-//                                user.username,
-//                                user.imageUrl,
-//                                JPAExpressions
-//                                        .select(subRecipe.count().intValue())
-//                                        .from(subRecipe)
-//                                        .where(subRecipe.user.eq(user).and(subRecipe.deletedAt.isNull()))
-//                        ),
-//
-//                        // Recipe와 xToMany 연관 관계인 Comment 관련 데이터를 가져옵니다.
-//                        JPAExpressions
-//                                .select(comment.id.countDistinct().longValue())
-//                                .from(comment)
-//                                .where(comment.deletedAt.isNull()),
-//
-//                        // Recipe와 xToMany 연관 관계인 Likes 관련 데이터를 가져옵니다.
-//                        JPAExpressions
-//                                .select(likes.id.countDistinct().longValue())
-//                                .from(likes)
-//                                .where(likes.isLiked.isTrue()),
-//
-//                        // Recipe와 xToMany 연관 관계인 Category 관련 데이터를 가져옵니다.
-//                        JPAExpressions
-//                                .select(
-//                                        Projections.constructor(CategoryDto.class,
-//                                                recipeCategory.category.id,
-//                                                recipeCategory.category.name)
-//                                )
-//                                .from(recipeCategory)
-//                                .where(recipeCategory.recipe.eq(recipe))
-//                ))
-//                .from(recipe)
-//                .innerJoin(recipe.user, user)
-//                .leftJoin(comment).on(comment.recipe.eq(recipe))
-//                .leftJoin(likes).on(likes.entityId.eq(id).and(likes.type.eq(LikesType.COMMENT)))
-//                .where(recipe.id.eq(id).and(recipe.deletedAt.isNull()))
-//                .groupBy(recipe.id)
-//                .fetchOne();
-//
-//        return Optional.ofNullable(recipeDto);
-//    }
+    public Optional<NRecipeDto> findRecipe_old(Long id) {
+        QRecipe recipe = QRecipe.recipe;
+        QRecipe subRecipe = new QRecipe("subRecipe");
+        QEatzUser user = QEatzUser.eatzUser;
+        QComment comment = QComment.comment;
+        QRating rating = QRating.rating;
+        QLikes likes = QLikes.likes;
+        QRecipeCategory recipeCategory = QRecipeCategory.recipeCategory;
+
+        NRecipeDto recipeDto = queryFactory
+                .select(Projections.constructor(NRecipeDto.class,
+                        recipe.id,
+                        recipe.title,
+                        recipe.description,
+                        recipe.imageUrl,
+                        recipe.createdAt,
+                        recipe.updatedAt,
+
+                        // Recipe와 xToOne 연관 관계인 EatzUser 관련 데이터를 가져옵니다.
+                        Projections.constructor(EatzUserWithRecipeSummaryDto.class,
+                                user.id,
+                                user.username,
+                                user.imageUrl,
+                                JPAExpressions
+                                        .select(subRecipe.count().intValue())
+                                        .from(subRecipe)
+                                        .where(subRecipe.user.eq(user).and(subRecipe.deletedAt.isNull()))
+                        ),
+
+                        // Recipe와 xToMany 연관 관계인 Comment 관련 데이터를 가져옵니다.
+                        JPAExpressions
+                                .select(comment.id.countDistinct().longValue())
+                                .from(comment)
+                                .where(comment.deletedAt.isNull()),
+
+                        // Recipe와 xToMany 연관 관계인 Likes 관련 데이터를 가져옵니다.
+                        JPAExpressions
+                                .select(likes.id.countDistinct().longValue())
+                                .from(likes)
+                                .where(likes.isLiked.isTrue()),
+
+                        // Recipe와 xToMany 연관 관계인 Category 관련 데이터를 가져옵니다.
+                        JPAExpressions
+                                .select(
+                                        Projections.constructor(CategoryDto.class,
+                                                recipeCategory.category.id,
+                                                recipeCategory.category.name)
+                                )
+                                .from(recipeCategory)
+                                .where(recipeCategory.recipe.eq(recipe))
+                ))
+                .from(recipe)
+                .innerJoin(recipe.user, user)
+                .leftJoin(comment).on(comment.recipe.eq(recipe))
+                .leftJoin(likes).on(likes.entityId.eq(id).and(likes.type.eq(LikesType.COMMENT)))
+                .where(recipe.id.eq(id).and(recipe.deletedAt.isNull()))
+                .groupBy(recipe.id)
+                .fetchOne();
+
+        return Optional.ofNullable(recipeDto);
+    }
 
 
     /**

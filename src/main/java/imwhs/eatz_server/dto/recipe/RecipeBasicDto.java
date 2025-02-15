@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * RecipeBasicDto 클래스입니다.
  * <ul>
- *     <li>레시피에 대한 간략한 정보를 전달하기 위해 사용하는 DTO입니다..</li>
+ *     <li>레시피에 대한 간략한 정보를 전달하기 위해 사용하는 DTO입니다.</li>
  * </ul>
  */
 @Data

@@ -1,6 +1,5 @@
 package imwhs.eatz_server.service.recipe;
 
-import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.IngredientRecipe;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
@@ -24,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * RecipeService 클래스입니다.<br/>
+ */
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -48,8 +50,8 @@ public class RecipeService {
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
     @Transactional
-    public Long registerRecipe(RecipeCreateDto dto) {
-        EatzUser user = getEatzUserByUsername(EatzUserAuthUtil.getUsername());
+    public Long registerRecipe(RecipeCreateDto dto, String username) {
+        EatzUser user = getEatzUser(username);
         Recipe recipe = Recipe.create(user, dto.getTitle(), dto.getUrl(), dto.getImageUrl(), dto.getDescription());
 
         // 레시피에 재료를 추가합니다.
@@ -101,7 +103,7 @@ public class RecipeService {
      * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자.와 레시피를 등록한 사용자 식별자가 다른 경우.
      */
     @Transactional
-    public void deleteRecipe(Long id, String username) {
+    public void markRecipeAsDeleted(Long id, String username) {
         EatzUser user = getEatzUser(username);
         Recipe recipe = getRecipe(id);
         validateUserAuthorization(recipe, user);
@@ -109,11 +111,6 @@ public class RecipeService {
     }
 
     private EatzUser getEatzUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new EatzUserNotFoundException(username));
-    }
-
-    private EatzUser getEatzUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new EatzUserNotFoundException(username));
     }
@@ -136,14 +133,14 @@ public class RecipeService {
      * @param recipe 레시피 엔티티.
      */
     private void addCategories(List<String> categoryNames, Recipe recipe) {
-        List<Category> existingCategories = categoryRepository.findByNameIn(categoryNames);
+        if (categoryNames == null || categoryNames.isEmpty()) return;
 
+        List<Category> existingCategories = categoryRepository.findByNameIn(categoryNames);
         existingCategories.forEach(category -> {
             recipe.addRecipeCategory(RecipeCategory.of(recipe, category));
         });
 
         List<String> existingCategoryNames = existingCategories.stream().map(Category::getName).toList();
-
         categoryNames.stream()
                 .filter(categoryName -> !existingCategoryNames.contains(categoryName))
                 .forEach(missingCategoryName -> {
@@ -159,12 +156,9 @@ public class RecipeService {
      * @param recipe 레시피 엔티티.
      */
     private void addIngredients(List<Long> ingredientIds, Recipe recipe) {
-        List<Ingredient> ingredients = new ArrayList<>();
+        if (ingredientIds == null || ingredientIds.isEmpty()) return;
 
-        if (ingredientIds != null && !ingredientIds.isEmpty()) {
-            ingredients.addAll(ingredientRepository.findAllById(ingredientIds));
-        }
-
+        List<Ingredient> ingredients = new ArrayList<>(ingredientRepository.findAllById(ingredientIds));
         for (Ingredient ingredient : ingredients) {
             recipe.addIngredientRecipe(IngredientRecipe.create(ingredient, recipe));
         }

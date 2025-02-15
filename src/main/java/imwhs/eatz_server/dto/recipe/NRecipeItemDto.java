@@ -1,6 +1,8 @@
 package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import imwhs.eatz_server.dto.eatzuser.EatzUserWithRecipeSummaryDto;
+import imwhs.eatz_server.dto.eatzuser.NEatzUserEssentialsDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import lombok.AllArgsConstructor;
@@ -10,14 +12,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * RecipeDto 클래스입니다.
+ * RecipeItemDto 클래스입니다.
  * <p>
- *     레시피의 상세 정보를 전달하기 위한 DTO로 사용합니다.
+ *     레시피 및 레시피와 연관된 엔티티의 요약 정보를 함께 전달하기 위한 DTO입니다.
+ *     여러 개의 레시피가 하나의 목록에 나열되어질 때 주로 사용합니다.
  * </p>
  */
 @Data
 @AllArgsConstructor
-public class NRecipeDto {
+public class NRecipeItemDto {
 
     /**
      * 레시피 ID.
@@ -28,11 +31,6 @@ public class NRecipeDto {
      * 레시피 제목.
      */
     private String title;
-
-    /**
-     * 레시피 설명.
-     */
-    private String description;
 
     /**
      * 레시피 대표 이미지 URL 주소.
@@ -51,12 +49,10 @@ public class NRecipeDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    // 아래부터는 xToOne 연관 관계 엔티티 관련 DTO 타입의 필드입니다.
-
     /**
-     * 레시피를 등록한 사용자 정보. (with EatzUser)
+     * 레시피를 등록한 사용자의 핵심 정보. (with EatzUser)
      */
-    private UserDto user;
+    private NEatzUserEssentialsDto user;
 
     /**
      * 재료 목록. (from IngredientRecipe)
@@ -79,44 +75,38 @@ public class NRecipeDto {
     private Long likeCount;
 
     /**
+     * 좋아요 여부. (from Likes)
+     */
+    private boolean likedByUser;
+
+    /**
+     * 레시피를 저장한 사용자 수. (from SavedRecipe)
+     */
+    private Long savedCount;
+
+    /**
+     * 저장 여부. (from SavedRecipe)
+     */
+    private boolean savedByUser;
+
+    /**
      * 레시피에 등록된 평가 요약 정보. (from Rating)
      */
     private RatingSummaryDto rating;
 
-    /*
-    TODO: 사용자들의 레시피 저장 수. (from SavedRecipe)
-     */
-//    private Long savedCount;
-
-    public NRecipeDto(
+    public NRecipeItemDto(
             Long id,
             String title,
-            String description,
             String imageUrl,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
-            UserDto user) {
+            NEatzUserEssentialsDto user) {
         this.id = id;
         this.title = title;
-        this.description = description;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.imageUrl = imageUrl;
         this.user = user;
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class UserDto {
-
-        private Long id;
-
-        private String username;
-
-        private String imageUrl;
-
-        private Integer recipeCount;
-
     }
 
 }
