@@ -2,6 +2,8 @@ package imwhs.eatz_server.repository.like;
 
 import imwhs.eatz_server.domain.likes.Likes;
 import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.dto.likes.LikeCountByEntityDto;
+import imwhs.eatz_server.dto.likes.LikeStatusByEntityDto;
 import imwhs.eatz_server.dto.likes.LikesDetailDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,6 +36,8 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
      */
     boolean existsByUserIdAndEntityIdAndTypeAndIsLikedIsTrue(Long userId, Long entityId, LikesType type);
 
+
+
     /**
      * 특정 항목에 대한 좋아요 상세 정보를 조회합니다.<br/>
      * 항목을 좋아하는 모든 사용자 정보는 조회 대상에서 제외합니다.
@@ -57,5 +61,17 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
             "inner join EatzUser u on l.user = u and l.isLiked = true " +
             "where l.entityId = :entityId and l.type = :type")
     List<EatzUserBasicDto> findLikedUsersByEntityIdAndType(@Param("entityId") Long entityId, @Param("type") LikesType type);
+
+    @Query("select new imwhs.eatz_server.dto.likes.LikeCountByEntityDto(l.entityId, COUNT(l)) " +
+            "from Likes l " +
+            "where l.type = :type and l.entityId in :entityIds " +
+            "group by l.entityId")
+    List<LikeCountByEntityDto> countByEntityIdsAndType(@Param("entityIds") List<Long> entityIds, @Param("type") LikesType type);
+
+    @Query("select l.entityId " +
+            "from Likes l " +
+            "where l.type = :type and l.entityId in :entityIds and l.user.username = :username " +
+            "group by l.entityId")
+    List<Long> findLikesByEntityIdsAndTypeAndUserUsername(@Param("entityIds") List<Long> entityIds, @Param("type") LikesType type, @Param("username") String username);
 
 }
