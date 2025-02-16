@@ -137,6 +137,8 @@ public class Recipe extends BaseEntity {
      * @param description
      */
     public void update(String title, String url, String imageUrl, String description) {
+        validateRecipe();
+
         if (Objects.isNull(title) || title.isEmpty()) {
             throw new IllegalArgumentException("레시피 제목은 필수 항목입니다.");
         }
@@ -148,6 +150,12 @@ public class Recipe extends BaseEntity {
         this.url = url;
         this.imageUrl = imageUrl;
         this.description = description;
+    }
+
+    private void validateRecipe() {
+        if (this.isMarkedAsDeleted()) {
+            throw new IllegalStateException("삭제 처리된 레시피입니다.");
+        }
     }
 
     public void addIngredientRecipe(IngredientRecipe ingredientRecipe) {

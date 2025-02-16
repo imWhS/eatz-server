@@ -5,8 +5,10 @@ import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.comment.CommentCreateDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
+import imwhs.eatz_server.dto.rating.RatingCreateDto;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.service.CommentService;
+import imwhs.eatz_server.service.RatingService;
 import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
 import imwhs.eatz_server.service.query.NSavedRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
@@ -38,6 +40,7 @@ public class RecipeController {
     private final IngredientRecipeService ingredientRecipeService;
 
     private final NSavedRecipeService savedRecipeService;
+    private final RatingService ratingService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
@@ -103,9 +106,15 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}/saveds/count")
-    public @ResponseBody ResponseEntity<ApiResponse<Long>> getSavedUserCount(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Long>> getSavedUserCount(@PathVariable Long id) {
         Long savedUserCount = savedRecipeService.countSaveds(id);
         return ResponseEntity.ok(ApiResponse.success(savedUserCount));
+    }
+
+    @PostMapping("/{id}/ratings")
+    public ResponseEntity<ApiResponse<Long>> addRating(@PathVariable Long id, @RequestBody RatingCreateDto dto) {
+        Long ratingId = ratingService.registerRating(id, EatzUserAuthUtil.getUsername(), dto.getScore(), dto.getContent());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(ratingId));
     }
 
 }

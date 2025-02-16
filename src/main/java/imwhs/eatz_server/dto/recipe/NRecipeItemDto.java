@@ -1,7 +1,6 @@
 package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.dto.eatzuser.EatzUserWithRecipeSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.NEatzUserEssentialsDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
@@ -77,7 +76,7 @@ public class NRecipeItemDto {
     /**
      * 좋아요 여부. (from Likes)
      */
-    private boolean likedByUser;
+    private boolean isLikedByUser;
 
     /**
      * 레시피를 저장한 사용자 수. (from SavedRecipe)
