@@ -4,7 +4,6 @@ import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.IngredientRecipe;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
-import imwhs.eatz_server.dto.ingredient.IngredientRecipeDto;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.ingredient.IngredientRecipeRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;

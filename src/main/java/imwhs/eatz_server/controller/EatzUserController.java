@@ -112,7 +112,7 @@ public class EatzUserController {
     public ResponseEntity<ApiResponse<Paged<RecipeDto>>> getRecipeByUser(
             @PathVariable Long id,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RecipeDto> recipes = recipeQueryService.findAllRecipesByUser(id, pageable);
+        Page<RecipeDto> recipes = recipeQueryService.findAllRecipesByUserId(id, pageable);
         return ResponseEntity.ok(ApiResponse.success(recipes));
     }
 

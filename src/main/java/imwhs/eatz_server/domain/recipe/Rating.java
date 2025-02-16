@@ -3,6 +3,7 @@ package imwhs.eatz_server.domain.recipe;
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Getter;
  * </p>
  */
 @Getter
+@AllArgsConstructor
 @Entity
 public class Rating extends BaseEntity {
 
@@ -45,30 +47,9 @@ public class Rating extends BaseEntity {
 
     protected Rating() {}
 
-    /**
-     * Rating의 필드 초기화 생성자.
-     * @param user 평가하는 사용자
-     * @param recipe 평가할 레시피
-     * @param score 평가 점수
-     * @param content 평가 내용
-     */
-    public Rating(EatzUser user, Recipe recipe, int score, String content) {
+    public static Rating create(EatzUser user, Recipe recipe, int score, String content) {
         validateScore(score);
-
-        this.user = user;
-        this.recipe = recipe;
-        this.score = score;
-        this.content = content;
-    }
-
-    /**
-     * Rating의 필수 필드 초기화 생성자.
-     * @param user 평가하는 사용자
-     * @param recipe 평가할 레시피
-     * @param score 평가 점수
-     */
-    public Rating(EatzUser user, Recipe recipe, int score) {
-        this(user, recipe, score, null);
+        return new Rating(null, user, recipe, score, content, false);
     }
 
     /**
@@ -88,6 +69,13 @@ public class Rating extends BaseEntity {
      */
     public void updateContent(String content) {
         validateRating();
+        this.content = content;
+    }
+
+    public void update(int score, String content) {
+        validateRating();
+        validateScore(score);
+        this.score = score;
         this.content = content;
     }
 
