@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain.recipe;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -10,6 +11,7 @@ import lombok.Getter;
  * 사용자가 레시피를 저장하면 생성됩니다.
  */
 @Getter
+@AllArgsConstructor
 @Entity
 public class NSavedRecipe {
 
@@ -26,10 +28,8 @@ public class NSavedRecipe {
 
     protected NSavedRecipe() {}
 
-    public static NSavedRecipe of(Recipe recipe, EatzUser user) {
-        NSavedRecipe savedRecipe = new NSavedRecipe();
-        savedRecipe.recipe = recipe;
-        savedRecipe.user = user;
+    public static NSavedRecipe create(Recipe recipe, EatzUser user) {
+        NSavedRecipe savedRecipe = new NSavedRecipe(null, recipe, user);
         return savedRecipe;
     }
 

@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service.query;
+package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.NSavedRecipe;
@@ -20,6 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class NSavedRecipeService {
 
@@ -30,7 +31,7 @@ public class NSavedRecipeService {
     private final RecipeRepository recipeRepository;
 
     @Transactional
-    public Long save(Long id, String username) {
+    public Long saveRecipe(Long id, String username) {
         Recipe recipe = getRecipe(id);
         EatzUser user = getUser(username);
 
@@ -38,20 +39,20 @@ public class NSavedRecipeService {
             throw new DuplicatedSavedRecipeException(id, username);
         }
 
-        NSavedRecipe savedRecipe = NSavedRecipe.of(recipe, user);
+        NSavedRecipe savedRecipe = NSavedRecipe.create(recipe, user);
         savedRecipeRepository.save(savedRecipe);
         return savedRecipe.getId();
     }
 
     @Transactional
-    public Boolean unsave(Long id, String username) {
+    public void unsaveRecipeById(Long id, String username) {
         validateRecipe(id);
-        return savedRecipeRepository.deleteSavedRecipe(username, id);
+        savedRecipeRepository.deleteSavedRecipe(username, id);
     }
 
-    public List<RecipeBasicDto> getSavedRecipesByUser(Long id) {
-        validateUser(id);
-        return savedRecipeRepository.findRecipesByUserId(id);
+    public List<RecipeBasicDto> getSavedRecipesByUser(String username) {
+        validateUser(username);
+        return savedRecipeRepository.findRecipesByUserUsername(username);
     }
 
     public List<EatzUserBasicDto> getSavedUsersByRecipe(Long id) {
@@ -86,9 +87,9 @@ public class NSavedRecipeService {
         return recipe;
     }
 
-    private void validateUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new EatzUserNotFoundException(id);
+    private void validateUser(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new EatzUserNotFoundException(username);
         }
     }
 

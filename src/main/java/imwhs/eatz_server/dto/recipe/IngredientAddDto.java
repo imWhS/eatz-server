@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class RecipeAddIngredientDto {
+public class IngredientAddDto {
 
     List<Long> ingredientIds;
 

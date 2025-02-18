@@ -36,40 +36,41 @@ public class EatzUserQueryRepository {
      * @return 페이징 처리된 EatzUserSummaryDto.
      */
     public Page<EatzUserSummaryDto> findAllWithActivity(Pageable pageable) {
-        QEatzUser eatzUser = QEatzUser.eatzUser;
-        QRecipe recipe = QRecipe.recipe;
-
-        // 모든 사용자를 조회하며, 동시에 각 사용자마다 등록한 레시피 수를 함께 집계한 데이터를 포함해
-        // EatzUserSummaryDto로 반환합니다.
-        JPAQuery<EatzUserSummaryDto> query = queryFactory
-                .select(
-                        Projections.constructor(EatzUserSummaryDto.class,
-                                eatzUser.id,
-                                eatzUser.username,
-                                recipe.count().intValue()
-                        ))
-                .from(eatzUser)
-                .leftJoin(eatzUser.recipes, recipe)
-                .groupBy(eatzUser.id);
-
-        // 페이징 적용이 필요한 경우에만 offset, limit를 쿼리에 적용합니다.
-        if (!pageable.isUnpaged()) {
-            query.offset(pageable.getOffset())
-                    .limit(pageable.getPageSize());
-        }
-
-        List<EatzUserSummaryDto> items = query.fetch();
-
-        // 총 사용자 수를 조회해 totalItems에 할당합니다.
-        Long totalItems =
-                Optional.ofNullable(queryFactory
-                        .select(eatzUser.count())
-                        .from(eatzUser)
-                        .fetchOne())
-                .orElse(0L);
-
-        // 페이징 정보를 포함하는 Page로 감싼 후 데이터를 반환합니다.
-        return new PageImpl<>(items, pageable, totalItems);
+//        QEatzUser eatzUser = QEatzUser.eatzUser;
+//        QRecipe recipe = QRecipe.recipe;
+//
+//        // 모든 사용자를 조회하며, 동시에 각 사용자마다 등록한 레시피 수를 함께 집계한 데이터를 포함해
+//        // EatzUserSummaryDto로 반환합니다.
+//        JPAQuery<EatzUserSummaryDto> query = queryFactory
+//                .select(
+//                        Projections.constructor(EatzUserSummaryDto.class,
+//                                eatzUser.id,
+//                                eatzUser.username,
+//                                recipe.count().intValue()
+//                        ))
+//                .from(eatzUser)
+//                .leftJoin(eatzUser.recipes, recipe)
+//                .groupBy(eatzUser.id);
+//
+//        // 페이징 적용이 필요한 경우에만 offset, limit를 쿼리에 적용합니다.
+//        if (!pageable.isUnpaged()) {
+//            query.offset(pageable.getOffset())
+//                    .limit(pageable.getPageSize());
+//        }
+//
+//        List<EatzUserSummaryDto> items = query.fetch();
+//
+//        // 총 사용자 수를 조회해 totalItems에 할당합니다.
+//        Long totalItems =
+//                Optional.ofNullable(queryFactory
+//                        .select(eatzUser.count())
+//                        .from(eatzUser)
+//                        .fetchOne())
+//                .orElse(0L);
+//
+//        // 페이징 정보를 포함하는 Page로 감싼 후 데이터를 반환합니다.
+//        return new PageImpl<>(items, pageable, totalItems);
+        return null;
     }
 
 }

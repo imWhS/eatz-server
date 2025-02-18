@@ -32,8 +32,10 @@ public interface NSavedRecipeRepository extends JpaRepository<NSavedRecipe, Long
     List<EatzUserBasicDto> findUsersByRecipeId(@Param("id") Long id);
 
     @Query("select new imwhs.eatz_server.dto.recipe.RecipeBasicDto(r.id, r.title, r.imageUrl) " +
-            "from NSavedRecipe sr join sr.recipe r " +
-            "where sr.user.id = :id")
-    List<RecipeBasicDto> findRecipesByUserId(@Param("id") Long id);
+            "from NSavedRecipe sr " +
+            "join sr.recipe r " +
+            "join sr.user " +
+            "where sr.user.username = :username")
+    List<RecipeBasicDto> findRecipesByUserUsername(@Param("username") String username);
 
 }

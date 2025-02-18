@@ -10,7 +10,7 @@ import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.service.CommentService;
 import imwhs.eatz_server.service.RatingService;
 import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
-import imwhs.eatz_server.service.query.NSavedRecipeService;
+import imwhs.eatz_server.service.NSavedRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
 import lombok.RequiredArgsConstructor;
@@ -76,13 +76,6 @@ public class RecipeController {
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 
-
-//    @GetMapping("/{id}/details")
-//    public @ResponseBody ResponseEntity<ApiResponse<RecipeDetailDto>> getRecipeDetails(@PathVariable Long id) {
-//        RecipeDetailDto dto = recipeQueryService.findRecipeDetailsById(id);
-//        return ResponseEntity.ok(ApiResponse.success(dto));
-//    }
-
     @PostMapping("/{id}/comments")
     public ResponseEntity<ApiResponse<Long>> addComment(@PathVariable Long id, @RequestBody CommentCreateDto dto) {
         Long commentId = commentService.registerComment(id, dto.getContent());
@@ -90,13 +83,16 @@ public class RecipeController {
     }
 
     @PostMapping("/{id}/ingredients")
-    public ResponseEntity<?> addIngredient(@PathVariable Long id, @RequestBody RecipeAddIngredientDto dto) {
+    public ResponseEntity<?> addIngredients(@PathVariable Long id, @RequestBody IngredientAddDto dto) {
         List<Long> addedIngredients = ingredientRecipeService.addAllIngredientsToRecipe(dto.getIngredientIds(), id);
+
         if (addedIngredients.size() != dto.getIngredientIds().size()) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(ApiResponse.success(addedIngredients));
         } else if (addedIngredients.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("레시피에 모든 재료를 추가하지 못했어요. 레시피에 추가하려는 재료를 다시 확인해보세요."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("레시피에 모든 재료를 추가하지 못했어요. " +
+                    "레시피에 추가하려는 재료를 다시 확인해보세요."));
         }
+
         return ResponseEntity.ok().body(ApiResponse.success(addedIngredients));
     }
 
@@ -116,5 +112,14 @@ public class RecipeController {
         Long ratingId = ratingService.registerRating(id, EatzUserAuthUtil.getUsername(), dto.getScore(), dto.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(ratingId));
     }
+
+    /*
+    레시피 저장: POST /recipes/{id}/saveds
+    레시피 저장 취소: DELETE /recipes/{id}/saveds
+
+    새 레시피 플랜 등록: POST /plans
+    레시피 플랜 삭제: DELETE /plans/{id}
+    레시피 플랜 수정: UPDATE /plans/{id}
+     */
 
 }

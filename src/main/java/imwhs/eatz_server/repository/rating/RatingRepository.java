@@ -1,7 +1,6 @@
 package imwhs.eatz_server.repository.rating;
 
 import imwhs.eatz_server.domain.recipe.Rating;
-import imwhs.eatz_server.dto.rating.RatingRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import org.springframework.data.domain.Page;
@@ -53,7 +52,8 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     // 레시피 별 평가 항목 조회
     @Query("select new imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto(r.recipe.id, COUNT(r), AVG(r.score)) " +
             "from Rating r " +
-            "where r.recipe.id in :recipeId")
-    List<RatingSummaryByRecipeDto> findRatingSummariesByRecipeIds(@Param("recipeId") List<Long> recipeId);
+            "where r.recipe.id in :recipeIds " +
+            "group by r.recipe.id")
+    List<RatingSummaryByRecipeDto> findRatingSummariesByRecipeIds(@Param("recipeIds") List<Long> recipeIds);
 
 }

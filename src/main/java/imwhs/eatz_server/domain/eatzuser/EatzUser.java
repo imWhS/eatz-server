@@ -1,6 +1,8 @@
 package imwhs.eatz_server.domain.eatzuser;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.Ingredient;
+import imwhs.eatz_server.domain.IngredientUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.domain.recipe.SavedRecipe;
 import jakarta.persistence.*;
@@ -83,22 +85,25 @@ public class EatzUser extends BaseEntity {
      */
     private String imageUrl;
 
-    /**
-     * 사용자가 등록한 모든 레시피 목록.
-     * <ul>
-     *     <li>사용자는 레시피와 1:N(One-To-Many) 연관 관계를 가질 수 있습니다.</li>
-     *     <li>EATZ_USER 테이블의 행을 참조하는 외래 키 필드가 RECIPE 테이블에 존재하기에,
-     *     해당 테이블에 매핑될 Recipe를 연관 관계의 주인으로 설정합니다.</li>
-     * </ul>
-     * TODO: 사용자 회원 탈퇴 시, 연관 관계인 레시피도 함께 삭제되어야 하는지 여부 결정
-     */
-    @OneToMany(mappedBy = "user")
-    private List<Recipe> recipes = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IngredientUser> ingredientUsers = new ArrayList<>();
+
+//    /**
+//     * 사용자가 등록한 모든 레시피 목록.
+//     * <ul>
+//     *     <li>사용자는 레시피와 1:N(One-To-Many) 연관 관계를 가질 수 있습니다.</li>
+//     *     <li>EATZ_USER 테이블의 행을 참조하는 외래 키 필드가 RECIPE 테이블에 존재하기에,
+//     *     해당 테이블에 매핑될 Recipe를 연관 관계의 주인으로 설정합니다.</li>
+//     * </ul>
+//     * TODO: 사용자 회원 탈퇴 시, 연관 관계인 레시피도 함께 삭제되어야 하는지 여부 결정
+//     */
+//    @OneToMany(mappedBy = "user")
+//    private List<Recipe> recipes = new ArrayList<>();
 
     /**
      * 사용자가 저장한 모든 레시피 목록.
      */
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SavedRecipe> savedRecipes = new ArrayList<>();
 
     protected EatzUser() {}
@@ -158,6 +163,14 @@ public class EatzUser extends BaseEntity {
      */
     public void deleteImageUrl() {
         this.imageUrl = null;
+    }
+
+    public void addIngredientUser(IngredientUser ingredientUser) {
+        this.ingredientUsers.add(ingredientUser);
+    }
+
+    public void clearIngredientUsers() {
+        this.ingredientUsers.clear();
     }
 
 }

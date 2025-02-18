@@ -27,8 +27,6 @@ public class EatzUserQueryService {
 
     private final EatzUserRepository userRepository;
 
-    private final EatzUserQueryRepository userQueryRepository;
-
     /**
      * 모든 사용자를 조회합니다.
      * <ul>
@@ -39,16 +37,6 @@ public class EatzUserQueryService {
     public Page<EatzUserDto> findAllUsers(Pageable pageable) {
         Page<EatzUser> foundUsers = userRepository.findAll(pageable);
         return foundUsers.map(EatzUserDto::new);
-    }
-
-    /**
-     * 모든 사용자와 사용자 별 활동 요약을 함께 조회합니다.
-     * <ul>
-     *     <li>페이징을 적용할 수 있습니다.</li>
-     * </ul>
-     */
-    public Page<EatzUserSummaryDto> findAllUsersWithActivity(Pageable pageable) {
-        return userQueryRepository.findAllWithActivity(pageable);
     }
 
     /**
