@@ -25,46 +25,38 @@ public class IngredientRecipeService {
 
     private final RecipeRepository recipeRepository;
 
-    /*
-    레시피에 재료 추가
-    레시피에서 재료 삭제
-    해당 재료를 사용하는 모든 레시피 조회
-    레시피에 추가된 모든 재료 조회
-     */
-
-
-    // TODO: 중복 추가 예외 처리
     @Transactional
     public Long addIngredientToRecipe(Long ingredientId, Long recipeId) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId).orElseThrow(IllegalArgumentException::new);
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException(recipeId));
 
         if (ingredientRecipeRepository.existsByRecipeIdAndIngredientId(recipeId, ingredientId)) {
-            throw new IllegalArgumentException("재료(" + ingredient.getName() + ")가 이미 레시피(" + recipe.getTitle() + ")에 추가되어 있어요.");
+            throw new IllegalArgumentException("재료(" + ingredient.getName() + ")가 " +
+                    "이미 레시피(" + recipe.getTitle() + ")에 추가되어 있어요.");
         }
 
         IngredientRecipe ingredientRecipe = IngredientRecipe.create(ingredient, recipe);
         return ingredientRecipeRepository.save(ingredientRecipe).getId();
     }
 
+    /**
+     * 레시피에 여러 재료를 추가합니다.
+     * @param ingredientIds 추가할 재료 목록.
+     * @param recipeId 재료를 추가할 레시피.
+     * @return 추가 완료된 재료 ID 목록.
+     */
     @Transactional
     public List<Long> addAllIngredientsToRecipe(List<Long> ingredientIds, Long recipeId) {
+        // ID에 해당하는 레시피를 조회합니다.
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException(recipeId));
 
-        List<Long> existingIngredientIdsOfRecipe = ingredientRecipeRepository.findIngredientIdsByRecipeId(recipeId);
-        System.out.println("레시피에 추가되어 있는 재료 목록");
-        for (Long l : existingIngredientIdsOfRecipe) {
-            System.out.println("   id = " + l);
-        }
+        // 기존 레시피에 등록된 모든 재료를 조회합니다.
+        List<Long> existingIngredientIdsByRecipe = ingredientRecipeRepository.findIngredientIdsByRecipe(recipe);
 
         List<Long> ingredientIdsToAdd = new ArrayList<>();
-
         for (Long ingredientId : ingredientIds) {
-            if (!existingIngredientIdsOfRecipe.contains(ingredientId)) {
-                System.out.println("레시피에 추가할 재료 ID = " + ingredientId);
+            if (!existingIngredientIdsByRecipe.contains(ingredientId)) {
                 ingredientIdsToAdd.add(ingredientId);
-            } else {
-                System.out.println("레시피에 이미 추가돼있는 재료 ID = " + ingredientId);
             }
         }
 
@@ -93,10 +85,10 @@ public class IngredientRecipeService {
     }
 
     public List<IngredientDto> ingredientsOfRecipe(Long recipeId) {
-        List<IngredientRecipe> ingredientRecipes = ingredientRecipeRepository.findByRecipeIdWithIngredient(recipeId);
+        List<IngredientRecipe> ingredientRecipes = ingredientRecipeRepository.findIngredientsByRecipeIdWithIngredient(recipeId);
         return ingredientRecipes.stream().map(
                 ingredientRecipe -> new IngredientDto(
-                        ingredientRecipe.getId(), ingredientRecipe.getIngredient().getName())).toList();
+                        ingredientRecipe.getRecipe().getId(), ingredientRecipe.getIngredient().getName())).toList();
     }
 
 }

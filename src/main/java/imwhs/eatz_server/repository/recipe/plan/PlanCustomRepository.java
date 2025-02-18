@@ -1,4 +1,4 @@
-package imwhs.eatz_server.repository.recipe.scheduledRecipe;
+package imwhs.eatz_server.repository.recipe.plan;
 
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import org.springframework.stereotype.Repository;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ScheduledRecipeCustomRepository {
+public interface PlanCustomRepository {
 
     /*
     1. 플래너에 레시피 등록
@@ -25,9 +25,7 @@ public interface ScheduledRecipeCustomRepository {
     7. 플래너에서 특정 재료를 포함하고 있는 레시피 조회
      */
 
-    List<RecipeDto> findScheduledRecipesByUsername(String username);
-
-    
+//    List<RecipeDto> findPlansByUsername(String username);
 
 
 }

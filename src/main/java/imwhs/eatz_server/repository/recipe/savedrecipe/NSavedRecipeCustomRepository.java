@@ -25,16 +25,14 @@ public interface NSavedRecipeCustomRepository {
      * 저장된 레시피를 삭제합니다.
      * @param userId 사용자 ID.
      * @param id 저장된 레시피 ID.
-     * @return 삭제 여부.
      */
-    Boolean deleteSavedRecipe(Long userId, Long id);
+    void deleteSavedRecipe(Long userId, Long id);
 
     /**
      * 저장된 레시피를 삭제합니다.
      * @param username 사용자 이름.
      * @param id 저장된 레시피 ID.
-     * @return 삭제 여부.
      */
-    Boolean deleteSavedRecipe(String username, Long id);
+    void deleteSavedRecipe(String username, Long id);
 
 }

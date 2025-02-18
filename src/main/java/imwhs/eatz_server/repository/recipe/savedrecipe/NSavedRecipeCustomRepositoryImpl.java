@@ -118,29 +118,25 @@ public class NSavedRecipeCustomRepositoryImpl implements NSavedRecipeCustomRepos
      * {@inheritDoc}
      */
     @Override
-    public Boolean deleteSavedRecipe(Long userId, Long id) {
+    public void deleteSavedRecipe(Long userId, Long id) {
         QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
 
-        long deletedCount = queryFactory
+        queryFactory
                 .delete(savedRecipe)
                 .where(savedRecipe.user.id.eq(userId)
                         .and(savedRecipe.recipe.id.eq(id)))
                 .execute();
-
-        return deletedCount == 1;
     }
 
     @Override
-    public Boolean deleteSavedRecipe(String username, Long id) {
+    public void deleteSavedRecipe(String username, Long id) {
         QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
 
-        long deletedCount = queryFactory
+        queryFactory
                 .delete(savedRecipe)
                 .where(savedRecipe.user.username.eq(username)
                         .and(savedRecipe.recipe.id.eq(id)))
                 .execute();
-
-        return deletedCount == 1;
     }
 
 }

@@ -78,15 +78,6 @@ public class Recipe extends BaseEntity {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeCategory> recipeCategories = new ArrayList<>();
 
-    /**
-     * Recipe, EatzUser의 양방향 연관 관계 설정 메서드.
-     * @param user 레시피를 등록한 사용자.
-     */
-    public void setUser(EatzUser user) {
-        this.user = user;
-        user.getRecipes().add(this);
-    }
-
     protected Recipe() {}
 
     /**
@@ -120,7 +111,7 @@ public class Recipe extends BaseEntity {
         }
 
         Recipe recipe = new Recipe();
-        recipe.setUser(user);
+        recipe.user = user;
         recipe.title = title;
         recipe.url = url;
         recipe.imageUrl = imageUrl;
