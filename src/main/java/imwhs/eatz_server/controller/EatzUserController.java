@@ -6,6 +6,7 @@ import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
+import imwhs.eatz_server.dto.plan.ChecklistItemResponseDto;
 import imwhs.eatz_server.dto.plan.PlanCreateDto;
 import imwhs.eatz_server.dto.plan.PlanUpdateDto;
 import imwhs.eatz_server.dto.recipe.IngredientAddDto;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -164,8 +166,7 @@ public class EatzUserController {
     @GetMapping("/plans")
     public ResponseEntity<ApiResponse<List<PlanDto>>> getPlans(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
-    ) {
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         if (startDate == null) {
             startDate = LocalDate.of(1900, 1, 1); // 과거의 기준 날짜
         }
@@ -175,6 +176,14 @@ public class EatzUserController {
 
         List<PlanDto> plans = planService.findAllByUserAndDateRange(EatzUserAuthUtil.getUsername(), startDate, endDate);
         return ResponseEntity.ok(ApiResponse.success(plans));
+    }
+
+    @GetMapping("/plans/checklist")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getChecklist(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+        Map<String, Object> checklist = planService.getChecklist(EatzUserAuthUtil.getUsername(), startDate, endDate);
+        return ResponseEntity.ok(ApiResponse.success(checklist));
     }
 
     // TODO: 재료 등록, 삭제

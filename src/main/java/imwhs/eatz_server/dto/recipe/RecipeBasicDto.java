@@ -3,6 +3,7 @@ package imwhs.eatz_server.dto.recipe;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * RecipeBasicDto 클래스입니다.
@@ -11,9 +12,11 @@ import lombok.Data;
  * </ul>
  */
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 public class RecipeBasicDto {
 
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String title;
