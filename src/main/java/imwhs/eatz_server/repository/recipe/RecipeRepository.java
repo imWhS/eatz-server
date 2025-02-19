@@ -60,4 +60,5 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, NRecipeCu
             "group by r")
     Page<RecipeDto> findAllByUserIdAndDeletedAtIsNull(@Param("userId") Long userId, Pageable pageable);
 
+
 }

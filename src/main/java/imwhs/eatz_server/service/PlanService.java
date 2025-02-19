@@ -3,9 +3,12 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Plan;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.dto.ingredient.IngredientDto;
+import imwhs.eatz_server.dto.plan.ChecklistItemResponseDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.PlanDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
@@ -16,8 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,6 +91,60 @@ public class PlanService {
         }
 
         return plans;
+    }
+
+    public Map<String, Object> getChecklist(String username, LocalDate startDate, LocalDate endDate) {
+        /*
+        1. 사용자 이름, 기간에 해당하는 Plan 조회
+            - Plan에 해당하는 레시피들 가져오기
+
+        2. Plan에 해당하는 레시피들의 id로 IngredientRecipe 조회
+            - Plan에 해당하는 레시피들과 관련된 재료들 가져오기
+
+        3. 사용자 ID로 IngredientUser 조회
+            - 사용자와 관련된 재료들 가져오기
+        4.
+         */
+
+        EatzUser user = findUser(username);
+
+        List<ChecklistItemResponseDto> checklistItems = planRepository.findChecklistByUserAndDateRange(user, startDate, endDate);
+        Set<IngredientDto> missingIngredients = new HashSet<>();
+        Map<Long, Boolean> cookableByRecipeId = new HashMap<>();
+
+        for (ChecklistItemResponseDto item : checklistItems) {
+            Long recipeId = item.getRecipe().getId();
+
+            /*
+            item 별 레시피 요리 가능 여부를 조회합니다.
+            요리가 불가능한 경우 필요한 재료 목록에 해당 재료를 추가합니다.
+             */
+            if (cookableByRecipeId.getOrDefault(recipeId, true) && item.isMissing()) {
+                // 레시피의 요리 가능 여부를 조회한 적 없고, 재료가 없는 경우 해당 레시피의 요리 가능 여부를 false로 설정합니다.
+                cookableByRecipeId.put(recipeId, false);
+            }
+
+            if (item.isMissing()) {
+                missingIngredients.add(item.getIngredient());
+            }
+        }
+
+        Set<Long> cookableRecipeIds = new HashSet<>();
+        Set<Long> uncookableRecipeIds = new HashSet<>();
+
+        for (Map.Entry<Long, Boolean> entry : cookableByRecipeId.entrySet()) {
+            if (entry.getValue()) {
+                cookableRecipeIds.add(entry.getKey());
+            } else {
+                uncookableRecipeIds.add(entry.getKey());
+            }
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("cookable", new ArrayList<>(cookableRecipeIds));
+        response.put("uncookable", new ArrayList<>(uncookableRecipeIds));
+        response.put("missingIngredients", new ArrayList<>(missingIngredients));
+
+        return response;
     }
 
     private EatzUser findUser(String username) {

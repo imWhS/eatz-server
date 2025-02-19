@@ -3,6 +3,7 @@ package imwhs.eatz_server.repository.recipe.plan;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Plan;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.dto.plan.ChecklistItemResponseDto;
 import imwhs.eatz_server.dto.recipe.PlanDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,5 +32,36 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanCustomRep
             @Param("user") EatzUser user,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    @Query("select p.recipe.id " +
+            "from Plan p " +
+            "where p.user = :user and p.scheduledAt between :startDate and :endDate")
+    List<Long> findRecipeIdsByUserAndDateRange(
+            @Param("user") EatzUser user,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+    @Query("""
+    select new imwhs.eatz_server.dto.plan.ChecklistItemResponseDto(
+        new imwhs.eatz_server.dto.recipe.RecipeBasicDto(
+            ir.recipe.id,
+            ir.recipe.title,
+            ir.recipe.imageUrl),
+        new imwhs.eatz_server.dto.ingredient.IngredientDto(
+            ir.ingredient.id,
+            ir.ingredient.name),
+        case when iu.id is null then true else false end
+    )
+    from IngredientRecipe ir
+    left join IngredientUser iu on ir.ingredient = iu.ingredient and iu.user = :user
+    where ir.recipe.id in (
+        select p.recipe.id from Plan p
+        where p.user = :user
+        and p.scheduledAt between :startDate and :endDate
+    )
+    """)
+    List<ChecklistItemResponseDto> findChecklistByUserAndDateRange(@Param("user") EatzUser user,
+                                                                   @Param("startDate") LocalDate startDate,
+                                                                   @Param("endDate") LocalDate endDate);
 
 }
