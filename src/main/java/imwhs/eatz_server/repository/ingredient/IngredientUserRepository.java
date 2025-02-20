@@ -5,6 +5,7 @@ import imwhs.eatz_server.domain.IngredientUser;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -24,5 +25,10 @@ public interface IngredientUserRepository extends JpaRepository<IngredientUser, 
             "join iu.ingredient i " +
             "where iu.user = :user")
     List<IngredientDto> findIngredientsByUser(@Param("user") EatzUser user);
+
+    @Modifying
+    @Query("delete from IngredientUser iu " +
+            "where iu.user = :user and iu.ingredient.id in :ingredientIds")
+    void deleteByUserAndIngredientIds(@Param("user") EatzUser user, @Param("ingredientIds") List<Long> ingredientIds);
 
 }

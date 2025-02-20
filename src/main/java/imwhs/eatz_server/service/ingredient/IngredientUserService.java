@@ -69,6 +69,14 @@ public class IngredientUserService {
         return ingredientIdsToAdd;
     }
 
+    @Transactional
+    public void removeIngredientsFromUser(String username, List<Long> ingredientIds) {
+        EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
+                new EatzUserNotFoundException(username));
+
+        ingredientUserRepository.deleteByUserAndIngredientIds(user, ingredientIds);
+    }
+
     public List<IngredientDto> getIngredients(String username) {
         EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
                 new EatzUserNotFoundException(username));

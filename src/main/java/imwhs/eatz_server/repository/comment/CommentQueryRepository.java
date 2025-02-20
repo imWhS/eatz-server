@@ -73,13 +73,13 @@ public class CommentQueryRepository {
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      */
-    public List<CommentByRecipeResponseDto> findCommentsByRecipe(Long id, int page, int size) {
+    public List<CommentResponseDto> findCommentsByRecipe(Long id, int page, int size) {
         QComment comment = QComment.comment;
         QEatzUser user = QEatzUser.eatzUser;
 
         return queryFactory
                 .select(
-                        Projections.constructor(CommentByRecipeResponseDto.class,
+                        Projections.constructor(CommentResponseDto.class,
                                 comment.id,
                                 Projections.constructor(CommentUserDto.class,
                                         user.id,

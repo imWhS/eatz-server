@@ -43,12 +43,6 @@ public class CategoryService {
         return category;
     }
 
-//    @Transactional
-//    public void addRecipe(List<Long> categoryIds, Long) {
-//
-//    }
-
-
     @Transactional
     public void addRecipe(Long categoryId, Long recipeId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(

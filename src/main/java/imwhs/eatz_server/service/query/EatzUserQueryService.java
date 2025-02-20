@@ -60,10 +60,14 @@ public class EatzUserQueryService {
      */
     public EatzUserDto findUserByEmail(String email) {
         validateEmail(email);
-
         EatzUser user = userRepository.findByEmail(email).orElseThrow(
-                () -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾지 못했습니다."));
+                () -> new EatzUserNotFoundException(email, true));
+        return new EatzUserDto(user);
+    }
 
+    public EatzUserDto findUserByUsername(String username) {
+        EatzUser user = userRepository.findByUsername(username).orElseThrow(
+                () -> new EatzUserNotFoundException(username));
         return new EatzUserDto(user);
     }
 

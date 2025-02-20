@@ -40,6 +40,7 @@ public class RecipeController {
     private final IngredientRecipeService ingredientRecipeService;
 
     private final NSavedRecipeService savedRecipeService;
+
     private final RatingService ratingService;
 
     @PostMapping
@@ -76,12 +77,6 @@ public class RecipeController {
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 
-    @PostMapping("/{id}/comments")
-    public ResponseEntity<ApiResponse<Long>> addComment(@PathVariable Long id, @RequestBody CommentCreateDto dto) {
-        Long commentId = commentService.registerComment(id, dto.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(commentId));
-    }
-
     @PostMapping("/{id}/ingredients")
     public ResponseEntity<?> addIngredients(@PathVariable Long id, @RequestBody IngredientAddDto dto) {
         List<Long> addedIngredients = ingredientRecipeService.addAllIngredientsToRecipe(dto.getIngredientIds(), id);
@@ -112,14 +107,5 @@ public class RecipeController {
         Long ratingId = ratingService.registerRating(id, EatzUserAuthUtil.getUsername(), dto.getScore(), dto.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(ratingId));
     }
-
-    /*
-    레시피 저장: POST /recipes/{id}/saveds
-    레시피 저장 취소: DELETE /recipes/{id}/saveds
-
-    새 레시피 플랜 등록: POST /plans
-    레시피 플랜 삭제: DELETE /plans/{id}
-    레시피 플랜 수정: UPDATE /plans/{id}
-     */
 
 }
