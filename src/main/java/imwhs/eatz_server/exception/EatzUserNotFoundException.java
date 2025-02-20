@@ -6,6 +6,8 @@ public class EatzUserNotFoundException extends RuntimeException {
 
     private static final String MESSAGE_TEMPLATE_INVALID_USERNAME = "사용자 이름이 %s인 사용자를 찾을 수 없어요.";
 
+    private static final String MESSAGE_TEMPLATE_INVALID_EMAIL = "사용자 이름이 %s인 사용자를 찾을 수 없어요.";
+
     private static final String MESSAGE_TEMPLATE_INVALID_ID = "ID가 %s인 사용자를 찾을 수 없어요.";
 
     public EatzUserNotFoundException() {
@@ -14,6 +16,10 @@ public class EatzUserNotFoundException extends RuntimeException {
 
     public EatzUserNotFoundException(String username) {
         super(String.format(MESSAGE_TEMPLATE_INVALID_USERNAME, username));
+    }
+
+    public EatzUserNotFoundException(String email, boolean isEmail) {
+        super(String.format(MESSAGE_TEMPLATE_INVALID_EMAIL, email));
     }
 
     public EatzUserNotFoundException(Long id) {

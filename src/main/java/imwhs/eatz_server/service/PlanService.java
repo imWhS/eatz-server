@@ -5,10 +5,10 @@ import imwhs.eatz_server.domain.recipe.Plan;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.plan.ChecklistItemResponseDto;
+import imwhs.eatz_server.dto.plan.ChecklistResponseDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.PlanDto;
-import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
@@ -74,7 +74,7 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
-    public List<PlanDto> findAllByUserAndDateRange(String username, LocalDate startDate, LocalDate endDate) {
+    public List<PlanDto> findByUserAndDateRange(String username, LocalDate startDate, LocalDate endDate) {
         EatzUser user = findUser(username);
         List<PlanDto> plans = planRepository.findAllByUserAndDateRange(user, startDate, endDate);
 
@@ -93,19 +93,7 @@ public class PlanService {
         return plans;
     }
 
-    public Map<String, Object> getChecklist(String username, LocalDate startDate, LocalDate endDate) {
-        /*
-        1. 사용자 이름, 기간에 해당하는 Plan 조회
-            - Plan에 해당하는 레시피들 가져오기
-
-        2. Plan에 해당하는 레시피들의 id로 IngredientRecipe 조회
-            - Plan에 해당하는 레시피들과 관련된 재료들 가져오기
-
-        3. 사용자 ID로 IngredientUser 조회
-            - 사용자와 관련된 재료들 가져오기
-        4.
-         */
-
+    public ChecklistResponseDto getChecklist(String username, LocalDate startDate, LocalDate endDate) {
         EatzUser user = findUser(username);
 
         List<ChecklistItemResponseDto> checklistItems = planRepository.findChecklistByUserAndDateRange(user, startDate, endDate);
@@ -139,12 +127,12 @@ public class PlanService {
                 uncookableRecipeIds.add(entry.getKey());
             }
         }
-        Map<String, Object> response = new HashMap<>();
-        response.put("cookable", new ArrayList<>(cookableRecipeIds));
-        response.put("uncookable", new ArrayList<>(uncookableRecipeIds));
-        response.put("missingIngredients", new ArrayList<>(missingIngredients));
 
-        return response;
+        return new ChecklistResponseDto(
+                new ArrayList<>(cookableRecipeIds),
+                new ArrayList<>(uncookableRecipeIds),
+                missingIngredients
+        );
     }
 
     private EatzUser findUser(String username) {

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 // TODO: DTO 클래스 공통 필드 상속
 @Data
 @AllArgsConstructor
-public class CommentByRecipeResponseDto {
+public class CommentResponseDto {
 
     private Long id;
 
@@ -38,18 +38,7 @@ public class CommentByRecipeResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
-    public CommentByRecipeResponseDto(
-            Long id,
-            CommentUserDto user,
-            String content,
-            boolean isHidden) {
-        this.id = id;
-        this.user = user;
-        this.content = content;
-        this.isHidden = isHidden;
-    }
-
-    public CommentByRecipeResponseDto(Comment comment) {
+    public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
         this.user = new CommentUserDto(comment.getUser());
         this.content = comment.getContent();

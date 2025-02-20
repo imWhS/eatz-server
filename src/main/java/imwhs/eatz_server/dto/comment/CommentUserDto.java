@@ -16,6 +16,8 @@ public class CommentUserDto {
 
     private String username;
 
+    private String imageUrl;
+
     public CommentUserDto(EatzUser user) {
         this.id = user.getId();
         this.username = user.getUsername();

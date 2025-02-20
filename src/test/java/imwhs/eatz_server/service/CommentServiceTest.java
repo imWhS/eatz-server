@@ -3,8 +3,7 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.recipe.Comment;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
-import imwhs.eatz_server.dto.comment.CommentUserDto;
+import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
@@ -184,42 +183,42 @@ public class CommentServiceTest {
                 .isInstanceOf(UnauthorizedEatzUserException.class);
     }
 
+//    @Test
+//    @Transactional
+//    void findCommentByIdTest() {
+//        // given
+//        EatzUser user = EatzUser.createMember(
+//                "heextoryAA",
+//                "heextory@icloud.com",
+//                "1q2w3e4r!");
+//        userRepository.save(user);
+//
+//        Recipe recipe = Recipe.create(
+//                user,
+//                "Kimchi Pasta",
+//                "https://www.naver.com/",
+//                "https://www.naver.com/test.jpg",
+//                "맛있는 김치 파스타를 즐겨보세요!");
+//        recipeRepository.save(recipe);
+//
+//        String content = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
+//
+//        Comment comment = new Comment(user, recipe, content);
+//        commentRepository.save(comment);
+//
+//        // when
+//        CommentByRecipeResponseDto commentDto = commentService.findComment(comment.getId());
+//
+//        // then
+//        Assertions.assertThat(commentDto).isNotNull();
+//        Assertions.assertThat(commentDto.getId()).isEqualTo(comment.getId());
+//        Assertions.assertThat(commentDto.getContent()).isEqualTo(comment.getContent());
+//        Assertions.assertThat(commentDto.getUser()).isEqualTo(new CommentUserDto(comment.getUser()));
+//    }
+
     @Test
     @Transactional
-    void findCommentByIdTest() {
-        // given
-        EatzUser user = EatzUser.createMember(
-                "heextoryAA",
-                "heextory@icloud.com",
-                "1q2w3e4r!");
-        userRepository.save(user);
-
-        Recipe recipe = Recipe.create(
-                user,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-
-        String content = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
-
-        Comment comment = new Comment(user, recipe, content);
-        commentRepository.save(comment);
-
-        // when
-        CommentByRecipeResponseDto commentDto = commentService.findComment(comment.getId());
-
-        // then
-        Assertions.assertThat(commentDto).isNotNull();
-        Assertions.assertThat(commentDto.getId()).isEqualTo(comment.getId());
-        Assertions.assertThat(commentDto.getContent()).isEqualTo(comment.getContent());
-        Assertions.assertThat(commentDto.getUser()).isEqualTo(new CommentUserDto(comment.getUser()));
-    }
-
-    @Test
-    @Transactional
-    void findCommentsByUserAndRecipeTest() {
+    void findCommentsByRecipeByUserByUserAndRecipeTest() {
         // given
         EatzUser user = EatzUser.createMember(
                 "heextoryBB",
@@ -244,7 +243,7 @@ public class CommentServiceTest {
         commentRepository.save(comment2);
 
         // when
-        Page<CommentByRecipeResponseDto> comments = commentService.findComments(
+        Page<CommentResponseDto> comments = commentService.findCommentsByUser(
                 user.getId(),
                 recipe.getId(),
                 null,

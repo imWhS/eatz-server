@@ -170,7 +170,7 @@ public class RecipeQueryService {
      * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto.
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
-    public Page<RecipeDto> findAllRecipesByUserId(Long userId, Pageable pageable) {
+    public Page<RecipeDto> findRecipesByUserId(Long userId, Pageable pageable) {
         Page<RecipeDto> foundRecipes = recipeRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
         return foundRecipes;
     }
