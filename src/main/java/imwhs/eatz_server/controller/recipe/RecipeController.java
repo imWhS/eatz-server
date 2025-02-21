@@ -35,13 +35,9 @@ public class RecipeController {
 
     private final RecipeQueryService recipeQueryService;
 
-    private final CommentService commentService;
-
     private final IngredientRecipeService ingredientRecipeService;
 
     private final NSavedRecipeService savedRecipeService;
-
-    private final RatingService ratingService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
@@ -66,6 +62,12 @@ public class RecipeController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<NRecipeDto>> getRecipe(@PathVariable Long id) {
         NRecipeDto dto = recipeQueryService.findRecipeById(id);
+        return ResponseEntity.ok(ApiResponse.success(dto));
+    }
+
+    @GetMapping("/{id}/test")
+    public ResponseEntity<ApiResponse<NRecipeDto>> getRecipeTest(@PathVariable Long id) {
+        NRecipeDto dto = recipeQueryService.findRecipeByIdTest(id);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
@@ -100,12 +102,6 @@ public class RecipeController {
     public ResponseEntity<ApiResponse<Long>> getSavedUserCount(@PathVariable Long id) {
         Long savedUserCount = savedRecipeService.countSaveds(id);
         return ResponseEntity.ok(ApiResponse.success(savedUserCount));
-    }
-
-    @PostMapping("/{id}/ratings")
-    public ResponseEntity<ApiResponse<Long>> addRating(@PathVariable Long id, @RequestBody RatingCreateDto dto) {
-        Long ratingId = ratingService.registerRating(id, EatzUserAuthUtil.getUsername(), dto.getScore(), dto.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(ratingId));
     }
 
 }

@@ -7,8 +7,8 @@ import imwhs.eatz_server.domain.recipe.QComment;
 import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.recipe.QRecipe;
 import imwhs.eatz_server.dto.comment.*;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
-import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -50,7 +50,7 @@ public class CommentQueryRepository {
                                                 .select(recipe.count().intValue())
                                                 .from(recipe)
                                                 .where(recipe.user.eq(user))),
-                                Projections.constructor(RecipeBasicDto.class,
+                                Projections.constructor(imwhs.eatz_server.dto.recipe.RecipeBasicDto.class,
                                         recipe.id,
                                         recipe.title,
                                         recipe.imageUrl),
@@ -73,15 +73,15 @@ public class CommentQueryRepository {
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      */
-    public List<CommentResponseDto> findCommentsByRecipe(Long id, int page, int size) {
+    public List<CommentWithUserResponseDto> findCommentsByRecipe(Long id, int page, int size) {
         QComment comment = QComment.comment;
         QEatzUser user = QEatzUser.eatzUser;
 
         return queryFactory
                 .select(
-                        Projections.constructor(CommentResponseDto.class,
+                        Projections.constructor(CommentWithUserResponseDto.class,
                                 comment.id,
-                                Projections.constructor(CommentUserDto.class,
+                                Projections.constructor(EatzUserBasicDto.class,
                                         user.id,
                                         user.username
                                 ),
@@ -134,7 +134,7 @@ public class CommentQueryRepository {
                 .select(
                         Projections.constructor(CommentByUserResponseDto.class,
                                 comment.id,
-                                Projections.constructor(CommentRecipeDto.class,
+                                Projections.constructor(RecipeBasicDto.class,
                                         recipe.id,
                                         recipe.title,
                                         recipe.imageUrl

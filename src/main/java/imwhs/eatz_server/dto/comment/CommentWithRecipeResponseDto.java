@@ -12,7 +12,7 @@ public class CommentWithRecipeResponseDto {
 
     private Long id;
 
-    private CommentRecipeDto recipe;
+    private RecipeBasicDto recipe;
 
     private String content;
 

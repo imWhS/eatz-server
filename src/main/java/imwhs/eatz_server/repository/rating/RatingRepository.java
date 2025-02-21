@@ -3,6 +3,8 @@ package imwhs.eatz_server.repository.rating;
 import imwhs.eatz_server.domain.recipe.Rating;
 import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
+import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
+import imwhs.eatz_server.dto.rating.RatingWithUserResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,5 +57,34 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "where r.recipe.id in :recipeIds " +
             "group by r.recipe.id")
     List<RatingSummaryByRecipeDto> findRatingSummariesByRecipeIds(@Param("recipeIds") List<Long> recipeIds);
+
+    @Query("""
+    select new imwhs.eatz_server.dto.rating.RatingWithUserResponseDto(
+        r.id,
+        new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.email, u.imageUrl),
+        r.score,
+        r.content
+    )
+    from Rating r
+    join r.user u
+    where r.recipe.id = :recipeId and r.deletedAt is null
+    """)
+    Page<RatingWithUserResponseDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
+
+    @Query("""
+    select new imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto(
+        r.id,
+        new imwhs.eatz_server.dto.recipe.RecipeBasicDto(re.id, re.title, re.imageUrl),
+        r.score,
+        r.content
+    )
+    from Rating r
+    join r.recipe re
+    join r.user u
+    where u.username = :username and r.deletedAt is null
+    """)
+    Page<RatingWithRecipeResponseDto> findWithRecipeByUserUsername(@Param("username") String username, Pageable pageable);
+
+
 
 }

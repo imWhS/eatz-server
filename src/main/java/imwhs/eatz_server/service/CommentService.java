@@ -4,7 +4,7 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.recipe.Comment;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.comment.CommentResponseDto;
+import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.comment.CommentRepository;
@@ -75,13 +75,13 @@ public class CommentService {
     }
 
     /**
-     * 레시피에에 추가된 댓글 목록을 조회합니다.
+     * 레시피에 추가된 댓글 목록을 조회합니다.
      * @param id 조회할 댓글의 식별자
      * @return
      */
-    public Page<CommentResponseDto> findCommentsByRecipe(Long id, Pageable pageable) {
+    public Page<CommentWithUserResponseDto> findCommentsByRecipe(Long id, Pageable pageable) {
         validateRecipe(id);
-        Page<CommentResponseDto> dto = commentRepository.findWithUserByRecipeId(id, pageable);
+        Page<CommentWithUserResponseDto> dto = commentRepository.findWithUserByRecipeId(id, pageable);
         return dto;
     }
 
@@ -90,7 +90,7 @@ public class CommentService {
      */
     public Page<CommentWithRecipeResponseDto> findCommentsByUser(String username, Pageable pageable) {
         validateUser(username);
-        Page<CommentWithRecipeResponseDto> dto = commentRepository.findWithRecipeByUserUsernameAndRecipeId(username, pageable);
+        Page<CommentWithRecipeResponseDto> dto = commentRepository.findWithRecipeByUserUsername(username, pageable);
         return dto;
     }
 
