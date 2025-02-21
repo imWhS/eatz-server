@@ -3,11 +3,14 @@ package imwhs.eatz_server.repository.recipe;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import imwhs.eatz_server.domain.QIngredient;
+import imwhs.eatz_server.domain.QIngredientRecipe;
 import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.likes.LikesType;
 import imwhs.eatz_server.domain.likes.QLikes;
 import imwhs.eatz_server.domain.recipe.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserWithRecipeSummaryDto;
+import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.CategoryDto;
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
@@ -15,7 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +30,56 @@ import java.util.Optional;
 public class NRecipeCustomRepositoryImpl implements NRecipeCustomRepository {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Optional<NRecipeDto> findRecipeWithUserIngredientsCategories(Long id) {
+        QRecipe recipe = QRecipe.recipe;
+        QEatzUser user = QEatzUser.eatzUser;
+        QRecipeCategory recipeCategory = QRecipeCategory.recipeCategory;
+        QCategory category = QCategory.category;
+        QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
+        QIngredient ingredient = QIngredient.ingredient;
+
+        List<NRecipeDto> transform = queryFactory
+                .from(recipe)
+                .join(recipe.recipeCategories, recipeCategory)
+                .join(recipeCategory.category, category)
+                .join(recipe.ingredientRecipes, ingredientRecipe)
+                .join(ingredientRecipe.ingredient, ingredient)
+                .transform(
+                        groupBy(recipe.id).list(
+                                Projections.constructor(NRecipeDto.class,
+                                        recipe.id,
+                                        recipe.title,
+                                        recipe.description,
+                                        recipe.imageUrl,
+                                        recipe.createdAt,
+                                        recipe.updatedAt,
+                                        Projections.constructor(NRecipeDto.UserDto.class,
+                                                user.id,
+                                                user.username,
+                                                user.imageUrl,
+                                                JPAExpressions
+                                                        .select(recipe.count().intValue())
+                                                        .from(recipe)
+                                                        .where(recipe.user.eq(user))
+                                        ),
+                                        list(
+                                                Projections.constructor(IngredientDto.class,
+                                                        ingredient.id,
+                                                        ingredient.name)
+                                        ),
+                                        list(
+                                                Projections.constructor(CategoryDto.class,
+                                                        category.id,
+                                                        category.name)
+                                        )
+                                )
+                        )
+                );
+
+        return Optional.ofNullable(transform.get(0));
+    }
 
     @Override
     public Optional<NRecipeDto> findRecipeWithUser(Long id) {

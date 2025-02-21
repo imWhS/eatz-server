@@ -1,7 +1,6 @@
 package imwhs.eatz_server.service.ingredient;
 
 import imwhs.eatz_server.domain.Ingredient;
-import imwhs.eatz_server.domain.IngredientRecipe;
 import imwhs.eatz_server.domain.IngredientUser;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;

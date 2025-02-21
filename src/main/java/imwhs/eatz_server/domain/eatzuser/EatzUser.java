@@ -100,12 +100,6 @@ public class EatzUser extends BaseEntity {
 //    @OneToMany(mappedBy = "user")
 //    private List<Recipe> recipes = new ArrayList<>();
 
-    /**
-     * 사용자가 저장한 모든 레시피 목록.
-     */
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SavedRecipe> savedRecipes = new ArrayList<>();
-
     protected EatzUser() {}
 
     public EatzUser(String username, String email, String password, Role role) {

@@ -3,7 +3,10 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Rating;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.rating.RatingDtoOld;
+import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
+import imwhs.eatz_server.dto.rating.RatingWithUserResponseDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
@@ -14,24 +17,17 @@ import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RatingService {
-
-    /**
-     * 페이지 번호 및 크기 기본 값.
-     * <p>
-     *     응답 메시지에 포함시킬 시용자에 대해 페이징 처리를 하기 위해 정의합니다.
-     * </p>
-     */
-    private static final int DEFAULT_CURRENT_PAGE = 0;
-    private static final int DEFAULT_PAGING_SIZE = 10;
 
     private final RatingRepository ratingRepository;
 
@@ -105,6 +101,22 @@ public class RatingService {
         return new RatingDtoOld(rating);
     }
 
+    /*
+    특정 사용자가 남긴 모든 평가 with 레시피 조회
+    레시피에 달린 모든 평가 with 사용자 조회
+     */
+
+    public Page<RatingWithUserResponseDto> findRatingsByRecipe(Long id, Pageable pageable) {
+        validateRecipe(id);
+        return ratingRepository.findWithUserByRecipeId(id, pageable);
+    }
+
+    public Page<RatingWithRecipeResponseDto> findRatingsByUser(String username, Pageable pageable) {
+        validateUser(username);
+        return ratingRepository.findWithRecipeByUserUsername(username, pageable);
+    }
+
+
     /**
      * 시용자 식별자, 레시피 식별자로 평가를 조회합니다.
      */
@@ -117,31 +129,11 @@ public class RatingService {
     }
 
     /**
-     * 특정 레시피에 달린 평가를 모두 조회합니다.
-     */
-    public Page<RatingDtoOld> findRatings(Long recipeId, Integer currentPage, Integer pagingSize) {
-        validateRecipe(recipeId);
-
-        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
-        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
-
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Rating> ratings = ratingRepository.findJoinUserRecipeByRecipeId(recipeId, pageRequest);
-
-        return ratings.map(RatingDtoOld::new);
-    }
-
-    /**
      * 특정 사용자가 등록한 평가를 모두 조회합니다.
      */
-    public Page<RatingDtoOld> findRatingsByUser(Long userId, Integer currentPage, Integer pagingSize) {
+    public Page<RatingDtoOld> findRatingsByUser(Long userId, Integer currentPage, Integer pagingSize, Pageable pageable) {
 //        validateUser(userId);
-
-        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
-        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
-
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Rating> ratings = ratingRepository.findJoinUserRecipeByUserId(userId, pageRequest);
+        Page<Rating> ratings = ratingRepository.findJoinUserRecipeByUserId(userId, pageable);
 
         return ratings.map(RatingDtoOld::new);
     }

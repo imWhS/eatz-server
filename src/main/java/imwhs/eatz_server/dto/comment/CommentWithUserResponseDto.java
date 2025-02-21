@@ -2,6 +2,7 @@ package imwhs.eatz_server.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.domain.recipe.Comment;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,12 +19,12 @@ import java.time.LocalDateTime;
 // TODO: DTO 클래스 공통 필드 상속
 @Data
 @AllArgsConstructor
-public class CommentResponseDto {
+public class CommentWithUserResponseDto {
 
     private Long id;
 
     /** 댓글을 등록한 사용자의 기본 정보 */
-    private CommentUserDto user;
+    private EatzUserBasicDto user;
 
     private String content;
 
@@ -38,9 +39,9 @@ public class CommentResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
-    public CommentResponseDto(Comment comment) {
+    public CommentWithUserResponseDto(Comment comment) {
         this.id = comment.getId();
-        this.user = new CommentUserDto(comment.getUser());
+        this.user = new EatzUserBasicDto(comment.getUser());
         this.content = comment.getContent();
         this.isHidden = comment.isHidden();
         this.createdAt = comment.getCreatedAt();

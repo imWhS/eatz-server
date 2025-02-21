@@ -3,7 +3,6 @@ package imwhs.eatz_server.domain.recipe;
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.IngredientRecipe;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;

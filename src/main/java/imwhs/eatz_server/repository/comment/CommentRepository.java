@@ -1,7 +1,7 @@
 package imwhs.eatz_server.repository.comment;
 
 import imwhs.eatz_server.domain.recipe.Comment;
-import imwhs.eatz_server.dto.comment.CommentResponseDto;
+import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
 import imwhs.eatz_server.dto.comment.CommentCountByRecipeDto;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
 import org.springframework.data.domain.Page;
@@ -26,27 +26,21 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
     long countByRecipeIdAndDeletedAtIsNull(Long id);
 
     @Query("""
-    select new imwhs.eatz_server.dto.comment.CommentResponseDto(
-        c.id,
-        new imwhs.eatz_server.dto.comment.CommentUserDto(u.id, u.username, u.imageUrl),
-        c.content,
-        c.isHidden,
-        c.createdAt, 
-        c.updatedAt, 
-        c.deletedAt
-    ) 
+    select new imwhs.eatz_server.dto.comment.CommentWithUserResponseDto(
+        c
+    )
     from Comment c
     join c.user u
     where c.recipe.id = :recipeId and c.deletedAt is null
     """)
-    Page<CommentResponseDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
+    Page<CommentWithUserResponseDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
 
     @Query("""
     select new imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto(
         c.id,
-        new imwhs.eatz_server.dto.comment.CommentRecipeDto(r.id, r.title, r.imageUrl),
-        c.content, 
-        c.isHidden, 
+        new imwhs.eatz_server.dto.comment.RecipeBasicDto(r.id, r.title, r.imageUrl),
+        c.content,
+        c.isHidden,
         c.createdAt, 
         c.updatedAt, 
         c.deletedAt
@@ -56,7 +50,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
     join c.user u
     where u.username = :username
     """)
-    Page<CommentWithRecipeResponseDto> findWithRecipeByUserUsernameAndRecipeId(
+    Page<CommentWithRecipeResponseDto> findWithRecipeByUserUsername(
             @Param("username") String username,
             Pageable pageable
     );

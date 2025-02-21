@@ -4,13 +4,13 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
-import imwhs.eatz_server.dto.comment.CommentResponseDto;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
 import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.plan.ChecklistResponseDto;
 import imwhs.eatz_server.dto.plan.PlanCreateDto;
 import imwhs.eatz_server.dto.plan.PlanUpdateDto;
+import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.dto.recipe.nsavedrecipe.NSavedRecipeCreateDto;
 import imwhs.eatz_server.service.*;
@@ -52,6 +52,7 @@ public class EatzUserController {
 
     private final IngredientUserService ingredientUserService;
     private final CommentService commentService;
+    private final RatingService ratingService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid SignUpRequestDto dto) {
@@ -211,6 +212,13 @@ public class EatzUserController {
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<CommentWithRecipeResponseDto> comments = commentService.findCommentsByUser(EatzUserAuthUtil.getUsername(), pageable);
         return ResponseEntity.ok(ApiResponse.success(comments));
+    }
+
+    @GetMapping("/ratings")
+    public ResponseEntity<ApiResponse<Paged<RatingWithRecipeResponseDto>>> getRatings(
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<RatingWithRecipeResponseDto> ratings = ratingService.findRatingsByUser(EatzUserAuthUtil.getUsername(), pageable);
+        return ResponseEntity.ok(ApiResponse.success(ratings));
     }
 
 }

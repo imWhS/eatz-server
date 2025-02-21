@@ -69,16 +69,23 @@ public class RecipeQueryService {
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
     public NRecipeDto findRecipeById(Long id) {
+        // 레시피와 레시피를 등록한 사용자의 정보를 함께 가져옵니다.
         NRecipeDto recipeDto = recipeRepository.findRecipeWithUser(id).orElseThrow(
                 () -> new RecipeNotFoundException(id));
 
         recipeDto.setIngredients(ingredientRecipeService.ingredientsOfRecipe(id));
         recipeDto.setCategories(recipeCategoryService.categoriesOfRecipe(id));
+
         recipeDto.setCommentCount(commentQueryService.countCommentByRecipeId(id));
         recipeDto.setLikeCount(likeQueryService.countLikeOfRecipe(id));
         recipeDto.setRating(ratingQueryService.findRatingSummaryByRecipeId(id));
 
         return recipeDto;
+    }
+
+    public NRecipeDto findRecipeByIdTest(Long id) {
+        return recipeRepository.findRecipeWithUserIngredientsCategories(id).orElseThrow(
+                () -> new RecipeNotFoundException(id));
     }
 
     /**

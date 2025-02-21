@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class CommentRecipeDto {
+public class RecipeBasicDto {
 
     private Long id;
 
@@ -18,7 +18,7 @@ public class CommentRecipeDto {
 
     private String imageUrl;
 
-    public CommentRecipeDto(Recipe recipe) {
+    public RecipeBasicDto(Recipe recipe) {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
         this.imageUrl = recipe.getImageUrl();
