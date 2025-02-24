@@ -1,7 +1,7 @@
 package imwhs.eatz_server.repository.recipe;
 
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
-import imwhs.eatz_server.dto.recipe.NRecipeItemDto;
+import imwhs.eatz_server.dto.recipe.RecipeItemDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,6 +13,6 @@ public interface RecipeCustomRepository {
 
     Optional<NRecipeDto> findRecipeWithUserIngredientsCategories(Long id);
 
-    Page<NRecipeItemDto> findAllRecipes(Long userId, Pageable pageable);
+    Page<RecipeItemDto> findAllRecipes(Long userId, Pageable pageable);
 
 }

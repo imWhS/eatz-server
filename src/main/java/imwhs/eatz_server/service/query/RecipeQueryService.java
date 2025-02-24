@@ -84,10 +84,11 @@ public class RecipeQueryService {
         return recipeDto;
     }
 
-    public Page<NRecipeItemDto> findAllRecipeItemsTest(Long userId, Pageable pageable) {
-        Page<NRecipeItemDto> items = recipeRepository.findAllRecipes(userId, pageable);
+    public Page<RecipeItemDto> findAllRecipeItemsTest(Long userId, Pageable pageable) {
+        // 모든 레시피 목록을 조회합니다.
+        Page<RecipeItemDto> items = recipeRepository.findAllRecipes(userId, pageable);
 
-        List<Long> recipeIds = items.getContent().stream().map(NRecipeItemDto::getId).toList();
+        List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
 
         // 레시피 별 평가 정보를 조회합니다.
         List<RatingSummaryByRecipeDto> ratingSummariesByRecipeIds = ratingRepository.findRatingSummariesByRecipeIds(recipeIds);
@@ -106,7 +107,7 @@ public class RecipeQueryService {
         Map<Long, List<CategoryByRecipeDto>> categoriesByRecipeIdMap = categoriesByRecipeIds.stream()
                 .collect(Collectors.groupingBy(CategoryByRecipeDto::getRecipeId));
 
-        for (NRecipeItemDto item : items) {
+        for (RecipeItemDto item : items) {
             Long recipeId = item.getId();
 
             List<IngredientDto> ingredientDtos = Optional.ofNullable(ingredientsByRecipeIdMap.get(recipeId))
@@ -135,10 +136,10 @@ public class RecipeQueryService {
      * @param pageable
      * @return
      */
-    public Page<NRecipeItemDto> findAllRecipeItems(Long userId, Pageable pageable) {
-        Page<NRecipeItemDto> items = recipeRepository.findAllItemsWithUser(userId, pageable);
+    public Page<RecipeItemDto> findAllRecipeItems(Long userId, Pageable pageable) {
+        Page<RecipeItemDto> items = recipeRepository.findAllItemsWithUser(userId, pageable);
 
-        List<Long> recipeIds = items.getContent().stream().map(NRecipeItemDto::getId).toList();
+        List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
 
         // 레시피 별 재료 정보를 조회합니다.
         List<IngredientByRecipeDto> ingredientsByRecipeIds = ingredientRecipeRepository.findIngredientsByRecipeIds(recipeIds);
@@ -178,7 +179,7 @@ public class RecipeQueryService {
                                 new RatingSummaryDto(ratingSummary.getRatingCount(), ratingSummary.getAverageRatingScore())));
 
         // 각 레시피에 대해 조회한 상세 정보를 결합합니다.
-        for (NRecipeItemDto item : items) {
+        for (RecipeItemDto item : items) {
             Long recipeId = item.getId();
 
             List<IngredientDto> ingredientDtos = Optional.ofNullable(ingredientsByRecipeIdMap.get(recipeId))

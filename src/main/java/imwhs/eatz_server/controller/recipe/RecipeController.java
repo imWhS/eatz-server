@@ -62,18 +62,10 @@ public class RecipeController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<NRecipeItemDto>>> getAllRecipeList(
+    public ResponseEntity<ApiResponse<Paged<RecipeItemDto>>> getAllRecipeListTest(
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItems(EatzUserAuthUtil.getId(), pageable);
-        return ResponseEntity.ok(ApiResponse.success(allRecipes));
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<ApiResponse<Paged<NRecipeItemDto>>> getAllRecipeListTest(
-            @PageableDefault(page = 0, size = 10) Pageable pageable
-    ) {
-        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItemsTest(EatzUserAuthUtil.getId(), pageable);
+        Page<RecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItemsTest(EatzUserAuthUtil.getId(), pageable);
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 

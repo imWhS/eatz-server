@@ -10,7 +10,7 @@ import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.plan.*;
 import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
 import imwhs.eatz_server.dto.recipe.*;
-import imwhs.eatz_server.dto.recipe.nsavedrecipe.NSavedRecipeCreateDto;
+import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeCreateDto;
 import imwhs.eatz_server.service.*;
 import imwhs.eatz_server.service.ingredient.IngredientUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
@@ -123,7 +123,7 @@ public class EatzUserController {
     }
 
     @PostMapping("/saveds")
-    public ResponseEntity<ApiResponse<Long>> save(@RequestBody NSavedRecipeCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> save(@RequestBody SavedRecipeCreateDto dto) {
         Long savedRecipeId = savedRecipeService.saveRecipe(dto.getRecipeId(), EatzUserAuthUtil.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(savedRecipeId));
     }
