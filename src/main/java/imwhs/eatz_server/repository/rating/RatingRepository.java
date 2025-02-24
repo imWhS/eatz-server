@@ -71,6 +71,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     """)
     Page<RatingWithUserResponseDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
 
+    // TODO: username 대신 id 사용?
     @Query("""
     select new imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto(
         r.id,
@@ -80,11 +81,9 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     )
     from Rating r
     join r.recipe re
-    join r.user u
-    where u.username = :username and r.deletedAt is null
+    where r.user.id = :id and r.deletedAt is null
     """)
-    Page<RatingWithRecipeResponseDto> findWithRecipeByUserUsername(@Param("username") String username, Pageable pageable);
-
+    Page<RatingWithRecipeResponseDto> findWithRecipeByUser(@Param("id") Long id, Pageable pageable);
 
 
 }

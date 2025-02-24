@@ -47,7 +47,7 @@ public class RecipeDetailDto {
     /**
      * 좋아하는 사용자 수
      */
-    private Long likeCount;
+    private Long likedCount;
 
     /**
      * 속해있는 카테고리 목록

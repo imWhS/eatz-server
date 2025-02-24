@@ -1,6 +1,6 @@
-package imwhs.eatz_server.dto.likes;
+package imwhs.eatz_server.dto.liked;
 
-import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.domain.liked.LikedType;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,17 +9,17 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class LikesDetailDto {
+public class LikedDetailDto {
 
     private Long entityId;
 
-    private LikesType type;
+    private LikedType type;
 
     private Long count;
 
     private List<EatzUserBasicDto> likedUsers;
 
-    public LikesDetailDto(Long entityId, LikesType type, Long count) {
+    public LikedDetailDto(Long entityId, LikedType type, Long count) {
         this.entityId = entityId;
         this.type = type;
         this.count = count;

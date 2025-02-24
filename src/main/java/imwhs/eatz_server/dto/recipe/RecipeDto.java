@@ -24,7 +24,7 @@ public class RecipeDto {
 
     private String imageUrl;
 
-    private Long likeCount = null;
+    private Long likedCount = null;
 
     private EatzUserBasicDto user;
 
@@ -48,14 +48,14 @@ public class RecipeDto {
         this.deletedAt = recipe.getDeletedAt();
     }
 
-    public RecipeDto(Recipe recipe, EatzUser user, Long likeCount) {
+    public RecipeDto(Recipe recipe, EatzUser user, Long likedCount) {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
         this.description = recipe.getDescription();
         this.url = recipe.getUrl();
         this.imageUrl = recipe.getImageUrl();
         this.user = new EatzUserBasicDto(user);
-        this.likeCount = likeCount;
+        this.likedCount = likedCount;
         this.createdAt = recipe.getCreatedAt();
         this.updatedAt = recipe.getUpdatedAt();
         this.deletedAt = recipe.getDeletedAt();
@@ -68,7 +68,7 @@ public class RecipeDto {
         this.url = recipe.getUrl();
         this.imageUrl = recipe.getImageUrl();
         this.user = new EatzUserBasicDto(user);
-        this.likeCount = likeCount;
+        this.likedCount = likedCount;
         this.createdAt = recipe.getCreatedAt();
         this.updatedAt = recipe.getUpdatedAt();
         this.deletedAt = recipe.getDeletedAt();

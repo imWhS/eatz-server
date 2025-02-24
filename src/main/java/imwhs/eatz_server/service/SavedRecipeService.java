@@ -10,7 +10,7 @@ import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.repository.recipe.savedrecipe.NSavedRecipeRepository;
+import imwhs.eatz_server.repository.recipe.savedrecipe.SavedRecipeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class NSavedRecipeService {
+public class SavedRecipeService {
 
-    private final NSavedRecipeRepository savedRecipeRepository;
+    private final SavedRecipeRepository savedRecipeRepository;
 
     private final EatzUserRepository userRepository;
 
@@ -45,9 +45,9 @@ public class NSavedRecipeService {
     }
 
     @Transactional
-    public void unsaveRecipeById(Long id, String username) {
+    public void unsaveRecipeById(Long id, Long userId) {
         validateRecipe(id);
-        savedRecipeRepository.deleteSavedRecipe(username, id);
+        savedRecipeRepository.deleteSavedRecipe(userId, id);
     }
 
     public List<RecipeBasicDto> getSavedRecipesByUser(String username) {

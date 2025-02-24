@@ -16,14 +16,18 @@ import org.springframework.stereotype.Repository;
  * Recipe 엔티티의 기본적인 조회를 포함한 CRUD 쿼리 작업을 처리하는 Spring Data JPA 리포지토리입니다.
  */
 @Repository
-public interface RecipeRepository extends JpaRepository<Recipe, Long>, NRecipeCustomRepository {
+public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeCustomRepository {
 
     @Query("select new imwhs.eatz_server.dto.recipe.NRecipeItemDto(" +
             "r.id, r.title, r.imageUrl, r.createdAt, r.updatedAt, " +
-            "new imwhs.eatz_server.dto.eatzuser.NEatzUserEssentialsDto(u.id, u.username, u.imageUrl)) " +
+            "new imwhs.eatz_server.dto.eatzuser.NEatzUserEssentialsDto(u.id, u.username, u.imageUrl)," +
+            "(select case when count(l) > 0 then true else false end from Liked l where l.entityId = r.id and l.type = 'RECIPE' and l.user.id = :userId))" +
             "from Recipe r " +
-            "join r.user u ")
-    Page<NRecipeItemDto> findAllItemsWithUser(Pageable pageable);
+            "join r.user u " +
+            "where r.deletedAt is null")
+    Page<NRecipeItemDto> findAllItemsWithUser(@Param("userId") Long userId, Pageable pageable);
+
+    Long countByUserIdAndDeletedAtIsNull(Long userId);
 
     /**
      * 모든 레시피 조회.
@@ -36,7 +40,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, NRecipeCu
      */
     @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
             "from Recipe r " +
-            "left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+            "left join Liked l on r.id = l.entityId and l.type = 'RECIPE' " +
             "left join EatzUser u on r.user.id = u.id " +
             "where r.deletedAt IS NULL " +
             "group by r")
@@ -54,7 +58,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, NRecipeCu
      */
     @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
             "from Recipe r " +
-            "left join Likes l on r.id = l.entityId and l.type = 'RECIPE' " +
+            "left join Liked l on r.id = l.entityId and l.type = 'RECIPE' " +
             "left join EatzUser u on r.user.id = u.id " +
             "where r.user.id = :userId and r.deletedAt IS NULL " +
             "group by r")

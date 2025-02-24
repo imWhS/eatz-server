@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,15 +66,25 @@ public class Recipe extends BaseEntity {
      */
     private String description;
 
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rating> ratings = new ArrayList<>();
+
     /**
      * 재료.
      */
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientRecipe> ingredientRecipes = new ArrayList<>();
 
     /**
      * 카테고리.
      */
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeCategory> recipeCategories = new ArrayList<>();
 

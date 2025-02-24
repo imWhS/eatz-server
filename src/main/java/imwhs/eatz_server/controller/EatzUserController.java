@@ -7,9 +7,7 @@ import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
 import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
-import imwhs.eatz_server.dto.plan.ChecklistResponseDto;
-import imwhs.eatz_server.dto.plan.PlanCreateDto;
-import imwhs.eatz_server.dto.plan.PlanUpdateDto;
+import imwhs.eatz_server.dto.plan.*;
 import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.dto.recipe.nsavedrecipe.NSavedRecipeCreateDto;
@@ -46,12 +44,14 @@ public class EatzUserController {
 
     private final RecipeQueryService recipeQueryService;
 
-    private final NSavedRecipeService savedRecipeService;
+    private final SavedRecipeService savedRecipeService;
 
     private final PlanService planService;
 
     private final IngredientUserService ingredientUserService;
+
     private final CommentService commentService;
+
     private final RatingService ratingService;
 
     @PostMapping
@@ -128,9 +128,9 @@ public class EatzUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(savedRecipeId));
     }
 
-    @DeleteMapping("/saveds/{id}")
+    @DeleteMapping("/saveds/recipes/{id}")
     public ResponseEntity<ApiResponse<Long>> unsaveRecipeById(@PathVariable Long id) {
-        savedRecipeService.unsaveRecipeById(id, EatzUserAuthUtil.getUsername());
+        savedRecipeService.unsaveRecipeById(id, EatzUserAuthUtil.getId());
         return ResponseEntity.ok(ApiResponse.success(id));
     }
 
@@ -217,7 +217,7 @@ public class EatzUserController {
     @GetMapping("/ratings")
     public ResponseEntity<ApiResponse<Paged<RatingWithRecipeResponseDto>>> getRatings(
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RatingWithRecipeResponseDto> ratings = ratingService.findRatingsByUser(EatzUserAuthUtil.getUsername(), pageable);
+        Page<RatingWithRecipeResponseDto> ratings = ratingService.findRatingsByUser(EatzUserAuthUtil.getId(), pageable);
         return ResponseEntity.ok(ApiResponse.success(ratings));
     }
 

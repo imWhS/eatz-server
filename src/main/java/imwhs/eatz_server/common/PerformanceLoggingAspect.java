@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PerformanceLoggingAspect {
 
-    @Around("execution(* imwhs.eatz_server.service.LikeService.getLikeDetails*(..))")
+    @Around("execution(* imwhs.eatz_server.service.LikedService.getLikedDetails(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
 

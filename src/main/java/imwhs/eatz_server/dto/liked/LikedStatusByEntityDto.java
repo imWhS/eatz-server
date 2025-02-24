@@ -1,11 +1,11 @@
-package imwhs.eatz_server.dto.likes;
+package imwhs.eatz_server.dto.liked;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LikeStatusByEntityDto {
+public class LikedStatusByEntityDto {
 
     Long entityId;
 
