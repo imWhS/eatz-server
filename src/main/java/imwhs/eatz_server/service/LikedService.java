@@ -2,16 +2,16 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.likes.Likes;
-import imwhs.eatz_server.domain.likes.LikesType;
-import imwhs.eatz_server.dto.likes.LikesDetailDto;
-import imwhs.eatz_server.dto.likes.LikesDto;
+import imwhs.eatz_server.domain.liked.Liked;
+import imwhs.eatz_server.domain.liked.LikedType;
+import imwhs.eatz_server.dto.liked.LikedDetailDto;
+import imwhs.eatz_server.dto.liked.LikedDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.like.LikeQueryRepository;
-import imwhs.eatz_server.repository.like.LikeRepository;
+import imwhs.eatz_server.repository.liked.LikedQueryRepository;
+import imwhs.eatz_server.repository.liked.LikedRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +24,11 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class LikeService {
+public class LikedService {
 
-    private final LikeRepository likeRepository;
+    private final LikedRepository likedRepository;
 
-    private final LikeQueryRepository likeQueryRepository;
+    private final LikedQueryRepository likedQueryRepository;
 
     private final EatzUserRepository userRepository;
 
@@ -37,7 +37,7 @@ public class LikeService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public LikesDto toggleLikeOf(Long entityId, LikesType type) {
+    public LikedDto toggleLikeOf(Long entityId, LikedType type) {
         String username = EatzUserAuthUtil.getUsername();
         EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
                 new EatzUserNotFoundException(username + "에 해당하는 사용자가 존재하지 않아요."));
@@ -46,7 +46,7 @@ public class LikeService {
         log.info("username: {} | user id: {}", username, user.getId());
 
         validateEntityById(entityId, type);
-        Optional<Likes> existingLike = likeRepository.findByUserIdAndEntityIdAndType(user.getId(), entityId, type);
+        Optional<Liked> existingLike = likedRepository.findByUserIdAndEntityIdAndType(user.getId(), entityId, type);
 
         boolean isLiked;
         Long likeId;
@@ -57,36 +57,36 @@ public class LikeService {
             likeId = existingLike.get().getId();
         } else {
             // 좋아요 레코드가 없는 경우 - isLiked가 true인 새 좋아요 레코드 생성
-            Likes likes = Likes.of(user, entityId, type);
-            likeRepository.save(likes);
-            isLiked = likes.getIsLiked();
-            likeId = likes.getId();
+            Liked liked = Liked.of(user, entityId, type);
+            likedRepository.save(liked);
+            isLiked = liked.getIsLiked();
+            likeId = liked.getId();
         }
 
-        long likesCount = likeRepository.countAllLikes(entityId, type);
+        long likedCount = likedRepository.countAllLikeds(entityId, type);
 
-        return new LikesDto(likeId, entityId, type, isLiked, likesCount);
+        return new LikedDto(likeId, entityId, type, isLiked, likedCount);
     }
 
-    public boolean isLikedByUser(Long userId, Long entityId, LikesType type) {
+    public boolean isLikedByUser(Long userId, Long entityId, LikedType type) {
         if (!userRepository.existsById(userId)) {
             throw new EatzUserNotFoundException("사용자(" + userId + ")가 존재하지 않아요.");
         }
 
         validateEntityById(entityId, type);
-        return likeRepository.existsByUserIdAndEntityIdAndTypeAndIsLikedIsTrue(userId, entityId, type);
+        return likedRepository.existsByUserIdAndEntityIdAndTypeAndIsLikedIsTrue(userId, entityId, type);
     }
 
-    public LikesDetailDto getLikeDetails(Long entityId, LikesType type) {
+    public LikedDetailDto getLikedDetails(Long entityId, LikedType type) {
         validateEntityById(entityId, type);
 
-        LikesDetailDto dto = likeRepository.findAllByEntityIdAndType(entityId, type);
-        List<EatzUserBasicDto> likedUsersDto = likeRepository.findLikedUsersByEntityIdAndType(entityId, type);
+        LikedDetailDto dto = likedRepository.findAllByEntityIdAndType(entityId, type);
+        List<EatzUserBasicDto> likedUsersDto = likedRepository.findLikedUsersByEntityIdAndType(entityId, type);
         dto.setLikedUsers(likedUsersDto);
         return dto;
     }
 
-    private void validateEntityById(Long entityId, LikesType type) {
+    private void validateEntityById(Long entityId, LikedType type) {
         switch (type) {
             case RECIPE:
                 validateRecipeById(entityId);

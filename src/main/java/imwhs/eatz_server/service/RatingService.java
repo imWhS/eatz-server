@@ -3,7 +3,6 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Rating;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.rating.RatingDtoOld;
 import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
 import imwhs.eatz_server.dto.rating.RatingWithUserResponseDto;
@@ -15,15 +14,15 @@ import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -101,21 +100,15 @@ public class RatingService {
         return new RatingDtoOld(rating);
     }
 
-    /*
-    특정 사용자가 남긴 모든 평가 with 레시피 조회
-    레시피에 달린 모든 평가 with 사용자 조회
-     */
-
     public Page<RatingWithUserResponseDto> findRatingsByRecipe(Long id, Pageable pageable) {
         validateRecipe(id);
         return ratingRepository.findWithUserByRecipeId(id, pageable);
     }
 
-    public Page<RatingWithRecipeResponseDto> findRatingsByUser(String username, Pageable pageable) {
-        validateUser(username);
-        return ratingRepository.findWithRecipeByUserUsername(username, pageable);
+    public Page<RatingWithRecipeResponseDto> findRatingsByUser(Long id, Pageable pageable) {
+        validateUser(id);
+        return ratingRepository.findWithRecipeByUser(id, pageable);
     }
-
 
     /**
      * 시용자 식별자, 레시피 식별자로 평가를 조회합니다.
@@ -129,17 +122,7 @@ public class RatingService {
     }
 
     /**
-     * 특정 사용자가 등록한 평가를 모두 조회합니다.
-     */
-    public Page<RatingDtoOld> findRatingsByUser(Long userId, Integer currentPage, Integer pagingSize, Pageable pageable) {
-//        validateUser(userId);
-        Page<Rating> ratings = ratingRepository.findJoinUserRecipeByUserId(userId, pageable);
-
-        return ratings.map(RatingDtoOld::new);
-    }
-
-    /**
-     * 레시피에 사용자가 평점을 등록했는지 확인합니다.
+     * 사용자가 레시피에 평점을 등록했는지 확인합니다.
      * @param recipeId 레시피 ID.
      * @param username 사용자 이름.
      */
@@ -149,9 +132,9 @@ public class RatingService {
         }
     }
 
-    private void validateUser(String username) {
-        if (!userRepository.existsByUsername(username)) {
-            throw new EatzUserNotFoundException(username);
+    private void validateUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EatzUserNotFoundException(id);
         }
     }
 

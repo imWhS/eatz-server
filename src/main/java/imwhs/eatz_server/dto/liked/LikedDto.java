@@ -1,18 +1,18 @@
-package imwhs.eatz_server.dto.likes;
+package imwhs.eatz_server.dto.liked;
 
-import imwhs.eatz_server.domain.likes.LikesType;
+import imwhs.eatz_server.domain.liked.LikedType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LikesDto {
+public class LikedDto {
 
     private Long id;
 
     private Long entityId;
 
-    private LikesType type;
+    private LikedType type;
 
     private Boolean isLiked;
 

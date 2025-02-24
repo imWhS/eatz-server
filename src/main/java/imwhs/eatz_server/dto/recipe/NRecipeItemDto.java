@@ -54,6 +54,31 @@ public class NRecipeItemDto {
     private NEatzUserEssentialsDto user;
 
     /**
+     * 레시피의 댓글 수. (from Comment)
+     */
+    private Long commentCount;
+
+    /**
+     * 좋아요 여부. (from Likes)
+     */
+    private boolean isLikedByUser;
+
+    /**
+     * 레시피를 좋아하는 사용자 수. (from Likes)
+     */
+    private Long likeCount;
+
+    /**
+     * 저장 여부. (from SavedRecipe)
+     */
+    private boolean savedByUser;
+
+    /**
+     * 레시피를 저장한 사용자 수. (from SavedRecipe)
+     */
+    private Long savedCount;
+
+    /**
      * 재료 목록. (from IngredientRecipe)
      */
     private List<IngredientDto> ingredients;
@@ -62,31 +87,6 @@ public class NRecipeItemDto {
      * 레시피의 카테고리 목록. (from RecipeCategory)
      */
     private List<CategoryDto> categories;
-
-    /**
-     * 레시피의 댓글 수. (from Comment)
-     */
-    private Long commentCount;
-
-    /**
-     * 레시피를 좋아하는 사용자 수. (from Likes)
-     */
-    private Long likeCount;
-
-    /**
-     * 좋아요 여부. (from Likes)
-     */
-    private boolean isLikedByUser;
-
-    /**
-     * 레시피를 저장한 사용자 수. (from SavedRecipe)
-     */
-    private Long savedCount;
-
-    /**
-     * 저장 여부. (from SavedRecipe)
-     */
-    private boolean savedByUser;
 
     /**
      * 레시피에 등록된 평가 요약 정보. (from Rating)
@@ -99,13 +99,39 @@ public class NRecipeItemDto {
             String imageUrl,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
-            NEatzUserEssentialsDto user) {
+            NEatzUserEssentialsDto user,
+            Boolean isLikedByUser) {
         this.id = id;
         this.title = title;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.imageUrl = imageUrl;
         this.user = user;
+        this.isLikedByUser = isLikedByUser;
+    }
+
+
+    public NRecipeItemDto(
+            Long id,
+            String title,
+            String imageUrl,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            NEatzUserEssentialsDto user,
+            Boolean isLikedByUser,
+            Long commentCount,
+            Long likeCount,
+            Long savedCount) {
+        this.id = id;
+        this.title = title;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.imageUrl = imageUrl;
+        this.user = user;
+        this.isLikedByUser = isLikedByUser;
+        this.commentCount = commentCount;
+        this.likeCount = likeCount;
+        this.savedCount = savedCount;
     }
 
 }

@@ -1,14 +1,14 @@
-package imwhs.eatz_server.dto.likes;
+package imwhs.eatz_server.dto.liked;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LikeCountByEntityDto {
+public class LikedCountByEntityDto {
 
     Long entityId;
 
-    Long likeCount;
+    Long likedCount;
 
 }

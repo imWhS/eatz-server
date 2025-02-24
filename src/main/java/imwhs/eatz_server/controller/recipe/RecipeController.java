@@ -3,14 +3,10 @@ package imwhs.eatz_server.controller.recipe;
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.comment.CommentCreateDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
-import imwhs.eatz_server.dto.rating.RatingCreateDto;
 import imwhs.eatz_server.dto.recipe.*;
-import imwhs.eatz_server.service.CommentService;
-import imwhs.eatz_server.service.RatingService;
 import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
-import imwhs.eatz_server.service.NSavedRecipeService;
+import imwhs.eatz_server.service.SavedRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +33,7 @@ public class RecipeController {
 
     private final IngredientRecipeService ingredientRecipeService;
 
-    private final NSavedRecipeService savedRecipeService;
+    private final SavedRecipeService savedRecipeService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
@@ -65,17 +61,19 @@ public class RecipeController {
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
-    @GetMapping("/{id}/test")
-    public ResponseEntity<ApiResponse<NRecipeDto>> getRecipeTest(@PathVariable Long id) {
-        NRecipeDto dto = recipeQueryService.findRecipeByIdTest(id);
-        return ResponseEntity.ok(ApiResponse.success(dto));
-    }
-
     @GetMapping
     public ResponseEntity<ApiResponse<Paged<NRecipeItemDto>>> getAllRecipeList(
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItems(EatzUserAuthUtil.getUsername(), pageable);
+        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItems(EatzUserAuthUtil.getId(), pageable);
+        return ResponseEntity.ok(ApiResponse.success(allRecipes));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<ApiResponse<Paged<NRecipeItemDto>>> getAllRecipeListTest(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItemsTest(EatzUserAuthUtil.getId(), pageable);
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,12 +62,12 @@ public class NRecipeDto {
     /**
      * 재료 목록. (from IngredientRecipe)
      */
-    private List<IngredientDto> ingredients;
+    private List<IngredientDto> ingredients = new ArrayList<>();
 
     /**
      * 레시피의 카테고리 목록. (from RecipeCategory)
      */
-    private List<CategoryDto> categories;
+    private List<CategoryDto> categories = new ArrayList<>();
 
     /**
      * 레시피의 댓글 수. (from Comment)
@@ -74,9 +75,9 @@ public class NRecipeDto {
     private Long commentCount;
 
     /**
-     * 레시피를 좋아하는 사용자 수. (from Likes)
+     * 레시피를 좋아하는 사용자 수. (from Liked)
      */
-    private Long likeCount;
+    private Long likedCount;
 
     /**
      * 레시피에 등록된 평가 요약 정보. (from Rating)
@@ -88,20 +89,14 @@ public class NRecipeDto {
      */
 //    private Long savedCount;
 
-    public NRecipeDto(
-            Long id,
-            String title,
-            String description,
-            String imageUrl,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            UserDto user) {
+
+    public NRecipeDto(Long id, String title, String description, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, UserDto user) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.imageUrl = imageUrl;
         this.user = user;
     }
 
@@ -115,7 +110,7 @@ public class NRecipeDto {
 
         private String imageUrl;
 
-        private Integer recipeCount;
+        private Long recipeCount;
 
     }
 

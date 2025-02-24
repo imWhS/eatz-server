@@ -1,4 +1,4 @@
-package imwhs.eatz_server.domain.likes;
+package imwhs.eatz_server.domain.liked;
 
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
@@ -8,13 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Like 클래스입니다.
+ * Liked 클래스입니다.
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Likes extends BaseEntity {
+public class Liked extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;
@@ -28,12 +28,12 @@ public class Likes extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LikesType type;
+    private LikedType type;
 
     private Boolean isLiked = true;
 
-    public static Likes of(EatzUser user, Long entityId, LikesType type) {
-        return new Likes(null, user, entityId, type, true);
+    public static Liked of(EatzUser user, Long entityId, LikedType type) {
+        return new Liked(null, user, entityId, type, true);
     }
 
     public boolean toggleIsLiked() {
