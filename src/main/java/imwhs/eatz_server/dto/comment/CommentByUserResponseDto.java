@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.Comment;
+import imwhs.eatz_server.domain.recipe.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -23,7 +23,7 @@ public class CommentByUserResponseDto {
     private Long id;
 
     /** 댓글이 달린 레시피의 기본 정보 */
-    private CommentRecipeDto recipe;
+    private RecipeBasicDto recipe;
 
     private String content;
 
@@ -40,23 +40,13 @@ public class CommentByUserResponseDto {
 
     public CommentByUserResponseDto(
             Long id,
-            CommentRecipeDto recipe,
+            RecipeBasicDto recipe,
             String content,
             boolean isHidden) {
         this.id = id;
         this.recipe = this.recipe;
         this.content = content;
         this.isHidden = isHidden;
-    }
-
-    public CommentByUserResponseDto(Comment comment) {
-        this.id = comment.getId();
-        this.recipe = new CommentRecipeDto(comment.getRecipe());
-        this.content = comment.getContent();
-        this.isHidden = comment.isHidden();
-        this.createdAt = comment.getCreatedAt();
-        this.updatedAt = comment.getUpdatedAt();
-        this.deletedAt = comment.getDeletedAt();
     }
 
 }

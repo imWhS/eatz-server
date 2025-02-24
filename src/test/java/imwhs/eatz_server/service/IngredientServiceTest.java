@@ -2,11 +2,12 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.dto.ingredient.IngredientCreateDto;
-import imwhs.eatz_server.dto.ingredient.IngredientDto;
+import imwhs.eatz_server.dto.ingredient.IngredientWithCategoryChildDto;
 import imwhs.eatz_server.dto.ingredient.IngredientTreeDto;
 import imwhs.eatz_server.dto.ingredient.IngredientUpdateDto;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
+import imwhs.eatz_server.service.ingredient.IngredientService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class IngredientServiceTest {
         IngredientCreateDto dto = new IngredientCreateDto(ingredientName);
 
         // when
-        Long ingredientId = ingredientService.registerIngredient(dto);
+        Long ingredientId = ingredientService.registerIngredient(dto.getName(), dto.getCategoryId(), dto.getChildIds());
 
         // then
         Optional<Ingredient> foundIngredient = ingredientRepository.findById(ingredientId);
@@ -62,7 +63,7 @@ class IngredientServiceTest {
         IngredientCreateDto dto = new IngredientCreateDto(ingredientName, category.getId(), Arrays.asList(child.getId()));
 
         // when
-        Long ingredientId = ingredientService.registerIngredient(dto);
+        Long ingredientId = ingredientService.registerIngredient(dto.getName(), dto.getCategoryId(), dto.getChildIds());
 
         // then
         Optional<Ingredient> foundIngredient = ingredientRepository.findById(ingredientId);
@@ -89,8 +90,8 @@ class IngredientServiceTest {
         IngredientCreateDto dto = new IngredientCreateDto(ingredientName, categoryId);
 
         // when, then
-        IngredientNotFoundException exception = Assertions.assertThrows(IngredientNotFoundException.class, () -> ingredientService.registerIngredient(dto));
-        Assertions.assertEquals("id가 " + categoryId + "인 재료 엔티티를 찾을 수 없습니다.", exception.getMessage());
+        IngredientNotFoundException exception = Assertions.assertThrows(IngredientNotFoundException.class, () -> ingredientService.registerIngredient(dto.getName(), dto.getCategoryId(), dto.getChildIds()));
+        Assertions.assertEquals("id가 " + categoryId + "인 재료를 찾을 수 없습니다.", exception.getMessage());
     }
 
     @Test
@@ -202,7 +203,7 @@ class IngredientServiceTest {
         ingredient.addChild(child2);
 
         // when
-        IngredientDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientWithCategoryChildDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -235,7 +236,7 @@ class IngredientServiceTest {
         ingredient.addChild(child2);
 
         // when
-        IngredientDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientWithCategoryChildDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -257,7 +258,7 @@ class IngredientServiceTest {
         ingredientRepository.save(ingredient);
 
         // when
-        IngredientDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientWithCategoryChildDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);

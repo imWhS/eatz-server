@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDetails;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;

@@ -3,9 +3,10 @@ package imwhs.eatz_server.service.query;
 import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.comment.CommentByUserResponseDto;
 import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
-import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
+import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentQueryRepository;
+import imwhs.eatz_server.repository.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class CommentQueryService {
     private static final int DEFAULT_PAGING_SIZE = 10;
 
     private final CommentQueryRepository commentQueryRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * 식별자로 댓글과 관련된 상세 정보를 조회합니다.<br/>
@@ -46,11 +48,11 @@ public class CommentQueryService {
      * 레시피에 달린 모든 댓글 별 기본 정보와 해당 댓글을 등록한 사용자의 부가 정보를 조회합니다.
      * @param id 레시피 식별자
      */
-    public PagedApiResponse<CommentByRecipeResponseDto> findCommentsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
+    public PagedApiResponse<CommentWithUserResponseDto> findCommentsByRecipe(Long id, Integer currentPage, Integer pagingSize) {
         int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
         int size = pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize;
 
-        List<CommentByRecipeResponseDto> data = commentQueryRepository.findCommentsByRecipe(id, page, size);
+        List<CommentWithUserResponseDto> data = commentQueryRepository.findCommentsByRecipe(id, page, size);
         Long totalItems = commentQueryRepository.countCommentsByRecipe(id);
         return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
     }
@@ -67,6 +69,10 @@ public class CommentQueryService {
         List<CommentByUserResponseDto> data = commentQueryRepository.findCommentsByUser(id, page, size);
         Long totalItems = commentQueryRepository.countCommentsByUser(id);
         return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
+    }
+
+    public Long countCommentByRecipeId(Long id) {
+        return commentRepository.countByRecipeIdAndDeletedAtIsNull(id);
     }
 
 }

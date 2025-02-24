@@ -1,8 +1,8 @@
 package imwhs.eatz_server.dto.eatzuser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Role;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.Role;
 import lombok.Data;
 
 import java.time.LocalDateTime;
