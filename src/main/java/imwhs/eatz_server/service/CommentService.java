@@ -1,16 +1,18 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.Comment;
-import imwhs.eatz_server.domain.EatzUser;
-import imwhs.eatz_server.domain.Recipe;
-import imwhs.eatz_server.dto.comment.CommentByRecipeResponseDto;
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
+import imwhs.eatz_server.domain.recipe.Comment;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
+import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +23,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CommentService {
 
-    /**
-     * 페이지 번호 및 크기 기본 값.
-     * <p>
-     *     응답 메시지에 포함시킬 시용자에 대해 페이징 처리를 하기 위해 정의합니다.
-     * </p>
-     */
-    private static final int DEFAULT_CURRENT_PAGE = 0;
-    private static final int DEFAULT_PAGING_SIZE = 10;
-
     private final CommentRepository commentRepository;
 
     private final RecipeRepository recipeRepository;
@@ -38,17 +31,19 @@ public class CommentService {
 
     /**
      * 새 댓글을 등록합니다.
+     *
      * @param recipeId 댓글을 달 레시피의 ID
-     * @param userId 댓글 등록을 요청한 사용자의 ID
-     * @param content 등록할 댓글의 내용
-     * @return 등록 완료된 댓글의 ID
+     * @param content  등록할 댓글의 내용
+     * @return 등록 완료된 댓글의 ID.
      */
     @Transactional
-    public Long registerComment(Long recipeId, Long userId, String content) {
+    public Long registerComment(Long recipeId, String content) {
+        String username = EatzUserAuthUtil.getUsername();
+
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다."));
-        EatzUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new RecipeNotFoundException(recipeId));
+        EatzUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EatzUserNotFoundException(username));
 
         Comment comment = new Comment(user, recipe, content);
         commentRepository.save(comment);
@@ -80,31 +75,23 @@ public class CommentService {
     }
 
     /**
-     * 식별자로 댓글을 조회합니다.
+     * 레시피에 추가된 댓글 목록을 조회합니다.
      * @param id 조회할 댓글의 식별자
      * @return
      */
-    public CommentByRecipeResponseDto findComment(Long id) {
-        Comment comment = commentRepository.findWithUserRecipeById(id)
-                .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글이 존재하지 않습니다."));
-        return new CommentByRecipeResponseDto(comment);
+    public Page<CommentWithUserResponseDto> findCommentsByRecipe(Long id, Pageable pageable) {
+        validateRecipe(id);
+        Page<CommentWithUserResponseDto> dto = commentRepository.findWithUserByRecipeId(id, pageable);
+        return dto;
     }
 
     /**
-     * 사용자와 레시피 각 식별자에 해당하는 모든 댓글을 조회합니다.
-     * @
+     * 특정 사용자가 등록한 모든 댓글을 조회합니다.
      */
-    public Page<CommentByRecipeResponseDto> findComments(Long userId, Long recipeId, Integer currentPage, Integer pagingSize) {
-        validateUser(userId);
-        validateRecipe(recipeId);
-
-        int page = (currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage);
-        int size = (pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize);
-
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Comment> comments = commentRepository.findWithUserRecipeByUserIdAndRecipeId(userId, recipeId, pageRequest);
-
-        return comments.map(CommentByRecipeResponseDto::new);
+    public Page<CommentWithRecipeResponseDto> findCommentsByUser(String username, Pageable pageable) {
+        validateUser(username);
+        Page<CommentWithRecipeResponseDto> dto = commentRepository.findWithRecipeByUserUsername(username, pageable);
+        return dto;
     }
 
     /**
@@ -131,15 +118,15 @@ public class CommentService {
         return comment;
     }
 
-    private void validateUser(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new EatzUserNotFoundException("id가 " + userId + "인 사용자가 존재하지 않습니다.");
+    private void validateUser(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new EatzUserNotFoundException(username);
         }
     }
 
     private void validateRecipe(Long recipeId) {
         if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException("id가 " + recipeId + "인 레시피가 존재하지 않습니다.");
+            throw new RecipeNotFoundException(recipeId);
         }
     }
 

@@ -3,9 +3,11 @@ package imwhs.eatz_server.service.query;
 import imwhs.eatz_server.dto.PagedApiResponse;
 import imwhs.eatz_server.dto.rating.RatingByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingByUserDto;
-import imwhs.eatz_server.dto.rating.RatingDetailDto;
+import imwhs.eatz_server.dto.rating.RatingDetailDtoOld;
+import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import imwhs.eatz_server.repository.rating.RatingQueryRepository;
+import imwhs.eatz_server.repository.rating.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +33,14 @@ public class RatingQueryService {
     private static final int DEFAULT_PAGING_SIZE = 10;
 
     private final RatingQueryRepository ratingQueryRepository;
+    private final RatingRepository ratingRepository;
 
     /**
      * 식별자로 평가와 관련된 상세 정보를 조회합니다.<br/>
      * 식별자에 해당하는 평가의 기본 정보와 평가를 등록한 사용자, 평가가 달린 레시피의 부가 정보를 조회합니다.
      * @param id 평가 식별자.
      */
-    public RatingDetailDto findRatingDetail(Long id) {
+    public RatingDetailDtoOld findRatingDetail(Long id) {
         return ratingQueryRepository.findRatingDetailById(id)
                 .orElseThrow(() -> new RatingNotFoundException("id " + id + "에 해당하는 평가가 존재하지 않습니다."));
     }
@@ -70,5 +73,8 @@ public class RatingQueryService {
         return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
     }
 
+    public RatingSummaryDto findRatingSummaryByRecipeId(Long id) {
+        return ratingRepository.findRatingSummaryByRecipeId(id);
+    }
 
 }

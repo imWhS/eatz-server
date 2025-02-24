@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
@@ -27,8 +27,6 @@ public class EatzUserQueryService {
 
     private final EatzUserRepository userRepository;
 
-    private final EatzUserQueryRepository userQueryRepository;
-
     /**
      * 모든 사용자를 조회합니다.
      * <ul>
@@ -39,16 +37,6 @@ public class EatzUserQueryService {
     public Page<EatzUserDto> findAllUsers(Pageable pageable) {
         Page<EatzUser> foundUsers = userRepository.findAll(pageable);
         return foundUsers.map(EatzUserDto::new);
-    }
-
-    /**
-     * 모든 사용자와 사용자 별 활동 요약을 함께 조회합니다.
-     * <ul>
-     *     <li>페이징을 적용할 수 있습니다.</li>
-     * </ul>
-     */
-    public Page<EatzUserSummaryDto> findAllUsersWithActivity(Pageable pageable) {
-        return userQueryRepository.findAllWithActivity(pageable);
     }
 
     /**
@@ -72,10 +60,14 @@ public class EatzUserQueryService {
      */
     public EatzUserDto findUserByEmail(String email) {
         validateEmail(email);
-
         EatzUser user = userRepository.findByEmail(email).orElseThrow(
-                () -> new EatzUserNotFoundException("이메일 주소가 " + email + "인 사용자를 찾지 못했습니다."));
+                () -> new EatzUserNotFoundException(email, true));
+        return new EatzUserDto(user);
+    }
 
+    public EatzUserDto findUserByUsername(String username) {
+        EatzUser user = userRepository.findByUsername(username).orElseThrow(
+                () -> new EatzUserNotFoundException(username));
         return new EatzUserDto(user);
     }
 
