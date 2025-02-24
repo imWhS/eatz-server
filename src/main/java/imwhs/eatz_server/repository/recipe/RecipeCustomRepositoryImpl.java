@@ -11,11 +11,11 @@ import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.liked.LikedType;
 import imwhs.eatz_server.domain.liked.QLiked;
 import imwhs.eatz_server.domain.recipe.*;
-import imwhs.eatz_server.dto.eatzuser.NEatzUserEssentialsDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserEssentialsDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.recipe.CategoryDto;
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
-import imwhs.eatz_server.dto.recipe.NRecipeItemDto;
+import imwhs.eatz_server.dto.recipe.RecipeItemDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -122,22 +122,22 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     }
 
     @Override
-    public Page<NRecipeItemDto> findAllRecipes(Long userId, Pageable pageable) {
+    public Page<RecipeItemDto> findAllRecipes(Long userId, Pageable pageable) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
         QLiked liked = QLiked.liked;
         QComment comment = QComment.comment;
         QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
 
-        List<NRecipeItemDto> result = queryFactory
+        List<RecipeItemDto> result = queryFactory
                 .select(
-                        Projections.constructor(NRecipeItemDto.class,
+                        Projections.constructor(RecipeItemDto.class,
                                 recipe.id,
                                 recipe.title,
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(NEatzUserEssentialsDto.class,
+                                Projections.constructor(EatzUserEssentialsDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl

@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class NEatzUserEssentialsDto {
+public class EatzUserEssentialsDto {
 
     private Long id;
 

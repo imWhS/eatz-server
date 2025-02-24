@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.dto.eatzuser.NEatzUserEssentialsDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserEssentialsDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-public class NRecipeItemDto {
+public class RecipeItemDto {
 
     /**
      * 레시피 ID.
@@ -51,7 +51,7 @@ public class NRecipeItemDto {
     /**
      * 레시피를 등록한 사용자의 핵심 정보. (with EatzUser)
      */
-    private NEatzUserEssentialsDto user;
+    private EatzUserEssentialsDto user;
 
     /**
      * 레시피의 댓글 수. (from Comment)
@@ -93,13 +93,13 @@ public class NRecipeItemDto {
      */
     private RatingSummaryDto rating;
 
-    public NRecipeItemDto(
+    public RecipeItemDto(
             Long id,
             String title,
             String imageUrl,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
-            NEatzUserEssentialsDto user,
+            EatzUserEssentialsDto user,
             Boolean isLikedByUser) {
         this.id = id;
         this.title = title;
@@ -111,13 +111,13 @@ public class NRecipeItemDto {
     }
 
 
-    public NRecipeItemDto(
+    public RecipeItemDto(
             Long id,
             String title,
             String imageUrl,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
-            NEatzUserEssentialsDto user,
+            EatzUserEssentialsDto user,
             Boolean isLikedByUser,
             Long commentCount,
             Long likeCount,
