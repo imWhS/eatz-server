@@ -1,9 +1,13 @@
 package imwhs.eatz_server.repository.recipe;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.QIngredient;
 import imwhs.eatz_server.domain.QIngredientRecipe;
@@ -22,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -122,7 +127,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     }
 
     @Override
-    public Page<RecipeItemDto> findAllRecipes(Long userId, Pageable pageable) {
+    public Page<RecipeItemDto> findRecipeItems_old(Long userId, Pageable pageable) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
         QLiked liked = QLiked.liked;
@@ -150,7 +155,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                         .from(liked)
                                         .where(liked.entityId.eq(recipe.id)
                                                 .and(liked.type.eq(LikedType.RECIPE))
-                                                .and(liked.user.id.eq(user.id))),
+                                                .and(liked.user.id.eq(userId))),
                                 JPAExpressions.select(comment.count().longValue())
                                         .from(comment)
                                         .where(comment.recipe.id.eq(recipe.id)),
@@ -168,6 +173,227 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        return new PageImpl<>(result, pageable, result.size());
+    }
+
+    @Override
+    public Page<RecipeItemDto> findRecipeItems_opt(Long currentUserId, Long categoryId, String title, Long authorId, Pageable pageable) {
+        QRecipe recipe = QRecipe.recipe;
+        QEatzUser user = QEatzUser.eatzUser;
+        QLiked liked = QLiked.liked;
+        QComment comment = QComment.comment;
+        QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
+        QRating rating = QRating.rating;
+
+        List<RecipeItemDto> result = queryFactory
+                .select(
+                        Projections.constructor(RecipeItemDto.class,
+                                recipe.id,
+                                recipe.title,
+                                recipe.imageUrl,
+                                recipe.createdAt,
+                                recipe.updatedAt,
+                                Projections.constructor(EatzUserEssentialsDto.class,
+                                        user.id,
+                                        user.username,
+                                        user.imageUrl
+                                ),
+                                JPAExpressions.select(
+                                        new CaseBuilder()
+                                                .when(liked.count().gt(0))
+                                                .then(Boolean.TRUE)
+                                                .otherwise(Boolean.FALSE))
+                                        .from(liked)
+                                        .where(liked.entityId.eq(recipe.id)
+                                                .and(liked.type.eq(LikedType.RECIPE))
+                                                .and(liked.user.id.eq(currentUserId))),
+                                JPAExpressions.select(comment.count().longValue())
+                                        .from(comment)
+                                        .where(comment.recipe.id.eq(recipe.id)),
+                                JPAExpressions.select(liked.count().longValue())
+                                        .from(liked)
+                                        .where(liked.entityId.eq(recipe.id).and(liked.type.eq(LikedType.RECIPE))),
+                                JPAExpressions.select(savedRecipe.count().longValue())
+                                        .from(savedRecipe)
+                                        .where(savedRecipe.recipe.eq(recipe)),
+                                JPAExpressions.select(rating.count())
+                                        .from(rating)
+                                        .where(rating.recipe.id.eq(recipe.id).and(rating.isHidden.isFalse()).and(rating.deletedAt.isNull())),
+                                JPAExpressions.select(rating.score.avg())
+                                        .from(rating)
+                                        .where(rating.recipe.id.eq(recipe.id).and(rating.isHidden.isFalse()).and(rating.deletedAt.isNull()))
+                        )
+                )
+                .from(recipe)
+                .join(recipe.user, user)
+                .where(
+                        recipe.deletedAt.isNull(),
+                        titleContains(title)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new PageImpl<>(result, pageable, result.size());
+    }
+
+    private BooleanExpression titleContains(String title) {
+        if (title != null && !title.isBlank()) {
+            return QRecipe.recipe.title.containsIgnoreCase(title);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Page<RecipeItemDto> findRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable) {
+        QRecipe recipe = QRecipe.recipe;
+        QEatzUser user = QEatzUser.eatzUser;
+        QLiked liked = QLiked.liked;
+        QComment comment = QComment.comment;
+        QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
+        QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
+        QRating rating = QRating.rating;
+
+        Expression<Long> likesCount = ExpressionUtils.as(
+                JPAExpressions.select(liked.count())
+                        .from(liked),
+                "likesCount"
+        );
+
+        return null;
+
+    }
+
+    @Override
+    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable) {
+        QRecipe recipe = QRecipe.recipe;
+        QEatzUser user = QEatzUser.eatzUser;
+        QLiked liked = QLiked.liked;
+        QComment comment = QComment.comment;
+        QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
+        QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
+        QRating rating = QRating.rating;
+
+        // 공통 서브쿼리: 게시물 별 댓글 수 조회
+        Expression<Long> commentCount = JPAExpressions.select(comment.count().longValue())
+                .from(comment)
+                .where(comment.recipe.id.eq(recipe.id));
+
+        // 공통 서브쿼리: 게시물 별 저장 수 조회
+        Expression<Long> savedCount = JPAExpressions.select(savedRecipe.count().longValue())
+                .from(savedRecipe)
+                .where(savedRecipe.recipe.eq(recipe));
+
+        // 공통 서브쿼리: 게시물 별 평가 수 조회
+        Expression<Long> ratingCount = JPAExpressions.select(rating.count().longValue())
+                .from(rating)
+                .where(rating.recipe.id.eq(recipe.id).and(rating.isHidden.isFalse()).and(rating.deletedAt.isNull()));
+
+        // 공통 서브쿼리: 게시물 별 좋아요 수 조회
+        NumberExpression<Long> likedCount = Expressions.numberTemplate(
+                Long.class,
+                "({0})",
+                JPAExpressions
+                        .select(liked.count().longValue())
+                        .from(liked)
+                        .where(liked.entityId.eq(recipe.id).and(liked.type.eq(LikedType.RECIPE)).and(liked.isLiked.isTrue()))
+        );
+
+        // 공통 서브쿼리: 게시물 별 평균 점수 조회
+        NumberTemplate<Double> averageRatingScore = Expressions.numberTemplate(
+                Double.class,
+                "({0})",
+                JPAExpressions
+                        .select(rating.score.avg().doubleValue())
+                        .from(rating)
+                        .where(rating.recipe.id.eq(recipe.id).and(rating.isHidden.isFalse()).and(rating.deletedAt.isNull()))
+        );
+
+        // 기본 쿼리: 레시피와 레시피를 등록한 사용자를 함께 조회합니다.
+        JPAQuery<RecipeItemDto> query = queryFactory
+                .select(
+                        Projections.constructor(RecipeItemDto.class,
+                                recipe.id,
+                                recipe.title,
+                                recipe.imageUrl,
+                                recipe.createdAt,
+                                recipe.updatedAt,
+                                Projections.constructor(EatzUserEssentialsDto.class,
+                                        user.id,
+                                        user.username,
+                                        user.imageUrl
+                                ),
+                                JPAExpressions
+                                        .select(new CaseBuilder()
+                                                .when(liked.count().gt(0))
+                                                .then(true)
+                                                .otherwise(false))
+                                        .from(liked)
+                                        .where(liked.entityId.eq(recipe.id)
+                                                .and(liked.type.eq(LikedType.RECIPE))
+                                                .and(liked.user.id.eq(currentUserId))
+                                                .and(liked.isLiked.isTrue())),
+                                commentCount,
+                                likedCount,
+                                savedCount,
+                                ratingCount,
+                                averageRatingScore
+                        )
+                )
+                .from(recipe)
+                .join(recipe.user, user);
+
+        // 필터 조건을 설정합니다.
+        BooleanBuilder predicate = new BooleanBuilder(recipe.deletedAt.isNull());
+
+        // 제목 또는 내용의 검색 키워드 포함 여부로 레시피를 필터링합니다.
+        if (StringUtils.hasText(keyword)) {
+            predicate.and(
+                    recipe.title.containsIgnoreCase(keyword)
+                            .or(recipe.description.containsIgnoreCase(keyword))
+            );
+        }
+
+        // 특정 재료 포함 여부로 레시피를 필터링합니다.
+        if (ingredientIds != null && !ingredientIds.isEmpty()) {
+            query.join(recipe.ingredientRecipes, ingredientRecipe);
+            predicate.and(
+                    ingredientRecipe.ingredient.id.in(ingredientIds)
+            );
+        }
+
+        // 특정 재료만 포함하는 레시피를 필터링합니다.
+        if (exactIngredientIds != null && !exactIngredientIds.isEmpty()) {
+            // 레시피가 갖고 있는 재료 ID가 모두 onlyIngredientIds에 포함되는지 검사
+            predicate.and(
+                    recipe.id.notIn(
+                            JPAExpressions.select(ingredientRecipe.recipe.id)
+                                    .from(ingredientRecipe)
+                                    .where(ingredientRecipe.ingredient.id.notIn(exactIngredientIds))
+                    )
+            );
+        }
+
+        // 레시피 기준으로 레코드를 그룹핑 후, 필터 옵션에 따라 추가되는 조건을 쿼리에 적용합니다.
+        query.groupBy(recipe.id).where(predicate);
+
+        // 정렬 옵션을 쿼리에 적용합니다.
+        switch (sortType) {
+            case MOST_LIKED:
+                query.orderBy(likedCount.desc());
+                break;
+            case HIGHEST_RATED:
+                query.orderBy(averageRatingScore.desc());
+                break;
+            default:
+                query.orderBy(recipe.createdAt.desc());
+                break;
+        }
+
+        // 페이징 적용한 조회 결과를 반환하기 위한 인스턴스를 가져옵니다.
+        List<RecipeItemDto> result = query.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
 
         return new PageImpl<>(result, pageable, result.size());
     }
