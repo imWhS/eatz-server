@@ -6,7 +6,6 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.QIngredient;
@@ -345,7 +344,34 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                 .from(recipe)
                 .join(recipe.user, user);
 
-        // 필터 조건을 설정합니다.
+        applyFilter(query, recipe, keyword, ingredientIds, exactIngredientIds, ingredientRecipe);
+
+        applySorting(query, recipe, sortType, likedCount, averageRatingScore);
+
+        // 페이징 적용한 조회 결과를 반환하기 위한 인스턴스를 가져옵니다.
+        List<RecipeItemDto> result = query.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
+
+        return new PageImpl<>(result, pageable, result.size());
+    }
+
+    /**
+     * 쿼리에 필터를 설정합니다.
+     * 설정한 필터 값은 BooleanBuilder를 통해 보관합니다.
+     * @param query
+     * @param recipe
+     * @param keyword
+     * @param ingredientIds
+     * @param exactIngredientIds
+     * @param ingredientRecipe
+     */
+    private void applyFilter(
+            JPAQuery<RecipeItemDto> query,
+            QRecipe recipe,
+            String keyword,
+            List<Long> ingredientIds,
+            List<Long> exactIngredientIds,
+            QIngredientRecipe ingredientRecipe) {
+        // 기본적으로 삭제 처리되지 않은 레시피로 필터링합니다.
         BooleanBuilder predicate = new BooleanBuilder(recipe.deletedAt.isNull());
 
         // 제목 또는 내용의 검색 키워드 포함 여부로 레시피를 필터링합니다.
@@ -378,8 +404,22 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
 
         // 레시피 기준으로 레코드를 그룹핑 후, 필터 옵션에 따라 추가되는 조건을 쿼리에 적용합니다.
         query.groupBy(recipe.id).where(predicate);
+    }
 
-        // 정렬 옵션을 쿼리에 적용합니다.
+    /**
+     * 쿼리에 정렬 옵션을 적용합니다.
+     * @param query
+     * @param recipe
+     * @param sortType
+     * @param likedCount
+     * @param averageRatingScore
+     */
+    private void applySorting(
+            JPAQuery<RecipeItemDto> query,
+            QRecipe recipe,
+            RecipeItemSortType sortType,
+            NumberExpression<Long> likedCount,
+            NumberTemplate<Double> averageRatingScore) {
         switch (sortType) {
             case MOST_LIKED:
                 query.orderBy(likedCount.desc());
@@ -387,15 +427,10 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
             case HIGHEST_RATED:
                 query.orderBy(averageRatingScore.desc());
                 break;
+            case LATEST:
             default:
                 query.orderBy(recipe.createdAt.desc());
-                break;
         }
-
-        // 페이징 적용한 조회 결과를 반환하기 위한 인스턴스를 가져옵니다.
-        List<RecipeItemDto> result = query.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
-
-        return new PageImpl<>(result, pageable, result.size());
     }
 
 }

@@ -10,17 +10,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum RecipeItemSortType {
 
-    LATEST("latest"),
-    HIGHEST_RATED("highest_rated"),
-    MOST_LIKED("mostLiked");
-
-    private final String value;
-
-    public static RecipeItemSortType of(String value) {
-        return Arrays.stream(values())
-                .filter(type -> type.value.equalsIgnoreCase(value))
-                .findFirst()
-                .orElse(LATEST);
-    }
+    LATEST,
+    HIGHEST_RATED,
+    MOST_LIKED
 
 }
