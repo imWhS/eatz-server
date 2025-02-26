@@ -1,10 +1,12 @@
 package imwhs.eatz_server.repository.recipe;
 
+import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.recipe.NRecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeItemDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RecipeCustomRepository {
@@ -13,6 +15,12 @@ public interface RecipeCustomRepository {
 
     Optional<NRecipeDto> findRecipeWithUserIngredientsCategories(Long id);
 
-    Page<RecipeItemDto> findAllRecipes(Long userId, Pageable pageable);
+    Page<RecipeItemDto> findRecipeItems_old(Long userId, Pageable pageable);
+
+    Page<RecipeItemDto> findRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable);
+
+    Page<RecipeItemDto> findRecipeItems_opt(Long currentUserId, Long categoryId, String title, Long authorId, Pageable pageable);
+
+    Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String title, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable);
 
 }
