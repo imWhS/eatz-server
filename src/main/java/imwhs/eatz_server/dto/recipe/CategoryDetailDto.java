@@ -7,7 +7,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * CategoryDto 클래스입니다.
+ * CategoryDetailDto 클래스입니다.
  */
 @Data
 public class CategoryDetailDto {

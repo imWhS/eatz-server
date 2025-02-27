@@ -1,6 +1,7 @@
 package imwhs.eatz_server.controller.recipe;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
+import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
@@ -62,18 +63,13 @@ public class RecipeController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<NRecipeItemDto>>> getAllRecipeList(
-            @PageableDefault(page = 0, size = 10) Pageable pageable
-    ) {
-        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItems(EatzUserAuthUtil.getId(), pageable);
-        return ResponseEntity.ok(ApiResponse.success(allRecipes));
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<ApiResponse<Paged<NRecipeItemDto>>> getAllRecipeListTest(
-            @PageableDefault(page = 0, size = 10) Pageable pageable
-    ) {
-        Page<NRecipeItemDto> allRecipes = recipeQueryService.findAllRecipeItemsTest(EatzUserAuthUtil.getId(), pageable);
+    public ResponseEntity<ApiResponse<Paged<RecipeItemDto>>> searchRecipeList(
+            @RequestParam(defaultValue = "LATEST") RecipeItemSortType sortType,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) List<Long> ingredientIds,
+            @RequestParam(required = false) List<Long> exactIngredientIds,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<RecipeItemDto> allRecipes = recipeQueryService.searchRecipeItems(sortType, EatzUserAuthUtil.getId(), keyword, ingredientIds, exactIngredientIds, pageable);
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 

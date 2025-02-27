@@ -1,10 +1,8 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.liked.LikedType;
-import imwhs.eatz_server.dto.comment.CommentCountByRecipeDto;
+import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.ingredient.IngredientByRecipeDto;
-import imwhs.eatz_server.dto.liked.LikedCountByEntityDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.*;
@@ -50,12 +48,6 @@ public class RecipeQueryService {
 
     private final RecipeCategoryRepository recipeCategoryRepository;
 
-    private final CommentRepository commentRepository;
-
-    private final LikedRepository likedRepository;
-
-    private final RatingRepository ratingRepository;
-
     /**
      * 식별자로 레시피를 조회합니다.
      * @param id 조회할 레시피의 식별자.
@@ -84,61 +76,21 @@ public class RecipeQueryService {
         return recipeDto;
     }
 
-    public Page<NRecipeItemDto> findAllRecipeItemsTest(Long userId, Pageable pageable) {
-        Page<NRecipeItemDto> items = recipeRepository.findAllRecipes(userId, pageable);
-
-        List<Long> recipeIds = items.getContent().stream().map(NRecipeItemDto::getId).toList();
-
-        // 레시피 별 평가 정보를 조회합니다.
-        List<RatingSummaryByRecipeDto> ratingSummariesByRecipeIds = ratingRepository.findRatingSummariesByRecipeIds(recipeIds);
-        Map<Long, RatingSummaryDto> ratingSummariesByRecipeIdMap = ratingSummariesByRecipeIds.stream()
-                .collect(Collectors.toMap(
-                        RatingSummaryByRecipeDto::getRecipeId,
-                        ratingSummary ->
-                                new RatingSummaryDto(ratingSummary.getRatingCount(), ratingSummary.getAverageRatingScore())));
-
-        List<IngredientByRecipeDto> ingredientsByRecipeIds = ingredientRecipeRepository.findIngredientsByRecipeIds(recipeIds);
-        Map<Long, List<IngredientByRecipeDto>> ingredientsByRecipeIdMap = ingredientsByRecipeIds.stream()
-                .collect(Collectors.groupingBy(IngredientByRecipeDto::getRecipeId));
-
-        // 레시피 별 카테고리 정보를 조회합니다.
-        List<CategoryByRecipeDto> categoriesByRecipeIds = recipeCategoryRepository.findCategoriesByRecipeIds(recipeIds);
-        Map<Long, List<CategoryByRecipeDto>> categoriesByRecipeIdMap = categoriesByRecipeIds.stream()
-                .collect(Collectors.groupingBy(CategoryByRecipeDto::getRecipeId));
-
-        for (NRecipeItemDto item : items) {
-            Long recipeId = item.getId();
-
-            List<IngredientDto> ingredientDtos = Optional.ofNullable(ingredientsByRecipeIdMap.get(recipeId))
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .map(ingredient -> new IngredientDto(ingredient.getIngredientId(), ingredient.getIngredientName()))
-                    .collect(Collectors.toList());
-
-            List<CategoryDto> categoryDtos = Optional.ofNullable(categoriesByRecipeIdMap.get(recipeId))
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .map(category -> new CategoryDto(category.getCategoryId(), category.getCategoryName()))
-                    .collect(Collectors.toList());
-
-            item.setIngredients(ingredientDtos);
-            item.setCategories(categoryDtos);
-            item.setRating(ratingSummariesByRecipeIdMap.get(recipeId));
-        }
-
-
-        return items;
+    /**
+     * 특정 사용자가 등록한 모든 레시피를 조회합니다.
+     * @param userId 레시피를 등록한 사용자의 식별자.
+     * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto.
+     * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
+     */
+    public Page<RecipeDto> findRecipesByUserId(Long userId, Pageable pageable) {
+        Page<RecipeDto> foundRecipes = recipeRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
+        return foundRecipes;
     }
 
-    /**
-     * 등록된 모든 레시피 목록을 조회하고, 각 레시피와 연관 관계인 상세 정보를 가져옵니다.
-     * @param pageable
-     * @return
-     */
-    public Page<NRecipeItemDto> findAllRecipeItems(Long userId, Pageable pageable) {
-        Page<NRecipeItemDto> items = recipeRepository.findAllItemsWithUser(userId, pageable);
+    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long userId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Pageable pageable) {
+        Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, null, keyword, ingredientIds, exactIngredientIds, null, pageable);
 
-        List<Long> recipeIds = items.getContent().stream().map(NRecipeItemDto::getId).toList();
+        List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
 
         // 레시피 별 재료 정보를 조회합니다.
         List<IngredientByRecipeDto> ingredientsByRecipeIds = ingredientRecipeRepository.findIngredientsByRecipeIds(recipeIds);
@@ -150,35 +102,7 @@ public class RecipeQueryService {
         Map<Long, List<CategoryByRecipeDto>> categoriesByRecipeIdMap = categoriesByRecipeIds.stream()
                 .collect(Collectors.groupingBy(CategoryByRecipeDto::getRecipeId));
 
-        // 레시피 별 댓글 수를 조회합니다.
-        List<CommentCountByRecipeDto> commentCountsByRecipeIds = commentRepository.countByRecipeIds(recipeIds);
-        Map<Long, Long> commentCountsByRecipeIdMap = commentCountsByRecipeIds.stream()
-                .collect(Collectors.toMap(
-                        CommentCountByRecipeDto::getRecipeId,
-                        CommentCountByRecipeDto::getCommentCount
-                ));
-
-        // 레시피 별 좋아요 수를 조회합니다.
-        List<LikedCountByEntityDto> likeCountsByEntityDtos = likedRepository.countByEntityIdsAndType(recipeIds, LikedType.RECIPE);
-        Map<Long, Long> likeCountsByRecipeIdMap = likeCountsByEntityDtos.stream()
-                .collect(Collectors.toMap(
-                        LikedCountByEntityDto::getEntityId,
-                        LikedCountByEntityDto::getLikedCount
-                ));
-
-        // 요청한 사용자의 레시피 별 좋아요 여부를 조회합니다.
-//        Set<Long> likedRecipeIds = new HashSet<>(likeRepository.findLikesByEntityIdsAndTypeAndUserUsername(recipeIds, LikesType.RECIPE, username));
-
-        // 레시피 별 평가 정보를 조회합니다.
-        List<RatingSummaryByRecipeDto> ratingSummariesByRecipeIds = ratingRepository.findRatingSummariesByRecipeIds(recipeIds);
-        Map<Long, RatingSummaryDto> ratingSummariesByRecipeIdMap = ratingSummariesByRecipeIds.stream()
-                .collect(Collectors.toMap(
-                        RatingSummaryByRecipeDto::getRecipeId,
-                        ratingSummary ->
-                                new RatingSummaryDto(ratingSummary.getRatingCount(), ratingSummary.getAverageRatingScore())));
-
-        // 각 레시피에 대해 조회한 상세 정보를 결합합니다.
-        for (NRecipeItemDto item : items) {
+        for (RecipeItemDto item : items) {
             Long recipeId = item.getId();
 
             List<IngredientDto> ingredientDtos = Optional.ofNullable(ingredientsByRecipeIdMap.get(recipeId))
@@ -195,24 +119,9 @@ public class RecipeQueryService {
 
             item.setIngredients(ingredientDtos);
             item.setCategories(categoryDtos);
-            item.setCommentCount(commentCountsByRecipeIdMap.get(recipeId));
-            item.setLikeCount(likeCountsByRecipeIdMap.get(recipeId));
-//            item.setLikedByUser(likedRecipeIds.contains(recipeId));
-            item.setRating(ratingSummariesByRecipeIdMap.get(recipeId));
         }
 
         return items;
-    }
-
-    /**
-     * 특정 사용자가 등록한 모든 레시피를 조회합니다.
-     * @param userId 레시피를 등록한 사용자의 식별자.
-     * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto.
-     * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
-     */
-    public Page<RecipeDto> findRecipesByUserId(Long userId, Pageable pageable) {
-        Page<RecipeDto> foundRecipes = recipeRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
-        return foundRecipes;
     }
 
 }
