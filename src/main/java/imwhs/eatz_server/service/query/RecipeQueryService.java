@@ -48,12 +48,6 @@ public class RecipeQueryService {
 
     private final RecipeCategoryRepository recipeCategoryRepository;
 
-    private final CommentRepository commentRepository;
-
-    private final LikedRepository likedRepository;
-
-    private final RatingRepository ratingRepository;
-
     /**
      * 식별자로 레시피를 조회합니다.
      * @param id 조회할 레시피의 식별자.
@@ -80,52 +74,6 @@ public class RecipeQueryService {
         recipeDto.setRating(ratingQueryService.findRatingSummaryByRecipeId(id));
 
         return recipeDto;
-    }
-
-    public Page<RecipeItemDto> findRecipeItems(Long userId, String title, Pageable pageable) {
-        // 모든 레시피 목록을 조회합니다.
-        Page<RecipeItemDto> items = recipeRepository.findRecipeItems_opt(userId, null, title, null, pageable);
-
-        List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
-
-        // 레시피 별 평가 정보를 조회합니다.
-        List<RatingSummaryByRecipeDto> ratingSummariesByRecipeIds = ratingRepository.findRatingSummariesByRecipeIds(recipeIds);
-        Map<Long, RatingSummaryDto> ratingSummariesByRecipeIdMap = ratingSummariesByRecipeIds.stream()
-                .collect(Collectors.toMap(
-                        RatingSummaryByRecipeDto::getRecipeId,
-                        ratingSummary ->
-                                new RatingSummaryDto(ratingSummary.getRatingCount(), ratingSummary.getAverageRatingScore())));
-
-        List<IngredientByRecipeDto> ingredientsByRecipeIds = ingredientRecipeRepository.findIngredientsByRecipeIds(recipeIds);
-        Map<Long, List<IngredientByRecipeDto>> ingredientsByRecipeIdMap = ingredientsByRecipeIds.stream()
-                .collect(Collectors.groupingBy(IngredientByRecipeDto::getRecipeId));
-
-        // 레시피 별 카테고리 정보를 조회합니다.
-        List<CategoryByRecipeDto> categoriesByRecipeIds = recipeCategoryRepository.findCategoriesByRecipeIds(recipeIds);
-        Map<Long, List<CategoryByRecipeDto>> categoriesByRecipeIdMap = categoriesByRecipeIds.stream()
-                .collect(Collectors.groupingBy(CategoryByRecipeDto::getRecipeId));
-
-        for (RecipeItemDto item : items) {
-            Long recipeId = item.getId();
-
-            List<IngredientDto> ingredientDtos = Optional.ofNullable(ingredientsByRecipeIdMap.get(recipeId))
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .map(ingredient -> new IngredientDto(ingredient.getIngredientId(), ingredient.getIngredientName()))
-                    .collect(Collectors.toList());
-
-            List<CategoryDto> categoryDtos = Optional.ofNullable(categoriesByRecipeIdMap.get(recipeId))
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .map(category -> new CategoryDto(category.getCategoryId(), category.getCategoryName()))
-                    .collect(Collectors.toList());
-
-            item.setIngredients(ingredientDtos);
-            item.setCategories(categoryDtos);
-//            item.setRating(ratingSummariesByRecipeIdMap.get(recipeId));
-        }
-
-        return items;
     }
 
     /**

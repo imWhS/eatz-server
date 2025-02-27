@@ -114,7 +114,7 @@ public class RatingService {
      * 시용자 식별자, 레시피 식별자로 평가를 조회합니다.
      */
     public RatingDtoOld findRating(Long userId, Long recipeId) {
-//        validateUser(userId);
+        validateUser(userId);
         validateRecipe(recipeId);
         Rating rating = ratingRepository.findJoinUserRecipeByUserIdAndRecipeId(userId, recipeId)
                 .orElseThrow(() -> new RatingNotFoundException("평가가 존재하지 않습니다."));

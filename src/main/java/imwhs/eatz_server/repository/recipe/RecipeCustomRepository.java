@@ -15,12 +15,6 @@ public interface RecipeCustomRepository {
 
     Optional<NRecipeDto> findRecipeWithUserIngredientsCategories(Long id);
 
-    Page<RecipeItemDto> findRecipeItems_old(Long userId, Pageable pageable);
-
-    Page<RecipeItemDto> findRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable);
-
-    Page<RecipeItemDto> findRecipeItems_opt(Long currentUserId, Long categoryId, String title, Long authorId, Pageable pageable);
-
     Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String title, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable);
 
 }
