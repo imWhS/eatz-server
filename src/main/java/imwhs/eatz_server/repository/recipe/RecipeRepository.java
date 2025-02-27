@@ -18,15 +18,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeCustomRepository {
 
-//    @Query("select new imwhs.eatz_server.dto.recipe.RecipeItemDto(" +
-//            "r.id, r.title, r.imageUrl, r.createdAt, r.updatedAt, " +
-//            "new imwhs.eatz_server.dto.eatzuser.EatzUserEssentialsDto(u.id, u.username, u.imageUrl)," +
-//            "(select case when count(l) > 0 then true else false end from Liked l where l.entityId = r.id and l.type = 'RECIPE' and l.user.id = :userId))" +
-//            "from Recipe r " +
-//            "join r.user u " +
-//            "where r.deletedAt is null")
-//    Page<RecipeItemDto> findAllItemsWithUser(@Param("userId") Long userId, Pageable pageable);
-
     Long countByUserIdAndDeletedAtIsNull(Long userId);
 
     /**
