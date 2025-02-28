@@ -100,11 +100,6 @@ public class PlanService {
         checklistItems에는 조회하려는 플랜 별 레시피 요약 정보, 레시피의 재료 요약 정보, 레시피 요리 가능 여부가 포함됩니다.
          */
         List<ChecklistItemResponseDto> checklistItems = planRepository.findChecklistByUserAndDateRangeV2(user, startDate, endDate);
-        List<ChecklistItemResponseDto> checklistByUserAndDateRangeV2 = planRepository.findChecklistByUserAndDateRangeV2(user, startDate, endDate);
-
-        for (ChecklistItemResponseDto checklistItemResponseDto : checklistByUserAndDateRangeV2) {
-            System.out.println("체크리스트 속 레시피 ID = " + checklistItemResponseDto.getRecipe().getId() + ", 재료: " + checklistItemResponseDto.getIngredient().getName() + "isMissing: " + checklistItemResponseDto.isMissing());
-        }
 
         // 레시피 ID 별 요리 가능 여부 목록을 저장합니다.
         Map<Long, Boolean> cookableByRecipeId = new HashMap<>();
@@ -135,7 +130,6 @@ public class PlanService {
         Set<Long> uncookableRecipeIds = new HashSet<>();
 
         for (Map.Entry<Long, Boolean> entry : cookableByRecipeId.entrySet()) {
-            System.out.println("레시피 ID = " + entry.getKey() + ", 지금 요리 가능 여부 = " + entry.getValue());
             if (entry.getValue()) {
                 cookableRecipeIds.add(entry.getKey());
             } else {
