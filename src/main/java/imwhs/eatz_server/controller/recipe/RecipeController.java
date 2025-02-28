@@ -63,14 +63,14 @@ public class RecipeController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<RecipeItemDto>>> searchRecipeList(
+    public ResponseEntity<ApiResponse<Paged<RecipeItemDto>>> searchRecipes(
             @RequestParam(defaultValue = "LATEST") RecipeItemSortType sortType,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) List<Long> ingredientIds,
             @RequestParam(required = false) List<Long> exactIngredientIds,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RecipeItemDto> allRecipes = recipeQueryService.searchRecipeItems(sortType, EatzUserAuthUtil.getId(), categoryId, keyword, ingredientIds, exactIngredientIds, pageable);
+        Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), categoryId, keyword, ingredientIds, exactIngredientIds, pageable);
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 

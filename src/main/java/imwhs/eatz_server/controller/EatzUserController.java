@@ -142,7 +142,7 @@ public class EatzUserController {
 
     @PostMapping("/plans")
     public ResponseEntity<ApiResponse<Long>> registerPlan(@RequestBody PlanCreateDto dto) {
-        Long planId = planService.registerPlan(dto.getRecipeId(), EatzUserAuthUtil.getUsername(), dto.getDate(), dto.getPriority());
+        Long planId = planService.registerPlan(dto.getRecipeId(), EatzUserAuthUtil.getId(), dto.getDate(), dto.getPriority());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(planId));
     }
 
@@ -169,7 +169,7 @@ public class EatzUserController {
             endDate = LocalDate.of(2100, 12, 31);
         }
 
-        List<PlanDto> plans = planService.findByUserAndDateRange(EatzUserAuthUtil.getUsername(), startDate, endDate);
+        List<PlanDto> plans = planService.findByUserAndDateRange(EatzUserAuthUtil.getId(), startDate, endDate);
         return ResponseEntity.ok(ApiResponse.success(plans));
     }
 
@@ -177,13 +177,21 @@ public class EatzUserController {
     public ResponseEntity<ApiResponse<ChecklistResponseDto>> getChecklist(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
-        ChecklistResponseDto checklist = planService.getChecklist(EatzUserAuthUtil.getUsername(), startDate, endDate);
+        ChecklistResponseDto checklist = planService.getChecklist(EatzUserAuthUtil.getId(), startDate, endDate);
         return ResponseEntity.ok(ApiResponse.success(checklist));
+    }
+
+    @PostMapping("/plans/checklist/complete")
+    public ResponseEntity<ApiResponse<?>> completeChecklist(
+            @RequestBody ChecklistCompleteDto dto
+    ) {
+        ingredientUserService.addIngredientsToUser(EatzUserAuthUtil.getId(), dto.getIngredientIds());
+        return ResponseEntity.ok(ApiResponse.success("체크리스트의 필요한 재료를 모두 추가했어요."));
     }
 
     @PostMapping("/ingredients")
     public ResponseEntity<ApiResponse<List<Long>>> addIngredients(@RequestBody IngredientAddDto dto) {
-        List<Long> addedIngredients = ingredientUserService.addIngredientsToUser(EatzUserAuthUtil.getUsername(), dto.getIngredientIds());
+        List<Long> addedIngredients = ingredientUserService.addIngredientsToUser(EatzUserAuthUtil.getId(), dto.getIngredientIds());
 
         if (addedIngredients.size() != dto.getIngredientIds().size()) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(ApiResponse.success(addedIngredients));

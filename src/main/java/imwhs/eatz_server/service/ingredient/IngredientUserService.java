@@ -41,9 +41,9 @@ public class IngredientUserService {
     }
 
     @Transactional
-    public List<Long> addIngredientsToUser(String username, List<Long> ingredientIds) {
-        EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
-                new EatzUserNotFoundException(username));
+    public List<Long> addIngredientsToUser(Long userId, List<Long> ingredientIds) {
+        EatzUser user = userRepository.findById(userId).orElseThrow(() ->
+                new EatzUserNotFoundException(userId));
         List<Long> existingIngredientIdsByUser = ingredientUserRepository.findIngredientIdsByUser(user);
 
         List<Long> ingredientIdsToAdd = new ArrayList<>();
