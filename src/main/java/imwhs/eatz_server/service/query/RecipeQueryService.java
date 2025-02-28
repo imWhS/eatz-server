@@ -3,15 +3,10 @@ package imwhs.eatz_server.service.query;
 import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.ingredient.IngredientByRecipeDto;
-import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
-import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
-import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRecipeRepository;
-import imwhs.eatz_server.repository.liked.LikedRepository;
-import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeCategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -87,7 +82,7 @@ public class RecipeQueryService {
         return foundRecipes;
     }
 
-    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long userId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Pageable pageable) {
+    public Page<RecipeItemDto> search(RecipeItemSortType sortType, Long userId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Pageable pageable) {
         Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, categoryId, keyword, ingredientIds, exactIngredientIds, null, pageable);
 
         List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
