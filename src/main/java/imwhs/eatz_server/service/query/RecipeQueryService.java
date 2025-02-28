@@ -87,8 +87,8 @@ public class RecipeQueryService {
         return foundRecipes;
     }
 
-    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long userId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Pageable pageable) {
-        Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, null, keyword, ingredientIds, exactIngredientIds, null, pageable);
+    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long userId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Pageable pageable) {
+        Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, categoryId, keyword, ingredientIds, exactIngredientIds, null, pageable);
 
         List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
 

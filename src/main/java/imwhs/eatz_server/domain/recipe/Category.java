@@ -24,7 +24,6 @@ public class Category extends BaseEntity {
     /**
      * 카테고리를 생성합니다.
      * @param name 카테고리 이름.
-     * @param description 카테고리 설명.
      * @return 카테고리 인스턴스.
      */
     public static Category create(String name) {
