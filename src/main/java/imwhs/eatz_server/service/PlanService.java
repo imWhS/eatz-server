@@ -96,12 +96,21 @@ public class PlanService {
     public ChecklistResponseDto getChecklist(String username, LocalDate startDate, LocalDate endDate) {
         EatzUser user = findUser(username);
 
-        List<ChecklistItemResponseDto> checklistItems = planRepository.findChecklistByUserAndDateRange(user, startDate, endDate);
-        Set<IngredientDto> missingIngredients = new HashSet<>();
+        /*
+        checklistItems에는 조회하려는 플랜 별 레시피 요약 정보, 레시피의 재료 요약 정보, 레시피 요리 가능 여부가 포함됩니다.
+         */
+        List<ChecklistItemResponseDto> checklistItems = planRepository.findChecklistByUserAndDateRangeV2(user, startDate, endDate);
+
+        // 레시피 ID 별 요리 가능 여부 목록을 저장합니다.
         Map<Long, Boolean> cookableByRecipeId = new HashMap<>();
+
+        // 체크리스트 속의 모든 레시피에 필요한 재료 목록을 저장합니다.
+        Set<IngredientDto> missingIngredients = new HashSet<>();
 
         for (ChecklistItemResponseDto item : checklistItems) {
             Long recipeId = item.getRecipe().getId();
+
+            cookableByRecipeId.putIfAbsent(recipeId, true);
 
             /*
             item 별 레시피 요리 가능 여부를 조회합니다.
