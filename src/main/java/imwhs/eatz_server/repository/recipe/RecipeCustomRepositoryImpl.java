@@ -135,6 +135,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
         QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
         QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
         QRating rating = QRating.rating;
+        QRecipeCategory recipeCategory = QRecipeCategory.recipeCategory;
 
         // 공통 서브쿼리: 게시물 별 댓글 수 조회
         Expression<Long> commentCount = JPAExpressions.select(comment.count().longValue())
@@ -205,14 +206,26 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                 .from(recipe)
                 .join(recipe.user, user);
 
-        applyFilter(query, recipe, keyword, ingredientIds, exactIngredientIds, ingredientRecipe);
+        BooleanBuilder predicate = new BooleanBuilder(recipe.deletedAt.isNull());
+
+        // 기본적으로 삭제 처리되지 않은 레시피로 필터링합니다.
+        applyFilter(query, predicate, recipe, keyword, categoryId, recipeCategory, ingredientIds, exactIngredientIds, ingredientRecipe);
 
         applySorting(query, recipe, sortType, likedCount, averageRatingScore);
 
         // 페이징 적용한 조회 결과를 반환하기 위한 인스턴스를 가져옵니다.
         List<RecipeItemDto> result = query.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
 
-        return new PageImpl<>(result, pageable, result.size());
+        // 페이징 처리를 위해 전체 레시피 수를 조회합니다.
+        Long totalCount = queryFactory
+                .select(recipe.count())
+                .from(recipe)
+                .leftJoin(recipe.recipeCategories, recipeCategory)
+                .leftJoin(recipe.ingredientRecipes, ingredientRecipe)
+                .where(predicate)
+                .fetchOne();
+
+        return new PageImpl<>(result, pageable, totalCount);
     }
 
     /**
@@ -227,14 +240,14 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
      */
     private void applyFilter(
             JPAQuery<RecipeItemDto> query,
+            BooleanBuilder predicate,
             QRecipe recipe,
             String keyword,
+            Long categoryId,
+            QRecipeCategory recipeCategory,
             List<Long> ingredientIds,
             List<Long> exactIngredientIds,
             QIngredientRecipe ingredientRecipe) {
-        // 기본적으로 삭제 처리되지 않은 레시피로 필터링합니다.
-        BooleanBuilder predicate = new BooleanBuilder(recipe.deletedAt.isNull());
-
         // 제목 또는 내용의 검색 키워드 포함 여부로 레시피를 필터링합니다.
         if (StringUtils.hasText(keyword)) {
             predicate.and(
@@ -243,12 +256,16 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
             );
         }
 
+        // 특정 카테고리에 포함되는 레시피를 필터링합니다.
+        if (categoryId != null) {
+            query.join(recipe.recipeCategories, recipeCategory);
+            predicate.and(recipeCategory.category.id.eq(categoryId));
+        }
+
         // 특정 재료 포함 여부로 레시피를 필터링합니다.
         if (ingredientIds != null && !ingredientIds.isEmpty()) {
             query.join(recipe.ingredientRecipes, ingredientRecipe);
-            predicate.and(
-                    ingredientRecipe.ingredient.id.in(ingredientIds)
-            );
+            predicate.and(ingredientRecipe.ingredient.id.in(ingredientIds));
         }
 
         // 특정 재료만 포함하는 레시피를 필터링합니다.
