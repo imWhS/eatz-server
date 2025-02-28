@@ -36,9 +36,9 @@ public class PlanService {
     private final RatingRepository ratingRepository;
 
     @Transactional
-    public Long registerPlan(Long recipeId, String username, LocalDate date, Integer priority) {
+    public Long registerPlan(Long recipeId, Long userId, LocalDate date, Integer priority) {
         Recipe recipe = findRecipe(recipeId);
-        EatzUser user = findUser(username);
+        EatzUser user = findUser(userId);
         validateDate(date);
         validatePriority(priority);
         validateDuplicatePlan(recipe, user, date);
@@ -74,8 +74,8 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
-    public List<PlanDto> findByUserAndDateRange(String username, LocalDate startDate, LocalDate endDate) {
-        EatzUser user = findUser(username);
+    public List<PlanDto> findByUserAndDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
+        EatzUser user = findUser(userId);
         List<PlanDto> plans = planRepository.findAllByUserAndDateRange(user, startDate, endDate);
 
         // PlanDto에서 레시피 ID 목록 추출 후, 레시피 별 Rating 데이터 조합
@@ -93,8 +93,8 @@ public class PlanService {
         return plans;
     }
 
-    public ChecklistResponseDto getChecklist(String username, LocalDate startDate, LocalDate endDate) {
-        EatzUser user = findUser(username);
+    public ChecklistResponseDto getChecklist(Long userId, LocalDate startDate, LocalDate endDate) {
+        EatzUser user = findUser(userId);
 
         /*
         checklistItems에는 조회하려는 플랜 별 레시피 요약 정보, 레시피의 재료 요약 정보, 레시피 요리 가능 여부가 포함됩니다.
@@ -144,8 +144,8 @@ public class PlanService {
         );
     }
 
-    private EatzUser findUser(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new EatzUserNotFoundException(username));
+    private EatzUser findUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new EatzUserNotFoundException(id));
     }
 
     private Recipe findRecipe(Long recipeId) {
