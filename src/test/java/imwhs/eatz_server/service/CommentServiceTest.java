@@ -3,7 +3,6 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.recipe.Comment;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
@@ -13,7 +12,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)

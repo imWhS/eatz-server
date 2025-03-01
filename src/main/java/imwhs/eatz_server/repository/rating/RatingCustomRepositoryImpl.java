@@ -2,14 +2,17 @@ package imwhs.eatz_server.repository.rating;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.recipe.QRating;
 import imwhs.eatz_server.domain.recipe.QRecipe;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.rating.*;
 import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class RatingQueryRepository {
+public class RatingCustomRepositoryImpl implements RatingCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -27,6 +30,7 @@ public class RatingQueryRepository {
      * @param id 평가 식별자
      * @return Optional로 wrapping된 RatingDetailResponseDto. 평가의 상세 정보를 담은 DTO입니다.
      */
+    @Override
     public Optional<RatingDetailDtoOld> findRatingDetailById(Long id) {
         QRating rating = QRating.rating;
         QEatzUser user = QEatzUser.eatzUser;
@@ -66,11 +70,10 @@ public class RatingQueryRepository {
      * 특정 레시피에 달린 모든 평가를 조회합니다.<br/>
      * 평가 별 기본 정보 뿐 아니라 해당 평가를 등록한 사용자의 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 평가는 조회 대상에서 제외됩니다.
-     * @param id 레시피 식별자.
-     * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
-     * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
+     * @param id 레시피 ID.
      */
-    public List<RatingByRecipeDto> findRatingsByRecipe(Long id, int page, int size) {
+    @Override
+    public List<RatingByRecipeDto> findRatingsByRecipe(Long id, Pageable pageable) {
         QRating rating = QRating.rating;
         QEatzUser user = QEatzUser.eatzUser;
 
@@ -93,8 +96,8 @@ public class RatingQueryRepository {
                 .where(rating.user.eq(user)
                         .and(rating.deletedAt.isNull())
                 )
-                .offset((long) page * size)
-                .limit(size)
+                .offset((long) pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
@@ -104,6 +107,7 @@ public class RatingQueryRepository {
      * @param id 레시피 식별자
      * @return 총 평가 수
      */
+    @Override
     public Long countRatingsByRecipe(Long id) {
         QRating rating = QRating.rating;
 
@@ -119,11 +123,10 @@ public class RatingQueryRepository {
      * 특정 사용자가 등록한 모든 평가를 조회합니다.<br/>
      * 평가 별 기본 정보 뿐 아니라 해당 평가를 등록한 사용자의 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 평가는 조회 대상에서 제외됩니다.
-     * @param id 사용자 식별자
-     * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
-     * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
+     * @param id 사용자 ID.
      */
-    public List<RatingByUserDto> findRatingsByUser(Long id, int page, int size) {
+    @Override
+    public List<RatingByUserDto> findRatingsByUser(Long id, Pageable pageable) {
         QRating rating = QRating.rating;
         QRecipe recipe = QRecipe.recipe;
 
@@ -145,8 +148,8 @@ public class RatingQueryRepository {
                 .from(rating)
                 .leftJoin(rating.recipe, recipe)
                 .where(rating.user.id.eq(id))
-                .offset((long) page * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
@@ -156,6 +159,7 @@ public class RatingQueryRepository {
      * @param id 사용자 식별자
      * @return 총 평가 수
      */
+    @Override
     public Long countRatingsByUser(Long id) {
         QRating rating = QRating.rating;
 
