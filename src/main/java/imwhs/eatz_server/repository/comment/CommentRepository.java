@@ -1,7 +1,7 @@
 package imwhs.eatz_server.repository.comment;
 
 import imwhs.eatz_server.domain.recipe.Comment;
-import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
+import imwhs.eatz_server.dto.comment.CommentItemDto;
 import imwhs.eatz_server.dto.comment.CommentCountByRecipeDto;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
 import org.springframework.data.domain.Page;
@@ -25,15 +25,17 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 
     long countByRecipeIdAndDeletedAtIsNull(Long id);
 
-    @Query("""
-    select new imwhs.eatz_server.dto.comment.CommentWithUserResponseDto(
-        c
-    )
-    from Comment c
-    join c.user u
-    where c.recipe.id = :recipeId and c.deletedAt is null
-    """)
-    Page<CommentWithUserResponseDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
+    @Query("select new imwhs.eatz_server.dto.comment.CommentItemDto(" +
+            "c.id, " +
+            "new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.email, u.imageUrl)," +
+            "c.content," +
+            "c.isHidden," +
+            "c.createdAt," +
+            "c.updatedAt)" +
+            "from Comment c " +
+            "join c.user u " +
+            "where c.recipe.id = :recipeId and c.deletedAt is null")
+    Page<CommentItemDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
 
     @Query("""
     select new imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto(
@@ -41,9 +43,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
         new imwhs.eatz_server.dto.comment.RecipeBasicDto(r.id, r.title, r.imageUrl),
         c.content,
         c.isHidden,
-        c.createdAt, 
-        c.updatedAt, 
-        c.deletedAt
+        c.createdAt,
+        c.updatedAt
     ) 
     from Comment c
     join c.recipe r

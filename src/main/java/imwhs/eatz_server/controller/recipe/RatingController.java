@@ -4,7 +4,8 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.rating.RatingCreateDto;
-import imwhs.eatz_server.dto.rating.RatingWithUserResponseDto;
+import imwhs.eatz_server.dto.rating.RatingItemDto;
+import imwhs.eatz_server.dto.rating.RatingsDetailDto;
 import imwhs.eatz_server.service.RatingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,11 +29,19 @@ public class RatingController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<RatingWithUserResponseDto>>> findRatings(
+    public ResponseEntity<ApiResponse<Paged<RatingItemDto>>> findRatings(
             @PathVariable Long id,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RatingWithUserResponseDto> ratings = ratingService.findRatingsByRecipe(id, pageable);
+        Page<RatingItemDto> ratings = ratingService.findRatingsByRecipe(id, pageable);
         return ResponseEntity.ok((ApiResponse.success(ratings)));
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<ApiResponse<RatingsDetailDto>> findRatingsDetail(
+            @PathVariable Long id,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        RatingsDetailDto dto = ratingService.findRatingsDetail(id, pageable);
+        return ResponseEntity.ok((ApiResponse.success(dto)));
     }
 
 }

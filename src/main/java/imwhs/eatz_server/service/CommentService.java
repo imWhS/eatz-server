@@ -4,7 +4,7 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.recipe.Comment;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
+import imwhs.eatz_server.dto.comment.CommentItemDto;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.comment.CommentRepository;
@@ -79,9 +79,9 @@ public class CommentService {
      * @param id 조회할 댓글의 식별자
      * @return
      */
-    public Page<CommentWithUserResponseDto> findCommentsByRecipe(Long id, Pageable pageable) {
+    public Page<CommentItemDto> findCommentsByRecipe(Long id, Pageable pageable) {
         validateRecipe(id);
-        Page<CommentWithUserResponseDto> dto = commentRepository.findWithUserByRecipeId(id, pageable);
+        Page<CommentItemDto> dto = commentRepository.findWithUserByRecipeId(id, pageable);
         return dto;
     }
 

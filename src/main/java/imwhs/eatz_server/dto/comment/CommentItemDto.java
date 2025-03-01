@@ -9,7 +9,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * CommentByRecipeResponseDto 클래스입니다.
+ * CommentItemDto 클래스입니다.
  * <ul>
  *     <li>댓글의 기본 정보와 댓글을 등록한 사용자의 기본(최소) 정보를 포함하는 DTO입니다.</li>
  *     <li>레시피 별 댓글 목록을 조회하는 상황에서, 댓글 목록과 같이 댓글이 컬렉션에 포함되어졌을 때<br/>
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 // TODO: DTO 클래스 공통 필드 상속
 @Data
 @AllArgsConstructor
-public class CommentWithUserResponseDto {
+public class CommentItemDto {
 
     private Long id;
 
@@ -35,18 +35,5 @@ public class CommentWithUserResponseDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime deletedAt;
-
-    public CommentWithUserResponseDto(Comment comment) {
-        this.id = comment.getId();
-        this.user = new EatzUserBasicDto(comment.getUser());
-        this.content = comment.getContent();
-        this.isHidden = comment.isHidden();
-        this.createdAt = comment.getCreatedAt();
-        this.updatedAt = comment.getUpdatedAt();
-        this.deletedAt = comment.getDeletedAt();
-    }
 
 }

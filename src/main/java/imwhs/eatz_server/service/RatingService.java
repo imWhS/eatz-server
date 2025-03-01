@@ -3,9 +3,8 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Rating;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.rating.RatingDtoOld;
-import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
-import imwhs.eatz_server.dto.rating.RatingWithUserResponseDto;
+import imwhs.eatz_server.dto.Paged;
+import imwhs.eatz_server.dto.rating.*;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
@@ -100,14 +99,23 @@ public class RatingService {
         return new RatingDtoOld(rating);
     }
 
-    public Page<RatingWithUserResponseDto> findRatingsByRecipe(Long id, Pageable pageable) {
+    public Page<RatingItemDto> findRatingsByRecipe(Long id, Pageable pageable) {
         validateRecipe(id);
         return ratingRepository.findWithUserByRecipeId(id, pageable);
     }
 
     public Page<RatingWithRecipeResponseDto> findRatingsByUser(Long id, Pageable pageable) {
         validateUser(id);
-        return ratingRepository.findWithRecipeByUser(id, pageable);
+        return ratingRepository.findWithRecipeByUserId(id, pageable);
+    }
+
+
+    public RatingsDetailDto findRatingsDetail(Long recipeId, Pageable pageable) {
+        validateRecipe(recipeId);
+
+        RatingsSummaryDistributionDto summary = ratingRepository.findAverageScoreByRecipeId(recipeId);
+        Paged<RatingItemDto> ratings = new Paged<>(ratingRepository.findWithUserByRecipeId(recipeId, pageable));
+        return new RatingsDetailDto(summary, ratings);
     }
 
     /**
