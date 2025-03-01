@@ -64,30 +64,6 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanCustomRep
                                                                    @Param("startDate") LocalDate startDate,
                                                                    @Param("endDate") LocalDate endDate);
 
-
-    /*
-    특정 사용자, 일정의 '플랜에 추가된 레시피' 별 요리 가능 여부
-
-
-    PLAN A.
-    1. 사용자 ID, 일정에 대한 Plan 목록 조회 - Plan 목록에서 사용자가 요리하려는 레시피 ID 목록을 가져올 수 있음.
-    2. 사용자가 요리하려는 레시피 ID 목록을 이용해 재료 조회 -  사용자가 요리하려는 레시피들이 필요로 하는 재료 목록을 가져올 수 있음.
-    3.
-     */
-
-    /*
-    select new imwhs.eatz_server.dto.plan.ChecklistItemResponseDto(
-        new imwhs.eatz_server.dto.recipe.RecipeBasicDto(
-            ir.recipe.id,
-            ir.recipe.title,
-            ir.recipe.imageUrl),
-        new imwhs.eatz_server.dto.ingredient.IngredientDto(
-            ir.ingredient.id,
-            ir.ingredient.name),
-        case when iu.id is null then true else false end
-    )
-     */
-
     @Query("""
         select new imwhs.eatz_server.dto.plan.ChecklistItemResponseDto(
             new imwhs.eatz_server.dto.recipe.RecipeBasicDto(p.recipe.id, p.recipe.title, p.recipe.imageUrl),

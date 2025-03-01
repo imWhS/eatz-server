@@ -58,7 +58,7 @@ public class RecipeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<NRecipeDto>> getRecipe(@PathVariable Long id) {
-        NRecipeDto dto = recipeQueryService.findRecipeById(id);
+        NRecipeDto dto = recipeQueryService.findRecipeById(id, EatzUserAuthUtil.getId());
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
