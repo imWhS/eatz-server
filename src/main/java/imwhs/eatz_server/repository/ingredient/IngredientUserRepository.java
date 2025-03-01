@@ -31,4 +31,7 @@ public interface IngredientUserRepository extends JpaRepository<IngredientUser, 
             "where iu.user = :user and iu.ingredient.id in :ingredientIds")
     void deleteByUserAndIngredientIds(@Param("user") EatzUser user, @Param("ingredientIds") List<Long> ingredientIds);
 
+
+
+
 }

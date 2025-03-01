@@ -1,12 +1,15 @@
 package imwhs.eatz_server.service.query;
 
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.ingredient.IngredientByRecipeDto;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRecipeRepository;
+import imwhs.eatz_server.repository.ingredient.IngredientUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeCategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +45,8 @@ public class RecipeQueryService {
     private final IngredientRecipeRepository ingredientRecipeRepository;
 
     private final RecipeCategoryRepository recipeCategoryRepository;
+    private final IngredientUserRepository ingredientUserRepository;
+    private final EatzUserRepository eatzUserRepository;
 
     /**
      * 식별자로 레시피를 조회합니다.
@@ -49,7 +54,7 @@ public class RecipeQueryService {
      * @return 조회된 레시피 정보를 담고 있는 RecipeDto.
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
-    public NRecipeDto findRecipeById(Long id) {
+    public NRecipeDto findRecipeById(Long id, Long userId) {
         // 레시피 ID에 대한 Recipe와 해당 레시피를 등록한 사용자에 대한 User를 페치 조인을 통해 함께 가져옵니다.
         NRecipeDto recipeDto = recipeRepository.findRecipeWithUser(id).orElseThrow(
                 () -> new RecipeNotFoundException(id));
@@ -58,6 +63,15 @@ public class RecipeQueryService {
         ingredientRecipeRepository.findIngredientsByRecipe(id).forEach(ingredient -> {
             recipeDto.getIngredients().add(ingredient);
         });
+
+        // 레시피 정보를 요청한 사용자의 레시피 재료 별 보유 여부를 가져옵니다.
+        if (userId != null) {
+            EatzUser user = eatzUserRepository.findById(userId).orElseThrow(() -> new EatzUserNotFoundException(userId));
+            List<Long> ingredientIdsByUser = ingredientUserRepository.findIngredientIdsByUser(user);
+            recipeDto.getIngredients().forEach(ingredient -> {
+                ingredient.setOwnedByUser(ingredientIdsByUser.contains(ingredient.getId()));
+            });
+        }
 
         // 레시피 ID에 대한 모든 Category를 RecipeCategory와의 페치 조인을 통해 함께 가져옵니다.
         recipeCategoryRepository.findCategoriesByRecipe(id).forEach(recipeCategory -> {
