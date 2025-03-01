@@ -2,7 +2,7 @@ package imwhs.eatz_server.controller.recipe;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.comment.CommentWithUserResponseDto;
+import imwhs.eatz_server.dto.comment.CommentItemDto;
 import imwhs.eatz_server.dto.comment.CommentCreateDto;
 import imwhs.eatz_server.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +28,10 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<CommentWithUserResponseDto>>> findComments(
+    public ResponseEntity<ApiResponse<Paged<CommentItemDto>>> findComments(
             @PathVariable Long id,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<CommentWithUserResponseDto> comments = commentService.findCommentsByRecipe(id, pageable);
+        Page<CommentItemDto> comments = commentService.findCommentsByRecipe(id, pageable);
         return ResponseEntity.ok(ApiResponse.success(comments));
     }
 
