@@ -1,7 +1,6 @@
 package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -62,7 +61,7 @@ public class NRecipeDto {
     /**
      * 재료 목록. (from IngredientRecipe)
      */
-    private List<IngredientDto> ingredients = new ArrayList<>();
+    private List<RecipeIngredientDto> ingredients = new ArrayList<>();
 
     /**
      * 레시피의 카테고리 목록. (from RecipeCategory)

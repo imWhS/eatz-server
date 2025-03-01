@@ -17,4 +17,6 @@ public interface RecipeCustomRepository {
 
     Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String title, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable);
 
+    Optional<NRecipeDto> findRecipeWithUserIngredients(Long id);
+
 }
