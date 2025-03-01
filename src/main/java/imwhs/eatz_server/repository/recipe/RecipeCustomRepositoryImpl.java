@@ -38,6 +38,47 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public Optional<NRecipeDto> findRecipeWithUserIngredients(Long id) {
+        QRecipe recipe = QRecipe.recipe;
+        QEatzUser user = QEatzUser.eatzUser;
+        QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
+        QIngredient ingredient = QIngredient.ingredient;
+
+        NRecipeDto recipeDto = queryFactory
+                .select(
+                        Projections.constructor(NRecipeDto.class,
+                                recipe.id,
+                                recipe.title,
+                                recipe.description,
+                                recipe.imageUrl,
+                                recipe.createdAt,
+                                recipe.updatedAt,
+                                Projections.constructor(NRecipeDto.UserDto.class,
+                                        user.id,
+                                        user.username,
+                                        user.imageUrl,
+                                        JPAExpressions
+                                                .select(recipe.count())
+                                                .from(recipe)
+                                                .where(recipe.user.eq(user))
+                                ),
+                                Projections.constructor(IngredientDto.class,
+                                        ingredient.id,
+                                        ingredient.name
+                                )
+                        )
+                )
+                .from(recipe)
+                .join(recipe.user, user)
+                .join(recipe.ingredientRecipes, ingredientRecipe)
+                .join(ingredientRecipe.ingredient, ingredient)
+                .where(recipe.id.eq(id).and(recipe.deletedAt.isNull()))
+                .fetchOne();
+
+        return Optional.ofNullable(recipeDto);
+    }
+
+    @Override
     public Optional<NRecipeDto> findRecipeWithUser(Long id) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
