@@ -6,8 +6,8 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Category;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.domain.recipe.RecipeCategory;
-import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
-import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
+import imwhs.eatz_server.dto.recipe.CreateRecipeDto;
+import imwhs.eatz_server.dto.recipe.UpdateRecipeDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
@@ -50,7 +50,7 @@ public class RecipeService {
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
     @Transactional
-    public Long registerRecipe(RecipeCreateDto dto, String username) {
+    public Long register(CreateRecipeDto dto, String username) {
         EatzUser user = getEatzUser(username);
         Recipe recipe = Recipe.create(user, dto.getTitle(), dto.getUrl(), dto.getImageUrl(), dto.getDescription());
 
@@ -77,7 +77,7 @@ public class RecipeService {
      * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자와 레시피를 등록한 사용자 식별자가 다른 경우.
      */
     @Transactional
-    public void updateRecipe(Long id, RecipeUpdateDto dto, String username) {
+    public void update(Long id, UpdateRecipeDto dto, String username) {
         Recipe recipe = getRecipe(id);
         EatzUser user = getEatzUser(username);
         validateUserAuthorization(recipe, user);
@@ -103,7 +103,7 @@ public class RecipeService {
      * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자.와 레시피를 등록한 사용자 식별자가 다른 경우.
      */
     @Transactional
-    public void markRecipeAsDeleted(Long id, String username) {
+    public void markAsDeleted(Long id, String username) {
         EatzUser user = getEatzUser(username);
         Recipe recipe = getRecipe(id);
         validateUserAuthorization(recipe, user);
@@ -121,7 +121,7 @@ public class RecipeService {
     }
 
     private void validateUserAuthorization(Recipe recipe, EatzUser user) {
-        if (!recipe.getUser().equals(user)) {
+        if (!recipe.getAuthor().equals(user)) {
             throw new UnauthorizedAccessException("해당 레시피를 등록한 사용자가 아니어서, 레시피를 업데이트할 권한이 없습니다.");
         }
     }

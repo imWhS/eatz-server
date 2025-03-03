@@ -5,6 +5,8 @@ import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.ingredient.IngredientByRecipeDto;
 import imwhs.eatz_server.dto.recipe.*;
+import imwhs.eatz_server.dto.recipe.category.CategoryByRecipeDto;
+import imwhs.eatz_server.dto.recipe.category.CategoryBasicDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -45,7 +47,9 @@ public class RecipeQueryService {
     private final IngredientRecipeRepository ingredientRecipeRepository;
 
     private final RecipeCategoryRepository recipeCategoryRepository;
+
     private final IngredientUserRepository ingredientUserRepository;
+
     private final EatzUserRepository eatzUserRepository;
 
     /**
@@ -54,9 +58,9 @@ public class RecipeQueryService {
      * @return 조회된 레시피 정보를 담고 있는 RecipeDto.
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
      */
-    public NRecipeDto findRecipeById(Long id, Long userId) {
+    public RecipeDto findById(Long id, Long userId) {
         // 레시피 ID에 대한 Recipe와 해당 레시피를 등록한 사용자에 대한 User를 페치 조인을 통해 함께 가져옵니다.
-        NRecipeDto recipeDto = recipeRepository.findRecipeWithUser(id).orElseThrow(
+        RecipeDto recipeDto = recipeRepository.findRecipeWithUser(id).orElseThrow(
                 () -> new RecipeNotFoundException(id));
 
         // 레시피 ID에 대한 모든 Ingredient를 IngredientRecipe와의 페치 조인을 통해 함께 가져옵니다.
@@ -91,13 +95,20 @@ public class RecipeQueryService {
      * @return 조회된 레시피의 목록과 메타 데이터를 담고 있는 PagedResponseDto.
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
-    public Page<RecipeDto> findRecipesByUserId(Long userId, Pageable pageable) {
-        Page<RecipeDto> foundRecipes = recipeRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
-        return foundRecipes;
+    public Page<RecipeByUserDto> findByUserId(Long userId, Pageable pageable) {
+        Page<RecipeByUserDto> recipes = recipeRepository.findByAuthorIdAndDeletedAtIsNull(userId, pageable);
+        return recipes;
     }
 
-    public Page<RecipeItemDto> search(RecipeItemSortType sortType, Long userId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Pageable pageable) {
-        Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, categoryId, keyword, ingredientIds, exactIngredientIds, null, pageable);
+    public Page<RecipeItemDto> search(
+            RecipeItemSortType sortType,
+            Long userId,
+            Long categoryId,
+            String keyword,
+            List<Long> ingredientIds,
+            List<Long> requiredIngredientIds,
+            Pageable pageable) {
+        Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, categoryId, keyword, ingredientIds, requiredIngredientIds, null, pageable);
 
         List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
 
@@ -120,14 +131,14 @@ public class RecipeQueryService {
                     .map(ingredient -> new IngredientDto(ingredient.getIngredientId(), ingredient.getIngredientName()))
                     .collect(Collectors.toList());
 
-            List<CategoryDto> categoryDtos = Optional.ofNullable(categoriesByRecipeIdMap.get(recipeId))
+            List<CategoryBasicDto> categoryBasicDtos = Optional.ofNullable(categoriesByRecipeIdMap.get(recipeId))
                     .orElse(Collections.emptyList())
                     .stream()
-                    .map(category -> new CategoryDto(category.getCategoryId(), category.getCategoryName()))
+                    .map(category -> new CategoryBasicDto(category.getCategoryId(), category.getCategoryName()))
                     .collect(Collectors.toList());
 
             item.setIngredients(ingredientDtos);
-            item.setCategories(categoryDtos);
+            item.setCategories(categoryBasicDtos);
         }
 
         return items;

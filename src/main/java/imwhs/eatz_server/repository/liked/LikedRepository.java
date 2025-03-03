@@ -53,7 +53,7 @@ public interface LikedRepository extends JpaRepository<Liked, Long> {
      * @param type 조회할 항목의 유형. RECIPE 또는 COMMENT가 될 수 있습니다.
      * @return 특정 항목을 좋아하는 모든 사용자 요약 정보
      */
-    @Query("select new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u) " +
+    @Query("select new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.imageUrl) " +
             "from Liked l " +
             "inner join EatzUser u on l.user = u and l.isLiked = true " +
             "where l.entityId = :entityId and l.type = :type")

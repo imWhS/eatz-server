@@ -1,8 +1,7 @@
 package imwhs.eatz_server.repository.recipe;
 
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.recipe.RecipeItemDto;
-import imwhs.eatz_server.dto.recipe.RecipeDto;
+import imwhs.eatz_server.dto.recipe.RecipeByUserDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,24 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeCustomRepository {
 
-    Long countByUserIdAndDeletedAtIsNull(Long userId);
-
-    /**
-     * 모든 레시피 조회.
-     * <p>
-     *     모든 Recipe 엔티티를 페이징 적용해 조회합니다.
-     *     삭제 처리된 레시피는 조회 대상에서 제외됩니다.
-     * </p>
-     * @param pageable 페이징 설정 정보.
-     * @return 페이징 적용된 모든 Recipe 컬렉션.
-     */
-    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
-            "from Recipe r " +
-            "left join Liked l on r.id = l.entityId and l.type = 'RECIPE' " +
-            "left join EatzUser u on r.user.id = u.id " +
-            "where r.deletedAt IS NULL " +
-            "group by r")
-    Page<RecipeDto> findAllByDeletedAtIsNull(Pageable pageable);
+    Long countByAuthorIdAndDeletedAtIsNull(Long userId);
 
     /**
      * 특정 사용자가 등록한 모든 레시피 조회.
@@ -43,17 +25,15 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeCus
      *     특정 EatzUser의 식별자로 모든 Recipe 엔티티를 페이징 적용해 조회합니다.
      *     삭제 처리된 레시피는 조회 대상에서 제외됩니다.
      * </p>
-     * @param userId 사용자 식별자.
+     * @param authorId 사용자 식별자.
      * @param pageable 페이징 설정 정보.
      * @return 페이징 적용된 모든 Recipe 컬렉션.
      */
-    @Query("select new imwhs.eatz_server.dto.recipe.RecipeDto(r, u, COUNT(l.id)) " +
+    @Query("select new imwhs.eatz_server.dto.recipe.RecipeByUserDto(" +
+            "r.id, r.title, r.description, r.url, r.imageUrl, r.createdAt, r.updatedAt) " +
             "from Recipe r " +
-            "left join Liked l on r.id = l.entityId and l.type = 'RECIPE' " +
-            "left join EatzUser u on r.user.id = u.id " +
-            "where r.user.id = :userId and r.deletedAt IS NULL " +
-            "group by r")
-    Page<RecipeDto> findAllByUserIdAndDeletedAtIsNull(@Param("userId") Long userId, Pageable pageable);
+            "where r.author.id = :authorId and r.deletedAt IS NULL ")
+    Page<RecipeByUserDto> findByAuthorIdAndDeletedAtIsNull(@Param("authorId") Long authorId, Pageable pageable);
 
 
 }

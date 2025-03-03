@@ -1,6 +1,6 @@
 package imwhs.eatz_server.repository.recipe.savedrecipe;
 
-import imwhs.eatz_server.domain.recipe.NSavedRecipe;
+import imwhs.eatz_server.domain.recipe.SavedRecipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface SavedRecipeRepository extends JpaRepository<NSavedRecipe, Long>, SavedRecipeCustomRepository {
+public interface SavedRecipeRepository extends JpaRepository<SavedRecipe, Long>, SavedRecipeCustomRepository {
 
     /**
      * 사용자의 레시피 저장 여부를 조회합니다.
@@ -26,13 +26,13 @@ public interface SavedRecipeRepository extends JpaRepository<NSavedRecipe, Long>
      */
     long countByRecipeId(Long id);
 
-    @Query("select new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.email, u.imageUrl) " +
-            "from NSavedRecipe sr join sr.user u " +
+    @Query("select new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.imageUrl) " +
+            "from SavedRecipe sr join sr.user u " +
             "where sr.recipe.id = :id")
     List<EatzUserBasicDto> findUsersByRecipeId(@Param("id") Long id);
 
     @Query("select new imwhs.eatz_server.dto.recipe.RecipeBasicDto(r.id, r.title, r.imageUrl) " +
-            "from NSavedRecipe sr " +
+            "from SavedRecipe sr " +
             "join sr.recipe r " +
             "join sr.user " +
             "where sr.user.username = :username")

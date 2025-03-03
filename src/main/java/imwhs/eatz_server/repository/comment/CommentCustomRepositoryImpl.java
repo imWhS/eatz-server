@@ -6,7 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.recipe.QComment;
 import imwhs.eatz_server.domain.recipe.QRecipe;
-import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
+import imwhs.eatz_server.dto.comment.CommentDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +21,14 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<CommentDetailResponseDto> findCommentDetailById(Long id) {
+    public Optional<CommentDto> findCommentDetailById(Long id) {
         QComment comment = QComment.comment;
         QEatzUser user = QEatzUser.eatzUser;
         QRecipe recipe = QRecipe.recipe;
 
         return Optional.ofNullable(queryFactory
                 .select(
-                        Projections.constructor(CommentDetailResponseDto.class,
+                        Projections.constructor(CommentDto.class,
                                 comment.id,
                                 Projections.constructor(EatzUserSummaryDto.class,
                                         user.id,
@@ -36,7 +36,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                                         JPAExpressions
                                                 .select(recipe.count().intValue())
                                                 .from(recipe)
-                                                .where(recipe.user.eq(user))),
+                                                .where(recipe.author.eq(user))),
                                 Projections.constructor(RecipeBasicDto.class,
                                         recipe.id,
                                         recipe.title,
@@ -44,7 +44,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                                 comment.content)
                 )
                 .from(comment)
-                .leftJoin(comment.user, user)
+                .leftJoin(comment.author, user)
                 .leftJoin(comment.recipe, recipe)
                 .where(comment.id.eq(id)
                         .and(comment.deletedAt.isNull()))

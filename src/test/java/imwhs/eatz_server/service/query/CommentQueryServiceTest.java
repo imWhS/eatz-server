@@ -3,7 +3,7 @@ package imwhs.eatz_server.service.query;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Comment;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
+import imwhs.eatz_server.dto.comment.CommentDto;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
@@ -75,16 +75,16 @@ public class CommentQueryServiceTest {
         commentRepository.save(comment);
 
         // when
-        CommentDetailResponseDto commentDetailResponseDto = commentQueryService.findCommentDetail(comment.getId());
+        CommentDto commentDto = commentQueryService.findCommentDetail(comment.getId());
 
         // then
-        Assertions.assertNotNull(commentDetailResponseDto);
-        Assertions.assertEquals(comment.getId(), commentDetailResponseDto.getId());
-        Assertions.assertEquals(commentWriter.getId(), commentDetailResponseDto.getUser().getId());
-        Assertions.assertEquals(2, commentDetailResponseDto.getUser().getRecipeCount());
-        Assertions.assertEquals(recipe.getId(), commentDetailResponseDto.getRecipe().getId());
-        Assertions.assertEquals(recipe.getTitle(), commentDetailResponseDto.getRecipe().getTitle());
-        Assertions.assertEquals(comment.getContent(), commentDetailResponseDto.getContent());
+        Assertions.assertNotNull(commentDto);
+        Assertions.assertEquals(comment.getId(), commentDto.getId());
+        Assertions.assertEquals(commentWriter.getId(), commentDto.getUser().getId());
+        Assertions.assertEquals(2, commentDto.getUser().getRecipeCount());
+        Assertions.assertEquals(recipe.getId(), commentDto.getRecipe().getId());
+        Assertions.assertEquals(recipe.getTitle(), commentDto.getRecipe().getTitle());
+        Assertions.assertEquals(comment.getContent(), commentDto.getContent());
     }
 
 //    @Test

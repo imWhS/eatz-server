@@ -4,7 +4,7 @@ import imwhs.eatz_server.domain.liked.LikedType;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.liked.LikedDetailDto;
 import imwhs.eatz_server.dto.liked.LikedDto;
-import imwhs.eatz_server.dto.liked.LikedRequestDto;
+import imwhs.eatz_server.dto.liked.ToggleLikedDto;
 import imwhs.eatz_server.service.LikedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class LikedController {
     private final LikedService likedService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<LikedDto>> toggleLikeOf(@RequestBody LikedRequestDto dto) {
+    public ResponseEntity<ApiResponse<LikedDto>> toggleLikeOf(@RequestBody ToggleLikedDto dto) {
         LikedDto likedDto = likedService.toggleLikeOf(dto.getEntityId(), dto.getType());
         return ResponseEntity.ok(ApiResponse.success(likedDto));
     }
