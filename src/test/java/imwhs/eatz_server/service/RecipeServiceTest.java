@@ -1,16 +1,8 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
-import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
-import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.service.recipe.RecipeService;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;

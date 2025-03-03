@@ -3,7 +3,7 @@ package imwhs.eatz_server.repository.ingredient;
 import imwhs.eatz_server.domain.IngredientRecipe;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.ingredient.IngredientByRecipeDto;
-import imwhs.eatz_server.dto.recipe.RecipeIngredientDto;
+import imwhs.eatz_server.dto.recipe.ingredient.RecipeIngredientDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,7 +28,7 @@ public interface IngredientRecipeRepository extends JpaRepository<IngredientReci
             "where ir.recipe.id in :recipeIds")
     List<IngredientByRecipeDto> findIngredientsByRecipeIds(@Param("recipeIds") List<Long> recipeIds);
 
-    @Query("select new imwhs.eatz_server.dto.recipe.RecipeIngredientDto(ir.id, i.name) " +
+    @Query("select new imwhs.eatz_server.dto.recipe.ingredient.RecipeIngredientDto(ir.id, i.name) " +
             "from IngredientRecipe ir " +
             "join ir.ingredient i " +
             "where ir.recipe.id = :recipeId ")

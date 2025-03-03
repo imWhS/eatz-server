@@ -2,7 +2,7 @@ package imwhs.eatz_server.dto.eatzuser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.eatzuser.Role;
+import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -20,7 +20,7 @@ public class EatzUserDto {
 
     private String email;
 
-    private Role role;
+    private EatzUserRole eatzUserRole;
 
     private String imageUrl;
 
@@ -37,7 +37,7 @@ public class EatzUserDto {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
-        this.role = user.getRole();
+        this.eatzUserRole = user.getEatzUserRole();
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
         this.deletedAt = user.getDeletedAt();

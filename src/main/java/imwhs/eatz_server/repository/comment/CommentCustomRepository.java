@@ -1,11 +1,11 @@
 package imwhs.eatz_server.repository.comment;
 
-import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
+import imwhs.eatz_server.dto.comment.CommentDto;
 
 import java.util.Optional;
 
 public interface CommentCustomRepository {
 
-    Optional<CommentDetailResponseDto> findCommentDetailById(Long id);
+    Optional<CommentDto> findCommentDetailById(Long id);
 
 }

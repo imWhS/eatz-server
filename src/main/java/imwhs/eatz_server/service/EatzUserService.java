@@ -2,8 +2,8 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.dto.eatzuser.EatzUserDeleteDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
+import imwhs.eatz_server.dto.eatzuser.DeleteEatzUserDto;
+import imwhs.eatz_server.dto.eatzuser.UpdateEatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.InvalidPasswordException;
 import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
@@ -39,7 +39,7 @@ public class EatzUserService {
      * @param dto 사용자 업데이트 DTO.
      */
     @Transactional
-    public void updateUser(String username, Long id, EatzUserUpdateDto dto) {
+    public void updateUser(String username, Long id, UpdateEatzUserDto dto) {
         EatzUser user = userRepository.findById(id).orElseThrow(() ->
                 new EatzUserNotFoundException(id));
 
@@ -85,7 +85,7 @@ public class EatzUserService {
      */
     // TODO: 삭제 처리 여부 결정
     @Transactional
-    public void deleteUser(Long id, EatzUserDeleteDto dto) {
+    public void deleteUser(Long id, DeleteEatzUserDto dto) {
         EatzUser user = userRepository.findById(id).orElseThrow(() ->
                 new EatzUserNotFoundException("ID가 " + id + "인 사용자를 찾을 수 없습니다."));
         validateExistingPassword(dto.getExistingPassword(), user);

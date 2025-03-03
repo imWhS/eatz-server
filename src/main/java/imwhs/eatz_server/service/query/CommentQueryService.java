@@ -1,8 +1,8 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.dto.PagedApiResponse;
-import imwhs.eatz_server.dto.comment.CommentByUserResponseDto;
-import imwhs.eatz_server.dto.comment.CommentDetailResponseDto;
+import imwhs.eatz_server.dto.comment.CommentByUserDtoOld;
+import imwhs.eatz_server.dto.comment.CommentDto;
 import imwhs.eatz_server.dto.comment.CommentItemDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentQueryRepository;
@@ -38,7 +38,7 @@ public class CommentQueryService {
      * 식별자로 댓글과 관련된 상세 정보를 조회합니다.<br/>
      * 식별자에 해당하는 댓글의 기본 정보와 댓글을 등록한 사용자, 댓글이 달린 레시피의 부가 정보를 조회합니다.
      */
-    public CommentDetailResponseDto findCommentDetail(Long id) {
+    public CommentDto findCommentDetail(Long id) {
         return commentQueryRepository.findCommentDetailById(id)
                 .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글이 존재하지 않습니다."));
     }
@@ -62,11 +62,11 @@ public class CommentQueryService {
      * 사용자가 등록한 모든 댓글 별 기본 정보와 해당 댓글이 달린 레시피의 부가 정보를 조회합니다.
      * @param id 레시피 식별자
      */
-    public PagedApiResponse<CommentByUserResponseDto> findCommentsByUser(Long id, Integer currentPage, Integer pagingSize) {
+    public PagedApiResponse<CommentByUserDtoOld> findCommentsByUser(Long id, Integer currentPage, Integer pagingSize) {
         int page = currentPage == null ? DEFAULT_CURRENT_PAGE : currentPage;
         int size = pagingSize == null ? DEFAULT_PAGING_SIZE : pagingSize;
 
-        List<CommentByUserResponseDto> data = commentQueryRepository.findCommentsByUser(id, page, size);
+        List<CommentByUserDtoOld> data = commentQueryRepository.findCommentsByUser(id, page, size);
         Long totalItems = commentQueryRepository.countCommentsByUser(id);
         return PagedApiResponse.success(data, totalItems, (int) Math.ceil((double) totalItems / size), page, size);
     }

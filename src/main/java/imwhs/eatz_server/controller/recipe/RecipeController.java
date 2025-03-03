@@ -4,10 +4,9 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.recipe.*;
+import imwhs.eatz_server.dto.recipe.ingredient.AddIngredientDto;
 import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
-import imwhs.eatz_server.service.SavedRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * RecipeController 클래스입니다.
+ * 레시피를 관리하기 위한 API를 제공하는 컨트롤러입니다.
  */
 @RequestMapping("/api/v0/recipes")
 @RequiredArgsConstructor
@@ -34,49 +33,47 @@ public class RecipeController {
 
     private final IngredientRecipeService ingredientRecipeService;
 
-    private final SavedRecipeService savedRecipeService;
-
+    /**
+     * 새 레시피를 등록합니다.
+     * @param dto 등록하려는 레시피 관련 정보.
+     * @return 생성된 레시피의 ID.
+     */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
-        Long recipeId = recipeService.registerRecipe(dto, EatzUserAuthUtil.getUsername());
+    public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody CreateRecipeDto dto) {
+        Long recipeId = recipeService.register(dto, EatzUserAuthUtil.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(recipeId));
     }
 
+    /**
+     * 레시피를 업데이트합니다.
+     * @param id 업데이트하려는 레시피의 ID.
+     * @param dto 업데이트하려는 레시피 관련 정보.
+     */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> updateRecipe(@PathVariable Long id, @RequestBody RecipeUpdateDto dto) {
-        recipeService.updateRecipe(id, dto, EatzUserAuthUtil.getUsername());
-        return ResponseEntity.ok().body(ApiResponse.success("레시피를 성공적으로 업데이트했어요."));
+    public void updateRecipe(@PathVariable Long id, @RequestBody UpdateRecipeDto dto) {
+        recipeService.update(id, dto, EatzUserAuthUtil.getUsername());
     }
 
+    /**
+     * 레시피를 삭제 처리합니다.
+     * <p>레시피를 등록한 사용자만 접근 가능합니다.</p>
+     * @param id 삭제 처리하려는 레시피의 ID.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> deleteRecipe(@PathVariable Long id) {
-        recipeService.markRecipeAsDeleted(id, EatzUserAuthUtil.getUsername());
-        return ResponseEntity.ok().body(ApiResponse.success("레시피를 성공적으로 삭제했어요."));
+    public void deleteRecipe(@PathVariable Long id) {
+        recipeService.markAsDeleted(id, EatzUserAuthUtil.getUsername());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<NRecipeDto>> getRecipe(@PathVariable Long id) {
-        NRecipeDto dto = recipeQueryService.findRecipeById(id, EatzUserAuthUtil.getId());
-        return ResponseEntity.ok(ApiResponse.success(dto));
-    }
-
-    @GetMapping
-    public ResponseEntity<ApiResponse<Paged<RecipeItemDto>>> searchRecipes(
-            @RequestParam(defaultValue = "LATEST") RecipeItemSortType sortType,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) List<Long> ingredientIds,
-            @RequestParam(required = false) List<Long> exactIngredientIds,
-            @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), categoryId, keyword, ingredientIds, exactIngredientIds, pageable);
-        return ResponseEntity.ok(ApiResponse.success(allRecipes));
-    }
-
+    /**
+     * 레시피에 재료를 추가합니다.
+     * @param id 레시피의 ID.
+     * @param dto 추가하려는 재료 정보.
+     */
     @PostMapping("/{id}/ingredients")
-    public ResponseEntity<?> addIngredients(@PathVariable Long id, @RequestBody IngredientAddDto dto) {
-        List<Long> addedIngredients = ingredientRecipeService.addAllIngredientsToRecipe(dto.getIngredientIds(), id);
+    public ResponseEntity<?> addIngredients(@PathVariable Long id, @RequestBody AddIngredientDto dto) {
+        List<Long> addedIngredients = ingredientRecipeService.addIngredientsToRecipe(dto.getIngredientIds(), id);
 
         if (addedIngredients.size() != dto.getIngredientIds().size()) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(ApiResponse.success(addedIngredients));
@@ -88,15 +85,38 @@ public class RecipeController {
         return ResponseEntity.ok().body(ApiResponse.success(addedIngredients));
     }
 
-    @GetMapping("/{id}/saveds")
-    public ResponseEntity<ApiResponse<List<EatzUserBasicDto>>> getSavedUsers(@PathVariable Long id) {
-        return ResponseEntity.ok().body(ApiResponse.success(savedRecipeService.getSavedUsersByRecipe(id)));
+    /**
+     * 레시피를 조회합니다.
+     * @param id 조회하려는 레시피의 ID.
+     * @return 레시피 정보.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<RecipeDto>> findRecipe(@PathVariable Long id) {
+        RecipeDto dto = recipeQueryService.findById(id, EatzUserAuthUtil.getId());
+        return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
-    @GetMapping("/{id}/saveds/count")
-    public ResponseEntity<ApiResponse<Long>> getSavedUserCount(@PathVariable Long id) {
-        Long savedUserCount = savedRecipeService.countSaveds(id);
-        return ResponseEntity.ok(ApiResponse.success(savedUserCount));
+    /**
+     * 필터링을 적용해 레시피 목록을 검색하거나, 모든 레시피 목록을 조회합니다.
+     * @param sortType 레시피 정렬 기준.
+     * @param keyword 레시피를 필터링 할 제목 및 내용 키워드.
+     * @param categoryId 레시피를 필터링 할 카테고리 ID.
+     * @param ingredientIds 레시피를 필터링 할 재료 ID 목록.
+     * @param requiredIngredientIds 특정 재료 집합과 일치하는 레시피만 필터링하기 위한 재료 ID 목록.
+     * @param pageable 페이징 정보.
+     * @return 레시피 목록.
+     */
+    @GetMapping
+    public ResponseEntity<ApiResponse<Paged<RecipeItemDto>>> searchRecipes(
+            @RequestParam(required = false) RecipeItemSortType sortType,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) List<Long> ingredientIds,
+            @RequestParam(required = false) List<Long> requiredIngredientIds,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        if (sortType == null) sortType = RecipeItemSortType.LATEST;
+        Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), categoryId, keyword, ingredientIds, requiredIngredientIds, pageable);
+        return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 
 }

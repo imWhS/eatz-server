@@ -4,17 +4,22 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
-import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
+import imwhs.eatz_server.dto.comment.CommentWithRecipeDto;
 import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.plan.*;
-import imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto;
+import imwhs.eatz_server.dto.rating.RatingWithRecipeDto;
 import imwhs.eatz_server.dto.recipe.*;
-import imwhs.eatz_server.dto.recipe.savedrecipe.SavedRecipeCreateDto;
+import imwhs.eatz_server.dto.recipe.ingredient.AddIngredientDto;
+import imwhs.eatz_server.dto.recipe.ingredient.RemoveIngredientDto;
+import imwhs.eatz_server.dto.recipe.savedrecipe.CreateSavedRecipeDto;
 import imwhs.eatz_server.service.*;
 import imwhs.eatz_server.service.ingredient.IngredientUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
+import imwhs.eatz_server.service.recipe.PlanService;
+import imwhs.eatz_server.service.recipe.RatingService;
+import imwhs.eatz_server.service.recipe.SavedRecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +70,7 @@ public class EatzUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> updateUser(
             @PathVariable Long id,
-            @RequestBody @Valid EatzUserUpdateDto dto) {
+            @RequestBody @Valid UpdateEatzUserDto dto) {
         userService.updateUser(EatzUserAuthUtil.getUsername(), id, dto);
         return ResponseEntity.ok().body(ApiResponse.success("사용자의 주요 정보를 업데이트했어요."));
     }
@@ -86,7 +91,7 @@ public class EatzUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(
             @PathVariable Long id,
-            @RequestBody @Valid EatzUserDeleteDto dto) {
+            @RequestBody @Valid DeleteEatzUserDto dto) {
         userService.deleteUser(id, dto);
     }
 
@@ -115,15 +120,15 @@ public class EatzUserController {
     }
 
     @GetMapping("/{id}/recipes")
-    public ResponseEntity<ApiResponse<Paged<RecipeDto>>> getRecipeByUser(
+    public ResponseEntity<ApiResponse<Paged<RecipeByUserDto>>> getRecipesByUser(
             @PathVariable Long id,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RecipeDto> recipes = recipeQueryService.findRecipesByUserId(id, pageable);
+        Page<RecipeByUserDto> recipes = recipeQueryService.findByUserId(id, pageable);
         return ResponseEntity.ok(ApiResponse.success(recipes));
     }
 
     @PostMapping("/saveds")
-    public ResponseEntity<ApiResponse<Long>> save(@RequestBody SavedRecipeCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> save(@RequestBody CreateSavedRecipeDto dto) {
         Long savedRecipeId = savedRecipeService.saveRecipe(dto.getRecipeId(), EatzUserAuthUtil.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(savedRecipeId));
     }
@@ -141,13 +146,13 @@ public class EatzUserController {
     }
 
     @PostMapping("/plans")
-    public ResponseEntity<ApiResponse<Long>> registerPlan(@RequestBody PlanCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> registerPlan(@RequestBody CreatePlanDto dto) {
         Long planId = planService.registerPlan(dto.getRecipeId(), EatzUserAuthUtil.getId(), dto.getDate(), dto.getPriority());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(planId));
     }
 
     @PutMapping("/plans/{id}")
-    public ResponseEntity<ApiResponse<?>> updatePlan(@PathVariable Long id, @RequestBody PlanUpdateDto dto) {
+    public ResponseEntity<ApiResponse<?>> updatePlan(@PathVariable Long id, @RequestBody UpdatePlanDto dto) {
         planService.updatePlan(id, EatzUserAuthUtil.getUsername(), dto.getDate(), dto.getPriority());
         return ResponseEntity.ok(ApiResponse.success("플랜을 성공적으로 업데이트했어요."));
     }
@@ -174,23 +179,23 @@ public class EatzUserController {
     }
 
     @GetMapping("/plans/checklist")
-    public ResponseEntity<ApiResponse<ChecklistResponseDto>> getChecklist(
+    public ResponseEntity<ApiResponse<ChecklistDto>> getChecklist(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
-        ChecklistResponseDto checklist = planService.getChecklist(EatzUserAuthUtil.getId(), startDate, endDate);
+        ChecklistDto checklist = planService.getChecklist(EatzUserAuthUtil.getId(), startDate, endDate);
         return ResponseEntity.ok(ApiResponse.success(checklist));
     }
 
     @PostMapping("/plans/checklist/complete")
     public ResponseEntity<ApiResponse<?>> completeChecklist(
-            @RequestBody ChecklistCompleteDto dto
+            @RequestBody CompleteChecklistDto dto
     ) {
         ingredientUserService.addIngredientsToUser(EatzUserAuthUtil.getId(), dto.getIngredientIds());
         return ResponseEntity.ok(ApiResponse.success("체크리스트의 필요한 재료를 모두 추가했어요."));
     }
 
     @PostMapping("/ingredients")
-    public ResponseEntity<ApiResponse<List<Long>>> addIngredients(@RequestBody IngredientAddDto dto) {
+    public ResponseEntity<ApiResponse<List<Long>>> addIngredients(@RequestBody AddIngredientDto dto) {
         List<Long> addedIngredients = ingredientUserService.addIngredientsToUser(EatzUserAuthUtil.getId(), dto.getIngredientIds());
 
         if (addedIngredients.size() != dto.getIngredientIds().size()) {
@@ -204,7 +209,7 @@ public class EatzUserController {
     }
 
     @DeleteMapping("/ingredients")
-    public ResponseEntity<ApiResponse<?>> removeIngredients(@RequestBody IngredientRemoveDto dto) {
+    public ResponseEntity<ApiResponse<?>> removeIngredients(@RequestBody RemoveIngredientDto dto) {
         ingredientUserService.removeIngredientsFromUser(EatzUserAuthUtil.getUsername(), dto.getIngredientIds());
         return ResponseEntity.ok(ApiResponse.success("재료 제거를 완료했어요."));
     }
@@ -216,16 +221,16 @@ public class EatzUserController {
     }
 
     @GetMapping("/comments")
-    public ResponseEntity<ApiResponse<Paged<CommentWithRecipeResponseDto>>> getComments(
+    public ResponseEntity<ApiResponse<Paged<CommentWithRecipeDto>>> getComments(
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<CommentWithRecipeResponseDto> comments = commentService.findCommentsByUser(EatzUserAuthUtil.getUsername(), pageable);
+        Page<CommentWithRecipeDto> comments = commentService.findCommentsByUser(EatzUserAuthUtil.getUsername(), pageable);
         return ResponseEntity.ok(ApiResponse.success(comments));
     }
 
     @GetMapping("/ratings")
-    public ResponseEntity<ApiResponse<Paged<RatingWithRecipeResponseDto>>> getRatings(
+    public ResponseEntity<ApiResponse<Paged<RatingWithRecipeDto>>> getRatings(
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RatingWithRecipeResponseDto> ratings = ratingService.findRatingsByUser(EatzUserAuthUtil.getId(), pageable);
+        Page<RatingWithRecipeDto> ratings = ratingService.findRatingsByUser(EatzUserAuthUtil.getId(), pageable);
         return ResponseEntity.ok(ApiResponse.success(ratings));
     }
 
