@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.dto.eatzuser.EatzUserEssentialsDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.recipe.category.CategoryBasicDto;
 import lombok.AllArgsConstructor;
@@ -51,7 +51,7 @@ public class RecipeItemDto {
     /**
      * 레시피를 등록한 사용자의 핵심 정보. (with EatzUser)
      */
-    private EatzUserEssentialsDto author;
+    private EatzUserBasicDto author;
 
     /**
      * 레시피의 댓글 수. (from Comment)
@@ -105,7 +105,7 @@ public class RecipeItemDto {
             String imageUrl,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
-            EatzUserEssentialsDto author,
+            EatzUserBasicDto author,
             Boolean isLikedByUser,
             Long commentCount,
             Long likedCount,

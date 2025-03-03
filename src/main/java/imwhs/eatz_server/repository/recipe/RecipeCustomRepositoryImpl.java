@@ -14,7 +14,7 @@ import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.liked.LikedType;
 import imwhs.eatz_server.domain.liked.QLiked;
 import imwhs.eatz_server.domain.recipe.*;
-import imwhs.eatz_server.dto.eatzuser.EatzUserEssentialsDto;
+import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.recipe.category.CategoryBasicDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
@@ -229,7 +229,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(EatzUserEssentialsDto.class,
+                                Projections.constructor(EatzUserBasicDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl
