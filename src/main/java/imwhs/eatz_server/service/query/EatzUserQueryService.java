@@ -1,10 +1,8 @@
 package imwhs.eatz_server.service.query;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
-import imwhs.eatz_server.repository.eatzuser.EatzUserQueryRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

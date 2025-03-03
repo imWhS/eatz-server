@@ -6,7 +6,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class LikedRequestDto {
+public class ToggleLikedDto {
 
     private Long entityId;
 

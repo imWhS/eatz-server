@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.recipe.Comment;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 // TODO: DTO 클래스 공통 필드 상속
 @Data
 @AllArgsConstructor
-public class CommentByUserResponseDto {
+public class CommentByUserDtoOld {
 
     private Long id;
 
@@ -35,16 +35,13 @@ public class CommentByUserResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime deletedAt;
-
-    public CommentByUserResponseDto(
+    public CommentByUserDtoOld(
             Long id,
             RecipeBasicDto recipe,
             String content,
             boolean isHidden) {
         this.id = id;
-        this.recipe = this.recipe;
+        this.recipe = recipe;
         this.content = content;
         this.isHidden = isHidden;
     }

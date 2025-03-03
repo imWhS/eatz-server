@@ -1,12 +1,12 @@
-package imwhs.eatz_server.dto.recipe;
+package imwhs.eatz_server.dto.recipe.category;
 
 import lombok.Data;
 
 /**
- * CategoryCreateDto 클래스입니다.
+ * CreateCategoryDto 클래스입니다.
  */
 @Data
-public class CategoryCreateDto {
+public class CreateCategoryDto {
 
     private String name;
 

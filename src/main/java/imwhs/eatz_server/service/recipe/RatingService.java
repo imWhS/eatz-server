@@ -68,7 +68,7 @@ public class RatingService {
         Rating rating = ratingRepository.findById(ratingId)
                 .orElseThrow(() -> new RatingNotFoundException("id가 " + ratingId + "인 평가가 존재하지 않아요."));
 
-        if (!Objects.equals(rating.getUser().getUsername(), username)) {
+        if (!Objects.equals(rating.getAuthor().getUsername(), username)) {
             throw new UnauthorizedEatzUserException("평가를 수정할 권한이 없어요.");
         }
 
@@ -95,9 +95,9 @@ public class RatingService {
         return ratingRepository.findWithUserByRecipeId(id, pageable);
     }
 
-    public Page<RatingWithRecipeResponseDto> findRatingsByUser(Long id, Pageable pageable) {
+    public Page<RatingWithRecipeDto> findRatingsByUser(Long id, Pageable pageable) {
         validateUser(id);
-        return ratingRepository.findWithRecipeByUserId(id, pageable);
+        return ratingRepository.findWithRecipeByAuthorId(id, pageable);
     }
 
 
@@ -115,7 +115,7 @@ public class RatingService {
      * @param username 사용자 이름.
      */
     private void validateDuplicates(Long recipeId, String username) {
-        if (ratingRepository.existsByRecipeIdAndUserUsername(recipeId, username)) {
+        if (ratingRepository.existsByRecipeIdAndAuthorUsername(recipeId, username)) {
             throw new IllegalArgumentException("이미 평가를 남긴 레시피입니다.");
         }
     }

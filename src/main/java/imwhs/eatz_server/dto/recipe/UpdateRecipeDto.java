@@ -7,12 +7,12 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * RecipeUpdateDto 클래스입니다.<br/>
+ * UpdateRecipeDto 클래스입니다.<br/>
  * 레시피에 대해 업데이트가 필요한 정보를 전달하기 위한 DTO입니다.
  */
 @Data
 @AllArgsConstructor
-public class RecipeUpdateDto {
+public class UpdateRecipeDto {
 
     @NotNull
     private String title;

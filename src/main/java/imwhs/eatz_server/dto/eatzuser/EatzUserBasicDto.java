@@ -16,14 +16,11 @@ public class EatzUserBasicDto {
 
     private String username;
 
-    private String email;
-
     private String imageUrl;
 
     public EatzUserBasicDto(EatzUser user) {
         this.id = user.getId();
         this.username = user.getUsername();
-        this.email = user.getEmail();
         this.imageUrl = user.getImageUrl();
     }
 

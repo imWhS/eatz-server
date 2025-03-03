@@ -1,7 +1,7 @@
 package imwhs.eatz_server.repository.recipe.savedrecipe;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import imwhs.eatz_server.domain.recipe.QNSavedRecipe;
+import imwhs.eatz_server.domain.recipe.QSavedRecipe;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +16,7 @@ public class SavedRecipeCustomRepositoryImpl implements SavedRecipeCustomReposit
      */
     @Override
     public void deleteSavedRecipe(Long userId, Long id) {
-        QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
+        QSavedRecipe savedRecipe = QSavedRecipe.savedRecipe;
 
         queryFactory
                 .delete(savedRecipe)

@@ -2,6 +2,8 @@ package imwhs.eatz_server.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
+import imwhs.eatz_server.dto.recipe.category.CategoryBasicDto;
+import imwhs.eatz_server.dto.recipe.ingredient.RecipeIngredientDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -56,7 +58,7 @@ public class RecipeDto {
     /**
      * 레시피를 등록한 사용자 정보. (with EatzUser)
      */
-    private UserDto user;
+    private AuthorOfRecipeDto author;
 
     /**
      * 재료 목록. (from IngredientRecipe)
@@ -66,7 +68,7 @@ public class RecipeDto {
     /**
      * 레시피의 카테고리 목록. (from RecipeCategory)
      */
-    private List<CategoryDto> categories = new ArrayList<>();
+    private List<CategoryBasicDto> categories = new ArrayList<>();
 
     /**
      * 레시피의 댓글 수. (from Comment)
@@ -89,19 +91,19 @@ public class RecipeDto {
 //    private Long savedCount;
 
 
-    public RecipeDto(Long id, String title, String description, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, UserDto user) {
+    public RecipeDto(Long id, String title, String description, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, AuthorOfRecipeDto author) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.user = user;
+        this.author = author;
     }
 
     @Data
     @AllArgsConstructor
-    public static class UserDto {
+    public static class AuthorOfRecipeDto {
 
         private Long id;
 

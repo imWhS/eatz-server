@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-public class ChecklistResponseDto {
+public class ChecklistDto {
 
     private final List<Long> cookable;
 

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ChecklistCompleteDto {
+public class CompleteChecklistDto {
 
     private List<Long> ingredientIds;
 

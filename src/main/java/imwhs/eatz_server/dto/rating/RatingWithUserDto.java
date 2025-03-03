@@ -18,12 +18,12 @@ import java.time.LocalDateTime;
 // TODO: DTO 클래스 공통 필드 상속
 @Data
 @AllArgsConstructor
-public class RatingByRecipeDto {
+public class RatingWithUserDto {
 
     private Long id;
 
     /** 평가를 등록한 사용자의 기본 정보 */
-    private RatingUserDto user;
+    private UserOfRatingDto user;
 
     private Integer score;
 
@@ -37,12 +37,9 @@ public class RatingByRecipeDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime deletedAt;
-
-    public RatingByRecipeDto(
+    public RatingWithUserDto(
             Long id,
-            RatingUserDto user,
+            UserOfRatingDto user,
             Integer score,
             String content,
             boolean isHidden) {
@@ -53,15 +50,14 @@ public class RatingByRecipeDto {
         this.isHidden = isHidden;
     }
 
-    public RatingByRecipeDto(Rating rating) {
+    public RatingWithUserDto(Rating rating) {
         this.id = rating.getId();
-        this.user = new RatingUserDto(rating.getUser());
+        this.user = new UserOfRatingDto(rating.getAuthor());
         this.score = rating.getScore();
         this.content = rating.getContent();
         this.isHidden = rating.isHidden();
         this.createdAt = rating.getCreatedAt();
         this.updatedAt = rating.getUpdatedAt();
-        this.deletedAt = rating.getDeletedAt();
     }
 
 }

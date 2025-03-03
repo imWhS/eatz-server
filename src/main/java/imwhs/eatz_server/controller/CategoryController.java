@@ -2,8 +2,8 @@ package imwhs.eatz_server.controller;
 
 import imwhs.eatz_server.domain.recipe.Category;
 import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.dto.recipe.CategoryCreateDto;
-import imwhs.eatz_server.dto.recipe.CategoryDetailDto;
+import imwhs.eatz_server.dto.recipe.category.CreateCategoryDto;
+import imwhs.eatz_server.dto.recipe.category.CategoryDto;
 import imwhs.eatz_server.service.recipe.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +23,11 @@ public class CategoryController {
 
     /**
      * 새 카테고리를 등록합니다.
-     * @param dto
-     * @return
+     * @param dto 등록하려는 카테고리 정보.
+     * @return 생성된 카테고리 관련 정보.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<CategoryDetailDto>> registerCategory(@RequestBody CategoryCreateDto dto) {
+    public ResponseEntity<ApiResponse<CategoryDto>> registerCategory(@RequestBody CreateCategoryDto dto) {
         Long recipeId = dto.getRecipeId();
         Category category;
 
@@ -37,7 +37,7 @@ public class CategoryController {
             category = categoryService.register(dto.getName(), dto.getDescription(), recipeId);
         }
 
-        return ResponseEntity.ok(ApiResponse.success(new CategoryDetailDto(category)));
+        return ResponseEntity.ok(ApiResponse.success(new CategoryDto(category)));
     }
 
 }

@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class EatzUserDeleteDto {
+public class DeleteEatzUserDto {
 
     private String existingPassword;
 

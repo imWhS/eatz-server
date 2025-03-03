@@ -1,11 +1,11 @@
-package imwhs.eatz_server.dto.recipe;
+package imwhs.eatz_server.dto.recipe.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CategoryDto {
+public class CategoryBasicDto {
 
     private Long id;
 

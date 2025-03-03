@@ -1,11 +1,11 @@
-package imwhs.eatz_server.dto.recipe;
+package imwhs.eatz_server.dto.recipe.ingredient;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class IngredientAddDto {
+public class AddIngredientDto {
 
     List<Long> ingredientIds;
 

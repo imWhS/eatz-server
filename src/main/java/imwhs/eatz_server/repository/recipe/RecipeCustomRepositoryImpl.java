@@ -16,7 +16,7 @@ import imwhs.eatz_server.domain.liked.QLiked;
 import imwhs.eatz_server.domain.recipe.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserEssentialsDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
-import imwhs.eatz_server.dto.recipe.CategoryDto;
+import imwhs.eatz_server.dto.recipe.category.CategoryBasicDto;
 import imwhs.eatz_server.dto.recipe.RecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeItemDto;
 import lombok.RequiredArgsConstructor;
@@ -53,14 +53,14 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(RecipeDto.UserDto.class,
+                                Projections.constructor(RecipeDto.AuthorOfRecipeDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl,
                                         JPAExpressions
                                                 .select(recipe.count())
                                                 .from(recipe)
-                                                .where(recipe.user.eq(user))
+                                                .where(recipe.author.eq(user))
                                 ),
                                 Projections.constructor(IngredientDto.class,
                                         ingredient.id,
@@ -69,7 +69,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                         )
                 )
                 .from(recipe)
-                .join(recipe.user, user)
+                .join(recipe.author, user)
                 .join(recipe.ingredientRecipes, ingredientRecipe)
                 .join(ingredientRecipe.ingredient, ingredient)
                 .where(recipe.id.eq(id).and(recipe.deletedAt.isNull()))
@@ -92,18 +92,18 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(RecipeDto.UserDto.class,
+                                Projections.constructor(RecipeDto.AuthorOfRecipeDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl,
                                         JPAExpressions
                                                 .select(recipe.count())
                                                 .from(recipe)
-                                                .where(recipe.user.eq(user))
+                                                .where(recipe.author.eq(user))
                                 )
                         ))
                 .from(recipe)
-                .join(recipe.user, user)
+                .join(recipe.author, user)
                 .where(recipe.id.eq(id).and(recipe.deletedAt.isNull()))
                 .fetchOne();
 
@@ -128,14 +128,14 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(RecipeDto.UserDto.class,
+                                Projections.constructor(RecipeDto.AuthorOfRecipeDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl,
                                         JPAExpressions
                                                 .select(recipe.count())
                                                 .from(recipe)
-                                                .where(recipe.user.eq(user))
+                                                .where(recipe.author.eq(user))
                                 ),
                                 Projections.constructor(IngredientDto.class,
                                         ExpressionUtils.as(
@@ -146,7 +146,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                                 "ingredients"
                                         )
                                         ),
-                                Projections.constructor(CategoryDto.class,
+                                Projections.constructor(CategoryBasicDto.class,
                                         ExpressionUtils.as(
                                                 JPAExpressions.select(category.id)
                                                         .from(recipeCategory)
@@ -155,10 +155,9 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                                 "categories"
                                         )
                                 )
-
                         ))
                 .from(recipe)
-                .join(recipe.user, user)
+                .join(recipe.author, user)
                 .join(recipe.ingredientRecipes, ingredientRecipe)
                 .join(recipe.recipeCategories, recipeCategory)
                 .where(recipe.id.eq(id).and(recipe.deletedAt.isNull()))
@@ -168,12 +167,20 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     }
 
     @Override
-    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> requiredIngredientIds, Long authorId, Pageable pageable) {
+    public Page<RecipeItemDto> searchRecipeItems(
+            RecipeItemSortType sortType,
+            Long currentUserId,
+            Long categoryId,
+            String keyword,
+            List<Long> ingredientIds,
+            List<Long> requiredIngredientIds,
+            Long authorId,
+            Pageable pageable) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
         QLiked liked = QLiked.liked;
         QComment comment = QComment.comment;
-        QNSavedRecipe savedRecipe = QNSavedRecipe.nSavedRecipe;
+        QSavedRecipe savedRecipe = QSavedRecipe.savedRecipe;
         QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
         QRating rating = QRating.rating;
         QRecipeCategory recipeCategory = QRecipeCategory.recipeCategory;
@@ -245,7 +252,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                         )
                 )
                 .from(recipe)
-                .join(recipe.user, user);
+                .join(recipe.author, user);
 
         BooleanBuilder predicate = new BooleanBuilder(recipe.deletedAt.isNull());
 
@@ -276,7 +283,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
      * @param recipe
      * @param keyword
      * @param ingredientIds
-     * @param exactIngredientIds
+     * @param requiredIngredientIds
      * @param ingredientRecipe
      */
     private void applyFilter(
@@ -287,7 +294,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
             Long categoryId,
             QRecipeCategory recipeCategory,
             List<Long> ingredientIds,
-            List<Long> exactIngredientIds,
+            List<Long> requiredIngredientIds,
             QIngredientRecipe ingredientRecipe) {
         // 제목 또는 내용의 검색 키워드 포함 여부로 레시피를 필터링합니다.
         if (StringUtils.hasText(keyword)) {
@@ -310,13 +317,13 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
         }
 
         // 특정 재료만 포함하는 레시피를 필터링합니다.
-        if (exactIngredientIds != null && !exactIngredientIds.isEmpty()) {
+        if (requiredIngredientIds != null && !requiredIngredientIds.isEmpty()) {
             // 레시피가 갖고 있는 재료 ID가 모두 onlyIngredientIds에 포함되는지 검사
             predicate.and(
                     recipe.id.notIn(
                             JPAExpressions.select(ingredientRecipe.recipe.id)
                                     .from(ingredientRecipe)
-                                    .where(ingredientRecipe.ingredient.id.notIn(exactIngredientIds))
+                                    .where(ingredientRecipe.ingredient.id.notIn(requiredIngredientIds))
                     )
             );
         }

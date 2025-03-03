@@ -3,7 +3,7 @@ package imwhs.eatz_server.dto.comment;
 import lombok.Data;
 
 @Data
-public class CommentCreateDto {
+public class CreateCommentDto {
 
     private String content;
 

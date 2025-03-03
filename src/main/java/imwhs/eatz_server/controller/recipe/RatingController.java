@@ -3,7 +3,7 @@ package imwhs.eatz_server.controller.recipe;
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.rating.RatingCreateDto;
+import imwhs.eatz_server.dto.rating.CreateRatingDto;
 import imwhs.eatz_server.dto.rating.RatingItemDto;
 import imwhs.eatz_server.dto.rating.RatingsDetailDto;
 import imwhs.eatz_server.service.recipe.RatingService;
@@ -32,7 +32,7 @@ public class RatingController {
      * @return 생성된 평가의 ID.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> addRating(@PathVariable Long id, @RequestBody RatingCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> addRating(@PathVariable Long id, @RequestBody CreateRatingDto dto) {
         Long ratingId = ratingService.register(id, EatzUserAuthUtil.getUsername(), dto.getScore(), dto.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(ratingId));
     }

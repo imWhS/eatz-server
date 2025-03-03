@@ -26,7 +26,7 @@ public interface SavedRecipeRepository extends JpaRepository<SavedRecipe, Long>,
      */
     long countByRecipeId(Long id);
 
-    @Query("select new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.email, u.imageUrl) " +
+    @Query("select new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.imageUrl) " +
             "from SavedRecipe sr join sr.user u " +
             "where sr.recipe.id = :id")
     List<EatzUserBasicDto> findUsersByRecipeId(@Param("id") Long id);

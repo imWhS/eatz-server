@@ -75,7 +75,7 @@ public class EatzUser extends BaseEntity {
      *
      */
     @Enumerated(EnumType.STRING)
-    private Role role = Role.ROLE_MEMBER;
+    private EatzUserRole eatzUserRole = EatzUserRole.ROLE_MEMBER;
 
     /**
      * 사용자 대표(프로필) 이미지 URL.
@@ -99,11 +99,11 @@ public class EatzUser extends BaseEntity {
 
     protected EatzUser() {}
 
-    public EatzUser(String username, String email, String password, Role role) {
+    public EatzUser(String username, String email, String password, EatzUserRole eatzUserRole) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.role = role == null ? Role.ROLE_MEMBER : role;
+        this.eatzUserRole = eatzUserRole == null ? EatzUserRole.ROLE_MEMBER : eatzUserRole;
     }
 
     /**
@@ -118,7 +118,7 @@ public class EatzUser extends BaseEntity {
             String username,
             String email,
             String password) { // TODO: 암호화된 password 설정 메서드 별도로 분리
-        return new EatzUser(username, email, password, Role.ROLE_MEMBER);
+        return new EatzUser(username, email, password, EatzUserRole.ROLE_MEMBER);
     }
 
     /**

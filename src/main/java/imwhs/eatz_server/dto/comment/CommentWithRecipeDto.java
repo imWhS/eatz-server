@@ -1,6 +1,7 @@
 package imwhs.eatz_server.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class CommentWithRecipeResponseDto {
+public class CommentWithRecipeDto {
 
     private Long id;
 

@@ -35,7 +35,7 @@ public class EatzUserDetails implements UserDetails {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return user.getRole().name();
+                return user.getEatzUserRole().name();
             }
         });
 

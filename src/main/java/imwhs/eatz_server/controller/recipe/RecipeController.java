@@ -5,6 +5,7 @@ import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.recipe.*;
+import imwhs.eatz_server.dto.recipe.ingredient.AddIngredientDto;
 import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
@@ -38,7 +39,7 @@ public class RecipeController {
      * @return 생성된 레시피의 ID.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody RecipeCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody CreateRecipeDto dto) {
         Long recipeId = recipeService.register(dto, EatzUserAuthUtil.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(recipeId));
     }
@@ -50,7 +51,7 @@ public class RecipeController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateRecipe(@PathVariable Long id, @RequestBody RecipeUpdateDto dto) {
+    public void updateRecipe(@PathVariable Long id, @RequestBody UpdateRecipeDto dto) {
         recipeService.update(id, dto, EatzUserAuthUtil.getUsername());
     }
 
@@ -71,7 +72,7 @@ public class RecipeController {
      * @param dto 추가하려는 재료 정보.
      */
     @PostMapping("/{id}/ingredients")
-    public ResponseEntity<?> addIngredients(@PathVariable Long id, @RequestBody IngredientAddDto dto) {
+    public ResponseEntity<?> addIngredients(@PathVariable Long id, @RequestBody AddIngredientDto dto) {
         List<Long> addedIngredients = ingredientRecipeService.addIngredientsToRecipe(dto.getIngredientIds(), id);
 
         if (addedIngredients.size() != dto.getIngredientIds().size()) {
@@ -90,7 +91,7 @@ public class RecipeController {
      * @return 레시피 정보.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<RecipeDto>> getRecipe(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<RecipeDto>> findRecipe(@PathVariable Long id) {
         RecipeDto dto = recipeQueryService.findById(id, EatzUserAuthUtil.getId());
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
@@ -113,10 +114,7 @@ public class RecipeController {
             @RequestParam(required = false) List<Long> ingredientIds,
             @RequestParam(required = false) List<Long> requiredIngredientIds,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        if (sortType == null) {
-            sortType = RecipeItemSortType.LATEST;
-        }
-
+        if (sortType == null) sortType = RecipeItemSortType.LATEST;
         Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), categoryId, keyword, ingredientIds, requiredIngredientIds, pageable);
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }

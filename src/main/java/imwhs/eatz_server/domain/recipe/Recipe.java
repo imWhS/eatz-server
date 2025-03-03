@@ -29,12 +29,12 @@ public class Recipe extends BaseEntity {
     private Long id;
 
     /**
-     * 레시피를 등록한 사용자.
+     * 레시피 등록자.
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private EatzUser user;
+    @JoinColumn(name = "author_id", nullable = false)
+    private EatzUser author;
 
     /**
      * 제목.
@@ -95,7 +95,7 @@ public class Recipe extends BaseEntity {
      * <p>
      * 엔티티의 주요 필드와 함께 Recipe 엔티티 인스턴스를 생성합니다.
      * </p>
-     * @param user 레시피를 등록하려는 사용자. 필수 항목입니다.
+     * @param author 레시피를 등록하려는 사용자. 필수 항목입니다.
      * @param title 레시피 제목. 필수 항목입니다.
      * @param url 레시피 URL. 필수 항목입니다.
      * @param imageUrl 레시피 대표 이미지 URL.
@@ -104,13 +104,13 @@ public class Recipe extends BaseEntity {
      * @throws IllegalArgumentException Recipe 엔티티의 필수 항목인 제목 또는 URL이 null이거나 빈 값일 경우.
      */
     public static Recipe create(
-            EatzUser user,
+            EatzUser author,
             String title,
             String url,
             String imageUrl,
             String description
     ) {
-        if (Objects.isNull(user)) {
+        if (Objects.isNull(author)) {
             throw new IllegalArgumentException("레시피를 등록하려는 사용자 정보가 없습니다.");
         }
         if (Objects.isNull(title) || title.isEmpty()) {
@@ -121,7 +121,7 @@ public class Recipe extends BaseEntity {
         }
 
         Recipe recipe = new Recipe();
-        recipe.user = user;
+        recipe.author = author;
         recipe.title = title;
         recipe.url = url;
         recipe.imageUrl = imageUrl;

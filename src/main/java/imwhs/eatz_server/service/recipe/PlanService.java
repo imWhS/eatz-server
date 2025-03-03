@@ -4,8 +4,8 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Plan;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
-import imwhs.eatz_server.dto.plan.ChecklistItemResponseDto;
-import imwhs.eatz_server.dto.plan.ChecklistResponseDto;
+import imwhs.eatz_server.dto.plan.ChecklistItemDto;
+import imwhs.eatz_server.dto.plan.ChecklistDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.PlanDto;
@@ -41,7 +41,7 @@ public class PlanService {
         EatzUser user = findUser(userId);
         validateDate(date);
         validatePriority(priority);
-        validateDuplicatePlan(recipe, user, date);
+        validatePlanDuplication(recipe, user, date);
 
         Plan plan = Plan.create(recipe, user, date, priority);
         planRepository.save(plan);
@@ -53,9 +53,7 @@ public class PlanService {
     public void updatePlan(Long planId, String username, LocalDate date, Integer priority) {
         Plan plan = planRepository.findByIdWithEatzUser(planId).orElseThrow(() -> new PlanNotFoundException(planId));
 
-        if (!plan.getUser().getUsername().equals(username)) {
-            throw new UnauthorizedAccessException("플랜을 수정할 권한이 없어요.");
-        }
+        validateUser(username, plan);
 
         validateDate(date);
         validatePriority(priority);
@@ -67,9 +65,7 @@ public class PlanService {
     public void deletePlan(Long planId, String username) {
         Plan plan = planRepository.findById(planId).orElseThrow(() -> new PlanNotFoundException(planId));
 
-        if (!plan.getUser().getUsername().equals(username)) {
-            throw new UnauthorizedAccessException("플랜을 수정할 권한이 없어요.");
-        }
+        validateUser(username, plan);
 
         planRepository.delete(plan);
     }
@@ -93,13 +89,13 @@ public class PlanService {
         return plans;
     }
 
-    public ChecklistResponseDto getChecklist(Long userId, LocalDate startDate, LocalDate endDate) {
+    public ChecklistDto getChecklist(Long userId, LocalDate startDate, LocalDate endDate) {
         EatzUser user = findUser(userId);
 
         /*
         checklistItems에는 조회하려는 플랜 별 레시피 요약 정보, 레시피의 재료 요약 정보, 레시피 요리 가능 여부가 포함됩니다.
          */
-        List<ChecklistItemResponseDto> checklistItems = planRepository.findChecklistByUserAndDateRangeV2(user, startDate, endDate);
+        List<ChecklistItemDto> checklistItems = planRepository.findChecklistByUserAndDateRangeV2(user, startDate, endDate);
 
         // 레시피 ID 별 요리 가능 여부 목록을 저장합니다.
         Map<Long, Boolean> cookableByRecipeId = new HashMap<>();
@@ -107,7 +103,7 @@ public class PlanService {
         // 체크리스트 속의 모든 레시피에 필요한 재료 목록을 저장합니다.
         Set<IngredientDto> missingIngredients = new HashSet<>();
 
-        for (ChecklistItemResponseDto item : checklistItems) {
+        for (ChecklistItemDto item : checklistItems) {
             Long recipeId = item.getRecipe().getId();
 
             cookableByRecipeId.putIfAbsent(recipeId, true);
@@ -137,7 +133,7 @@ public class PlanService {
             }
         }
 
-        return new ChecklistResponseDto(
+        return new ChecklistDto(
                 new ArrayList<>(cookableRecipeIds),
                 new ArrayList<>(uncookableRecipeIds),
                 missingIngredients
@@ -150,6 +146,12 @@ public class PlanService {
 
     private Recipe findRecipe(Long recipeId) {
         return recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException(recipeId));
+    }
+
+    private static void validateUser(String username, Plan plan) {
+        if (!plan.getUser().getUsername().equals(username)) {
+            throw new UnauthorizedAccessException("플랜을 수정할 권한이 없어요.");
+        }
     }
 
     private void validatePriority(Integer priority) {
@@ -168,7 +170,7 @@ public class PlanService {
         }
     }
 
-    public void validateDuplicatePlan(Recipe recipe, EatzUser user, LocalDate date) {
+    public void validatePlanDuplication(Recipe recipe, EatzUser user, LocalDate date) {
         if (planRepository.existsByRecipeAndUserAndScheduledAt(recipe, user, date)) {
             throw new DuplicatedPlanException("이미 플래너의 해당 날짜에 등록되어 있어요.");
         }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RatingCreateDto {
+public class CreateRatingDto {
 
     int score;
 

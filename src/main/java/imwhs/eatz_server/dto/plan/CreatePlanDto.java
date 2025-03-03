@@ -8,7 +8,10 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-public class PlanUpdateDto {
+public class CreatePlanDto {
+
+    @NotNull
+    Long recipeId;
 
     @NotNull
     LocalDate date;
