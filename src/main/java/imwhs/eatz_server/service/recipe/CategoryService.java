@@ -20,7 +20,7 @@ public class CategoryService {
     private final RecipeRepository recipeRepository;
 
     @Transactional
-    public Category registerCategory(String name, String description) {
+    public Category register(String name, String description) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("카테고리 이름은 필수 항목이에요.");
         }
@@ -36,8 +36,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category registerCategory(String name, String description, Long recipeId) {
-        Category category = registerCategory(name, description);
+    public Category register(String name, String description, Long recipeId) {
+        Category category = register(name, description);
         Recipe recipe = findRecipe(recipeId);
         addRecipeToCategory(category, recipe);
         return category;

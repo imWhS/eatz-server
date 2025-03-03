@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.recipe;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Plan;

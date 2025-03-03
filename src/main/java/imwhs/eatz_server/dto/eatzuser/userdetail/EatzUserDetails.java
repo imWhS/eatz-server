@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto.eatzuser;
+package imwhs.eatz_server.dto.eatzuser.userdetail;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import lombok.RequiredArgsConstructor;

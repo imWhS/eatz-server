@@ -17,7 +17,7 @@ import imwhs.eatz_server.domain.recipe.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserEssentialsDto;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.recipe.CategoryDto;
-import imwhs.eatz_server.dto.recipe.NRecipeDto;
+import imwhs.eatz_server.dto.recipe.RecipeDto;
 import imwhs.eatz_server.dto.recipe.RecipeItemDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,22 +38,22 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<NRecipeDto> findRecipeWithUserIngredients(Long id) {
+    public Optional<RecipeDto> findRecipeWithUserIngredients(Long id) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
         QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
         QIngredient ingredient = QIngredient.ingredient;
 
-        NRecipeDto recipeDto = queryFactory
+        RecipeDto recipeDto = queryFactory
                 .select(
-                        Projections.constructor(NRecipeDto.class,
+                        Projections.constructor(RecipeDto.class,
                                 recipe.id,
                                 recipe.title,
                                 recipe.description,
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(NRecipeDto.UserDto.class,
+                                Projections.constructor(RecipeDto.UserDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl,
@@ -79,20 +79,20 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     }
 
     @Override
-    public Optional<NRecipeDto> findRecipeWithUser(Long id) {
+    public Optional<RecipeDto> findRecipeWithUser(Long id) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
 
-        NRecipeDto recipeDto = queryFactory
+        RecipeDto recipeDto = queryFactory
                 .select(
-                        Projections.constructor(NRecipeDto.class,
+                        Projections.constructor(RecipeDto.class,
                                 recipe.id,
                                 recipe.title,
                                 recipe.description,
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(NRecipeDto.UserDto.class,
+                                Projections.constructor(RecipeDto.UserDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl,
@@ -111,7 +111,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     }
 
     @Override
-    public Optional<NRecipeDto> findRecipeWithUserIngredientsCategories(Long id) {
+    public Optional<RecipeDto> findRecipeWithUserIngredientsCategories(Long id) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
         QIngredientRecipe ingredientRecipe = QIngredientRecipe.ingredientRecipe;
@@ -119,16 +119,16 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
         QRecipeCategory recipeCategory = QRecipeCategory.recipeCategory;
         QCategory category = QCategory.category;
 
-        NRecipeDto recipeDto = queryFactory
+        RecipeDto recipeDto = queryFactory
                 .select(
-                        Projections.constructor(NRecipeDto.class,
+                        Projections.constructor(RecipeDto.class,
                                 recipe.id,
                                 recipe.title,
                                 recipe.description,
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
-                                Projections.constructor(NRecipeDto.UserDto.class,
+                                Projections.constructor(RecipeDto.UserDto.class,
                                         user.id,
                                         user.username,
                                         user.imageUrl,
@@ -168,7 +168,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     }
 
     @Override
-    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> exactIngredientIds, Long authorId, Pageable pageable) {
+    public Page<RecipeItemDto> searchRecipeItems(RecipeItemSortType sortType, Long currentUserId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> requiredIngredientIds, Long authorId, Pageable pageable) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
         QLiked liked = QLiked.liked;
@@ -250,7 +250,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
         BooleanBuilder predicate = new BooleanBuilder(recipe.deletedAt.isNull());
 
         // 기본적으로 삭제 처리되지 않은 레시피로 필터링합니다.
-        applyFilter(query, predicate, recipe, keyword, categoryId, recipeCategory, ingredientIds, exactIngredientIds, ingredientRecipe);
+        applyFilter(query, predicate, recipe, keyword, categoryId, recipeCategory, ingredientIds, requiredIngredientIds, ingredientRecipe);
 
         applySorting(query, recipe, sortType, likedCount, averageRatingScore);
 

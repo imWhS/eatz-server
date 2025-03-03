@@ -41,8 +41,11 @@ public class SecurityConfig {
 
     private final String[] publicUrls = {
             "/",
-            "/auth/public/**",
-            "/login"
+            "/auth/**",
+            "/login",
+            "/sign-up",
+            "/reissue-token",
+            "/sign-out",
     };
 
     @Bean

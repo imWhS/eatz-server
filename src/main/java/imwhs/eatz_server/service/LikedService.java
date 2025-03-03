@@ -28,8 +28,6 @@ public class LikedService {
 
     private final LikedRepository likedRepository;
 
-    private final LikedQueryRepository likedQueryRepository;
-
     private final EatzUserRepository userRepository;
 
     private final RecipeRepository recipeRepository;

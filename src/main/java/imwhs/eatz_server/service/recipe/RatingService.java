@@ -1,4 +1,4 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.recipe;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Rating;
@@ -42,7 +42,7 @@ public class RatingService {
      * @return 등록 완료된 평가의 ID.
      */
     @Transactional
-    public Long registerRating(Long recipeId, String username, int score, String content) {
+    public Long register(Long recipeId, String username, int score, String content) {
         validateDuplicates(recipeId, username);
 
         Recipe recipe = recipeRepository.findById(recipeId)
@@ -90,16 +90,7 @@ public class RatingService {
 //        rating.markAsDeleted();
     }
 
-    /**
-     * 식별자로 평가를 조회합니다.
-     */
-    public RatingDtoOld findRating(Long id) {
-        Rating rating = ratingRepository.findJoinUserRecipeById(id)
-                .orElseThrow(() -> new RatingNotFoundException("id " + id + "에 해당하는 평가가 존재하지 않습니다."));
-        return new RatingDtoOld(rating);
-    }
-
-    public Page<RatingItemDto> findRatingsByRecipe(Long id, Pageable pageable) {
+    public Page<RatingItemDto> findAllByRecipe(Long id, Pageable pageable) {
         validateRecipe(id);
         return ratingRepository.findWithUserByRecipeId(id, pageable);
     }
@@ -110,23 +101,12 @@ public class RatingService {
     }
 
 
-    public RatingsDetailDto findRatingsDetail(Long recipeId, Pageable pageable) {
+    public RatingsDetailDto getWithDetail(Long recipeId, Pageable pageable) {
         validateRecipe(recipeId);
 
         RatingsSummaryDistributionDto summary = ratingRepository.findAverageScoreByRecipeId(recipeId);
         Paged<RatingItemDto> ratings = new Paged<>(ratingRepository.findWithUserByRecipeId(recipeId, pageable));
         return new RatingsDetailDto(summary, ratings);
-    }
-
-    /**
-     * 시용자 식별자, 레시피 식별자로 평가를 조회합니다.
-     */
-    public RatingDtoOld findRating(Long userId, Long recipeId) {
-        validateUser(userId);
-        validateRecipe(recipeId);
-        Rating rating = ratingRepository.findJoinUserRecipeByUserIdAndRecipeId(userId, recipeId)
-                .orElseThrow(() -> new RatingNotFoundException("평가가 존재하지 않습니다."));
-        return new RatingDtoOld(rating);
     }
 
     /**

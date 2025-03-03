@@ -1,8 +1,7 @@
 package imwhs.eatz_server.auth;
 
-import imwhs.eatz_server.dto.eatzuser.EatzUserDetails;
+import imwhs.eatz_server.dto.eatzuser.userdetail.EatzUserDetails;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class EatzUserAuthUtil {

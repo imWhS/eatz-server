@@ -37,7 +37,7 @@ public class CommentService {
      * @return 등록 완료된 댓글의 ID.
      */
     @Transactional
-    public Long registerComment(Long recipeId, String content) {
+    public Long register(Long recipeId, String content) {
         String username = EatzUserAuthUtil.getUsername();
 
         Recipe recipe = recipeRepository.findById(recipeId)
@@ -79,7 +79,7 @@ public class CommentService {
      * @param id 조회할 댓글의 식별자
      * @return
      */
-    public Page<CommentItemDto> findCommentsByRecipe(Long id, Pageable pageable) {
+    public Page<CommentItemDto> findAllByRecipe(Long id, Pageable pageable) {
         validateRecipe(id);
         Page<CommentItemDto> dto = commentRepository.findWithUserByRecipeId(id, pageable);
         return dto;

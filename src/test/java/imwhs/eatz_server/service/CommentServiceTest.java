@@ -45,7 +45,7 @@ public class CommentServiceTest {
         String commentContent = "내 맘 속에 저장~";
 
         // when
-        Long commentId = commentService.registerComment(recipeId, commentContent);
+        Long commentId = commentService.register(recipeId, commentContent);
 
         // then
         boolean present = commentRepository.findById(commentId).isPresent();
