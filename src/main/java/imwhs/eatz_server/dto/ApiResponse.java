@@ -1,5 +1,6 @@
 package imwhs.eatz_server.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
@@ -33,6 +34,7 @@ public class ApiResponse<T> {
     /**
      * 응답 생성 시점의 타임스탬프.
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
     public ApiResponse(String status, T data, String message) {

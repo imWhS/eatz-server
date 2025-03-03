@@ -15,6 +15,9 @@ import imwhs.eatz_server.service.*;
 import imwhs.eatz_server.service.ingredient.IngredientUserService;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
+import imwhs.eatz_server.service.recipe.PlanService;
+import imwhs.eatz_server.service.recipe.RatingService;
+import imwhs.eatz_server.service.recipe.SavedRecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -115,10 +118,10 @@ public class EatzUserController {
     }
 
     @GetMapping("/{id}/recipes")
-    public ResponseEntity<ApiResponse<Paged<RecipeDto>>> getRecipeByUser(
+    public ResponseEntity<ApiResponse<Paged<RecipeByUserDto>>> getRecipesByUser(
             @PathVariable Long id,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RecipeDto> recipes = recipeQueryService.findRecipesByUserId(id, pageable);
+        Page<RecipeByUserDto> recipes = recipeQueryService.findByUserId(id, pageable);
         return ResponseEntity.ok(ApiResponse.success(recipes));
     }
 

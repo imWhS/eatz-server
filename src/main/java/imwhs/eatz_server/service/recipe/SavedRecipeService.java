@@ -1,7 +1,7 @@
-package imwhs.eatz_server.service;
+package imwhs.eatz_server.service.recipe;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.recipe.NSavedRecipe;
+import imwhs.eatz_server.domain.recipe.SavedRecipe;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
@@ -39,7 +39,7 @@ public class SavedRecipeService {
             throw new DuplicatedSavedRecipeException(id, username);
         }
 
-        NSavedRecipe savedRecipe = NSavedRecipe.create(recipe, user);
+        SavedRecipe savedRecipe = SavedRecipe.create(recipe, user);
         savedRecipeRepository.save(savedRecipe);
         return savedRecipe.getId();
     }

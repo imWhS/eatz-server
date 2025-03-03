@@ -25,48 +25,6 @@ public class RatingCustomRepositoryImpl implements RatingCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     /**
-     * 식별자에 해당하는 평가의 기본 정보 및 평가를 등록한 사용자와 레시피 부가 정보를 함께 조회합니다.<br/>
-     * 삭제 처리된 평가는 조회 대상에서 제외됩니다.
-     * @param id 평가 식별자
-     * @return Optional로 wrapping된 RatingDetailResponseDto. 평가의 상세 정보를 담은 DTO입니다.
-     */
-    @Override
-    public Optional<RatingDetailDtoOld> findRatingDetailById(Long id) {
-        QRating rating = QRating.rating;
-        QEatzUser user = QEatzUser.eatzUser;
-        QRecipe recipe = QRecipe.recipe;
-
-        return Optional.ofNullable(queryFactory
-                .select(
-                        Projections.constructor(RatingDetailDtoOld.class,
-                                rating.id,
-                                Projections.constructor(EatzUserSummaryDto.class,
-                                        user.id,
-                                        user.username,
-                                        JPAExpressions
-                                                .select(recipe.count().intValue())
-                                                .from(recipe)
-                                                .where(recipe.user.eq(user))
-                                ),
-                                Projections.constructor(RecipeBasicDto.class,
-                                        recipe.id,
-                                        recipe.title,
-                                        recipe.imageUrl
-                                ),
-                                rating.score,
-                                rating.content
-                        )
-                )
-                .from(rating)
-                .leftJoin(rating.user, user)
-                .leftJoin(rating.recipe, recipe)
-                .where(rating.id.eq(id)
-                        .and(rating.deletedAt.isNull()))
-                .fetchOne()
-        );
-    }
-
-    /**
      * 특정 레시피에 달린 모든 평가를 조회합니다.<br/>
      * 평가 별 기본 정보 뿐 아니라 해당 평가를 등록한 사용자의 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 평가는 조회 대상에서 제외됩니다.

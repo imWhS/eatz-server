@@ -37,9 +37,6 @@ public class RatingByUserDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime deletedAt;
-
     public RatingByUserDto(
             Long id,
             RatingRecipeDto recipe,
@@ -61,7 +58,6 @@ public class RatingByUserDto {
         this.isHidden = rating.isHidden();
         this.createdAt = rating.getCreatedAt();
         this.updatedAt = rating.getUpdatedAt();
-        this.deletedAt = rating.getDeletedAt();
     }
 
 }

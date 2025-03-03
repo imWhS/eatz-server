@@ -21,7 +21,7 @@ import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping
 public class AuthController {
 
     private final AuthService authService;
@@ -30,14 +30,14 @@ public class AuthController {
 
     private final JwtProperties jwtProperties;
 
-    @PostMapping("/public/sign-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid SignUpRequestDto dto) {
         Long userId = authService.signUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(userId));
     }
 
-    @PostMapping("/public/reissue")
+    @PostMapping("/reissue-token")
     public ResponseEntity<ApiResponse<?>> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         try {
             String refreshToken = getRefreshToken(request);
@@ -59,11 +59,11 @@ public class AuthController {
                     .body(ApiResponse.error(e.getMessage()));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error("리프레시 토큰이 만료됐습니다."));
+                    .body(ApiResponse.error("리프레시 토큰이 만료됐어요."));
         }
     }
 
-    @PostMapping("/public/logout")
+    @PostMapping("/sign-out")
     public ResponseEntity<ApiResponse<?>> logout(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = getRefreshToken(request);
         authService.logout(refreshToken);
@@ -75,7 +75,7 @@ public class AuthController {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null || cookies.length == 0) {
-            throw new InvalidTokenException("쿠키가 존재하지 않습니다.");
+            throw new InvalidTokenException("쿠키가 존재하지 않아요.");
         }
 
         for (Cookie cookie : cookies) {
@@ -84,7 +84,7 @@ public class AuthController {
             }
         }
 
-        throw new InvalidTokenException("리프레시 토큰이 존재하지 않습니다.");
+        throw new InvalidTokenException("리프레시 토큰이 존재하지 않아요.");
     }
 
     private void addRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
