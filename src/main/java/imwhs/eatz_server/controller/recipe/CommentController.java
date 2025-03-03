@@ -3,7 +3,7 @@ package imwhs.eatz_server.controller.recipe;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.comment.CommentItemDto;
-import imwhs.eatz_server.dto.comment.CommentCreateDto;
+import imwhs.eatz_server.dto.comment.CreateCommentDto;
 import imwhs.eatz_server.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +31,7 @@ public class CommentController {
      * @return 생성된 댓글의 ID.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> addComment(@PathVariable Long id, @RequestBody CommentCreateDto dto) {
+    public ResponseEntity<ApiResponse<Long>> addComment(@PathVariable Long id, @RequestBody CreateCommentDto dto) {
         Long commentId = commentService.register(id, dto.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(commentId));
     }

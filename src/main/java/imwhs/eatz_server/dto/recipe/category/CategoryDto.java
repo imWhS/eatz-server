@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto.recipe;
+package imwhs.eatz_server.dto.recipe.category;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import imwhs.eatz_server.domain.recipe.Category;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * CategoryDetailDto 클래스입니다.
  */
 @Data
-public class CategoryDetailDto {
+public class CategoryDto {
 
     private Long id;
 
@@ -18,24 +18,18 @@ public class CategoryDetailDto {
 
     private String description;
 
-    // TODO: RecipeSummaryDto
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime deletedAt;
-
-    public CategoryDetailDto(Category category) {
+    public CategoryDto(Category category) {
         this.id = category.getId();
         this.name = category.getName();
         this.description = category.getDescription();
         this.createdAt = category.getCreatedAt();
         this.updatedAt = category.getUpdatedAt();
-        this.deletedAt = category.getDeletedAt();
     }
 
 }

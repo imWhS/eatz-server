@@ -5,7 +5,7 @@ import imwhs.eatz_server.domain.recipe.Comment;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.comment.CommentItemDto;
-import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
+import imwhs.eatz_server.dto.comment.CommentWithRecipeDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -88,9 +88,9 @@ public class CommentService {
     /**
      * 특정 사용자가 등록한 모든 댓글을 조회합니다.
      */
-    public Page<CommentWithRecipeResponseDto> findCommentsByUser(String username, Pageable pageable) {
+    public Page<CommentWithRecipeDto> findCommentsByUser(String username, Pageable pageable) {
         validateUser(username);
-        Page<CommentWithRecipeResponseDto> dto = commentRepository.findWithRecipeByUserUsername(username, pageable);
+        Page<CommentWithRecipeDto> dto = commentRepository.findWithRecipeByUserUsername(username, pageable);
         return dto;
     }
 
@@ -107,7 +107,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException("id가 " + id + "인 댓글이 존재하지 않습니다."));
 
-        if (!Objects.equals(comment.getUser().getId(), userId)) {
+        if (!Objects.equals(comment.getAuthor().getId(), userId)) {
             throw new UnauthorizedEatzUserException("댓글을 등록한 사용자가 아니어서, 권한이 없습니다.");
         }
 

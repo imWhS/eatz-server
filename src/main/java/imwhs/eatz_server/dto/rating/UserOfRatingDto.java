@@ -5,18 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * RatingUserDto 클래스입니다.<br/>
+ * UserOfRatingDto 클래스입니다.<br/>
  * 평가와 연관 관계인 사용자의 간략한 정보를 전달하기 위해 사용합니다.
  */
 @Data
 @AllArgsConstructor
-public class RatingUserDto {
+public class UserOfRatingDto {
 
     private Long id;
 
     private String username;
 
-    public RatingUserDto(EatzUser user) {
+    public UserOfRatingDto(EatzUser user) {
         this.id = user.getId();
         this.username = user.getUsername();
     }

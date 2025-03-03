@@ -9,6 +9,7 @@ import imwhs.eatz_server.domain.recipe.QRecipe;
 import imwhs.eatz_server.dto.comment.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -32,16 +33,16 @@ public class CommentQueryRepository {
      * 식별자에 해당하는 댓글의 기본 정보 및 댓글을 등록한 사용자와 레시피 부가 정보를 함께 조회합니다.<br/>
      * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
      * @param id 댓글 식별자
-     * @return Optional로 wrapping된 CommentDetailResponseDto. 댓글의 상세 정보를 담은 DTO입니다.
+     * @return Optional로 wrapping된 CommentDto. 댓글의 상세 정보를 담은 DTO입니다.
      */
-    public Optional<CommentDetailResponseDto> findCommentDetailById(Long id) {
+    public Optional<CommentDto> findCommentDetailById(Long id) {
         QComment comment = QComment.comment;
         QEatzUser user = QEatzUser.eatzUser;
         QRecipe recipe = QRecipe.recipe;
 
         return Optional.ofNullable(queryFactory
                 .select(
-                        Projections.constructor(CommentDetailResponseDto.class,
+                        Projections.constructor(CommentDto.class,
                                 comment.id,
                                 Projections.constructor(EatzUserSummaryDto.class,
                                         user.id,
@@ -49,7 +50,7 @@ public class CommentQueryRepository {
                                         JPAExpressions
                                                 .select(recipe.count().intValue())
                                                 .from(recipe)
-                                                .where(recipe.user.eq(user))),
+                                                .where(recipe.author.eq(user))),
                                 Projections.constructor(imwhs.eatz_server.dto.recipe.RecipeBasicDto.class,
                                         recipe.id,
                                         recipe.title,
@@ -57,7 +58,7 @@ public class CommentQueryRepository {
                                 comment.content)
                 )
                 .from(comment)
-                .leftJoin(comment.user, user)
+                .leftJoin(comment.author, user)
                 .leftJoin(comment.recipe, recipe)
                 .where(comment.id.eq(id)
                         .and(comment.deletedAt.isNull()))
@@ -83,17 +84,17 @@ public class CommentQueryRepository {
                                 comment.id,
                                 Projections.constructor(EatzUserBasicDto.class,
                                         user.id,
-                                        user.username
+                                        user.username,
+                                        user.imageUrl
                                 ),
                                 comment.content,
                                 comment.isHidden,
                                 comment.createdAt,
-                                comment.updatedAt,
-                                comment.deletedAt
+                                comment.updatedAt
                         )
                 )
                 .from(comment)
-                .leftJoin(comment.user, user)
+                .leftJoin(comment.author, user)
                 .where(comment.recipe.id.eq(id)
                         .and(comment.deletedAt.isNull())
                 )
@@ -126,13 +127,13 @@ public class CommentQueryRepository {
      * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
      * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
      */
-    public List<CommentByUserResponseDto> findCommentsByUser(Long id, int page, int size) {
+    public List<CommentByUserDtoOld> findCommentsByUser(Long id, int page, int size) {
         QComment comment = QComment.comment;
         QRecipe recipe = QRecipe.recipe;
 
         return queryFactory
                 .select(
-                        Projections.constructor(CommentByUserResponseDto.class,
+                        Projections.constructor(CommentByUserDtoOld.class,
                                 comment.id,
                                 Projections.constructor(RecipeBasicDto.class,
                                         recipe.id,
@@ -142,13 +143,12 @@ public class CommentQueryRepository {
                                 comment.content,
                                 comment.isHidden,
                                 comment.createdAt,
-                                comment.updatedAt,
-                                comment.deletedAt
+                                comment.updatedAt
                         )
                 )
                 .from(comment)
                 .leftJoin(comment.recipe, recipe)
-                .where(comment.user.id.eq(id))
+                .where(comment.author.id.eq(id))
                 .offset((long) page * size)
                 .limit(size)
                 .fetch();
@@ -165,7 +165,7 @@ public class CommentQueryRepository {
 
         return queryFactory.select(comment.count())
                 .from(comment)
-                .where(comment.user.id.eq(id)
+                .where(comment.author.id.eq(id)
                         .and(comment.deletedAt.isNull()))
                 .fetchOne();
     }

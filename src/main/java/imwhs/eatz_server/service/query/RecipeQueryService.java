@@ -5,6 +5,8 @@ import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.ingredient.IngredientByRecipeDto;
 import imwhs.eatz_server.dto.recipe.*;
+import imwhs.eatz_server.dto.recipe.category.CategoryByRecipeDto;
+import imwhs.eatz_server.dto.recipe.category.CategoryBasicDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -45,7 +47,9 @@ public class RecipeQueryService {
     private final IngredientRecipeRepository ingredientRecipeRepository;
 
     private final RecipeCategoryRepository recipeCategoryRepository;
+
     private final IngredientUserRepository ingredientUserRepository;
+
     private final EatzUserRepository eatzUserRepository;
 
     /**
@@ -92,11 +96,18 @@ public class RecipeQueryService {
      * @throws EatzUserNotFoundException userId에 해당하는 사용자가 존재하지 않는 경우.
      */
     public Page<RecipeByUserDto> findByUserId(Long userId, Pageable pageable) {
-        Page<RecipeByUserDto> recipes = recipeRepository.findAllByUserIdAndDeletedAtIsNull(userId, pageable);
+        Page<RecipeByUserDto> recipes = recipeRepository.findByAuthorIdAndDeletedAtIsNull(userId, pageable);
         return recipes;
     }
 
-    public Page<RecipeItemDto> search(RecipeItemSortType sortType, Long userId, Long categoryId, String keyword, List<Long> ingredientIds, List<Long> requiredIngredientIds, Pageable pageable) {
+    public Page<RecipeItemDto> search(
+            RecipeItemSortType sortType,
+            Long userId,
+            Long categoryId,
+            String keyword,
+            List<Long> ingredientIds,
+            List<Long> requiredIngredientIds,
+            Pageable pageable) {
         Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, categoryId, keyword, ingredientIds, requiredIngredientIds, null, pageable);
 
         List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
@@ -120,14 +131,14 @@ public class RecipeQueryService {
                     .map(ingredient -> new IngredientDto(ingredient.getIngredientId(), ingredient.getIngredientName()))
                     .collect(Collectors.toList());
 
-            List<CategoryDto> categoryDtos = Optional.ofNullable(categoriesByRecipeIdMap.get(recipeId))
+            List<CategoryBasicDto> categoryBasicDtos = Optional.ofNullable(categoriesByRecipeIdMap.get(recipeId))
                     .orElse(Collections.emptyList())
                     .stream()
-                    .map(category -> new CategoryDto(category.getCategoryId(), category.getCategoryName()))
+                    .map(category -> new CategoryBasicDto(category.getCategoryId(), category.getCategoryName()))
                     .collect(Collectors.toList());
 
             item.setIngredients(ingredientDtos);
-            item.setCategories(categoryDtos);
+            item.setCategories(categoryBasicDtos);
         }
 
         return items;

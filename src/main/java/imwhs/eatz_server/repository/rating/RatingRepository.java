@@ -15,12 +15,12 @@ import java.util.Optional;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long>, RatingCustomRepository {
 
-    boolean existsByRecipeIdAndUserUsername(Long recipeId, String username);
+    boolean existsByRecipeIdAndAuthorUsername(Long recipeId, String username);
 
     Optional<Rating> findByIdAndDeletedAtIsNull(Long id);
 
     @Query("select r from Rating r " +
-            "join fetch r.user u " +
+            "join fetch r.author u " +
             "join fetch r.recipe rc " +
             "where r.id = :ratingId")
     Optional<Rating> findJoinUserRecipeById(@Param("ratingId") Long id);
@@ -38,19 +38,19 @@ public interface RatingRepository extends JpaRepository<Rating, Long>, RatingCus
     RatingsSummaryDistributionDto findAverageScoreByRecipeId(@Param("recipeId") Long recipeId);
 
     @Query("select r from Rating r " +
-            "join fetch r.user u " +
+            "join fetch r.author u " +
             "join fetch r.recipe rc " +
-            "where r.user.id = :userId and r.recipe.id = :recipeId")
+            "where r.author.id = :userId and r.recipe.id = :recipeId")
     Optional<Rating> findJoinUserRecipeByUserIdAndRecipeId(@Param("userId") Long userId, @Param("recipeId") Long recipeId);
 
     @Query("select r from Rating r " +
-            "join fetch r.user u " +
+            "join fetch r.author u " +
             "join fetch r.recipe rc " +
             "where rc.id = :recipeId")
     Page<Rating> findJoinUserRecipeByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
 
     @Query("select r from Rating r " +
-            "join fetch r.user u " +
+            "join fetch r.author u " +
             "join fetch r.recipe rc " +
             "where u.id = :userId")
     Page<Rating> findJoinUserRecipeByUserId(@Param("userId") Long userId, Pageable pageRequest);
@@ -70,20 +70,20 @@ public interface RatingRepository extends JpaRepository<Rating, Long>, RatingCus
     @Query("""
     select new imwhs.eatz_server.dto.rating.RatingItemDto(
         r.id,
-        new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.email, u.imageUrl),
+        new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.imageUrl),
         r.score,
         r.content,
         r.createdAt,
         r.updatedAt
     )
     from Rating r
-    join r.user u
+    join r.author u
     where r.recipe.id = :recipeId and r.deletedAt is null
     """)
     Page<RatingItemDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
 
     @Query("""
-    select new imwhs.eatz_server.dto.rating.RatingWithRecipeResponseDto(
+    select new imwhs.eatz_server.dto.rating.RatingWithRecipeDto(
         r.id,
         new imwhs.eatz_server.dto.recipe.RecipeBasicDto(re.id, re.title, re.imageUrl),
         r.score,
@@ -91,8 +91,8 @@ public interface RatingRepository extends JpaRepository<Rating, Long>, RatingCus
     )
     from Rating r
     join r.recipe re
-    where r.user.id = :id and r.deletedAt is null
+    where r.author.id = :id and r.deletedAt is null
     """)
-    Page<RatingWithRecipeResponseDto> findWithRecipeByUserId(@Param("id") Long id, Pageable pageable);
+    Page<RatingWithRecipeDto> findWithRecipeByAuthorId(@Param("id") Long id, Pageable pageable);
 
 }

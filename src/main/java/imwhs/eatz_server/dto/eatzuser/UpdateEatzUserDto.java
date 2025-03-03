@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class EatzUserUpdateDto {
+public class UpdateEatzUserDto {
 
     private String username;
 

@@ -20,11 +20,11 @@ public class Comment extends BaseEntity {
     private Long id;
 
     /**
-     * 댓글을 등록한 사용자.
+     * 댓글 등록자.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private EatzUser user;
+    @JoinColumn(name = "author_id")
+    private EatzUser author;
 
     /**
      * 댓글이 달려 있는 레시피.
@@ -47,12 +47,12 @@ public class Comment extends BaseEntity {
 
     /**
      * Comment의 필수 필드 초기화 생성자입니다.
-     * @param user 댓글을 작성하는 사용자
+     * @param author 댓글 등록자
      * @param recipe 댓글을 달 레시피
      * @param content 댓글 내용
      */
-    public Comment(EatzUser user, Recipe recipe, String content) {
-        this.user = user;
+    public Comment(EatzUser author, Recipe recipe, String content) {
+        this.author = author;
         this.recipe = recipe;
         this.content = content;
     }

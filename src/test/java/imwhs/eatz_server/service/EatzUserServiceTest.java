@@ -2,9 +2,8 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserDeleteDto;
+import imwhs.eatz_server.dto.eatzuser.DeleteEatzUserDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserUpdateDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.service.query.EatzUserQueryService;
@@ -212,7 +211,7 @@ public class EatzUserServiceTest {
         String encodedPassword = passwordEncoder.encode(rawPassword);
         EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", encodedPassword);
         userRepository.save(user);
-        EatzUserDeleteDto deleteDto = new EatzUserDeleteDto(rawPassword);
+        DeleteEatzUserDto deleteDto = new DeleteEatzUserDto(rawPassword);
 
         // when
         userService.deleteUser(user.getId(), deleteDto);
@@ -237,7 +236,7 @@ public class EatzUserServiceTest {
         Assertions.assertThatThrownBy(() ->
                 userService.deleteUser(
                         99999L,
-                        new EatzUserDeleteDto("test"))
+                        new DeleteEatzUserDto("test"))
         ).isInstanceOf(EatzUserNotFoundException.class);
     }
 
@@ -255,7 +254,7 @@ public class EatzUserServiceTest {
         // then
         Assertions.assertThat(dto.getUsername()).isEqualTo(user.getUsername());
         Assertions.assertThat(dto.getEmail()).isEqualTo(user.getEmail());
-        Assertions.assertThat(dto.getRole()).isEqualTo(user.getRole());
+        Assertions.assertThat(dto.getEatzUserRole()).isEqualTo(user.getEatzUserRole());
     }
 
     @Test
@@ -287,7 +286,7 @@ public class EatzUserServiceTest {
         // then
         Assertions.assertThat(dto.getUsername()).isEqualTo(user.getUsername());
         Assertions.assertThat(dto.getEmail()).isEqualTo(user.getEmail());
-        Assertions.assertThat(dto.getRole()).isEqualTo(user.getRole());
+        Assertions.assertThat(dto.getEatzUserRole()).isEqualTo(user.getEatzUserRole());
     }
 
     @Test

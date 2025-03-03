@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RatingWithRecipeResponseDto {
+public class RatingWithRecipeDto {
 
     private Long id;
 

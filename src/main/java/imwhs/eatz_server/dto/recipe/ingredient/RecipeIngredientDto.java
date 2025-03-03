@@ -1,4 +1,4 @@
-package imwhs.eatz_server.dto.recipe;
+package imwhs.eatz_server.dto.recipe.ingredient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

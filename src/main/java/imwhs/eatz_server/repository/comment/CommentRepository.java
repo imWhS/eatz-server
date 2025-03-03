@@ -3,7 +3,7 @@ package imwhs.eatz_server.repository.comment;
 import imwhs.eatz_server.domain.recipe.Comment;
 import imwhs.eatz_server.dto.comment.CommentItemDto;
 import imwhs.eatz_server.dto.comment.CommentCountByRecipeDto;
-import imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto;
+import imwhs.eatz_server.dto.comment.CommentWithRecipeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,43 +27,42 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 
     @Query("select new imwhs.eatz_server.dto.comment.CommentItemDto(" +
             "c.id, " +
-            "new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.email, u.imageUrl)," +
+            "new imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto(u.id, u.username, u.imageUrl)," +
             "c.content," +
             "c.isHidden," +
             "c.createdAt," +
             "c.updatedAt)" +
             "from Comment c " +
-            "join c.user u " +
+            "join c.author u " +
             "where c.recipe.id = :recipeId and c.deletedAt is null")
     Page<CommentItemDto> findWithUserByRecipeId(@Param("recipeId") Long recipeId, Pageable pageable);
 
     @Query("""
-    select new imwhs.eatz_server.dto.comment.CommentWithRecipeResponseDto(
+    select new imwhs.eatz_server.dto.comment.CommentWithRecipeDto(
         c.id,
-        new imwhs.eatz_server.dto.comment.RecipeBasicDto(r.id, r.title, r.imageUrl),
+        new imwhs.eatz_server.dto.recipe.RecipeBasicDto(r.id, r.title, r.imageUrl),
         c.content,
         c.isHidden,
         c.createdAt,
-        c.updatedAt
-    ) 
+        c.updatedAt)
     from Comment c
     join c.recipe r
-    join c.user u
+    join c.author u
     where u.username = :username
     """)
-    Page<CommentWithRecipeResponseDto> findWithRecipeByUserUsername(
+    Page<CommentWithRecipeDto> findWithRecipeByUserUsername(
             @Param("username") String username,
             Pageable pageable
     );
 
     @Query("select c from Comment c " +
-            "join fetch c.user u " +
+            "join fetch c.author u " +
             "join fetch c.recipe r " +
             "where u.username = :username and r.id = :recipeId and c.deletedAt is null")
     Page<Comment> findWithUserRecipeByRecipeId(@Param("username") String username, @Param("recipeId") Long recipeId, Pageable pageable);
 
     @Query("select c from Comment c " +
-            "join fetch c.user u " +
+            "join fetch c.author u " +
             "join fetch c.recipe r " +
             "where u.id = :userId and c.deletedAt is null")
     Page<Comment> findWithUserRecipeByUserId(@Param("userId") Long userId, Pageable pageable);

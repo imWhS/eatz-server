@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ChecklistItemResponseDto {
+public class ChecklistItemDto {
 
     private RecipeBasicDto recipe;
 
