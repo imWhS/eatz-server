@@ -3,7 +3,9 @@ package imwhs.eatz_server.controller;
 import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.dto.auth.SignUpRequestDto;
+import imwhs.eatz_server.dto.auth.RequestEmailVerificationDto;
+import imwhs.eatz_server.dto.auth.RequestVerificationCodeViaEmailDto;
+import imwhs.eatz_server.dto.auth.CreateEatzUserDto;
 import imwhs.eatz_server.exception.InvalidTokenException;
 import imwhs.eatz_server.service.AuthService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -42,14 +44,23 @@ public class AuthController {
     9. iOS - username, password 입력
     10. Server - signUp*
      */
-    @GetMapping("/sign-up/validateUserEmail")
-    public
+    @PostMapping("/sign-up/email-validation/send-code")
+    public ResponseEntity<ApiResponse<String>> sendCodeViaEmail(@RequestBody RequestVerificationCodeViaEmailDto dto) {
+        String email = dto.getEmail();
+        authService.sendVerificationCodeToEmail(email);
+        return ResponseEntity.ok(ApiResponse.success(email + "로 인증 코드를 전송했어요."));
+    }
+
+    @PostMapping("/sign-up/email-validation/verify")
+    public ResponseEntity<ApiResponse<String>> verifyEmail(@RequestBody RequestEmailVerificationDto dto) {
+        authService.verifyEmail(dto.getEmail(), dto.getCode());
+        return ResponseEntity.ok(ApiResponse.success("이메일 주소 인증을 완료했어요."));
+    }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid SignUpRequestDto dto) {
-        Long userId = authService.signUp(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(userId));
+    public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid CreateEatzUserDto dto) {
+        Long userId = authService.signUp(dto.getUsername(), dto.getEmail(), dto.getPassword());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
     }
 
     @PostMapping("/reissue-token")
