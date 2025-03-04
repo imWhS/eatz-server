@@ -3,20 +3,18 @@ package imwhs.eatz_server.config.properties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "jwt")
-public class JwtProperties {
+@PropertySource("classpath:admin-config.yml")
+@ConfigurationProperties(prefix = "admin")
+public class AdminConfigProperties {
 
-    private String secretKey;
+    private String email;
 
-    private long accessExpirationTime;
-
-    private long refreshExpirationTime;
-
-    private String issuer;
+    private String password;
 
 }

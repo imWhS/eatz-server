@@ -1,7 +1,7 @@
 package imwhs.eatz_server.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import imwhs.eatz_server.config.properties.JwtProperties;
+import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.domain.RefreshToken;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.eatzuser.userdetail.EatzUserDetails;
@@ -37,7 +37,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
     private final TokenManager tokenManager;
 
-    private final JwtProperties jwtProperties;
+    private final JwtConfigProperties jwtConfigProperties;
 
     // SRP를 준수하기 위해 SecurityConfig에서 스프링 빈으로 등록한 AuthenticationManager를 생성자로 주입 받습니다.
     private final AuthenticationManager authenticationManager;
@@ -93,7 +93,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         String refreshToken = tokenManager.createRefreshToken(email, role);
         Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
+        refreshTokenCookie.setMaxAge((int) jwtConfigProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
         response.addCookie(refreshTokenCookie);
 
         // 클라이언트에 발급한 리프레시 토큰을 저장합니다.

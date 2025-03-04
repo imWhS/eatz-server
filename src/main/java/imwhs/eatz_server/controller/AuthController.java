@@ -1,6 +1,6 @@
 package imwhs.eatz_server.controller;
 
-import imwhs.eatz_server.config.properties.JwtProperties;
+import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.auth.SignUpRequestDto;
@@ -28,7 +28,7 @@ public class AuthController {
 
     private final TokenManager tokenManager;
 
-    private final JwtProperties jwtProperties;
+    private final JwtConfigProperties jwtConfigProperties;
 
     @PostMapping("/sign-up")
     public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid SignUpRequestDto dto) {
@@ -93,7 +93,7 @@ public class AuthController {
         if (refreshToken != null) {
             refreshTokenCookie.setHttpOnly(true);
             refreshTokenCookie.setSecure(true);
-            refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
+            refreshTokenCookie.setMaxAge((int) jwtConfigProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
         } else {
             refreshTokenCookie.setMaxAge(0);
         }
