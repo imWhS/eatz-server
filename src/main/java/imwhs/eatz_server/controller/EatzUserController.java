@@ -3,7 +3,6 @@ package imwhs.eatz_server.controller;
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeDto;
 import imwhs.eatz_server.dto.eatzuser.*;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
@@ -44,8 +43,6 @@ public class EatzUserController {
     private final EatzUserService userService;
 
     private final EatzUserQueryService userQueryService;
-    
-    private final AuthService authService;
 
     private final RecipeQueryService recipeQueryService;
 
@@ -58,12 +55,6 @@ public class EatzUserController {
     private final CommentService commentService;
 
     private final RatingService ratingService;
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid SignUpRequestDto dto) {
-        Long userId = authService.signUp(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
-    }
 
     // TODO: PATCH, 요청 파라미터를 통해 비밀 번호 등에 대한 부분 업데이트 API 추가
     @PutMapping("/{id}")

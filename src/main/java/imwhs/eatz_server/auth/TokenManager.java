@@ -1,6 +1,6 @@
 package imwhs.eatz_server.auth;
 
-import imwhs.eatz_server.config.properties.JwtProperties;
+import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,11 +16,11 @@ import java.util.Date;
 @Component
 public class TokenManager {
 
-    private final JwtProperties jwtProperties;
+    private final JwtConfigProperties jwtConfigProperties;
 
     private SecretKey getSecretKey() {
         return new SecretKeySpec(
-                jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8),
+                jwtConfigProperties.getSecretKey().getBytes(StandardCharsets.UTF_8),
                 Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
@@ -58,7 +58,7 @@ public class TokenManager {
                 .claim("type", "access")
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessExpirationTime()))
+                .expiration(new Date(System.currentTimeMillis() + jwtConfigProperties.getAccessExpirationTime()))
                 .signWith(getSecretKey())
                 .compact();
     }
@@ -72,7 +72,7 @@ public class TokenManager {
                 .claim("type", "refresh")
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshExpirationTime()))
+                .expiration(new Date(System.currentTimeMillis() + jwtConfigProperties.getRefreshExpirationTime()))
                 .signWith(getSecretKey())
                 .compact();
     }

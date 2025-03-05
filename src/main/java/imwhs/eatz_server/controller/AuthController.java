@@ -1,9 +1,11 @@
 package imwhs.eatz_server.controller;
 
-import imwhs.eatz_server.config.properties.JwtProperties;
+import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.dto.auth.SignUpRequestDto;
+import imwhs.eatz_server.dto.auth.RequestEmailVerificationDto;
+import imwhs.eatz_server.dto.auth.RequestVerificationCodeViaEmailDto;
+import imwhs.eatz_server.dto.auth.CreateEatzUserDto;
 import imwhs.eatz_server.exception.InvalidTokenException;
 import imwhs.eatz_server.service.AuthService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,13 +30,37 @@ public class AuthController {
 
     private final TokenManager tokenManager;
 
-    private final JwtProperties jwtProperties;
+    private final JwtConfigProperties jwtConfigProperties;
+
+    /*
+    1. iOS - 가입 버튼 탭
+    2. iOS - 가입 화면 진입
+    3. iOS - 이메일 주소 입력
+    4. Server - 이메일 유효성 검증* (validateUserEmail)
+    5. iOS - 이메일 인증 버튼 탭
+    6. Server - 이메일 전송* (sendVerificationNumberToEmail)
+    7. iOS - 이메일 인증 번호 입력
+    8. Server - 인증 번호 유효성 검증* (validateVerificationNumberViaEmail)
+    9. iOS - username, password 입력
+    10. Server - signUp*
+     */
+    @PostMapping("/sign-up/email-validation/send-code")
+    public ResponseEntity<ApiResponse<String>> sendCodeViaEmail(@RequestBody RequestVerificationCodeViaEmailDto dto) {
+        String email = dto.getEmail();
+        authService.sendVerificationCodeToEmail(email);
+        return ResponseEntity.ok(ApiResponse.success(email + "로 인증 코드를 전송했어요."));
+    }
+
+    @PostMapping("/sign-up/email-validation/verify")
+    public ResponseEntity<ApiResponse<String>> verifyEmail(@RequestBody RequestEmailVerificationDto dto) {
+        authService.verifyEmail(dto.getEmail(), dto.getCode());
+        return ResponseEntity.ok(ApiResponse.success("이메일 주소 인증을 완료했어요."));
+    }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<ApiResponse<Long>> signUp(@RequestBody @Valid SignUpRequestDto dto) {
-        Long userId = authService.signUp(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(userId));
+    public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid CreateEatzUserDto dto) {
+        Long userId = authService.signUp(dto.getUsername(), dto.getEmail(), dto.getPassword());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
     }
 
     @PostMapping("/reissue-token")
@@ -93,7 +119,7 @@ public class AuthController {
         if (refreshToken != null) {
             refreshTokenCookie.setHttpOnly(true);
             refreshTokenCookie.setSecure(true);
-            refreshTokenCookie.setMaxAge((int) jwtProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
+            refreshTokenCookie.setMaxAge((int) jwtConfigProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
         } else {
             refreshTokenCookie.setMaxAge(0);
         }
