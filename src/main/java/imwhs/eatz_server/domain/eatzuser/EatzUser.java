@@ -1,7 +1,7 @@
 package imwhs.eatz_server.domain.eatzuser;
 
 import imwhs.eatz_server.common.BaseEntity;
-import imwhs.eatz_server.domain.IngredientUser;
+import imwhs.eatz_server.domain.ingredient.IngredientUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;

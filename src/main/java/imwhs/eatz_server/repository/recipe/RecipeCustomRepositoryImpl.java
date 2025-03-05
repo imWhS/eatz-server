@@ -11,7 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import imwhs.eatz_server.domain.QIngredient;
 import imwhs.eatz_server.domain.QIngredientRecipe;
 import imwhs.eatz_server.domain.eatzuser.QEatzUser;
-import imwhs.eatz_server.domain.liked.LikedType;
+import imwhs.eatz_server.domain.liked.EntityType;
 import imwhs.eatz_server.domain.liked.QLiked;
 import imwhs.eatz_server.domain.recipe.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
@@ -207,7 +207,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                 JPAExpressions
                         .select(liked.count().longValue())
                         .from(liked)
-                        .where(liked.entityId.eq(recipe.id).and(liked.type.eq(LikedType.RECIPE)).and(liked.isLiked.isTrue()))
+                        .where(liked.entityId.eq(recipe.id).and(liked.type.eq(EntityType.RECIPE)).and(liked.isLiked.isTrue()))
         );
 
         // 공통 서브쿼리: 게시물 별 평균 점수 조회
@@ -241,7 +241,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                                 .otherwise(false))
                                         .from(liked)
                                         .where(liked.entityId.eq(recipe.id)
-                                                .and(liked.type.eq(LikedType.RECIPE))
+                                                .and(liked.type.eq(EntityType.RECIPE))
                                                 .and(liked.user.id.eq(currentUserId))
                                                 .and(liked.isLiked.isTrue())),
                                 commentCount,

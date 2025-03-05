@@ -1,6 +1,6 @@
 package imwhs.eatz_server.dto.liked;
 
-import imwhs.eatz_server.domain.liked.LikedType;
+import imwhs.eatz_server.domain.liked.EntityType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -10,6 +10,6 @@ public class ToggleLikedDto {
 
     private Long entityId;
 
-    private LikedType type;
+    private EntityType type;
 
 }

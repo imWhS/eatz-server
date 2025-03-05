@@ -1,4 +1,4 @@
-package imwhs.eatz_server.domain;
+package imwhs.eatz_server.domain.ingredient;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

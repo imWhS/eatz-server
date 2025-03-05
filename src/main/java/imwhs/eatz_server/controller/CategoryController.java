@@ -1,6 +1,6 @@
 package imwhs.eatz_server.controller;
 
-import imwhs.eatz_server.domain.recipe.Category;
+import imwhs.eatz_server.domain.Category;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.recipe.category.CreateCategoryDto;
 import imwhs.eatz_server.dto.recipe.category.CategoryDto;
