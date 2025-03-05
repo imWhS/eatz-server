@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.domain.Ingredient;
+import imwhs.eatz_server.domain.ingredient.Ingredient;
 import imwhs.eatz_server.dto.ingredient.IngredientCreateDto;
 import imwhs.eatz_server.dto.ingredient.IngredientWithCategoryChildDto;
 import imwhs.eatz_server.dto.ingredient.IngredientTreeDto;

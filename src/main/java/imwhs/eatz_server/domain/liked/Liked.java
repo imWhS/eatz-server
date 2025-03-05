@@ -28,11 +28,11 @@ public class Liked extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LikedType type;
+    private EntityType type;
 
     private Boolean isLiked = true;
 
-    public static Liked of(EatzUser user, Long entityId, LikedType type) {
+    public static Liked of(EatzUser user, Long entityId, EntityType type) {
         return new Liked(null, user, entityId, type, true);
     }
 

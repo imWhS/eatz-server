@@ -1,7 +1,6 @@
-package imwhs.eatz_server.domain;
+package imwhs.eatz_server.domain.ingredient;
 
 import imwhs.eatz_server.common.BaseEntity;
-import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class IngredientUser extends BaseEntity {
+public class IngredientRecipe extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;
@@ -23,11 +22,11 @@ public class IngredientUser extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
-    private EatzUser user;
+    private Recipe recipe;
 
-    public static IngredientUser create(Ingredient ingredient, EatzUser user) {
-        IngredientUser ingredientUser = new IngredientUser(null, ingredient, user);
-        return ingredientUser;
+    public static IngredientRecipe create(Ingredient ingredient, Recipe recipe) {
+        IngredientRecipe ingredientRecipe = new IngredientRecipe(null, ingredient, recipe);
+        return ingredientRecipe;
     }
 
 }

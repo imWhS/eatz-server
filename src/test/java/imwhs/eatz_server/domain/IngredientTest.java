@@ -1,5 +1,6 @@
 package imwhs.eatz_server.domain;
 
+import imwhs.eatz_server.domain.ingredient.Ingredient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
