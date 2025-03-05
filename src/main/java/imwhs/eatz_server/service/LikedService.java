@@ -40,9 +40,6 @@ public class LikedService {
         EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
                 new EatzUserNotFoundException(username + "에 해당하는 사용자가 존재하지 않아요."));
 
-        log.info("{} ID: {}", type.name(), entityId);
-        log.info("username: {} | user id: {}", username, user.getId());
-
         validateEntityById(entityId, type);
         Optional<Liked> existingLike = likedRepository.findByUserIdAndEntityIdAndType(user.getId(), entityId, type);
 

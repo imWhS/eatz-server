@@ -39,7 +39,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
-        log.info("Authorization header: {}", authorizationHeader);
 
         // HTTP 요청에 JWT 형식의 액세스 토큰을 담은 Authorization 헤더가 존재하는지 확인합니다.
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -52,7 +51,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
         // Authorization 헤더에서 액세스 토큰을 추출합니다.
         String accessToken = authorizationHeader.substring("Bearer ".length());
-        log.info("액세스 토큰: {}", accessToken);
 
         try {
             String username = tokenManager.getUsername(accessToken);
