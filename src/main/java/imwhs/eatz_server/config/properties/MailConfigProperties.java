@@ -23,9 +23,20 @@ public class MailConfigProperties {
 
     private long authCodeExpirationTime;
 
+
     @Getter
     @Setter
     public static class Properties {
+
+        private Mail mail;
+
+    }
+
+    @Getter
+    @Setter
+    public static class Mail {
+
+        private boolean debug;
 
         private Smtp smtp;
 
@@ -34,6 +45,8 @@ public class MailConfigProperties {
     @Getter
     @Setter
     public static class Smtp {
+
+        private boolean debug;
 
         private boolean auth;
 

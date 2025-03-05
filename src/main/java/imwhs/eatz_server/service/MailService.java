@@ -19,7 +19,7 @@ public class MailService {
         try {
             mailSender.send(message);
         } catch (RuntimeException e) {
-            throw new RuntimeException("메일을 전송하지 못했어요.");
+            throw new RuntimeException("메일을 전송하지 못했어요: " + e.getMessage());
         }
     }
 

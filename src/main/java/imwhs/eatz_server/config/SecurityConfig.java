@@ -43,7 +43,7 @@ public class SecurityConfig {
             "/",
             "/auth/**",
             "/login",
-            "/sign-up",
+            "/sign-up/**",
             "/reissue-token",
             "/sign-out",
     };
