@@ -2,7 +2,7 @@ package imwhs.eatz_server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import imwhs.eatz_server.auth.*;
-import imwhs.eatz_server.config.properties.JwtProperties;
+import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
 import imwhs.eatz_server.service.EatzUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class SecurityConfig {
 
     private final TokenManager tokenManager;
 
-    private final JwtProperties jwtProperties;
+    private final JwtConfigProperties jwtConfigProperties;
 
     private final EatzUserDetailsService userDetailsService;
 
@@ -43,7 +43,7 @@ public class SecurityConfig {
             "/",
             "/auth/**",
             "/login",
-            "/sign-up",
+            "/sign-up/**",
             "/reissue-token",
             "/sign-out",
     };
@@ -59,7 +59,7 @@ public class SecurityConfig {
         JsonAuthenticationFilter jsonAuthenticationfilter = new JsonAuthenticationFilter(
                 objectMapper,
                 tokenManager,
-                jwtProperties,
+                jwtConfigProperties,
                 authenticationManager(authenticationConfiguration),
                 refreshTokenRepository
         );

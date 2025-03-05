@@ -1,6 +1,6 @@
 package imwhs.eatz_server.config;
 
-import imwhs.eatz_server.config.properties.AdminProperties;
+import imwhs.eatz_server.config.properties.AdminConfigProperties;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -20,13 +20,13 @@ public class AdminInitializer {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AdminProperties adminProperties;
+    private final AdminConfigProperties adminConfigProperties;
 
     @Bean
     public ApplicationRunner adminAccountInitializer() {
         return args -> {
-            String email = adminProperties.getEmail();
-            String password = adminProperties.getPassword();
+            String email = adminConfigProperties.getEmail();
+            String password = adminConfigProperties.getPassword();
 
             if (userRepository.findByEmail(email).isEmpty()) {
                 EatzUser admin = new EatzUser("admin", email, passwordEncoder.encode(password), EatzUserRole.ROLE_ADMIN);

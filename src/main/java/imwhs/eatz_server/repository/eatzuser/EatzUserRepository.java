@@ -1,6 +1,7 @@
 package imwhs.eatz_server.repository.eatzuser;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import jakarta.validation.constraints.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -53,4 +54,5 @@ public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
      */
     boolean existsByEmail(String email);
 
+    boolean existsByEmailOrUsername(@Email(message = "유효한 이메일 주소가 아닙니다.") String email, String username);
 }

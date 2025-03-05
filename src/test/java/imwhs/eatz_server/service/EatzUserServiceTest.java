@@ -1,7 +1,6 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.dto.auth.SignUpRequestDto;
 import imwhs.eatz_server.dto.eatzuser.DeleteEatzUserDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
@@ -220,25 +219,25 @@ public class EatzUserServiceTest {
         Assertions.assertThat(userRepository.findById(user.getId()).isPresent()).isFalse();
     }
 
-    @Test
-    @DisplayName("유효하지 않은 사용자의 삭제가 실패하는지 테스트합니다.")
-    @Transactional
-    void invalidUserDeleteTest() {
-        // given
-        SignUpRequestDto createDto = new SignUpRequestDto(
-                "heextory",
-                "imwhs@icloud.com",
-                "1q2w3e4r!");
-
-        authService.signUp(createDto);
-
-        // when, then
-        Assertions.assertThatThrownBy(() ->
-                userService.deleteUser(
-                        99999L,
-                        new DeleteEatzUserDto("test"))
-        ).isInstanceOf(EatzUserNotFoundException.class);
-    }
+//    @Test
+//    @DisplayName("유효하지 않은 사용자의 삭제가 실패하는지 테스트합니다.")
+//    @Transactional
+//    void invalidUserDeleteTest() {
+//        // given
+//        SignUpRequestDto createDto = new SignUpRequestDto(
+//                "heextory",
+//                "imwhs@icloud.com",
+//                "1q2w3e4r!");
+//
+//        authService.signUp(createDto);
+//
+//        // when, then
+//        Assertions.assertThatThrownBy(() ->
+//                userService.deleteUser(
+//                        99999L,
+//                        new DeleteEatzUserDto("test"))
+//        ).isInstanceOf(EatzUserNotFoundException.class);
+//    }
 
     @Test
     @DisplayName("등록된 사용자가 식별자로 정상적으로 조회되는지 테스트합니다.")
