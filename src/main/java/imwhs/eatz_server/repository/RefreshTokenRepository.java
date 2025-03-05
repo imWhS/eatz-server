@@ -5,13 +5,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 
-    @Query
+    Optional<RefreshToken> findByToken(String token);
+
     Boolean existsByToken(String token);
 
-    @Query
     void deleteByToken(String token);
 
 }
