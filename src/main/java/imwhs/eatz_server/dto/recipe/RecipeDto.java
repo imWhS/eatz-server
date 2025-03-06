@@ -53,6 +53,11 @@ public class RecipeDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
+    /**
+     * 레시피 조회 수
+     */
+    private Integer viewCount;
+
     // 아래부터는 xToOne 연관 관계 엔티티 관련 DTO 타입의 필드입니다.
 
     /**
@@ -91,13 +96,14 @@ public class RecipeDto {
 //    private Long savedCount;
 
 
-    public RecipeDto(Long id, String title, String description, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, AuthorOfRecipeDto author) {
+    public RecipeDto(Long id, String title, String description, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount, AuthorOfRecipeDto author) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.viewCount = viewCount;
         this.author = author;
     }
 
