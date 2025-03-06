@@ -1,6 +1,7 @@
 package imwhs.eatz_server.domain.recipe;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

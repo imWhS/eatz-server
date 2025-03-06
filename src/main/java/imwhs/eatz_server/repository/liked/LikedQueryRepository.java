@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import imwhs.eatz_server.domain.liked.LikedType;
+import imwhs.eatz_server.domain.liked.EntityType;
 import imwhs.eatz_server.domain.eatzuser.QEatzUser;
 import imwhs.eatz_server.domain.liked.QLiked;
 import imwhs.eatz_server.dto.liked.LikedDetailDto;
@@ -24,7 +24,7 @@ public class LikedQueryRepository {
      * ID에 해당하는 항목에 대한 좋아요 상세 정보를 조회합니다.
      */
 
-    public void findAll(Long entityId, LikedType type) throws JsonProcessingException {
+    public void findAll(Long entityId, EntityType type) throws JsonProcessingException {
         QLiked liked = QLiked.liked;
         QEatzUser user = QEatzUser.eatzUser;
 

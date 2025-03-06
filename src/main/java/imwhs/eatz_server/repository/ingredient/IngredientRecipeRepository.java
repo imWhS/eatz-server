@@ -1,6 +1,6 @@
 package imwhs.eatz_server.repository.ingredient;
 
-import imwhs.eatz_server.domain.IngredientRecipe;
+import imwhs.eatz_server.domain.ingredient.IngredientRecipe;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.ingredient.IngredientByRecipeDto;
 import imwhs.eatz_server.dto.recipe.ingredient.RecipeIngredientDto;

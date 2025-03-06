@@ -1,6 +1,6 @@
 package imwhs.eatz_server.repository.recipe;
 
-import imwhs.eatz_server.domain.recipe.Category;
+import imwhs.eatz_server.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

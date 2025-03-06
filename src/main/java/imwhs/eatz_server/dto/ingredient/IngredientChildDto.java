@@ -1,6 +1,6 @@
 package imwhs.eatz_server.dto.ingredient;
 
-import imwhs.eatz_server.domain.Ingredient;
+import imwhs.eatz_server.domain.ingredient.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
