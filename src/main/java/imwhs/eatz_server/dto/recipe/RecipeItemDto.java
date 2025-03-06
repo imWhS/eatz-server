@@ -49,6 +49,11 @@ public class RecipeItemDto {
     private LocalDateTime updatedAt;
 
     /**
+     * 조회 수.
+     */
+    private Integer viewCount;
+
+    /**
      * 레시피를 등록한 사용자의 핵심 정보. (with EatzUser)
      */
     private EatzUserBasicDto author;
@@ -105,6 +110,7 @@ public class RecipeItemDto {
             String imageUrl,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
+            Integer viewCount,
             EatzUserBasicDto author,
             Boolean isLikedByUser,
             Long commentCount,
@@ -116,6 +122,7 @@ public class RecipeItemDto {
         this.title = title;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.viewCount = viewCount;
         this.imageUrl = imageUrl;
         this.author = author;
         this.isLikedByUser = isLikedByUser;

@@ -10,6 +10,9 @@ import imwhs.eatz_server.service.ReportService;
 import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
+import imwhs.eatz_server.service.recipe.RecipeViewCountService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +38,7 @@ public class RecipeController {
     private final IngredientRecipeService ingredientRecipeService;
 
     private final ReportService reportService;
+    private final RecipeViewCountService recipeViewCountService;
 
     /**
      * 새 레시피를 등록합니다.
@@ -100,8 +104,12 @@ public class RecipeController {
      * @return 레시피 정보.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<RecipeDto>> findRecipe(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<RecipeDto>> findRecipe(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable Long id) {
         RecipeDto dto = recipeQueryService.findById(id, EatzUserAuthUtil.getId());
+        recipeViewCountService.increaseViewCount(request, response, id);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
