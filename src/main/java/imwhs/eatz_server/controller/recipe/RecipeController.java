@@ -1,11 +1,12 @@
 package imwhs.eatz_server.controller.recipe;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
+import imwhs.eatz_server.domain.liked.EntityType;
 import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
-import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.dto.Paged;
+import imwhs.eatz_server.dto.*;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.dto.recipe.ingredient.AddIngredientDto;
+import imwhs.eatz_server.service.ReportService;
 import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
 import imwhs.eatz_server.service.recipe.RecipeService;
 import imwhs.eatz_server.service.query.RecipeQueryService;
@@ -32,6 +33,8 @@ public class RecipeController {
     private final RecipeQueryService recipeQueryService;
 
     private final IngredientRecipeService ingredientRecipeService;
+
+    private final ReportService reportService;
 
     /**
      * 새 레시피를 등록합니다.
@@ -83,6 +86,12 @@ public class RecipeController {
         }
 
         return ResponseEntity.ok().body(ApiResponse.success(addedIngredients));
+    }
+
+    @PostMapping("/{id}/report")
+    public ResponseEntity<ApiResponse<Long>> reportRecipe(@PathVariable Long id, @RequestBody CreateBasicReportDto dto) {
+        Long reportId = reportService.register(EatzUserAuthUtil.getId(), id, EntityType.RECIPE, dto.getContent());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(reportId));
     }
 
     /**

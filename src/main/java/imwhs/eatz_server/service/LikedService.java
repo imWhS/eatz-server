@@ -1,16 +1,14 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.liked.EntityType;
 import imwhs.eatz_server.domain.liked.Liked;
-import imwhs.eatz_server.domain.liked.LikedType;
 import imwhs.eatz_server.dto.liked.LikedDetailDto;
 import imwhs.eatz_server.dto.liked.LikedDto;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.liked.LikedQueryRepository;
 import imwhs.eatz_server.repository.liked.LikedRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +33,8 @@ public class LikedService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public LikedDto toggleLikeOf(Long entityId, LikedType type) {
-        String username = EatzUserAuthUtil.getUsername();
-        EatzUser user = userRepository.findByUsername(username).orElseThrow(() ->
-                new EatzUserNotFoundException(username + "에 해당하는 사용자가 존재하지 않아요."));
-
+    public LikedDto toggleLikeOf(Long userId, Long entityId, EntityType type) {
+        EatzUser user = userRepository.findById(userId).orElseThrow(() -> new EatzUserNotFoundException(userId));
         validateEntityById(entityId, type);
         Optional<Liked> existingLike = likedRepository.findByUserIdAndEntityIdAndType(user.getId(), entityId, type);
 
@@ -63,7 +58,7 @@ public class LikedService {
         return new LikedDto(likeId, entityId, type, isLiked, likedCount);
     }
 
-    public boolean isLikedByUser(Long userId, Long entityId, LikedType type) {
+    public boolean isLikedByUser(Long userId, Long entityId, EntityType type) {
         if (!userRepository.existsById(userId)) {
             throw new EatzUserNotFoundException("사용자(" + userId + ")가 존재하지 않아요.");
         }
@@ -72,7 +67,7 @@ public class LikedService {
         return likedRepository.existsByUserIdAndEntityIdAndTypeAndIsLikedIsTrue(userId, entityId, type);
     }
 
-    public LikedDetailDto getLikedDetails(Long entityId, LikedType type) {
+    public LikedDetailDto getLikedDetails(Long entityId, EntityType type) {
         validateEntityById(entityId, type);
 
         LikedDetailDto dto = likedRepository.findAllByEntityIdAndType(entityId, type);
@@ -81,7 +76,7 @@ public class LikedService {
         return dto;
     }
 
-    private void validateEntityById(Long entityId, LikedType type) {
+    private void validateEntityById(Long entityId, EntityType type) {
         switch (type) {
             case RECIPE:
                 validateRecipeById(entityId);

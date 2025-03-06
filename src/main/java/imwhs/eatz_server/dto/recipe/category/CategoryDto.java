@@ -1,7 +1,7 @@
 package imwhs.eatz_server.dto.recipe.category;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import imwhs.eatz_server.domain.recipe.Category;
+import imwhs.eatz_server.domain.Category;
 import lombok.Data;
 
 import java.time.LocalDateTime;

@@ -1,12 +1,10 @@
-package imwhs.eatz_server.dto.liked;
+package imwhs.eatz_server.dto.report;
 
 import imwhs.eatz_server.domain.liked.EntityType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
 @Data
-public class ToggleLikedDto {
+public class ResolveReportDto {
 
     private Long entityId;
 

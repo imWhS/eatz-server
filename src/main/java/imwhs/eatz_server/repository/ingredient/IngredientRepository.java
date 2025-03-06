@@ -1,7 +1,6 @@
 package imwhs.eatz_server.repository.ingredient;
 
-import imwhs.eatz_server.domain.Ingredient;
-import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.domain.ingredient.Ingredient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

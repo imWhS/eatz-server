@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service.ingredient;
 
-import imwhs.eatz_server.domain.Ingredient;
+import imwhs.eatz_server.domain.ingredient.Ingredient;
 import imwhs.eatz_server.dto.ingredient.*;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;

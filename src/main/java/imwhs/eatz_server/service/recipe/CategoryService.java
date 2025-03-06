@@ -1,6 +1,6 @@
 package imwhs.eatz_server.service.recipe;
 
-import imwhs.eatz_server.domain.recipe.Category;
+import imwhs.eatz_server.domain.Category;
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.domain.recipe.RecipeCategory;
 import imwhs.eatz_server.exception.CategoryNotFoundException;
