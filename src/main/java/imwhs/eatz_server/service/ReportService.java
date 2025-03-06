@@ -2,10 +2,12 @@ package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.Report;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
 import imwhs.eatz_server.domain.liked.EntityType;
 import imwhs.eatz_server.dto.ReportDto;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.ReportNotFoundException;
+import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import imwhs.eatz_server.repository.ReportRepository;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
@@ -14,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class ReportService {
@@ -27,30 +31,36 @@ public class ReportService {
 
     private final CommentRepository commentRepository;
 
-    public Long registerReport(Long userId, Long entityId, EntityType type, String content) {
-        EatzUser user = userRepository.findById(userId).orElseThrow(() -> new EatzUserNotFoundException(userId));
+    @Transactional
+    public Long register(Long userId, Long entityId, EntityType type, String content) {
+        EatzUser user = findUser(userId);
         validateEntityById(entityId, type);
         Report report = Report.of(user, entityId, type, content);
         reportRepository.save(report);
         return report.getId();
     }
 
-    public Page<ReportDto> searchReports(EntityType type, Pageable pageable) {
-        return reportRepository.findByType(type, pageable);
-    }
+    @Transactional
+    public void markAsResolved(Long adminId, Long reportId) {
+        EatzUser admin = findUser(adminId);
 
-    public ReportDto markAsResolved(Long reportId) {
+        if (admin.getEatzUserRole().equals(EatzUserRole.ROLE_MEMBER)) {
+            throw new UnauthorizedEatzUserException("관리자 권한이 없는 사용자입니다.");
+        }
+
         Report report = reportRepository.findById(reportId).orElseThrow(
                 () -> new ReportNotFoundException(reportId));
 
-        return new ReportDto(
-                report.getId(),
-                report.getEntityId(),
-                report.getType(),
-                report.getContent(),
-                report.getResolvedBy().getId(),
-                report.getCreatedAt(),
-                report.getUpdatedAt());
+        report.resolve(admin);
+    }
+
+    public Page<ReportDto> findByType(EntityType type, Pageable pageable) {
+        return reportRepository.findByType(type, pageable);
+    }
+
+    private EatzUser findUser(Long userId) {
+        EatzUser user = userRepository.findById(userId).orElseThrow(() -> new EatzUserNotFoundException(userId));
+        return user;
     }
 
     private void validateEntityById(Long entityId, EntityType type) {
