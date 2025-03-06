@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,6 +42,16 @@ public class RedisService {
     @Transactional
     public void setValue(String key, String value, Duration timeout) {
         redisTemplate.opsForValue().set(key, value, timeout);
+    }
+
+    @Transactional
+    public void increaseValue(String key) {
+        redisTemplate.opsForValue().increment(key, 1);
+    }
+
+    @Transactional
+    public Set<String> getKeys(String pattern) {
+        return redisTemplate.keys(pattern);
     }
 
     /**

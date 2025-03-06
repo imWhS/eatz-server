@@ -88,6 +88,8 @@ public class Recipe extends BaseEntity {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeCategory> recipeCategories = new ArrayList<>();
 
+    private Integer viewCount = 0;
+
     protected Recipe() {}
 
     /**
@@ -173,6 +175,10 @@ public class Recipe extends BaseEntity {
 
     public void clearAllRecipeCategories() {
         this.recipeCategories.clear();
+    }
+
+    public void increaseViewCount(Integer viewCount) {
+        this.viewCount += viewCount;
     }
 
 }

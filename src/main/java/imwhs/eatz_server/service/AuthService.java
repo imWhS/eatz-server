@@ -55,11 +55,12 @@ public class AuthService {
         String storedCode = redisService.getValue(REDIS_KEY_PREFIX_VERIFICATION_CODE_OF + email);
         
         if (code == null || !Objects.equals(storedCode, code)) {
-            throw new IllegalArgumentException("인증 코드가 올바르지 않아요. 유효 시간(이메일 인증 요청한 시간으로부터 5분)이 지났다면, " +
-                    "처음부터 다시 진행해주세요.");
+            throw new IllegalArgumentException("인증 코드가 올바르지 않아요. 인증 코드는 이메일 인증을 요청한 시간으로부터 5분 간 유효해요. " +
+                    "유효 시간이 지났다면 처음부터 다시 진행해주세요.");
         }
-        
+
         redisService.setValue(REDIS_KEY_PREFIX_VERIFIED_TIME_OF + email, LocalDateTime.now().toString(), Duration.ofMinutes(30));
+        redisService.deleteValue(REDIS_KEY_PREFIX_VERIFICATION_CODE_OF + email);
     }
     
 
@@ -74,28 +75,23 @@ public class AuthService {
      */
     @Transactional
     public Long signUp(String username, String email, String password) {
-        isEmailExists(email);
-        String verifiedTime = redisService.getValue(REDIS_KEY_PREFIX_VERIFIED_TIME_OF + email);
+        if (userRepository.existsByUsername(username)) {
+            throw new DuplicatedEatzUserException("이미 사용 중인 사용자 이름입니다.");
+        }
 
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicatedEatzUserException("이미 사용 중인 이메일 주소입니다.");
+        }
+
+        String verifiedTime = redisService.getValue(REDIS_KEY_PREFIX_VERIFIED_TIME_OF + email);
         if (verifiedTime == null) {
             throw new IllegalArgumentException("인증이 완료되지 않은 이메일 주소입니다.");
         }
 
-        // 기존 등록된 사용자에 의해 사용 중인 사용자 이름이 아닌지 확인합니다.
-        if (userRepository.existsByEmailOrUsername(email, username)) {
-            throw new DuplicatedEatzUserException("이미 " + username + "를 사용자 이름으로 사용 중인 사용자가 존재합니다.");
-        }
-
         EatzUser member = EatzUser.createMember(username, email, passwordEncoder.encode(password));
         userRepository.save(member);
-
+        redisService.deleteValue(REDIS_KEY_PREFIX_VERIFIED_TIME_OF + email);
         return member.getId();
-    }
-
-    private void isEmailExists(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new DuplicatedEatzUserException("이미 " + email + "를 이메일 주소로 사용 중인 사용자가 존재합니다.");
-        }
     }
 
     public String reissueAccessToken(String refreshToken, String email, String password) {

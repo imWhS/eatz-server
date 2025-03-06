@@ -14,6 +14,7 @@ import imwhs.eatz_server.repository.ingredient.IngredientRecipeRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeCategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
+import imwhs.eatz_server.service.recipe.RecipeViewCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,7 @@ public class RecipeQueryService {
     private final IngredientUserRepository ingredientUserRepository;
 
     private final EatzUserRepository eatzUserRepository;
+    private final RecipeViewCountService recipeViewCountService;
 
     /**
      * 식별자로 레시피를 조회합니다.
