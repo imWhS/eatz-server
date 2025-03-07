@@ -4,6 +4,7 @@ import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.recipe.RecipeCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,11 @@ public class Category extends BaseEntity {
     public void addRecipeCategory(RecipeCategory recipeCategory) {
         this.recipeCategories.add(recipeCategory);
         recipeCategory.setCategory(this);
+    }
+
+    public void update(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
 }

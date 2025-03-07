@@ -59,7 +59,7 @@ public class CommentServiceTest {
 
     @Test
     @Transactional
-    void updateCommentTest() {
+    void updateTest() {
         // given
         EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
@@ -81,7 +81,7 @@ public class CommentServiceTest {
         Long commentId = comment.getId();
 
         // when
-        commentService.updateComment(commentId, userId, commentContentAfter);
+        commentService.update(commentId, userId, commentContentAfter);
         commentRepository.flush();
 
         // then
@@ -96,7 +96,7 @@ public class CommentServiceTest {
 
     @Test
     @Transactional
-    void updateCommentByInvalidUserTest() {
+    void updateByInvalidUserTest() {
         // given
         EatzUser user = EatzUser.createMember("heextoryA", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
@@ -120,13 +120,13 @@ public class CommentServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() ->
-                        commentService.updateComment(commentId, invalidUserId, commentContentAfter))
+                        commentService.update(commentId, invalidUserId, commentContentAfter))
                 .isInstanceOf(UnauthorizedEatzUserException.class);
     }
 
     @Test
     @Transactional
-    void deleteCommentTest() {
+    void deleteTest() {
         // given
         EatzUser user = EatzUser.createMember("heextoryB", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
@@ -147,7 +147,7 @@ public class CommentServiceTest {
         Long commentId = comment.getId();
 
         // when
-        commentService.deleteComment(commentId, userId);
+        commentService.delete(commentId, userId);
 
         // then
         Assertions.assertThat(commentRepository.findByIdAndDeletedAtIsNull(commentId)).isEmpty();
@@ -155,7 +155,7 @@ public class CommentServiceTest {
 
     @Test
     @Transactional
-    void deleteCommentByInvalidUserTest() {
+    void deleteByInvalidUserTest() {
         // given
         EatzUser user = EatzUser.createMember("heextoryC", "heextory@icloud.com", "1q2w3e4r!");
         userRepository.save(user);
@@ -177,7 +177,7 @@ public class CommentServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() ->
-                commentService.deleteComment(commentId, invalidUserId))
+                commentService.delete(commentId, invalidUserId))
                 .isInstanceOf(UnauthorizedEatzUserException.class);
     }
 
