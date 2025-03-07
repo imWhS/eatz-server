@@ -19,19 +19,19 @@ public class IngredientController {
 
     @PostMapping
     public @ResponseBody ResponseEntity<ApiResponse<Long>> registerIngredient(@RequestBody IngredientCreateDto dto) {
-        Long ingredientId = ingredientService.registerIngredient(dto.getName(), dto.getCategoryId(), dto.getChildIds());
+        Long ingredientId = ingredientService.register(dto.getName(), dto.getCategoryId(), dto.getChildIds());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(ingredientId));
     }
 
     @GetMapping("/{id}")
     public @ResponseBody ResponseEntity<ApiResponse<IngredientWithCategoryChildDto>> findIngredient(@PathVariable Long id) {
-        IngredientWithCategoryChildDto dto = ingredientService.findIngredient(id);
+        IngredientWithCategoryChildDto dto = ingredientService.findById(id);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
     @GetMapping("/{id}/tree")
     public @ResponseBody ResponseEntity<ApiResponse<IngredientTreeDto>> findIngredientTree(@PathVariable Long id) {
-        IngredientTreeDto dto = ingredientService.findIngredientTree(id);
+        IngredientTreeDto dto = ingredientService.getTreeById(id);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
 

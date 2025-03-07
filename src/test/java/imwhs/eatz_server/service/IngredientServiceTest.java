@@ -32,13 +32,13 @@ class IngredientServiceTest {
     @Test
     @DisplayName("새 재료가 정상적으로 등록되는지 테스트합니다.")
     @Transactional
-    void registerIngredientTest() {
+    void registerTest() {
         // given
         String ingredientName = "apple";
         IngredientCreateDto dto = new IngredientCreateDto(ingredientName);
 
         // when
-        Long ingredientId = ingredientService.registerIngredient(dto.getName(), dto.getCategoryId(), dto.getChildIds());
+        Long ingredientId = ingredientService.register(dto.getName(), dto.getCategoryId(), dto.getChildIds());
 
         // then
         Optional<Ingredient> foundIngredient = ingredientRepository.findById(ingredientId);
@@ -63,7 +63,7 @@ class IngredientServiceTest {
         IngredientCreateDto dto = new IngredientCreateDto(ingredientName, category.getId(), Arrays.asList(child.getId()));
 
         // when
-        Long ingredientId = ingredientService.registerIngredient(dto.getName(), dto.getCategoryId(), dto.getChildIds());
+        Long ingredientId = ingredientService.register(dto.getName(), dto.getCategoryId(), dto.getChildIds());
 
         // then
         Optional<Ingredient> foundIngredient = ingredientRepository.findById(ingredientId);
@@ -90,14 +90,14 @@ class IngredientServiceTest {
         IngredientCreateDto dto = new IngredientCreateDto(ingredientName, categoryId);
 
         // when, then
-        IngredientNotFoundException exception = Assertions.assertThrows(IngredientNotFoundException.class, () -> ingredientService.registerIngredient(dto.getName(), dto.getCategoryId(), dto.getChildIds()));
+        IngredientNotFoundException exception = Assertions.assertThrows(IngredientNotFoundException.class, () -> ingredientService.register(dto.getName(), dto.getCategoryId(), dto.getChildIds()));
         Assertions.assertEquals("id가 " + categoryId + "인 재료를 찾을 수 없습니다.", exception.getMessage());
     }
 
     @Test
     @DisplayName("재료가 정상적으로 수정되는지 테스트합니다.")
     @Transactional
-    void updateIngredientTest() {
+    void updateTest() {
         // given
         String categoryName = "Category name";
         Ingredient category = new Ingredient(categoryName);
@@ -131,7 +131,7 @@ class IngredientServiceTest {
                 Arrays.asList(updatedChild.getId()));
 
         // when
-        ingredientService.updateIngredient(dto);
+        ingredientService.update(dto);
 
         // then
         Optional<Ingredient> foundIngredient = ingredientRepository.findById(ingredientId);
@@ -168,7 +168,7 @@ class IngredientServiceTest {
         ingredient.addChild(child2);
 
         // when
-        ingredientService.deleteIngredient(ingredient.getId());
+        ingredientService.delete(ingredient.getId());
 
         // then: category는 children이 없어야 하며, 각 child는 category가 지정되어 있지 않아야 합니다.
         Assertions.assertTrue(category.getChildren().isEmpty());
@@ -203,7 +203,7 @@ class IngredientServiceTest {
         ingredient.addChild(child2);
 
         // when
-        IngredientWithCategoryChildDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientWithCategoryChildDto foundIngredient = ingredientService.findById(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -236,7 +236,7 @@ class IngredientServiceTest {
         ingredient.addChild(child2);
 
         // when
-        IngredientWithCategoryChildDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientWithCategoryChildDto foundIngredient = ingredientService.findById(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -258,7 +258,7 @@ class IngredientServiceTest {
         ingredientRepository.save(ingredient);
 
         // when
-        IngredientWithCategoryChildDto foundIngredient = ingredientService.findIngredient(ingredient.getId());
+        IngredientWithCategoryChildDto foundIngredient = ingredientService.findById(ingredient.getId());
 
         // then
         Assertions.assertNotNull(foundIngredient);
@@ -270,7 +270,7 @@ class IngredientServiceTest {
     @Test
     @Transactional
     @DisplayName("모든 재료가 계층 구조로 조회되는지 테스트합니다.")
-    void findIngredientWithAllChildrenTreeTest() {
+    void findByIdWithAllChildrenTreeTest() {
         // given
         Ingredient root = new Ingredient("모든 재료");
         ingredientRepository.save(root);
@@ -304,7 +304,7 @@ class IngredientServiceTest {
         beefSub1.setCategory(beef);
 
         // when
-        IngredientTreeDto rootOfIngredientTree = ingredientService.findIngredientTree(root.getId());
+        IngredientTreeDto rootOfIngredientTree = ingredientService.getTreeById(root.getId());
 
         // then
         Assertions.assertNotNull(rootOfIngredientTree);

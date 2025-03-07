@@ -38,6 +38,7 @@ public class RecipeController {
     private final IngredientRecipeService ingredientRecipeService;
 
     private final ReportService reportService;
+
     private final RecipeViewCountService recipeViewCountService;
 
     /**
@@ -92,6 +93,12 @@ public class RecipeController {
         return ResponseEntity.ok().body(ApiResponse.success(addedIngredients));
     }
 
+    /**
+     * 레시피를 신고합니다.
+     * @param id 신고하려는 레시피의 ID.
+     * @param dto 신고 정보.
+     * @return 추가된 신고 ID.
+     */
     @PostMapping("/{id}/report")
     public ResponseEntity<ApiResponse<Long>> reportRecipe(@PathVariable Long id, @RequestBody CreateBasicReportDto dto) {
         Long reportId = reportService.register(EatzUserAuthUtil.getId(), id, EntityType.RECIPE, dto.getContent());

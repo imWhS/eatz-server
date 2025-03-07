@@ -214,14 +214,14 @@ public class EatzUserController {
     @GetMapping("/comments")
     public ResponseEntity<ApiResponse<Paged<CommentWithRecipeDto>>> getComments(
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<CommentWithRecipeDto> comments = commentService.findCommentsByUser(EatzUserAuthUtil.getUsername(), pageable);
+        Page<CommentWithRecipeDto> comments = commentService.findByUser(EatzUserAuthUtil.getUsername(), pageable);
         return ResponseEntity.ok(ApiResponse.success(comments));
     }
 
     @GetMapping("/ratings")
     public ResponseEntity<ApiResponse<Paged<RatingWithRecipeDto>>> getRatings(
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<RatingWithRecipeDto> ratings = ratingService.findRatingsByUser(EatzUserAuthUtil.getId(), pageable);
+        Page<RatingWithRecipeDto> ratings = ratingService.findByUser(EatzUserAuthUtil.getId(), pageable);
         return ResponseEntity.ok(ApiResponse.success(ratings));
     }
 
