@@ -1,12 +1,15 @@
 package imwhs.eatz_server.controller;
 
+import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.Category;
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.recipe.category.CreateCategoryDto;
 import imwhs.eatz_server.dto.recipe.category.CategoryDto;
+import imwhs.eatz_server.dto.recipe.category.UpdateCategoryDto;
 import imwhs.eatz_server.service.recipe.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +41,18 @@ public class CategoryController {
         }
 
         return ResponseEntity.ok(ApiResponse.success(new CategoryDto(category)));
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCategory(@PathVariable Long id, @RequestBody UpdateCategoryDto dto) {
+        categoryService.update(id, EatzUserAuthUtil.getId(), dto.getName(), dto.getDescription());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCategory(@PathVariable Long id) {
+        categoryService.delete(id, EatzUserAuthUtil.getId());
     }
 
 }

@@ -19,28 +19,14 @@ public class IngredientService {
 
     /**
      * 새 재료를 등록합니다.
-     * <p>
-     *     Ingredient 엔티티를 생성하고, 리포지토리를 통해 저장합니다.
-     * </p>
-     * @param name 재료 이름.
-     *
-     * @return 생성된 재료의 식별자.
-     * @throws IngredientNotFoundException 유효하지 않은 식별자의 재료를 카테고리 또는 하위 재료로서 추가하려는 경우.
-     * TODO: 같은 이름을 가진 재료에 대한 처리
-     */
-
-    /**
-     * 새 재료를 등록합니다.
      * @param name 재료 이름.
      * @param categoryId 재료를 포함시킬 카테고리의 ID.
      * @param childIds 하위에 포함시킬 재료들의 ID 목록.
      * @return 등록 완료된 재료의 ID.
-     * @throws IngredientNotFoundException 유효하지 않은 식별자의 재료를 카테고리 또는 하위 재료로서 추가하려는 경우.
+     * @throws IngredientNotFoundException 유효하지 않은 ID의 재료를 카테고리 또는 하위 재료로서 추가하려는 경우.
      */
     @Transactional
-    public Long registerIngredient(String name, Long categoryId, List<Long> childIds) {
-        // String name, Long categoryId, List<Long> childIds
-
+    public Long register(String name, Long categoryId, List<Long> childIds) {
         // 사용하려는 재료 이름의 유효성을 검증합니다.
         validateIngredientName(name, categoryId);
 
@@ -50,7 +36,6 @@ public class IngredientService {
 
         // 재료에 설정할 카테고리 정보가 DTO에 포함되어 있는 경우: 카테고리를 설정합니다.
         if (categoryId != null) {
-
             if (Objects.equals(categoryId, ingredient.getId())) {
                 throw new IllegalArgumentException("재료 자신을 카테고리로 설정할 수 없습니다.");
             }
@@ -80,14 +65,14 @@ public class IngredientService {
      * </p>
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateIngredient(IngredientUpdateDto dto) {
-        // 업데이트할 재료의 식별자가 전달되지 않은 경우, 더 이상 진행하지 않습니다.
+    public void update(IngredientUpdateDto dto) {
+        // 업데이트할 재료의 ID가 전달되지 않은 경우, 더 이상 진행하지 않습니다.
         validateIngredientId(dto.getId());
 
         // 사용하려는 재료 이름의 유효성을 검증합니다.
         validateIngredientName(dto.getName(), dto.getCategoryId());
 
-        // 식별자로 업데이트할 재료의 엔티티를 조회합니다.
+        // ID로 업데이트할 재료의 엔티티를 조회합니다.
         Ingredient ingredient = getIngredient(dto.getId());
 
         // 카테고리로 설정할 재료의 엔티티를 조회합니다.
@@ -104,12 +89,12 @@ public class IngredientService {
 
     /**
      * 재료를 삭제합니다.
-     * @param id 삭제하려는 재료의 식별자.
-     * @throws IngredientNotFoundException 식별자에 해당하는 재료가 존재하지 않는 경우.
+     * @param id 삭제하려는 재료의 ID.
+     * @throws IngredientNotFoundException ID에 해당하는 재료가 존재하지 않는 경우.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteIngredient(Long id) {
-        // 삭제할 재료의 식별자가 전달되지 않은 경우, 더 이상 진행하지 않습니다.
+    public void delete(Long id) {
+        // 삭제할 재료의 ID가 전달되지 않은 경우, 더 이상 진행하지 않습니다.
         validateIngredientId(id);
 
         // 재료 엔티티를 조회합니다.
@@ -132,31 +117,31 @@ public class IngredientService {
      *     <li>Ingredient와 이와 연관 관계인 Ingredient.category를 페치 조인한 데이터를 조회합니다.</li>
      *     <li>Ingredient.children은 IngredientDto 생성자에서 지연 로딩됩니다.</li>
      * </ul>
-     * @param id 조회하려는 재료의 식별자.
+     * @param id 조회하려는 재료의 ID.
      * @return 조회된 재료의 정보를 담고 있는 IngredientResponseDto.
      */
-    public IngredientWithCategoryChildDto findIngredient(Long id) {
+    public IngredientWithCategoryChildDto findById(Long id) {
         Ingredient ingredient = ingredientRepository.findWithCategoryById(id)
                 .orElseThrow(() -> new IngredientNotFoundException("id " + id + "에 해당하는 재료를 찾을 수 없습니다."));
         return new IngredientWithCategoryChildDto(ingredient);
     }
 
     /**
-     * 식별자에 해당하는 재료와 하위 재료 계층을 구성하는 모든 재료 엔티티를 함께 조회합니다.
-     * @param id 조회하려는 재료의 식별자.
+     * ID에 해당하는 재료와 하위 재료 계층을 구성하는 모든 재료 엔티티를 함께 조회합니다.
+     * @param id 조회하려는 재료의 ID.
      * @return IngredientTreeResponseDto.
      */
-    public IngredientTreeDto findIngredientTree(Long id) {
+    public IngredientTreeDto getTreeById(Long id) {
         List<Ingredient> ingredientWithAllChildren = ingredientRepository.findIngredientTree(id);
         return toTreeResponseDto(ingredientWithAllChildren);
     }
 
     /**
-     * 식별자로 재료 엔티티를 가져옵니다.<br/>
-     * IngredientService 내부에서만 사용하는 메서드로, 식별자가 null이면 그대로 null을 반환합니다.
-     * @param id 조회하려는 재료의 식별자.
+     * ID로 재료 엔티티를 가져옵니다.<br/>
+     * IngredientService 내부에서만 사용하는 메서드로, ID가 null이면 그대로 null을 반환합니다.
+     * @param id 조회하려는 재료의 ID.
      * @return 재료 엔티티.
-     * @throws IngredientNotFoundException 식별자에 해당하는 재료 엔티티가 존재하지 않을 경우.
+     * @throws IngredientNotFoundException ID에 해당하는 재료 엔티티가 존재하지 않을 경우.
      */
     private Ingredient getIngredient(Long id) {
         if (id == null) return null;
@@ -165,8 +150,8 @@ public class IngredientService {
     }
 
     /**
-     * 재료 식별자의 유효성을 검증합니다.
-     * @throws IllegalArgumentException 식별자가 유효하지 않은 경우
+     * 재료 ID의 유효성을 검증합니다.
+     * @throws IllegalArgumentException ID가 유효하지 않은 경우
      */
     private void validateIngredientId(Long id) {
         if (id == null) {
@@ -175,12 +160,12 @@ public class IngredientService {
     }
 
     /**
-     * 리포지토리를 통해 재료 식별자 목록을 재료 엔티티 목록으로 변환합니다.<br/>
-     * 재료 식별자 목록이 null이거나 비어있으면 null을 반환합니다.
-     * @param ids 재료 식별자 목록.
+     * 리포지토리를 통해 재료 ID 목록을 재료 엔티티 목록으로 변환합니다.<br/>
+     * 재료 ID 목록이 null이거나 비어있으면 null을 반환합니다.
+     * @param ids 재료 ID 목록.
      * @return 재료 엔티티 목록.
-     * @throws IllegalArgumentException 재료 식별자 목록 내 유효하지 않은 식별자가 1개 이상 존재해서,
-     * 재료 식별자 목록의 전체 항목을 재료 엔티티 목록으로 변환하지 못한 경우.
+     * @throws IllegalArgumentException 재료 ID 목록 내 유효하지 않은 ID가 1개 이상 존재해서,
+     * 재료 ID 목록의 전체 항목을 재료 엔티티 목록으로 변환하지 못한 경우.
      */
     private List<Ingredient> toEntities(List<Long> ids) {
         if (ids == null || ids.isEmpty()) return null;
@@ -196,7 +181,7 @@ public class IngredientService {
     /**
      * 재료의 이름이 유효한지 검증합니다.
      * @param name 검증하려는 재료의 이름.
-     * @param categoryId 검증하려는 재료의 카테고리 식별자.
+     * @param categoryId 검증하려는 재료의 카테고리 ID.
      * @throws IllegalArgumentException 재료의 이름이 null이거나, 해당 카테고리에 동일한 이름이 존재하는 경우.
      */
     private void validateIngredientName(String name, Long categoryId) {
