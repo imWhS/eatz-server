@@ -31,46 +31,49 @@ public class CommentService {
 
     /**
      * 새 댓글을 등록합니다.
-     *
-     * @param recipeId 댓글을 달 레시피의 ID
-     * @param content  등록할 댓글의 내용
+     * @param recipeId 댓글을 달 레시피의 ID.
+     * @param userId 댓글 등록을 요청한 사용자의 ID.
+     * @param content 등록할 댓글의 내용.
      * @return 등록 완료된 댓글의 ID.
      */
     @Transactional
-    public Long register(Long recipeId, String content) {
-        String username = EatzUserAuthUtil.getUsername();
-
+    public Long register(Long recipeId, Long userId, String content) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new RecipeNotFoundException(recipeId));
-        EatzUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EatzUserNotFoundException(username));
+
+        EatzUser user = userRepository.findById(userId)
+                .orElseThrow(() -> new EatzUserNotFoundException(userId));
 
         Comment comment = new Comment(user, recipe, content);
         commentRepository.save(comment);
-
         return comment.getId();
     }
 
     /**
      * 댓글을 업데이트합니다.
-     * @param commentId 업데이트할 댓글의 ID
-     * @param userId 댓글 업데이트를 요청한 사용자의 ID
-     * @param content 업데이트할 댓글의 내용
+     * @param id 업데이트할 댓글의 ID.
+     * @param userId 댓글 업데이트를 요청한 사용자의 ID.
+     * @param content 업데이트할 댓글의 내용.
      */
     @Transactional
-    public void updateComment(Long commentId, Long userId, String content) {
-        Comment comment = getComment(commentId, userId);
+    public void update(Long id, Long userId, String content) {
+        Comment comment = getComment(id, userId);
+
+        if (comment.isMarkedAsDeleted()) {
+            throw new IllegalArgumentException("삭제 처리된 댓글이에요.");
+        }
+
         comment.updateContent(content);
     }
 
     /**
      * 댓글을 삭제 처리합니다.
-     * @param commentId 삭제 처리할 댓글의 ID
+     * @param id 삭제 처리할 댓글의 ID
      * @param userId 댓글 삭제 처리를 요청한 사용자의 ID
      */
     @Transactional
-    public void deleteComment(Long commentId, Long userId) {
-        Comment comment = getComment(commentId, userId);
+    public void delete(Long id, Long userId) {
+        Comment comment = getComment(id, userId);
         comment.markAsDeleted();
     }
 
@@ -79,7 +82,7 @@ public class CommentService {
      * @param id 조회할 댓글의 식별자
      * @return
      */
-    public Page<CommentItemDto> findAllByRecipe(Long id, Pageable pageable) {
+    public Page<CommentItemDto> findByRecipe(Long id, Pageable pageable) {
         validateRecipe(id);
         Page<CommentItemDto> dto = commentRepository.findWithUserByRecipeId(id, pageable);
         return dto;
@@ -88,7 +91,7 @@ public class CommentService {
     /**
      * 특정 사용자가 등록한 모든 댓글을 조회합니다.
      */
-    public Page<CommentWithRecipeDto> findCommentsByUser(String username, Pageable pageable) {
+    public Page<CommentWithRecipeDto> findByUser(String username, Pageable pageable) {
         validateUser(username);
         Page<CommentWithRecipeDto> dto = commentRepository.findWithRecipeByUserUsername(username, pageable);
         return dto;

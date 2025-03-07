@@ -60,7 +60,7 @@ public class LikedService {
 
     public boolean isLikedByUser(Long userId, Long entityId, EntityType type) {
         if (!userRepository.existsById(userId)) {
-            throw new EatzUserNotFoundException("사용자(" + userId + ")가 존재하지 않아요.");
+            throw new EatzUserNotFoundException(userId);
         }
 
         validateEntityById(entityId, type);

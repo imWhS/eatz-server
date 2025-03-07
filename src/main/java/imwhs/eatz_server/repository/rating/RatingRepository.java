@@ -17,6 +17,8 @@ public interface RatingRepository extends JpaRepository<Rating, Long>, RatingCus
 
     boolean existsByRecipeIdAndAuthorUsername(Long recipeId, String username);
 
+    boolean existsByRecipeIdAndAuthorId(Long recipeId, Long userId);
+
     Optional<Rating> findByIdAndDeletedAtIsNull(Long id);
 
     @Query("select r from Rating r " +

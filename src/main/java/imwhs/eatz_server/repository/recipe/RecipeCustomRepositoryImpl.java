@@ -192,7 +192,7 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
         // 공통 서브쿼리: 게시물 별 댓글 수 조회
         Expression<Long> commentCount = JPAExpressions.select(comment.count().longValue())
                 .from(comment)
-                .where(comment.recipe.id.eq(recipe.id));
+                .where(comment.recipe.id.eq(recipe.id).and(recipe.deletedAt.isNull()));
 
         // 공통 서브쿼리: 게시물 별 저장 수 조회
         Expression<Long> savedCount = JPAExpressions.select(savedRecipe.count().longValue())
