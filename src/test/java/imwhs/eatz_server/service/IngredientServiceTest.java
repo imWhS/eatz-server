@@ -209,11 +209,11 @@ class IngredientServiceTest {
         Assertions.assertNotNull(foundIngredient);
         Assertions.assertEquals(ingredientName, foundIngredient.getName());
         Assertions.assertNotNull(foundIngredient.getCategory());
-        Assertions.assertEquals(foundIngredient.getCategory().getCategoryName(), categoryName);
+        Assertions.assertEquals(foundIngredient.getCategory().getName(), categoryName);
         Assertions.assertFalse(foundIngredient.getChildren().isEmpty());
         Assertions.assertEquals(2, foundIngredient.getChildren().size());
-        Assertions.assertEquals(child1Name, foundIngredient.getChildren().get(0).getChildName());
-        Assertions.assertEquals(child2Name, foundIngredient.getChildren().get(1).getChildName());
+        Assertions.assertEquals(child1Name, foundIngredient.getChildren().get(0).getName());
+        Assertions.assertEquals(child2Name, foundIngredient.getChildren().get(1).getName());
     }
 
     @Test
@@ -244,8 +244,8 @@ class IngredientServiceTest {
         Assertions.assertNull(foundIngredient.getCategory());
         Assertions.assertFalse(foundIngredient.getChildren().isEmpty());
         Assertions.assertEquals(2, foundIngredient.getChildren().size());
-        Assertions.assertEquals(child1Name, foundIngredient.getChildren().get(0).getChildName());
-        Assertions.assertEquals(child2Name, foundIngredient.getChildren().get(1).getChildName());
+        Assertions.assertEquals(child1Name, foundIngredient.getChildren().get(0).getName());
+        Assertions.assertEquals(child2Name, foundIngredient.getChildren().get(1).getName());
     }
 
     @Test

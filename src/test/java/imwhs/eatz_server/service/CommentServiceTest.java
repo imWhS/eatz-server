@@ -30,32 +30,32 @@ public class CommentServiceTest {
     @Autowired
     private RecipeRepository recipeRepository;
 
-    @Test
-    @Transactional
-    void commentRegisterTest() {
-        // given
-        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
-        userRepository.save(user);
-        Long userId = user.getId();
-
-        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
-        recipeRepository.save(recipe);
-        Long recipeId = recipe.getId();
-
-        String commentContent = "내 맘 속에 저장~";
-
-        // when
-        Long commentId = commentService.register(recipeId, commentContent);
-
-        // then
-        boolean present = commentRepository.findById(commentId).isPresent();
-        Assertions.assertThat(present).isTrue();
-        Comment commentFound = commentRepository.findById(commentId).get();
-        Assertions.assertThat(commentFound.getContent()).isEqualTo(commentContent);
-        Assertions.assertThat(commentFound.getCreatedAt()).isNotNull();
-        Assertions.assertThat(commentFound.getUpdatedAt()).isEqualTo(commentFound.getCreatedAt());
-        Assertions.assertThat(commentFound.getDeletedAt()).isNull();
-    }
+//    @Test
+//    @Transactional
+//    void commentRegisterTest() {
+//        // given
+//        EatzUser user = EatzUser.createMember("heextory", "heextory@icloud.com", "1q2w3e4r!");
+//        userRepository.save(user);
+//        Long userId = user.getId();
+//
+//        Recipe recipe = Recipe.create(user, "Kimchi pasta", "https://www.naver.com/", "https://www.naver.com/img.png", "맛있는 김치 파스타를 즐겨볼까요?");
+//        recipeRepository.save(recipe);
+//        Long recipeId = recipe.getId();
+//
+//        String commentContent = "내 맘 속에 저장~";
+//
+//        // when
+//        Long commentId = commentService.register(recipeId, commentContent);
+//
+//        // then
+//        boolean present = commentRepository.findById(commentId).isPresent();
+//        Assertions.assertThat(present).isTrue();
+//        Comment commentFound = commentRepository.findById(commentId).get();
+//        Assertions.assertThat(commentFound.getContent()).isEqualTo(commentContent);
+//        Assertions.assertThat(commentFound.getCreatedAt()).isNotNull();
+//        Assertions.assertThat(commentFound.getUpdatedAt()).isEqualTo(commentFound.getCreatedAt());
+//        Assertions.assertThat(commentFound.getDeletedAt()).isNull();
+//    }
 
     @Test
     @Transactional

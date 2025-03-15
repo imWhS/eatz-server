@@ -41,17 +41,22 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
      * @return 계층 구조의 기준이 된 Ingredient 엔티티 및 이의 하위 재료로서 계층 구조에 속해 있는 모든 Ingredient 엔티티 객체 목록.
      */
     @Query(value = """
-        WITH RECURSIVE INGREDIENT_TREE(INGREDIENT_ID, NAME, CATEGORY_ID) AS (
+        with recursive ingredient_tree(ingredient_id, name, category_id) as (
             -- 식별자에 해당하는 타겟 재료를 조회합니다.
-            SELECT I.INGREDIENT_ID, I.NAME, I.CATEGORY_ID FROM INGREDIENT I WHERE I.INGREDIENT_ID = :id
-            UNION ALL
+            select i.ingredient_id, i.name, i.category_id from ingredient i where i.ingredient_id = :id
+            union all
             -- 타겟 재료를 시작으로, 하위 계층을 구성하는 모든 재료를 재귀적으로 조회합니다.
-            SELECT I.INGREDIENT_ID, I.NAME, I.CATEGORY_ID
-            FROM INGREDIENT I
-            JOIN INGREDIENT_TREE IT ON I.CATEGORY_ID = IT.INGREDIENT_ID
+            select i.ingredient_id, i.name, i.category_id
+            from Ingredient i
+            join ingredient_tree it on i.category_id = it.ingredient_id
         )
-        SELECT INGREDIENT_ID, NAME, CATEGORY_ID FROM INGREDIENT_TREE
+        select ingredient_id, name, category_id from ingredient_tree
         """, nativeQuery = true)
     List<Ingredient> findIngredientTree(@Param("id") Long id);
 
+    @Query("select i " +
+            "from Ingredient i " +
+            "left join fetch i.children " +
+            "where i.name = :name")
+    Optional<Ingredient> findByName(@Param("name") String name);
 }

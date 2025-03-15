@@ -13,7 +13,6 @@ import java.util.TimeZone;
 @EnableJpaAuditing
 public class EatzServerApplication {
 
-	// TODO: 엔티티 Soft Delete 처리
 	public static void main(String[] args) {
 		SpringApplication.run(EatzServerApplication.class, args);
 	}

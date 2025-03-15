@@ -7,27 +7,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * IngredientWithCategoryChildDto 클래스입니다.<br/>
- * 재료 및 재료의 카테고리, 하위 재료 목록 정보를 전달하기 위해 사용합니다.
+ * IngredientWithChildDto 클래스입니다.<br/>
+ * 재료 및 재료의 하위 재료 목록 정보를 전달하기 위해 사용합니다.
  */
 @Data
-public class IngredientWithCategoryChildDto {
+public class IngredientWithChildDto {
 
     private Long id;
 
     private String name;
 
-    private IngredientCategoryDto category;
-
     private List<IngredientChildDto> children;
 
-    public IngredientWithCategoryChildDto(Ingredient ingredient) {
+    public IngredientWithChildDto(Ingredient ingredient) {
         this.id = ingredient.getId();
         this.name = ingredient.getName();
-
-        this.category = (ingredient.getCategory() != null)
-                ? new IngredientCategoryDto(ingredient.getCategory())
-                : null;
         this.children = ingredient.getChildren()
                 .stream().map(IngredientChildDto::new).collect(Collectors.toList());
     }
