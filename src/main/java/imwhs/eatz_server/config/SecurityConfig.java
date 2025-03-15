@@ -46,6 +46,11 @@ public class SecurityConfig {
             "/sign-up/**",
             "/reissue-token",
             "/sign-out",
+            "/hello-admin",
+            "/css/**",
+            "/js/**",
+            "/images/**",
+            "/webjars/**"
     };
 
     @Bean

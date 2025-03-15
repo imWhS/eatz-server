@@ -42,11 +42,8 @@ public class ReportService {
 
     @Transactional
     public void markAsResolved(Long adminId, Long reportId) {
-        EatzUser admin = findUser(adminId);
-
-        if (admin.getEatzUserRole().equals(EatzUserRole.ROLE_MEMBER)) {
-            throw new UnauthorizedEatzUserException("관리자 권한이 없는 사용자입니다.");
-        }
+        EatzUser admin = userRepository.findAdminById(adminId).orElseThrow(
+                () -> new EatzUserNotFoundException(adminId, EatzUserRole.ROLE_ADMIN));
 
         Report report = reportRepository.findById(reportId).orElseThrow(
                 () -> new ReportNotFoundException(reportId));

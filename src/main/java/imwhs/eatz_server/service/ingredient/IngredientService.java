@@ -1,8 +1,11 @@
 package imwhs.eatz_server.service.ingredient;
 
+import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
 import imwhs.eatz_server.domain.ingredient.Ingredient;
 import imwhs.eatz_server.dto.ingredient.*;
+import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
+import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +20,11 @@ public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
 
+    private final EatzUserRepository userRepository;
+
     /**
      * 새 재료를 등록합니다.
+     * @param adminId 요청한 관리자 ID.
      * @param name 재료 이름.
      * @param categoryId 재료를 포함시킬 카테고리의 ID.
      * @param childIds 하위에 포함시킬 재료들의 ID 목록.
@@ -26,7 +32,9 @@ public class IngredientService {
      * @throws IngredientNotFoundException 유효하지 않은 ID의 재료를 카테고리 또는 하위 재료로서 추가하려는 경우.
      */
     @Transactional
-    public Long register(String name, Long categoryId, List<Long> childIds) {
+    public Long register(Long adminId, String name, Long categoryId, List<Long> childIds) {
+        verifyAdminRole(adminId);
+
         // 사용하려는 재료 이름의 유효성을 검증합니다.
         validateIngredientName(name, categoryId);
 
@@ -56,6 +64,12 @@ public class IngredientService {
         }
 
         return ingredient.getId();
+    }
+
+    private void verifyAdminRole(Long adminId) {
+        if (!userRepository.existsAdminById(adminId)) {
+            throw new EatzUserNotFoundException(adminId, EatzUserRole.ROLE_ADMIN);
+        }
     }
 
     /**
@@ -122,8 +136,20 @@ public class IngredientService {
      */
     public IngredientWithCategoryChildDto findById(Long id) {
         Ingredient ingredient = ingredientRepository.findWithCategoryById(id)
-                .orElseThrow(() -> new IngredientNotFoundException("id " + id + "에 해당하는 재료를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IngredientNotFoundException(id));
         return new IngredientWithCategoryChildDto(ingredient);
+    }
+
+    /**
+     * 이름으로 재료와 재료의 하위 재료를 함께 조회합니다.<br/>
+     * @param name 조회하려는 재료의 이름.
+     * @return 조회된 재료의 정보를 담고 있는 IngredientWithChildDto.
+     */
+    public IngredientWithChildDto findByName(String name) {
+        Ingredient ingredient = ingredientRepository.findByName(name)
+                .orElseThrow(() -> new IngredientNotFoundException(name));
+
+        return new IngredientWithChildDto(ingredient);
     }
 
     /**
@@ -240,7 +266,7 @@ public class IngredientService {
 
             // 현재 재료와 현재 재료가 속한 카테고리 정보를 담고 있는 DTO를 가져옵니다.
             IngredientTreeDto current = ingredientsMap.get(ingredient.getId());
-            IngredientTreeDto category = ingredientsMap.get(current.getCategory().getCategoryId());
+            IngredientTreeDto category = ingredientsMap.get(current.getCategory().getId());
 
             // 카테고리 DTO의 children 필드에 현재 재료의 DTO를 설정합니다.
             category.getChildren().add(current);

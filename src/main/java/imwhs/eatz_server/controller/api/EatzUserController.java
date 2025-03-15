@@ -1,4 +1,4 @@
-package imwhs.eatz_server.controller;
+package imwhs.eatz_server.controller.api;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.dto.ApiResponse;
