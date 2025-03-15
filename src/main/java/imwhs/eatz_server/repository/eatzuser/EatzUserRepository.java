@@ -1,8 +1,11 @@
 package imwhs.eatz_server.repository.eatzuser;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
 import jakarta.validation.constraints.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -55,4 +58,18 @@ public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
     boolean existsByEmail(String email);
 
     boolean existsByEmailOrUsername(@Email(message = "유효한 이메일 주소가 아닙니다.") String email, String username);
+
+    /**
+     * 특정 권한을 가진 사용자 조회
+     */
+    @Query("select u " +
+            "from EatzUser u " +
+            "where u.id = :id and u.eatzUserRole = 'ROLE_ADMIN'")
+    Optional<EatzUser> findAdminById(@Param("id") Long id);
+
+    @Query("select count(u) = 1 " +
+            "from EatzUser u " +
+            "where u.id = :id and u.eatzUserRole = 'ROLE_ADMIN'")
+    boolean existsAdminById(@Param("id") Long id);
+
 }

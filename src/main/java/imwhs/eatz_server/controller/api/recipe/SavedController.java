@@ -1,4 +1,4 @@
-package imwhs.eatz_server.controller.recipe;
+package imwhs.eatz_server.controller.api.recipe;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;

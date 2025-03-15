@@ -8,13 +8,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class IngredientCategoryDto {
 
-    private Long categoryId;
+    private Long id;
 
-    private String categoryName;
+    private String name;
 
     public IngredientCategoryDto(Ingredient category) {
-        this.categoryId = category.getId();
-        this.categoryName = category.getName();
+        this.id = category.getId();
+        this.name = category.getName();
     }
 
 }

@@ -1,4 +1,4 @@
-package imwhs.eatz_server.controller.recipe;
+package imwhs.eatz_server.controller.api.recipe;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.liked.EntityType;
