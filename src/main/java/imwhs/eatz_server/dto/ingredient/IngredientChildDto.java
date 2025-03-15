@@ -15,16 +15,16 @@ public class IngredientChildDto {
     /**
      * 재료의 식별자.
      */
-    private Long childId;
+    private Long id;
 
     /**
      * 재료의 이름.
      */
-    private String childName;
+    private String name;
 
     public IngredientChildDto(Ingredient child) {
-        this.childId = child.getId();
-        this.childName = child.getName();
+        this.id = child.getId();
+        this.name = child.getName();
     }
 
 }

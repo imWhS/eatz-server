@@ -1,4 +1,4 @@
-package imwhs.eatz_server.controller;
+package imwhs.eatz_server.controller.api;
 
 import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
@@ -32,18 +32,6 @@ public class AuthController {
 
     private final JwtConfigProperties jwtConfigProperties;
 
-    /*
-    1. iOS - 가입 버튼 탭
-    2. iOS - 가입 화면 진입
-    3. iOS - 이메일 주소 입력
-    4. Server - 이메일 유효성 검증* (validateUserEmail)
-    5. iOS - 이메일 인증 버튼 탭
-    6. Server - 이메일 전송* (sendVerificationNumberToEmail)
-    7. iOS - 이메일 인증 번호 입력
-    8. Server - 인증 번호 유효성 검증* (validateVerificationNumberViaEmail)
-    9. iOS - username, password 입력
-    10. Server - signUp*
-     */
     @PostMapping("/sign-up/email-validation/send-code")
     public ResponseEntity<ApiResponse<String>> sendCodeViaEmail(@RequestBody RequestVerificationCodeViaEmailDto dto) {
         String email = dto.getEmail();

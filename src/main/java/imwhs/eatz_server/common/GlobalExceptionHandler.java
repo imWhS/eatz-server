@@ -2,6 +2,7 @@ package imwhs.eatz_server.common;
 
 import imwhs.eatz_server.dto.ApiResponse;
 import imwhs.eatz_server.exception.DuplicatedEatzUserException;
+import imwhs.eatz_server.exception.IngredientNotFoundException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RecipeNotFoundException.class)
     public ApiResponse<Object> handleRecipeNotFoundException(RecipeNotFoundException e) {
+        return ApiResponse.error(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IngredientNotFoundException.class)
+    public ApiResponse<Object> handleIngredientNotFoundException(IngredientNotFoundException e) {
         return ApiResponse.error(e.getMessage());
     }
 
