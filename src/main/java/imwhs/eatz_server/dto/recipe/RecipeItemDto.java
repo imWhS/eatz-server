@@ -37,6 +37,18 @@ public class RecipeItemDto {
     private String imageUrl;
 
     /**
+     * 요리 시간.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime cookingTime;
+
+    /**
+     * 준비 시간.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime prepTime;
+
+    /**
      * 레시피 등록 날짜.
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -99,7 +111,7 @@ public class RecipeItemDto {
     private Long ratingCount;
 
     /**
-     * 레시피에 달린 평가들의 평균 점수
+     * 레시피에 달린 평가들의 평균 점수.
      * 1~5점 사이의 자연수 값이며, 사용자들이 남긴 평가 점수의 평균입니다.
      */
     private Double averageRatingScore;
