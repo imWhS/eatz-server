@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -66,10 +67,26 @@ public class Recipe extends BaseEntity {
      */
     private String description;
 
+    /**
+     * 요리 시간.
+     */
+    private LocalDateTime cookingTime;
+
+    /**
+     * 준비 시간.
+     */
+    private LocalDateTime prepTime;
+
+    /**
+     * 댓글 목록.
+     */
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    /**
+     * 평가 목록.
+     */
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
@@ -88,6 +105,9 @@ public class Recipe extends BaseEntity {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeCategory> recipeCategories = new ArrayList<>();
 
+    /**
+     * 조회 수.
+     */
     private Integer viewCount = 0;
 
     protected Recipe() {}
@@ -110,7 +130,9 @@ public class Recipe extends BaseEntity {
             String title,
             String url,
             String imageUrl,
-            String description
+            String description,
+            LocalDateTime cookingTime,
+            LocalDateTime prepTime
     ) {
         if (Objects.isNull(author)) {
             throw new IllegalArgumentException("레시피를 등록하려는 사용자 정보가 없습니다.");
@@ -128,7 +150,8 @@ public class Recipe extends BaseEntity {
         recipe.url = url;
         recipe.imageUrl = imageUrl;
         recipe.description = description;
-
+        recipe.cookingTime = cookingTime;
+        recipe.prepTime = prepTime;
         return recipe;
     }
 
@@ -139,7 +162,13 @@ public class Recipe extends BaseEntity {
      * @param imageUrl
      * @param description
      */
-    public void update(String title, String url, String imageUrl, String description) {
+    public void update(
+            String title,
+            String url,
+            String imageUrl,
+            String description,
+            LocalDateTime cookingTime,
+            LocalDateTime prepTime) {
         validateRecipe();
 
         if (Objects.isNull(title) || title.isEmpty()) {
@@ -153,6 +182,8 @@ public class Recipe extends BaseEntity {
         this.url = url;
         this.imageUrl = imageUrl;
         this.description = description;
+        this.cookingTime = cookingTime;
+        this.prepTime = prepTime;
     }
 
     private void validateRecipe() {

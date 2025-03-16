@@ -42,6 +42,18 @@ public class RecipeDto {
     private String imageUrl;
 
     /**
+     * 요리 시간.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime cookingTime;
+
+    /**
+     * 준비 시간.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime prepTime;
+
+    /**
      * 레시피 등록 날짜.
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

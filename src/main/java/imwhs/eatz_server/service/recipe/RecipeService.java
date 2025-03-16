@@ -52,7 +52,14 @@ public class RecipeService {
     @Transactional
     public Long register(CreateRecipeDto dto, String username) {
         EatzUser user = getEatzUser(username);
-        Recipe recipe = Recipe.create(user, dto.getTitle(), dto.getUrl(), dto.getImageUrl(), dto.getDescription());
+        Recipe recipe = Recipe.create(
+                user,
+                dto.getTitle(),
+                dto.getUrl(),
+                dto.getImageUrl(),
+                dto.getDescription(),
+                dto.getCookingTime(),
+                dto.getPrepTime());
 
         // 레시피에 재료를 추가합니다.
         List<Long> ingredientIds = dto.getIngredientIds();
@@ -82,7 +89,13 @@ public class RecipeService {
         EatzUser user = getEatzUser(username);
         validateUserAuthorization(recipe, user);
 
-        recipe.update(dto.getTitle(), dto.getUrl(), dto.getImageUrl(), dto.getDescription());
+        recipe.update(
+                dto.getTitle(),
+                dto.getUrl(),
+                dto.getImageUrl(),
+                dto.getDescription(),
+                dto.getCookingTime(),
+                dto.getPrepTime());
 
         // 기존 레시피에 추가했던 재료를 모두 삭제하고 새 재료를 추가합니다.
         recipe.clearAllIngredientRecipes();
@@ -100,7 +113,7 @@ public class RecipeService {
      * @param id 삭제 처리할 레시피 식별자.
      * @param username 레시피 삭제 처리를 요청한 사용자의 사용자 이름.
      * @throws RecipeNotFoundException id에 해당하는 레시피가 존재하지 않는 경우.
-     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자.와 레시피를 등록한 사용자 식별자가 다른 경우.
+     * @throws UnauthorizedAccessException 레시피 삭제 처리를 요청한 사용자 식별자와 레시피를 등록한 사용자 식별자가 다른 경우.
      */
     @Transactional
     public void markAsDeleted(Long id, String username) {
