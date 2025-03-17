@@ -58,8 +58,8 @@ public class RecipeService {
                 dto.getUrl(),
                 dto.getImageUrl(),
                 dto.getDescription(),
-                dto.getCookingTime(),
-                dto.getPrepTime());
+                dto.getCookingTimeAsDuration(),
+                dto.getPrepTimeAsDuration());
 
         // 레시피에 재료를 추가합니다.
         List<Long> ingredientIds = dto.getIngredientIds();
@@ -94,8 +94,8 @@ public class RecipeService {
                 dto.getUrl(),
                 dto.getImageUrl(),
                 dto.getDescription(),
-                dto.getCookingTime(),
-                dto.getPrepTime());
+                dto.getCookingTimeAsDuration(),
+                dto.getPrepTimeAsDuration());
 
         // 기존 레시피에 추가했던 재료를 모두 삭제하고 새 재료를 추가합니다.
         recipe.clearAllIngredientRecipes();

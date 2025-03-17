@@ -1,14 +1,12 @@
 package imwhs.eatz_server.dto.recipe;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.Objects;
 
 @Data
-@AllArgsConstructor
 public class RecipeItemBasicDto {
 
     private Long id;
@@ -18,16 +16,14 @@ public class RecipeItemBasicDto {
     private String imageUrl;
 
     /**
-     * 요리 시간.
+     * 요리 시간. '분' 단위를 사용합니다.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime cookingTime;
+    private Integer cookingTime;
 
     /**
-     * 준비 시간.
+     * 준비 시간. '분' 단위를 사용합니다.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime prepTime;
+    private Integer prepTime;
 
     /**
      *  레시피에 달린 평가 수
@@ -40,6 +36,20 @@ public class RecipeItemBasicDto {
      */
     private Double averageRatingScore;
 
+    public RecipeItemBasicDto(Long id, String title, String imageUrl, Long cookingTime, Long prepTime, Long ratingCount, Double averageRatingScore) {
+        this.id = id;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.cookingTime = toMinutes(cookingTime);
+        this.prepTime = toMinutes(prepTime);
+        this.ratingCount = ratingCount;
+        this.averageRatingScore = averageRatingScore;
+    }
+
+    private Integer toMinutes(Long seconds) {
+        return (seconds == null) ? null : (int) (seconds / 60);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,6 +61,14 @@ public class RecipeItemBasicDto {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Duration getCookingTimeAsDuration() {
+        return Duration.ofMinutes(cookingTime);
+    }
+
+    public Duration getPrepTimeAsDuration() {
+        return Duration.ofMinutes(prepTime);
     }
 
 }

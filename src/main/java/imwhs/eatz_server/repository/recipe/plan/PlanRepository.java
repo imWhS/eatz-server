@@ -23,7 +23,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanCustomRep
 
     boolean existsByRecipeAndUserAndScheduledAt(Recipe recipe, EatzUser user, LocalDate date);
 
-    @Query("select new imwhs.eatz_server.dto.recipe.PlanDto(p.id, r.id, u.id, r.title, r.imageUrl, p.scheduledAt)" +
+    @Query("select new imwhs.eatz_server.dto.recipe.PlanDto(p.id, r.id, u.id, r.title, r.imageUrl, r.cookingTime, r.prepTime, p.scheduledAt)" +
             "from Plan p " +
             "join p.user u " +
             "join p.recipe r " +
