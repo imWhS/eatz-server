@@ -7,6 +7,7 @@ import imwhs.eatz_server.dto.recipe.ingredient.RecipeIngredientDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.List;
  * </p>
  */
 @Data
-@AllArgsConstructor
 public class RecipeDto {
 
     /**
@@ -40,6 +40,16 @@ public class RecipeDto {
      * 레시피 대표 이미지 URL 주소.
      */
     private String imageUrl;
+
+    /**
+     * 요리 시간. '분' 단위를 사용합니다.
+     */
+    private Integer cookingTime;
+
+    /**
+     * 준비 시간. '분' 단위를 사용합니다.
+     */
+    private Integer prepTime;
 
     /**
      * 레시피 등록 날짜.
@@ -96,6 +106,19 @@ public class RecipeDto {
 //    private Long savedCount;
 
 
+    public RecipeDto(Long id, String title, String description, String imageUrl, Long cookingTime, Long prepTime, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount, AuthorOfRecipeDto author) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.cookingTime = toMinutes(cookingTime);
+        this.prepTime = toMinutes(prepTime);
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.viewCount = viewCount;
+        this.author = author;
+    }
+
     public RecipeDto(Long id, String title, String description, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount, AuthorOfRecipeDto author) {
         this.id = id;
         this.title = title;
@@ -105,6 +128,10 @@ public class RecipeDto {
         this.updatedAt = updatedAt;
         this.viewCount = viewCount;
         this.author = author;
+    }
+
+    private Integer toMinutes(Long seconds) {
+        return (seconds == null) ? null : (int) (seconds / 60);
     }
 
     @Data

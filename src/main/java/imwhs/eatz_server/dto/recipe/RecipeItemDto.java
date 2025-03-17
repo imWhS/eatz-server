@@ -7,6 +7,7 @@ import imwhs.eatz_server.dto.recipe.category.CategoryBasicDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,6 +38,16 @@ public class RecipeItemDto {
     private String imageUrl;
 
     /**
+     * 요리 시간. '분' 단위를 사용합니다.
+     */
+    private Integer cookingTime;
+
+    /**
+     * 준비 시간. '분' 단위를 사용합니다.
+     */
+    private Integer prepTime;
+
+    /**
      * 레시피 등록 날짜.
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -59,14 +70,14 @@ public class RecipeItemDto {
     private EatzUserBasicDto author;
 
     /**
-     * 레시피의 댓글 수. (from Comment)
-     */
-    private Long commentCount;
-
-    /**
      * 좋아요 여부. (from Likes)
      */
     private boolean isLikedByUser;
+
+    /**
+     * 레시피의 댓글 수. (from Comment)
+     */
+    private Long commentCount;
 
     /**
      * 레시피를 좋아하는 사용자 수. (from Liked)
@@ -99,7 +110,7 @@ public class RecipeItemDto {
     private Long ratingCount;
 
     /**
-     * 레시피에 달린 평가들의 평균 점수
+     * 레시피에 달린 평가들의 평균 점수.
      * 1~5점 사이의 자연수 값이며, 사용자들이 남긴 평가 점수의 평균입니다.
      */
     private Double averageRatingScore;
@@ -108,6 +119,8 @@ public class RecipeItemDto {
             Long id,
             String title,
             String imageUrl,
+            Long cookingTime,
+            Long prepTime,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
             Integer viewCount,
@@ -124,6 +137,8 @@ public class RecipeItemDto {
         this.updatedAt = updatedAt;
         this.viewCount = viewCount;
         this.imageUrl = imageUrl;
+        this.cookingTime = toMinutes(cookingTime);
+        this.prepTime = toMinutes(prepTime);
         this.author = author;
         this.isLikedByUser = isLikedByUser;
         this.commentCount = commentCount;
@@ -131,6 +146,10 @@ public class RecipeItemDto {
         this.savedCount = savedCount;
         this.ratingCount = ratingCount;
         this.averageRatingScore = averageRatingScore;
+    }
+
+    private Integer toMinutes(Long seconds) {
+        return (seconds == null) ? null : (int) (seconds / 60);
     }
 
 }

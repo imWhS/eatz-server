@@ -177,6 +177,15 @@ public class EatzUserController {
         return ResponseEntity.ok(ApiResponse.success(checklist));
     }
 
+    @GetMapping("/plans/checklistn")
+    public ResponseEntity<ApiResponse<NChecklistDto>> getChecklistn(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+    ) {
+        NChecklistDto checklist = planService.getChecklistn(EatzUserAuthUtil.getId(), startDate, endDate);
+        return ResponseEntity.ok(ApiResponse.success(checklist));
+    }
+
     @PostMapping("/plans/checklist/complete")
     public ResponseEntity<ApiResponse<?>> completeChecklist(
             @RequestBody CompleteChecklistDto dto

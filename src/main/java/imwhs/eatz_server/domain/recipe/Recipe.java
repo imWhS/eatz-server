@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -66,10 +68,26 @@ public class Recipe extends BaseEntity {
      */
     private String description;
 
+    /**
+     * 요리 시간. 매핑 데이터를 데이터베이스에서 효율적으로 저장, 관라하기 위해 '초' 단위를 사용합니다.
+     */
+    private Long cookingTime;
+
+    /**
+     * 준비 시간. 매핑 데이터를 데이터베이스에서 효율적으로 저장, 관라하기 위해 '초' 단위를 사용합니다.
+     */
+    private Long prepTime;
+
+    /**
+     * 댓글 목록.
+     */
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    /**
+     * 평가 목록.
+     */
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
@@ -88,6 +106,9 @@ public class Recipe extends BaseEntity {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeCategory> recipeCategories = new ArrayList<>();
 
+    /**
+     * 조회 수.
+     */
     private Integer viewCount = 0;
 
     protected Recipe() {}
@@ -110,7 +131,9 @@ public class Recipe extends BaseEntity {
             String title,
             String url,
             String imageUrl,
-            String description
+            String description,
+            Duration cookingTime,
+            Duration prepTime
     ) {
         if (Objects.isNull(author)) {
             throw new IllegalArgumentException("레시피를 등록하려는 사용자 정보가 없습니다.");
@@ -128,7 +151,8 @@ public class Recipe extends BaseEntity {
         recipe.url = url;
         recipe.imageUrl = imageUrl;
         recipe.description = description;
-
+        recipe.cookingTime = cookingTime == null ? null : cookingTime.getSeconds();
+        recipe.prepTime = prepTime == null ? null : prepTime.getSeconds();
         return recipe;
     }
 
@@ -139,7 +163,13 @@ public class Recipe extends BaseEntity {
      * @param imageUrl
      * @param description
      */
-    public void update(String title, String url, String imageUrl, String description) {
+    public void update(
+            String title,
+            String url,
+            String imageUrl,
+            String description,
+            Duration cookingTime,
+            Duration prepTime) {
         validateRecipe();
 
         if (Objects.isNull(title) || title.isEmpty()) {
@@ -153,6 +183,8 @@ public class Recipe extends BaseEntity {
         this.url = url;
         this.imageUrl = imageUrl;
         this.description = description;
+        this.cookingTime = cookingTime == null ? null : cookingTime.getSeconds();
+        this.prepTime = prepTime == null ? null : prepTime.getSeconds();
     }
 
     private void validateRecipe() {
@@ -179,6 +211,22 @@ public class Recipe extends BaseEntity {
 
     public void increaseViewCount(Integer viewCount) {
         this.viewCount += viewCount;
+    }
+
+    public void setCookingTime(Duration duration) {
+        this.cookingTime = duration.getSeconds();
+    }
+
+    public void setPrepTime(Duration duration) {
+        this.prepTime = duration.getSeconds();
+    }
+
+    public Duration getCookingTimeAsDuration() {
+        return Duration.ofSeconds(cookingTime);
+    }
+
+    public Duration getPrepTimeAsDuration() {
+        return Duration.ofSeconds(prepTime);
     }
 
 }

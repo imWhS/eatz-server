@@ -14,7 +14,6 @@ public class AdminHomeController {
 
     @RequestMapping("/hello-admin")
     public String adminHome() {
-        System.out.println("AdminHomeController.adminHome");
         return "admin/home";
     }
     

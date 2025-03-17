@@ -92,6 +92,8 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                 recipe.title,
                                 recipe.description,
                                 recipe.imageUrl,
+                                recipe.cookingTime,
+                                recipe.prepTime,
                                 recipe.createdAt,
                                 recipe.updatedAt,
                                 recipe.viewCount,
@@ -131,6 +133,8 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                 recipe.imageUrl,
                                 recipe.createdAt,
                                 recipe.updatedAt,
+                                recipe.cookingTime,
+                                recipe.prepTime,
                                 recipe.viewCount,
                                 Projections.constructor(RecipeDto.AuthorOfRecipeDto.class,
                                         user.id,
@@ -174,11 +178,9 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
     public Page<RecipeItemDto> searchRecipeItems(
             RecipeItemSortType sortType,
             Long currentUserId,
-            Long categoryId,
-            String keyword,
+            String keyword, Long categoryId,
             List<Long> ingredientIds,
             List<Long> requiredIngredientIds,
-            Long authorId,
             Pageable pageable) {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser user = QEatzUser.eatzUser;
@@ -231,6 +233,8 @@ public class RecipeCustomRepositoryImpl implements RecipeCustomRepository {
                                 recipe.id,
                                 recipe.title,
                                 recipe.imageUrl,
+                                recipe.cookingTime,
+                                recipe.prepTime,
                                 recipe.createdAt,
                                 recipe.updatedAt,
                                 recipe.viewCount,

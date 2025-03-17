@@ -121,7 +121,7 @@ public class RecipeController {
     }
 
     /**
-     * 필터링을 적용해 레시피 목록을 검색하거나, 모든 레시피 목록을 조회합니다.
+     * 필터링을 적용해 레시피를 검색하거나, 모든 레시피 목록을 조회합니다.
      * @param sortType 레시피 정렬 기준.
      * @param keyword 레시피를 필터링 할 제목 및 내용 키워드.
      * @param categoryId 레시피를 필터링 할 카테고리 ID.
@@ -139,7 +139,7 @@ public class RecipeController {
             @RequestParam(required = false) List<Long> requiredIngredientIds,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         if (sortType == null) sortType = RecipeItemSortType.LATEST;
-        Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), categoryId, keyword, ingredientIds, requiredIngredientIds, pageable);
+        Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), keyword, categoryId, ingredientIds, requiredIngredientIds, pageable);
         return ResponseEntity.ok(ApiResponse.success(allRecipes));
     }
 
