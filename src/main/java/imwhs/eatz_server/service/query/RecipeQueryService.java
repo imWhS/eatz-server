@@ -14,7 +14,6 @@ import imwhs.eatz_server.repository.ingredient.IngredientRecipeRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientUserRepository;
 import imwhs.eatz_server.repository.recipe.RecipeCategoryRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.service.recipe.RecipeViewCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -52,7 +51,6 @@ public class RecipeQueryService {
     private final IngredientUserRepository ingredientUserRepository;
 
     private final EatzUserRepository eatzUserRepository;
-    private final RecipeViewCountService recipeViewCountService;
 
     /**
      * 식별자로 레시피를 조회합니다.
@@ -102,16 +100,26 @@ public class RecipeQueryService {
         return recipes;
     }
 
+    /**
+     * 필터링을 적용해 레시피를 검색하거나, 모든 레시피 목록을 조회합니다.
+     * @param sortType 레시피 정렬 기준.
+     * @param userId 요청 사용자 ID.
+     * @param keyword 레시피를 필터링 할 제목 및 내용 키워드.
+     * @param categoryId 레시피를 필터링 할 카테고리 ID.
+     * @param ingredientIds
+     * @param requiredIngredientIds
+     * @param pageable
+     * @return
+     */
     public Page<RecipeItemDto> search(
             RecipeItemSortType sortType,
             Long userId,
-            Long categoryId,
             String keyword,
+            Long categoryId,
             List<Long> ingredientIds,
             List<Long> requiredIngredientIds,
             Pageable pageable) {
-        Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, categoryId, keyword, ingredientIds, requiredIngredientIds, null, pageable);
-
+        Page<RecipeItemDto> items = recipeRepository.searchRecipeItems(sortType, userId, keyword, categoryId, ingredientIds, requiredIngredientIds, pageable);
         List<Long> recipeIds = items.getContent().stream().map(RecipeItemDto::getId).toList();
 
         // 레시피 별 재료 정보를 조회합니다.

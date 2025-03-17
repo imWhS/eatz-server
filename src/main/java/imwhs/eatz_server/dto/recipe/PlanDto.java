@@ -37,6 +37,16 @@ public class PlanDto {
     private String imageUrl;
 
     /**
+     * 요리 시간. '분' 단위를 사용합니다.
+     */
+    private Integer cookingTime;
+
+    /**
+     * 준비 시간. '분' 단위를 사용합니다.
+     */
+    private Integer prepTime;
+
+    /**
      * 레시피가 플래너에 저장된 날짜.
      */
     private LocalDate scheduledAt;
@@ -52,14 +62,22 @@ public class PlanDto {
             Long userId,
             String title,
             String imageUrl,
+            Long cookingTime,
+            Long prepTime,
             LocalDate scheduledAt
             ) {
         this.id = id;
         this.recipeId = recipeId;
         this.title = title;
         this.imageUrl = imageUrl;
+        this.cookingTime = toMinutes(cookingTime);
+        this.prepTime = toMinutes(prepTime);
         this.userId = userId;
         this.scheduledAt = scheduledAt;
+    }
+
+    private Integer toMinutes(Long seconds) {
+        return (seconds == null) ? null : (int) (seconds / 60);
     }
 
 }
