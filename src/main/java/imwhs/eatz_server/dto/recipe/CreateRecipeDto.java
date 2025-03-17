@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,8 +27,26 @@ public class CreateRecipeDto {
 
     private String description;
 
+    /**
+     * 요리 시간. '분' 단위를 사용합니다.
+     */
+    private Integer cookingTime;
+
+    /**
+     * 준비 시간. '분' 단위를 사용합니다.
+     */
+    private Integer prepTime;
+
     private List<Long> ingredientIds;
 
     private List<String> categoryNames;
+
+    public Duration getCookingTimeAsDuration() {
+        return cookingTime != null ? Duration.ofMinutes(cookingTime) : null;
+    }
+
+    public Duration getPrepTimeAsDuration() {
+        return prepTime != null ? Duration.ofMinutes(prepTime) : null;
+    }
 
 }

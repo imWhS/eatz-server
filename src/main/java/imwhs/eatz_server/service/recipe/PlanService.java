@@ -6,9 +6,13 @@ import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import imwhs.eatz_server.dto.plan.ChecklistItemDto;
 import imwhs.eatz_server.dto.plan.ChecklistDto;
+import imwhs.eatz_server.dto.plan.ChecklistItemDtoN;
+import imwhs.eatz_server.dto.plan.NChecklistDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryByRecipeDto;
 import imwhs.eatz_server.dto.rating.RatingSummaryDto;
 import imwhs.eatz_server.dto.recipe.PlanDto;
+import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
+import imwhs.eatz_server.dto.recipe.RecipeItemBasicDto;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
@@ -89,13 +93,61 @@ public class PlanService {
         return plans;
     }
 
+    public NChecklistDto getChecklistn(Long userId, LocalDate startDate, LocalDate endDate) {
+        EatzUser user = findUser(userId);
+
+        /*
+        checklistItems에는 조회하려는 플랜 별 레시피 요약 정보, 레시피의 재료 요약 정보, 레시피 요리 가능 여부가 포함됩니다.
+         */
+        List<ChecklistItemDtoN> checklistItems = planRepository.findChecklistByUserAndDateRangeV2(user, startDate, endDate);
+        Map<Long, List<ChecklistItemDtoN>> checklistItemsByRecipeId = new HashMap<>();
+
+        Set<RecipeItemBasicDto> cookableRecipes = new HashSet<>();
+        Set<RecipeItemBasicDto> uncookableRecipes = new HashSet<>();
+        Set<IngredientDto> missingIngredients = new HashSet<>();
+
+        for (ChecklistItemDtoN item : checklistItems) {
+            RecipeItemBasicDto recipe = item.getRecipe();
+            Long recipeId = recipe.getId();
+            checklistItemsByRecipeId.computeIfAbsent(recipeId, k -> new ArrayList<>()).add(item);
+            if (item.isMissing()) {
+                missingIngredients.add(item.getIngredient());
+            }
+        }
+
+        for (Map.Entry<Long, List<ChecklistItemDtoN>> entry : checklistItemsByRecipeId.entrySet()) {
+            List<ChecklistItemDtoN> items = entry.getValue();
+            boolean isAllTrue = items.stream().allMatch(ChecklistItemDtoN::isMissing);
+            RecipeItemBasicDto recipe = items.get(0).getRecipe();
+
+            if (isAllTrue) {
+                cookableRecipes.add(recipe);
+            } else {
+                uncookableRecipes.add(recipe);
+            }
+        }
+
+        return new NChecklistDto(
+                new ArrayList<>(cookableRecipes),
+                new ArrayList<>(uncookableRecipes),
+                missingIngredients
+        );
+    }
+
+    /**
+     * 특정 기간에 설정된 레시피들에 대한 요리 가능, 불가능 여부와 요리 불가능한 레시피들에 대해 필요한 재료 목록을 조회합니다.
+     * @param userId 조회하려는 사용자 ID.
+     * @param startDate 기간 시작 날짜.
+     * @param endDate 기간 종료 날짜.
+     * @return ChecklistDto.
+     */
     public ChecklistDto getChecklist(Long userId, LocalDate startDate, LocalDate endDate) {
         EatzUser user = findUser(userId);
 
         /*
         checklistItems에는 조회하려는 플랜 별 레시피 요약 정보, 레시피의 재료 요약 정보, 레시피 요리 가능 여부가 포함됩니다.
          */
-        List<ChecklistItemDto> checklistItems = planRepository.findChecklistByUserAndDateRangeV2(user, startDate, endDate);
+        List<ChecklistItemDto> checklistItems = planRepository.findChecklistByUserAndDateRange(user, startDate, endDate);
 
         // 레시피 ID 별 요리 가능 여부 목록을 저장합니다.
         Map<Long, Boolean> cookableByRecipeId = new HashMap<>();
@@ -105,7 +157,6 @@ public class PlanService {
 
         for (ChecklistItemDto item : checklistItems) {
             Long recipeId = item.getRecipe().getId();
-
             cookableByRecipeId.putIfAbsent(recipeId, true);
 
             /*
