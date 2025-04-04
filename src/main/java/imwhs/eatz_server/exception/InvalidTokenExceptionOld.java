@@ -2,9 +2,9 @@ package imwhs.eatz_server.exception;
 
 import org.springframework.security.core.AuthenticationException;
 
-public class InvalidTokenException extends AuthenticationException {
+public class InvalidTokenExceptionOld extends AuthenticationException {
 
-    public InvalidTokenException(String message) {
+    public InvalidTokenExceptionOld(String message) {
         super(message);
     }
 

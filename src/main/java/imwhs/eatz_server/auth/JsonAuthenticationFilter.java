@@ -1,9 +1,13 @@
 package imwhs.eatz_server.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import imwhs.eatz_server.common.error.ErrorCode;
+import imwhs.eatz_server.common.error.ErrorCodeAuth;
+import imwhs.eatz_server.common.error.ErrorCodeUser;
 import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.domain.RefreshToken;
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.AuthErrorCode;
 import imwhs.eatz_server.dto.eatzuser.userdetail.EatzUserDetails;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
 import jakarta.servlet.FilterChain;
@@ -102,6 +106,10 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         refreshTokenRepository.save(refreshTokenEntity);
 
         log.info("'{}' 이메일 주소에 해당하는 사용자가 성공적으로 로그인됐어요. (ID: {})", email, id);
+        ApiResponse<Map<String, String>> responseBody = ApiResponse.success("성공적으로 로그인했어요.");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(responseBody));
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -117,7 +125,8 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         log.error("성공적으로 로그인하지 못했어요: {} ({})", failed.getMessage(), failed.getClass().getName());
 
         if (failed instanceof BadCredentialsException) {
-            responseBody = ApiResponse.error("이메일 주소 또는 비밀 번호가 올바르지 않아 로그인할 수 없어요.");
+            ErrorCodeAuth errorCode = ErrorCodeAuth.CREDENTIALS_INVALID;
+            responseBody = ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
         }
 
         response.setContentType("application/json");

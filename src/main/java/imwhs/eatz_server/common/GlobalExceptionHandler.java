@@ -1,11 +1,11 @@
 package imwhs.eatz_server.common;
 
-import imwhs.eatz_server.dto.ApiResponse;
-import imwhs.eatz_server.exception.DuplicatedEatzUserException;
-import imwhs.eatz_server.exception.IngredientNotFoundException;
-import imwhs.eatz_server.exception.RecipeNotFoundException;
+import imwhs.eatz_server.common.error.ErrorCodeUser;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
+import imwhs.eatz_server.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -49,29 +49,45 @@ public class GlobalExceptionHandler {
         return ApiResponse.error(e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ApiResponse<Object> handleUsernameNotFoundException(MethodArgumentNotValidException e) {
-        log.error(e.getBindingResult().getFieldError().getDefaultMessage());
-        return ApiResponse.error("유효하지 않은 사용자 이름입니다.");
+    public ApiResponse<Object> handleUsernameNotFoundException(UsernameNotFoundException e) {
+        ErrorCodeUser errorCode = ErrorCodeUser.EATZ_USER_USERNAME_NOT_FOUND;
+        return ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(DuplicatedEatzUserException.class)
-    public ApiResponse<Object> handleDuplicatedEatzUserException(DuplicatedEatzUserException e) {
-        return ApiResponse.error(e.getMessage());
+    @ExceptionHandler(DuplicatedEatzUserEmailException.class)
+    public ResponseEntity<ApiResponse<?>> handleDuplicatedEatzUserEmailException(DuplicatedEatzUserEmailException e) {
+        return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RecipeNotFoundException.class)
-    public ApiResponse<Object> handleRecipeNotFoundException(RecipeNotFoundException e) {
-        return ApiResponse.error(e.getMessage());
+    public ResponseEntity<ApiResponse<?>> handleRecipeNotFoundException(RecipeNotFoundException e) {
+        return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IngredientNotFoundException.class)
-    public ApiResponse<Object> handleIngredientNotFoundException(IngredientNotFoundException e) {
-        return ApiResponse.error(e.getMessage());
+    public ResponseEntity<ApiResponse<?>> handleIngredientNotFoundException(IngredientNotFoundException e) {
+        return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ApiResponse<?>> handleInvalidRefreshTokenException(InvalidRefreshTokenException e) {
+        return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleCategoryNotFoundException(CategoryNotFoundException e) {
+        return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidVerificationCodeException.class)
+    public ResponseEntity<ApiResponse<?>> handleInvalidVerificationCodeException(InvalidVerificationCodeException e) {
+        return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public ResponseEntity<ApiResponse<?>> handleEmailNotVerifiedException(EmailNotVerifiedException e) {
+        return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
     }
 
 }

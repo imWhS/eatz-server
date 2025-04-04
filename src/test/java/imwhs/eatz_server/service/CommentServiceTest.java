@@ -86,7 +86,7 @@ public class CommentServiceTest {
 
         // then
         Comment editedComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾지 못했습니다."));
+                .orElseThrow(CommentNotFoundException::new);
         Assertions.assertThat(editedComment.getContent()).isEqualTo(commentContentAfter);
         Assertions.assertThat(editedComment.getId()).isEqualTo(commentId);
         Assertions.assertThat(editedComment.getCreatedAt()).isNotNull();

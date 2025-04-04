@@ -1,7 +1,7 @@
 package imwhs.eatz_server.controller.api;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.comment.CommentWithRecipeDto;
 import imwhs.eatz_server.dto.eatzuser.*;

@@ -108,7 +108,7 @@ public class CommentService {
      */
     private Comment getComment(Long id, Long userId) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new CommentNotFoundException("id가 " + id + "인 댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CommentNotFoundException(id));
 
         if (!Objects.equals(comment.getAuthor().getId(), userId)) {
             throw new UnauthorizedEatzUserException("댓글을 등록한 사용자가 아니어서, 권한이 없습니다.");
