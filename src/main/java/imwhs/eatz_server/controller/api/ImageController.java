@@ -1,6 +1,6 @@
 package imwhs.eatz_server.controller.api;
 
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import imwhs.eatz_server.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

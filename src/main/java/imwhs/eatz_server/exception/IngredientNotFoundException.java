@@ -1,29 +1,19 @@
 package imwhs.eatz_server.exception;
 
-public class IngredientNotFoundException extends RuntimeException {
+import imwhs.eatz_server.common.error.ErrorCode;
 
-    private static final String MESSAGE_TEMPLATE_INVALID_NAME = "이름이 %s인 재료를 찾을 수 없어요.";
-
-    private static final String MESSAGE_TEMPLATE_INVALID_ID = "ID가 %s인 재료를 찾을 수 없어요.";
+public class IngredientNotFoundException extends BaseException {
 
     public IngredientNotFoundException() {
-        super();
-    }
-
-    public IngredientNotFoundException(String name) {
-        super(String.format(MESSAGE_TEMPLATE_INVALID_NAME, name));
+        super(ErrorCode.INGREDIENT_NOT_FOUND);
     }
 
     public IngredientNotFoundException(Long id) {
-        super(String.format(MESSAGE_TEMPLATE_INVALID_ID, id));
+        super(ErrorCode.INGREDIENT_NOT_FOUND, "ID가 " + id + "인 재료를 찾을 수 없어요.");
     }
 
-    public IngredientNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public IngredientNotFoundException(Throwable cause) {
-        super(cause);
+    public IngredientNotFoundException(String name) {
+        super(ErrorCode.INGREDIENT_NOT_FOUND, "이름이 " + name + "인 재료를 찾을 수 없어요.");
     }
 
 }

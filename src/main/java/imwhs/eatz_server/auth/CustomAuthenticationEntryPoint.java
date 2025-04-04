@@ -1,7 +1,8 @@
 package imwhs.eatz_server.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.common.error.ErrorCodeAuth;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,15 +23,16 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String message = "사용자 인증에 실패했습니다."; // 기본 메시지
+        String message = "사용자 인증에 실패했습니다.";
 
         if (authException instanceof InsufficientAuthenticationException) {
             message = "사용자 인증 정보가 필요합니다.";
         }
 
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        ApiResponse<Map<String, String>> responseBody = ApiResponse.error(message);
+        ErrorCodeAuth errorCode = ErrorCodeAuth.TOKEN_ACCESS_MISSING;
+        response.setStatus(errorCode.getStatus().value());
+        ApiResponse<Map<String, String>> responseBody = ApiResponse.error(errorCode.getMessage());
         response.getWriter().write(objectMapper.writeValueAsString(responseBody));
     }
 

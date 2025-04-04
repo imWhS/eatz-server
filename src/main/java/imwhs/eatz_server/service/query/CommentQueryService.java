@@ -40,7 +40,7 @@ public class CommentQueryService {
      */
     public CommentDto findCommentDetail(Long id) {
         return commentQueryRepository.findCommentDetailById(id)
-                .orElseThrow(() -> new CommentNotFoundException("id " + id + "에 해당하는 댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CommentNotFoundException(id));
     }
 
     /**

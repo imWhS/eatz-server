@@ -3,8 +3,7 @@ package imwhs.eatz_server.service;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.RefreshToken;
-import imwhs.eatz_server.exception.DuplicatedEatzUserException;
-import imwhs.eatz_server.exception.InvalidTokenException;
+import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.RefreshTokenRepository;
 import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
@@ -41,6 +39,8 @@ public class AuthService {
     private static final SecureRandom secureRandom = new SecureRandom();
 
     public void sendVerificationCodeToEmail(String email) {
+        existsUserByEmail(email);
+
         String verificationCode = generateVerificationCode();
         redisService.setValue(REDIS_KEY_PREFIX_VERIFICATION_CODE_OF + email, verificationCode, Duration.ofMinutes(5));
         mailService.sendMail(
@@ -50,13 +50,18 @@ public class AuthService {
                         "인증 코드를 이용해 입력하신 이메일 주소(" + email + ")를 " + "인증한 후, EATZ 회원 가입을 계속 진행해주세요. " +
                         "인증 코드는 이메일 인증을 요청하신 시간으로부터 5분까지 사용할 수 있어요.");
     }
-    
+
+    private void existsUserByEmail(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicatedEatzUserEmailException();
+        }
+    }
+
     public void verifyEmail(String email, String code) {
         String storedCode = redisService.getValue(REDIS_KEY_PREFIX_VERIFICATION_CODE_OF + email);
         
         if (code == null || !Objects.equals(storedCode, code)) {
-            throw new IllegalArgumentException("인증 코드가 올바르지 않아요. 인증 코드는 이메일 인증을 요청한 시간으로부터 5분 간 유효해요. " +
-                    "유효 시간이 지났다면 처음부터 다시 진행해주세요.");
+            throw new InvalidVerificationCodeException();
         }
 
         redisService.setValue(REDIS_KEY_PREFIX_VERIFIED_TIME_OF + email, LocalDateTime.now().toString(), Duration.ofMinutes(30));
@@ -76,16 +81,14 @@ public class AuthService {
     @Transactional
     public Long signUp(String username, String email, String password) {
         if (userRepository.existsByUsername(username)) {
-            throw new DuplicatedEatzUserException("이미 사용 중인 사용자 이름입니다.");
+            throw new DuplicatedEatzUserEmailException();
         }
 
-        if (userRepository.existsByEmail(email)) {
-            throw new DuplicatedEatzUserException("이미 사용 중인 이메일 주소입니다.");
-        }
+        existsUserByEmail(email);
 
         String verifiedTime = redisService.getValue(REDIS_KEY_PREFIX_VERIFIED_TIME_OF + email);
         if (verifiedTime == null) {
-            throw new IllegalArgumentException("인증이 완료되지 않은 이메일 주소입니다.");
+            throw new EmailNotVerifiedException();
         }
 
         EatzUser member = EatzUser.createMember(username, email, passwordEncoder.encode(password));
@@ -98,7 +101,7 @@ public class AuthService {
         String type = tokenManager.getType(refreshToken);
 
         if (!Objects.equals(type, "refresh")) {
-            throw new InvalidTokenException("리프레시 토큰이 없습니다.");
+            throw new InvalidRefreshTokenException();
         }
 
         return tokenManager.createAccessToken(email, password);
@@ -122,7 +125,7 @@ public class AuthService {
 
     private void deleteRefreshToken(String refreshTokenValue) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenValue).orElseThrow(
-                () -> new InvalidTokenException("유효하지 않은 리프레시 토큰입니다."));
+                InvalidRefreshTokenException::new);
 
         refreshTokenRepository.delete(refreshToken);
     }

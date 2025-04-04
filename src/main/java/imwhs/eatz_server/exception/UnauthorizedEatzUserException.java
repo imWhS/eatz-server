@@ -1,21 +1,15 @@
 package imwhs.eatz_server.exception;
 
-public class UnauthorizedEatzUserException extends RuntimeException {
+import imwhs.eatz_server.common.error.ErrorCodeAuth;
+
+public class UnauthorizedEatzUserException extends BaseException {
 
     public UnauthorizedEatzUserException() {
-        super();
+        super(ErrorCodeAuth.UNAUTHORIZED_USER);
     }
 
     public UnauthorizedEatzUserException(String message) {
-        super(message);
-    }
-
-    public UnauthorizedEatzUserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UnauthorizedEatzUserException(Throwable cause) {
-        super(cause);
+        super(ErrorCodeAuth.UNAUTHORIZED_USER, message);
     }
 
 }

@@ -2,7 +2,7 @@ package imwhs.eatz_server.controller.api.recipe;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.liked.EntityType;
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import imwhs.eatz_server.dto.CreateBasicReportDto;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.comment.CommentItemDto;
@@ -38,9 +38,10 @@ public class CommentController {
      * @return 생성된 댓글 ID.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> addComment(@PathVariable Long recipeId, @RequestBody CreateCommentDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long addComment(@PathVariable Long recipeId, @RequestBody CreateCommentDto dto) {
         Long commentId = commentService.register(recipeId, EatzUserAuthUtil.getId(), dto.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(commentId));
+        return commentId;
     }
 
     /**
@@ -50,8 +51,9 @@ public class CommentController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateComment(@PathVariable Long id, @RequestBody UpdateCommentDto dto) {
+    public ApiResponse<?> updateComment(@PathVariable Long id, @RequestBody UpdateCommentDto dto) {
         commentService.update(id, EatzUserAuthUtil.getId(), dto.getContent());
+        return ApiResponse.success();
     }
 
     /**
@@ -60,8 +62,9 @@ public class CommentController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Long id) {
+    public ApiResponse<?> deleteComment(@PathVariable Long id) {
         commentService.delete(id, EatzUserAuthUtil.getId());
+        return ApiResponse.success();
     }
 
     /**
@@ -71,17 +74,19 @@ public class CommentController {
      * @return 댓글 목록 정보.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<CommentItemDto>>> findComments(
+    @ResponseStatus(HttpStatus.OK)
+    public Page<CommentItemDto> findComments(
             @PathVariable Long recipeId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<CommentItemDto> comments = commentService.findByRecipe(recipeId, pageable);
-        return ResponseEntity.ok(ApiResponse.success(comments));
+        return comments;
     }
 
     @PostMapping("/{id}/report")
-    public ResponseEntity<ApiResponse<Long>> reportComment(@PathVariable Long id, @RequestBody CreateBasicReportDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long reportComment(@PathVariable Long id, @RequestBody CreateBasicReportDto dto) {
         Long reportId = reportService.register(EatzUserAuthUtil.getId(), id, EntityType.COMMENT, dto.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(reportId));
+        return reportId;
     }
 
 }

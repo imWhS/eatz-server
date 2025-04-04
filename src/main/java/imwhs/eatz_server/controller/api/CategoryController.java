@@ -2,7 +2,7 @@ package imwhs.eatz_server.controller.api;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.Category;
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import imwhs.eatz_server.dto.recipe.category.CreateCategoryDto;
 import imwhs.eatz_server.dto.recipe.category.CategoryDto;
 import imwhs.eatz_server.dto.recipe.category.UpdateCategoryDto;

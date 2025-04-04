@@ -1,21 +1,15 @@
 package imwhs.eatz_server.exception;
 
-public class CommentNotFoundException extends RuntimeException {
+import imwhs.eatz_server.common.error.ErrorCode;
+
+public class CommentNotFoundException extends BaseException {
 
     public CommentNotFoundException() {
-        super();
+        super(ErrorCode.COMMENT_NOT_FOUND);
     }
 
-    public CommentNotFoundException(String message) {
-        super(message);
-    }
-
-    public CommentNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CommentNotFoundException(Throwable cause) {
-        super(cause);
+    public CommentNotFoundException(Long id) {
+        super(ErrorCode.COMMENT_NOT_FOUND, "ID가 " + id + "인 댓글을 찾을 수 없어요.");
     }
 
 }

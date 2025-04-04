@@ -1,7 +1,7 @@
 package imwhs.eatz_server.controller.api.recipe;
 
 import imwhs.eatz_server.auth.EatzUserAuthUtil;
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import imwhs.eatz_server.dto.Paged;
 import imwhs.eatz_server.dto.rating.CreateRatingDto;
 import imwhs.eatz_server.dto.rating.RatingItemDto;
@@ -33,9 +33,10 @@ public class RatingController {
      * @return 생성된 평가의 ID.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> addRating(@PathVariable Long recipeId, @RequestBody CreateRatingDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long addRating(@PathVariable Long recipeId, @RequestBody CreateRatingDto dto) {
         Long ratingId = ratingService.register(recipeId, EatzUserAuthUtil.getId(), dto.getScore(), dto.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(ratingId));
+        return ratingId;
     }
 
     /**
@@ -45,8 +46,9 @@ public class RatingController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateRating(@PathVariable Long id, @RequestBody UpdateRatingDto dto) {
+    public ApiResponse<?> updateRating(@PathVariable Long id, @RequestBody UpdateRatingDto dto) {
         ratingService.update(id, EatzUserAuthUtil.getId(), dto.getScore(), dto.getContent());
+        return ApiResponse.success();
     }
 
     /**
@@ -55,8 +57,9 @@ public class RatingController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteRating(@PathVariable Long id) {
+    public ApiResponse<?> deleteRating(@PathVariable Long id) {
         ratingService.delete(id, EatzUserAuthUtil.getId());
+        return ApiResponse.success();
     }
 
     /**
@@ -66,11 +69,12 @@ public class RatingController {
      * @return 평가 목록.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<RatingItemDto>>> findRatings(
+    @ResponseStatus(HttpStatus.OK)
+    public Page<RatingItemDto> findRatings(
             @PathVariable Long recipeId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<RatingItemDto> ratings = ratingService.findByRecipe(recipeId, pageable);
-        return ResponseEntity.ok((ApiResponse.success(ratings)));
+        return ratings;
     }
 
     /**
@@ -80,11 +84,11 @@ public class RatingController {
      * @return 상세 평가 정보.
      */
     @GetMapping("/detail")
-    public ResponseEntity<ApiResponse<RatingsDetailDto>> findRatingsWithDetail(
+    public RatingsDetailDto findRatingsWithDetail(
             @PathVariable Long recipeId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         RatingsDetailDto dto = ratingService.getWithDetail(recipeId, pageable);
-        return ResponseEntity.ok((ApiResponse.success(dto)));
+        return dto;
     }
 
 }

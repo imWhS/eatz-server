@@ -45,12 +45,12 @@ public class IngredientRecipeService {
      * @param recipeId 재료를 추가할 레시피.
      * @return 추가 완료된 재료 ID 목록.
      */
-    @Transactional
     public List<Long> addIngredientsToRecipe(List<Long> ingredientIds, Long recipeId) {
         // ID에 해당하는 레시피를 조회합니다.
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException(recipeId));
 
         // 기존 레시피에 등록된 모든 재료를 조회합니다.
+        // TODO: 최적화? (SET)
         List<Long> existingIngredientIdsByRecipe = ingredientRecipeRepository.findIngredientIdsByRecipe(recipe);
 
         List<Long> ingredientIdsToAdd = new ArrayList<>();
