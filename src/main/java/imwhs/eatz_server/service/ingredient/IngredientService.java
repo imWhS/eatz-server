@@ -113,7 +113,7 @@ public class IngredientService {
 
         // 재료 엔티티를 조회합니다.
         Ingredient ingredient = ingredientRepository.findById(id)
-                .orElseThrow(() -> new IngredientNotFoundException("id가 " + id + "인 재료를 찾지 못했습니다."));
+                .orElseThrow(() -> new IngredientNotFoundException(id));
 
         // 재료에 설정된 카테고리를 해제합니다.
         ingredient.removeCategory();
@@ -172,7 +172,7 @@ public class IngredientService {
     private Ingredient getIngredient(Long id) {
         if (id == null) return null;
         else return ingredientRepository.findById(id)
-                .orElseThrow(() -> new IngredientNotFoundException("id가 " + id + "인 재료를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IngredientNotFoundException(id));
     }
 
     /**
@@ -181,7 +181,7 @@ public class IngredientService {
      */
     private void validateIngredientId(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("재료의 id가 유효하지 않습니다.");
+            throw new IllegalArgumentException("재료의 ID가 필요합니다.");
         }
     }
 

@@ -4,6 +4,7 @@ import imwhs.eatz_server.auth.EatzUserAuthUtil;
 import imwhs.eatz_server.domain.liked.EntityType;
 import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
 import imwhs.eatz_server.dto.*;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import imwhs.eatz_server.dto.recipe.*;
 import imwhs.eatz_server.dto.recipe.ingredient.AddIngredientDto;
 import imwhs.eatz_server.service.ReportService;
@@ -47,9 +48,9 @@ public class RecipeController {
      * @return 생성된 레시피의 ID.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerRecipe(@RequestBody CreateRecipeDto dto) {
+    public Long registerRecipe(@RequestBody CreateRecipeDto dto) {
         Long recipeId = recipeService.register(dto, EatzUserAuthUtil.getUsername());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(recipeId));
+        return recipeId;
     }
 
     /**
@@ -59,8 +60,9 @@ public class RecipeController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateRecipe(@PathVariable Long id, @RequestBody UpdateRecipeDto dto) {
+    public ApiResponse<?> updateRecipe(@PathVariable Long id, @RequestBody UpdateRecipeDto dto) {
         recipeService.update(id, dto, EatzUserAuthUtil.getUsername());
+        return ApiResponse.success();
     }
 
     /**
@@ -70,8 +72,9 @@ public class RecipeController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteRecipe(@PathVariable Long id) {
+    public ApiResponse<?> deleteRecipe(@PathVariable Long id) {
         recipeService.markAsDeleted(id, EatzUserAuthUtil.getUsername());
+        return ApiResponse.success();
     }
 
     /**
@@ -80,17 +83,17 @@ public class RecipeController {
      * @param dto 추가하려는 재료 정보.
      */
     @PostMapping("/{id}/ingredients")
-    public ResponseEntity<?> addIngredients(@PathVariable Long id, @RequestBody AddIngredientDto dto) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ApiResponse<?>> addIngredients(@PathVariable Long id, @RequestBody AddIngredientDto dto) {
         List<Long> addedIngredients = ingredientRecipeService.addIngredientsToRecipe(dto.getIngredientIds(), id);
 
         if (addedIngredients.size() != dto.getIngredientIds().size()) {
-            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(ApiResponse.success(addedIngredients));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(addedIngredients, "일부 재료만 추가됐어요."));
         } else if (addedIngredients.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("레시피에 모든 재료를 추가하지 못했어요. " +
-                    "레시피에 추가하려는 재료를 다시 확인해보세요."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("모든 재료를 추가하지 못했어요. 유효한 재료가 존재하지 않아요."));
         }
 
-        return ResponseEntity.ok().body(ApiResponse.success(addedIngredients));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(addedIngredients, "모든 재료를 추가했어요."));
     }
 
     /**
@@ -100,9 +103,10 @@ public class RecipeController {
      * @return 추가된 신고 ID.
      */
     @PostMapping("/{id}/report")
-    public ResponseEntity<ApiResponse<Long>> reportRecipe(@PathVariable Long id, @RequestBody CreateBasicReportDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long reportRecipe(@PathVariable Long id, @RequestBody CreateBasicReportDto dto) {
         Long reportId = reportService.register(EatzUserAuthUtil.getId(), id, EntityType.RECIPE, dto.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(reportId));
+        return reportId;
     }
 
     /**
@@ -111,13 +115,14 @@ public class RecipeController {
      * @return 레시피 정보.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<RecipeDto>> findRecipe(
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeDto findRecipe(
             HttpServletRequest request,
             HttpServletResponse response,
             @PathVariable Long id) {
         RecipeDto dto = recipeQueryService.findById(id, EatzUserAuthUtil.getId());
         recipeViewCountService.increaseViewCount(request, response, id);
-        return ResponseEntity.ok(ApiResponse.success(dto));
+        return dto;
     }
 
     /**
@@ -131,7 +136,8 @@ public class RecipeController {
      * @return 레시피 목록.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Paged<RecipeItemDto>>> searchRecipes(
+    @ResponseStatus(HttpStatus.OK)
+    public Page<RecipeItemDto> searchRecipes(
             @RequestParam(required = false) RecipeItemSortType sortType,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
@@ -140,7 +146,7 @@ public class RecipeController {
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         if (sortType == null) sortType = RecipeItemSortType.LATEST;
         Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), keyword, categoryId, ingredientIds, requiredIngredientIds, pageable);
-        return ResponseEntity.ok(ApiResponse.success(allRecipes));
+        return allRecipes;
     }
 
 }

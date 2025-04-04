@@ -1,12 +1,14 @@
 package imwhs.eatz_server.controller.api;
 
+import imwhs.eatz_server.common.error.ErrorCodeAuth;
 import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
-import imwhs.eatz_server.dto.ApiResponse;
+import imwhs.eatz_server.dto.apiresponse.ApiResponse;
 import imwhs.eatz_server.dto.auth.RequestEmailVerificationDto;
 import imwhs.eatz_server.dto.auth.RequestVerificationCodeViaEmailDto;
 import imwhs.eatz_server.dto.auth.CreateEatzUserDto;
-import imwhs.eatz_server.exception.InvalidTokenException;
+import imwhs.eatz_server.exception.InvalidTokenExceptionOld;
+import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import imwhs.eatz_server.service.AuthService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -33,22 +35,25 @@ public class AuthController {
     private final JwtConfigProperties jwtConfigProperties;
 
     @PostMapping("/sign-up/email-validation/send-code")
-    public ResponseEntity<ApiResponse<String>> sendCodeViaEmail(@RequestBody RequestVerificationCodeViaEmailDto dto) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ApiResponse<?> sendCodeViaEmail(@RequestBody RequestVerificationCodeViaEmailDto dto) {
         String email = dto.getEmail();
         authService.sendVerificationCodeToEmail(email);
-        return ResponseEntity.ok(ApiResponse.success(email + "로 인증 코드를 전송했어요."));
+        return ApiResponse.success();
     }
 
     @PostMapping("/sign-up/email-validation/verify")
-    public ResponseEntity<ApiResponse<String>> verifyEmail(@RequestBody RequestEmailVerificationDto dto) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ApiResponse<?> verifyEmail(@RequestBody RequestEmailVerificationDto dto) {
         authService.verifyEmail(dto.getEmail(), dto.getCode());
-        return ResponseEntity.ok(ApiResponse.success("이메일 주소 인증을 완료했어요."));
+        return ApiResponse.success();
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<ApiResponse<Long>> registerUser(@RequestBody @Valid CreateEatzUserDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<?> registerUser(@RequestBody @Valid CreateEatzUserDto dto) {
         Long userId = authService.signUp(dto.getUsername(), dto.getEmail(), dto.getPassword());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
+        return ApiResponse.success(userId);
     }
 
     @PostMapping("/reissue-token")
@@ -65,15 +70,11 @@ public class AuthController {
             addRefreshTokenToCookie(response, newRefreshToken);
 
             return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (InvalidTokenException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error(e.getMessage()));
+            throw new UnauthorizedEatzUserException();
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error("리프레시 토큰이 만료됐어요."));
+                    .body(ApiResponse.error(ErrorCodeAuth.TOKEN_REFRESH_EXPIRED.getMessage()));
         }
     }
 
@@ -89,7 +90,7 @@ public class AuthController {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null || cookies.length == 0) {
-            throw new InvalidTokenException("쿠키가 존재하지 않아요.");
+            throw new InvalidTokenExceptionOld("쿠키가 존재하지 않아요.");
         }
 
         for (Cookie cookie : cookies) {
@@ -98,7 +99,7 @@ public class AuthController {
             }
         }
 
-        throw new InvalidTokenException("리프레시 토큰이 존재하지 않아요.");
+        throw new InvalidTokenExceptionOld("리프레시 토큰이 존재하지 않아요.");
     }
 
     private void addRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
