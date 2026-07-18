@@ -174,3 +174,8 @@ gradle-app.setting
 /uploadsapplication*.yml
 application*.properties
 secret.json
+Users/
+.idea/
+.DS_Store
+dump.rdb
+uploads/
