@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * UserOfRatingDto 클래스입니다.<br/>
- * 평가와 연관 관계인 사용자의 간략한 정보를 전달하기 위해 사용합니다.
+ * 평가와 연관 관계인 사용자의 간략한 정보를 전달할 때 사용합니다.
  */
 @Data
 @AllArgsConstructor

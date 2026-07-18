@@ -1,26 +1,30 @@
 package imwhs.eatz_server.controller.api.recipe;
 
-import imwhs.eatz_server.auth.EatzUserAuthUtil;
-import imwhs.eatz_server.domain.liked.EntityType;
-import imwhs.eatz_server.domain.recipe.RecipeItemSortType;
-import imwhs.eatz_server.dto.*;
-import imwhs.eatz_server.dto.apiresponse.ApiResponse;
+import imwhs.eatz_server.dto.RecipeOutboundResponse;
+import imwhs.eatz_server.dto.UploadedImageInfoResponse;
+import imwhs.eatz_server.dto.liked.LikedRecipeBasicDto;
+import imwhs.eatz_server.dto.recipe.cookable.CookableRecipeDto;
+import imwhs.eatz_server.dto.recipe.cookable.CookableRecipesRequest;
+import imwhs.eatz_server.dto.recipe.explore.ExploreRecipeDto;
+import imwhs.eatz_server.dto.recipe.explore.ExploreRecipesRequest;
+import imwhs.eatz_server.dto.recipe.kitchenware.KitchenwareRequirementDto;
 import imwhs.eatz_server.dto.recipe.*;
-import imwhs.eatz_server.dto.recipe.ingredient.AddIngredientDto;
-import imwhs.eatz_server.service.ReportService;
-import imwhs.eatz_server.service.ingredient.IngredientRecipeService;
+import imwhs.eatz_server.dto.recipe.ingredient.IngredientRequirementDto;
+import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
+import imwhs.eatz_server.service.ingredient.IngredientQueryService;
+import imwhs.eatz_server.service.kitchenware.KitchenwareQueryService;
+import imwhs.eatz_server.service.liked.LikedRecipeService;
+import imwhs.eatz_server.service.recipe.RecipeOutboundCountService;
 import imwhs.eatz_server.service.recipe.RecipeService;
-import imwhs.eatz_server.service.query.RecipeQueryService;
-import imwhs.eatz_server.service.recipe.RecipeViewCountService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import imwhs.eatz_server.service.recipe.RecipeQueryService;
+import imwhs.eatz_server.service.recipe.RecipeDetailViewCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,120 +37,210 @@ import java.util.List;
 public class RecipeController {
 
     private final RecipeService recipeService;
-
     private final RecipeQueryService recipeQueryService;
-
-    private final IngredientRecipeService ingredientRecipeService;
-
-    private final ReportService reportService;
-
-    private final RecipeViewCountService recipeViewCountService;
+    private final IngredientQueryService ingredientQueryService;
+    private final KitchenwareQueryService kitchenwareQueryService;
+    private final RecipeDetailViewCountService recipeDetailViewCountService;
+    private final LikedRecipeService likedRecipeService;
+    private final RecipeOutboundCountService recipeOutboundCountService;
 
     /**
      * 새 레시피를 등록합니다.
-     * @param dto 등록하려는 레시피 관련 정보.
-     * @return 생성된 레시피의 ID.
+     * @param dto 레시피 생성 및 등록 요청 정보
+     * @return 등록 완료된 레시피의 생성 정보
      */
     @PostMapping
-    public Long registerRecipe(@RequestBody CreateRecipeDto dto) {
-        Long recipeId = recipeService.register(dto, EatzUserAuthUtil.getUsername());
-        return recipeId;
+    public RecipeCreationInfoDto registerRecipe(
+            @RequestBody RecipeCreateDto dto,
+            @AuthenticatedEatzUserId Long userId) {
+        return recipeService.register(dto, userId);
+    }
+
+    /**
+     * 새 '레시피 보기' 이벤트를 생성합니다.
+     * '레시피 보기' 이벤트 생성 수를 증기시키고, 레시피의 URL을 응답합니다.
+     * @param id
+     * @param userId
+     */
+    @PostMapping("/urls/{id}")
+    public RecipeOutboundResponse getRecipeOutbound(
+            @PathVariable Long id,
+            @AuthenticatedEatzUserId(required = false) Long userId,
+            @RequestHeader(value = "X-Device-ID", required = false) String deviceId,
+            @RequestHeader(value = "Time-Zone", defaultValue = "Asia/Seoul") String timeZone) {
+        if (userId == null) { recipeOutboundCountService.markAsOutboundTodayByGuest(id, deviceId, timeZone); }
+        else { recipeOutboundCountService.markAsOutboundTodayByAuthenticated(id, userId, timeZone); }
+
+        return recipeService.getUrl(id);
+    }
+
+    @PostMapping("/images")
+    @ResponseStatus(HttpStatus.OK)
+    public UploadedImageInfoResponse uploadRecipeImage(
+            @RequestParam("image") MultipartFile image,
+            @AuthenticatedEatzUserId Long userId) {
+        String imageUrl = recipeService.uploadNewImage(image, userId);
+        return new UploadedImageInfoResponse(imageUrl);
+    }
+
+    @DeleteMapping("/images")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRecipeImage(
+            @RequestParam String imageUrl,
+            @AuthenticatedEatzUserId Long userId) {
+        recipeService.deleteExistingImage(imageUrl, userId);
     }
 
     /**
      * 레시피를 업데이트합니다.
-     * @param id 업데이트하려는 레시피의 ID.
-     * @param dto 업데이트하려는 레시피 관련 정보.
+     * @param id 업데이트하려는 레시피의 ID
+     * @param dto 레시피 업데이트 요청 정보
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponse<?> updateRecipe(@PathVariable Long id, @RequestBody UpdateRecipeDto dto) {
-        recipeService.update(id, dto, EatzUserAuthUtil.getUsername());
-        return ApiResponse.success();
+    public void updateRecipe(
+            @PathVariable Long id,
+            @AuthenticatedEatzUserId Long userId,
+            @RequestBody RecipeUpdateDto dto) {
+        recipeService.update(id, dto, userId);
     }
 
     /**
      * 레시피를 삭제 처리합니다.
      * <p>레시피를 등록한 사용자만 접근 가능합니다.</p>
-     * @param id 삭제 처리하려는 레시피의 ID.
+     * @param id 레시피의 ID
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponse<?> deleteRecipe(@PathVariable Long id) {
-        recipeService.markAsDeleted(id, EatzUserAuthUtil.getUsername());
-        return ApiResponse.success();
+    public void markRecipeAsDeleted(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
+        recipeService.markAsDeleted(id, userId);
     }
 
     /**
-     * 레시피에 재료를 추가합니다.
-     * @param id 레시피의 ID.
-     * @param dto 추가하려는 재료 정보.
+     * 사용자가 레시피에 좋아요를 표시합니다.
+     * @param id 레시피의 ID
+     * @return 좋아요 표시한 레시피의 정보
      */
-    @PostMapping("/{id}/ingredients")
+    @PostMapping("/{id}/likeds")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ApiResponse<?>> addIngredients(@PathVariable Long id, @RequestBody AddIngredientDto dto) {
-        List<Long> addedIngredients = ingredientRecipeService.addIngredientsToRecipe(dto.getIngredientIds(), id);
-
-        if (addedIngredients.size() != dto.getIngredientIds().size()) {
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(addedIngredients, "일부 재료만 추가됐어요."));
-        } else if (addedIngredients.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("모든 재료를 추가하지 못했어요. 유효한 재료가 존재하지 않아요."));
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(addedIngredients, "모든 재료를 추가했어요."));
+    public LikedRecipeBasicDto likeRecipe(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
+        return likedRecipeService.like(id, userId);
     }
 
     /**
-     * 레시피를 신고합니다.
-     * @param id 신고하려는 레시피의 ID.
-     * @param dto 신고 정보.
-     * @return 추가된 신고 ID.
+     * 사용자가 레시피의 좋아요 표시를 취소합니다.
+     * @param id 레시피의 ID
+     * @return 좋아요 표시 취소한 레시피의 정보
      */
-    @PostMapping("/{id}/report")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Long reportRecipe(@PathVariable Long id, @RequestBody CreateBasicReportDto dto) {
-        Long reportId = reportService.register(EatzUserAuthUtil.getId(), id, EntityType.RECIPE, dto.getContent());
-        return reportId;
+    @DeleteMapping("/{id}/likeds")
+    @ResponseStatus(HttpStatus.OK)
+    public LikedRecipeBasicDto unlikeRecipe(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
+        return likedRecipeService.unlike(id, userId);
     }
 
+//    /**
+//     * 레시피를 신고합니다.
+//     * @param id 레시피의 ID
+//     * @param request 신고 정보
+//     * @return 신고 생성 정보를 담은 DTO
+//     */
+//    @PostMapping("/{id}/report")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ReportCreationInfoResponse reportRecipe(
+//            @PathVariable Long id,
+//            @RequestBody ReportBasicCreateRequest request,
+//            @AuthenticatedEatzUserId Long userId) {
+//        return reportService.register(
+//                userId,
+//                id,
+//                ReportResource.RECIPE,
+//                request.getCategoryId(),
+//                request.getResourceContent(),
+//                request.getDescription());
+//    }
+
     /**
-     * 레시피를 조회합니다.
-     * @param id 조회하려는 레시피의 ID.
-     * @return 레시피 정보.
+     * 레시피의 상세 정보를 가져오고, 해당 레시피의 조회 수를 증가시킵니다.
+     * @param id 레시피의 ID
+     * @return 레시피의 상세 정보
      */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public RecipeDto findRecipe(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            @PathVariable Long id) {
-        RecipeDto dto = recipeQueryService.findById(id, EatzUserAuthUtil.getId());
-        recipeViewCountService.increaseViewCount(request, response, id);
+    public RecipeDetailDto getRecipeDetailAndIncreaseViewCount(
+            @PathVariable Long id,
+            @AuthenticatedEatzUserId(required = false) Long userId,
+            @RequestHeader(value = "X-Device-ID", required = false) String deviceId,
+            @RequestHeader(value = "Time-Zone", defaultValue = "Asia/Seoul") String timeZone) {
+        RecipeDetailDto dto = recipeQueryService.getDetail(id, userId);
+        if (userId == null) { recipeDetailViewCountService.markAsViewedTodayByGuest(id, deviceId, timeZone); }
+        else { recipeDetailViewCountService.markAsViewedTodayByAuthenticated(id, userId, timeZone); }
+
         return dto;
     }
 
-    /**
-     * 필터링을 적용해 레시피를 검색하거나, 모든 레시피 목록을 조회합니다.
-     * @param sortType 레시피 정렬 기준.
-     * @param keyword 레시피를 필터링 할 제목 및 내용 키워드.
-     * @param categoryId 레시피를 필터링 할 카테고리 ID.
-     * @param ingredientIds 레시피를 필터링 할 재료 ID 목록.
-     * @param requiredIngredientIds 특정 재료 집합과 일치하는 레시피만 필터링하기 위한 재료 ID 목록.
-     * @param pageable 페이징 정보.
-     * @return 레시피 목록.
-     */
+    @GetMapping("/{id}/editable")
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeEditableDto getRecipeEditable(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
+        return recipeQueryService.getEditable(id, userId);
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<RecipeItemDto> searchRecipes(
-            @RequestParam(required = false) RecipeItemSortType sortType,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) List<Long> ingredientIds,
-            @RequestParam(required = false) List<Long> requiredIngredientIds,
+    public Page<RecipeBasicDto> getAllRecipeBasicsByAuthorId(
+            @RequestParam Long authorId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        if (sortType == null) sortType = RecipeItemSortType.LATEST;
-        Page<RecipeItemDto> allRecipes = recipeQueryService.search(sortType, EatzUserAuthUtil.getId(), keyword, categoryId, ingredientIds, requiredIngredientIds, pageable);
-        return allRecipes;
+        return recipeQueryService.getAllBasicsByAuthorId(authorId, pageable);
+    }
+
+    @GetMapping("/{id}/essential")
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeEssentialWithAuthorDto getRecipeEssential(@PathVariable Long id) {
+        return recipeQueryService.getEssentialWithAuthor(id);
+    }
+
+    @GetMapping("/{id}/ingredients")
+    @ResponseStatus(HttpStatus.OK)
+    public List<IngredientRequirementDto> getIngredientRequirements(
+            @PathVariable Long id,
+            @AuthenticatedEatzUserId(required = false) Long userId) {
+        return ingredientQueryService
+                .getIngredientRequirementsByRecipeId(id, userId);
+    }
+
+    @GetMapping("/{id}/kitchenwares")
+    @ResponseStatus(HttpStatus.OK)
+    public List<KitchenwareRequirementDto> getKitchenwareRequirements(
+            @PathVariable Long id, @AuthenticatedEatzUserId(required = false) Long userId) {
+        List<KitchenwareRequirementDto> kitchenwares = kitchenwareQueryService.getKitchenwareRequirementsByRecipeId(
+                id, userId);
+        return kitchenwares;
+    }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<RecipeBasicDto> searchRecipes(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @AuthenticatedEatzUserId(required = false) Long userId,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return recipeQueryService.getAllBasics(keyword, userId, pageable);
+    }
+
+    @GetMapping("/explore")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<ExploreRecipeDto> getExploreRecipes(
+            ExploreRecipesRequest request,
+            @AuthenticatedEatzUserId(required = false) Long userId,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return recipeQueryService.getExploreRecipes(request, userId, pageable);
+    }
+
+    @GetMapping("/cookable")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<CookableRecipeDto> getCookableRecipes(
+            CookableRecipesRequest request,
+            @AuthenticatedEatzUserId(required = false) Long userId,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return recipeQueryService.getCookableRecipes(request, userId, pageable);
     }
 
 }

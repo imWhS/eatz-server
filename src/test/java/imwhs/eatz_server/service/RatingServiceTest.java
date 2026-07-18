@@ -1,9 +1,9 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
+import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.service.recipe.RatingService;
+import imwhs.eatz_server.service.rating.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;

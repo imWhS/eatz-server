@@ -1,16 +1,19 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.Report;
+import imwhs.eatz_server.domain.ReportCategory;
+import imwhs.eatz_server.domain.ReportResourceType;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
-import imwhs.eatz_server.domain.liked.EntityType;
-import imwhs.eatz_server.dto.ReportDto;
-import imwhs.eatz_server.exception.EatzUserNotFoundException;
+import imwhs.eatz_server.dto.report.ReportDto;
+import imwhs.eatz_server.dto.report.ReportCreationInfoResponse;
+import imwhs.eatz_server.dto.report.ReportCategoryCreationInfoResponse;
+import imwhs.eatz_server.dto.report.ReportCategoryDto;
 import imwhs.eatz_server.exception.ReportNotFoundException;
-import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
+import imwhs.eatz_server.repository.ReportCategoryRepository;
 import imwhs.eatz_server.repository.ReportRepository;
 import imwhs.eatz_server.repository.comment.CommentRepository;
-import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
+import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,68 +21,94 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class ReportService {
 
     private final ReportRepository reportRepository;
-
     private final EatzUserRepository userRepository;
-
     private final RecipeRepository recipeRepository;
-
     private final CommentRepository commentRepository;
+    private final RatingRepository ratingRepository;
+    private final ReportCategoryRepository reportCategoryRepository;
 
-    @Transactional
-    public Long register(Long userId, Long entityId, EntityType type, String content) {
-        EatzUser user = findUser(userId);
-        validateEntityById(entityId, type);
-        Report report = Report.of(user, entityId, type, content);
+    @Transactional(rollbackFor = Exception.class)
+    public ReportCreationInfoResponse register(
+            Long userId,
+            Long resourceId,
+            ReportResourceType resourceType,
+            Long categoryId,
+            String resourceContent,
+            String description) {
+        EatzUser user = userRepository.get(userId);
+        validateResourceById(resourceId, resourceType);
+        ReportCategory category = reportCategoryRepository.get(categoryId);
+        Report report = Report.of(user, resourceId, resourceType, category, resourceContent, description);
         reportRepository.save(report);
-        return report.getId();
+        return new ReportCreationInfoResponse(report);
     }
 
-    @Transactional
-    public void markAsResolved(Long adminId, Long reportId) {
-        EatzUser admin = userRepository.findAdminById(adminId).orElseThrow(
-                () -> new EatzUserNotFoundException(adminId, EatzUserRole.ROLE_ADMIN));
+    @Transactional(rollbackFor = Exception.class)
+    public ReportCategoryCreationInfoResponse registerReason(Long adminId, String code, String description) {
+        userRepository.validateExistsAsAdmin(adminId);
+        ReportCategory category = ReportCategory.create(code, description);
+        reportCategoryRepository.save(category);
+        return new ReportCategoryCreationInfoResponse(category);
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCategory(Long adminId, Long id, String code, String description) {
+        userRepository.validateExistsAsAdmin(adminId);
+        ReportCategory category = reportCategoryRepository.get(id);
+        category.updateCode(code);
+        category.updateDescription(description);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCategoryCode(Long adminId, Long id, String code) {
+        userRepository.validateExistsAsAdmin(adminId);
+        ReportCategory category = reportCategoryRepository.get(id);
+        category.updateCode(code);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCategoryDescription(Long adminId, Long id, String description) {
+        userRepository.validateExistsAsAdmin(adminId);
+        ReportCategory category = reportCategoryRepository.get(id);
+        category.updateDescription(description);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void markAsResolved(Long adminId, Long reportId) {
+        EatzUser admin = userRepository.getAdmin(adminId);
         Report report = reportRepository.findById(reportId).orElseThrow(
                 () -> new ReportNotFoundException(reportId));
 
         report.resolve(admin);
     }
 
-    public Page<ReportDto> findByType(EntityType type, Pageable pageable) {
-        return reportRepository.findByType(type, pageable);
+    public Page<ReportDto> getAllByResourceType(ReportResourceType resourceType, boolean resolved, Pageable pageable) {
+        return reportRepository.findAllByResource(resourceType, resolved, pageable);
     }
 
-    private EatzUser findUser(Long userId) {
-        EatzUser user = userRepository.findById(userId).orElseThrow(() -> new EatzUserNotFoundException(userId));
-        return user;
+    public List<ReportCategoryDto> getAllCategories() {
+        return reportCategoryRepository.findAllActiveCategories();
     }
 
-    private void validateEntityById(Long entityId, EntityType type) {
-        switch (type) {
+    private void validateResourceById(Long id, ReportResourceType resource) {
+        switch (resource) {
             case RECIPE:
-                validateRecipeById(entityId);
+                recipeRepository.validateExists(id);
                 break;
             case COMMENT:
-                validateCommentById(entityId);
+                commentRepository.validateExists(id);
                 break;
-        }
-    }
-
-    private void validateCommentById(Long entityId) {
-        if (!commentRepository.existsById(entityId)) {
-            throw new IllegalArgumentException("댓글(" + entityId + ")이 존재하지 않아요.");
-        }
-    }
-
-    private void validateRecipeById(Long entityId) {
-        if (!recipeRepository.existsById(entityId)) {
-            throw new IllegalArgumentException("레시피(" + entityId + ")가 존재하지 않아요.");
+            case RATING:
+                ratingRepository.validateExists(id);
+                break;
         }
     }
 

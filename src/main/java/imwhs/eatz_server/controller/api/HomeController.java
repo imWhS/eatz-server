@@ -7,7 +7,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "Eatz RESTful API 서버입니다.";
+        return "EATZ RESTful API 서버입니다.";
     }
 
 }

@@ -1,7 +1,7 @@
 package imwhs.eatz_server.common;
 
 import imwhs.eatz_server.dto.Paged;
-import imwhs.eatz_server.dto.apiresponse.ApiResponse;
+import imwhs.eatz_server.dto.ErrorResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -16,20 +16,24 @@ public class ApiResponseBodyHandler implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return !Void.TYPE.equals(returnType.getParameterType());
+        return true;
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof ApiResponse) {
-            return body;
-        }
+    public Object beforeBodyWrite(
+            Object body,
+            MethodParameter returnType,
+            MediaType selectedContentType,
+            Class<? extends HttpMessageConverter<?>> selectedConverterType,
+            ServerHttpRequest request,
+            ServerHttpResponse response) {
+        if (body instanceof ErrorResponse) { return body; }
 
         if (body instanceof Page<?>) {
             Page<?> page = (Page<?>) body;
-            return ApiResponse.success(new Paged<>(page));
+            return new Paged<>(page);
         }
 
-        return ApiResponse.success(body);
+        return body;
     }
 }

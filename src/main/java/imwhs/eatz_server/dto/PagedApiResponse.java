@@ -40,7 +40,7 @@ public class PagedApiResponse<T> {
 
     /**
      * 현재 페이지 번호.<br/>
-     * 페이지 번호는 0부터 시작합니다.
+     * 페이지는 0부터 시작합니다.
      */
     private Integer page;
 
@@ -75,9 +75,9 @@ public class PagedApiResponse<T> {
 
     /**
      * 요청을 성공적으로 처리한 공통 API 응답 데이터를 생성합니다.
-     * @param data 응답 데이터.
-     * @return ApiResponse 객체.
-     * @param <T> 응답 데이터 타입.
+     * @param data 응답 데이터
+     * @return ApiResponse
+     * @param <T> 응답 데이터 타입
      */
     public static <T> PagedApiResponse<T> success(
             List<T> data,

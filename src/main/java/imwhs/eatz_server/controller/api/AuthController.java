@@ -1,64 +1,71 @@
 package imwhs.eatz_server.controller.api;
 
-import imwhs.eatz_server.common.error.ErrorCodeAuth;
 import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
-import imwhs.eatz_server.dto.apiresponse.ApiResponse;
-import imwhs.eatz_server.dto.auth.RequestEmailVerificationDto;
-import imwhs.eatz_server.dto.auth.RequestVerificationCodeViaEmailDto;
-import imwhs.eatz_server.dto.auth.CreateEatzUserDto;
-import imwhs.eatz_server.exception.InvalidTokenExceptionOld;
-import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
-import imwhs.eatz_server.service.AuthService;
+import imwhs.eatz_server.dto.auth.*;
+import imwhs.eatz_server.exception.*;
+import imwhs.eatz_server.exception.base.BaseAuthenticationException;
+import imwhs.eatz_server.service.auth.AuthService;
+import imwhs.eatz_server.service.auth.AuthPasswordResetService;
+import imwhs.eatz_server.service.eatzuser.EatzUserQueryService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
-@RestController
+@Slf4j
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/api/v0")
+@RestController
 public class AuthController {
 
     private final AuthService authService;
-
+    private final EatzUserQueryService userQueryService;
+    private final AuthPasswordResetService passwordResetService;
     private final TokenManager tokenManager;
-
     private final JwtConfigProperties jwtConfigProperties;
 
-    @PostMapping("/sign-up/email-validation/send-code")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponse<?> sendCodeViaEmail(@RequestBody RequestVerificationCodeViaEmailDto dto) {
-        String email = dto.getEmail();
-        authService.sendVerificationCodeToEmail(email);
-        return ApiResponse.success();
-    }
-
-    @PostMapping("/sign-up/email-validation/verify")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponse<?> verifyEmail(@RequestBody RequestEmailVerificationDto dto) {
-        authService.verifyEmail(dto.getEmail(), dto.getCode());
-        return ApiResponse.success();
-    }
-
     @PostMapping("/sign-up")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<?> registerUser(@RequestBody @Valid CreateEatzUserDto dto) {
-        Long userId = authService.signUp(dto.getUsername(), dto.getEmail(), dto.getPassword());
-        return ApiResponse.success(userId);
+    public Long registerUser(@RequestBody @Valid CreateEatzUserRequest request) {
+        return authService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
+    }
+
+    @GetMapping("/auth/email-status")
+    @ResponseStatus(HttpStatus.OK)
+    public EmailAvailabilityResponse getUserEmailStatus(@RequestParam String email) {
+        return userQueryService.getEmailStatus(email);
+    }
+
+    @PostMapping("/auth/reset-password/request")
+    @ResponseStatus(HttpStatus.OK)
+    public void requestPasswordReset(@Valid @RequestBody EmailVerificationCodeRequest request) {
+        passwordResetService.requestEmailVerification(request.getEmail());
+    }
+
+    @GetMapping("/auth/reset-password/authorize-token")
+    @ResponseStatus(HttpStatus.OK)
+    public VerifyResetTokenResponse authorizePasswordReset(@RequestParam String token) {
+        return passwordResetService.authorizePasswordReset(token);
+    }
+
+    @PostMapping("/auth/reset-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void resetPassword(@Valid @RequestBody ConfirmPasswordResetRequest request) {
+        passwordResetService.reset(request.getToken(), request.getNewPassword());
     }
 
     @PostMapping("/reissue-token")
-    public ResponseEntity<ApiResponse<?>> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
+    public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         try {
+            log.info("토큰 재발급 처리를 시작할게요.");
             String refreshToken = getRefreshToken(request);
             String email = tokenManager.getUsername(refreshToken);
             String role = tokenManager.getRole(refreshToken);
@@ -68,38 +75,43 @@ public class AuthController {
 
             String newRefreshToken = authService.reissueRefreshToken(refreshToken, email, role);
             addRefreshTokenToCookie(response, newRefreshToken);
-
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (AuthenticationException e) {
+            log.info("토큰 재발급을 완료했어요.");
+            log.info(" - 액세스 토큰: {}", accessToken);
+            log.info(" - 리프레시 토큰: {}", newRefreshToken);
+        } catch (BaseAuthenticationException e) {
+            throw e;
+        }  catch (AuthenticationException e) {
             throw new UnauthorizedEatzUserException();
         } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(ErrorCodeAuth.TOKEN_REFRESH_EXPIRED.getMessage()));
+            throw new RefreshTokenExpiredException();
         }
     }
 
     @PostMapping("/sign-out")
-    public ResponseEntity<ApiResponse<?>> logout(HttpServletRequest request, HttpServletResponse response) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = getRefreshToken(request);
         authService.logout(refreshToken);
         addRefreshTokenToCookie(response, null);
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     private String getRefreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null || cookies.length == 0) {
-            throw new InvalidTokenExceptionOld("쿠키가 존재하지 않아요.");
+            log.info("HTTP 요청에 쿠키가 존재하지 않아, 리프레시 토큰을 추출할 수 없어요.");
+            throw new RefreshTokenMissingException();
         }
 
         for (Cookie cookie : cookies) {
             if (Objects.equals(cookie.getName(), "RefreshToken")) {
+                log.info("쿠키에서 리프레시 토큰을 성공적으로 추출했어요. | 리프레시 토큰: {}", cookie.getValue() );
                 return cookie.getValue();
             }
         }
 
-        throw new InvalidTokenExceptionOld("리프레시 토큰이 존재하지 않아요.");
+        log.info("쿠키에 리프레시 토큰이 없어요.");
+        throw new RefreshTokenMissingException();
     }
 
     private void addRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
@@ -107,8 +119,9 @@ public class AuthController {
 
         if (refreshToken != null) {
             refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setSecure(true);
-            refreshTokenCookie.setMaxAge((int) jwtConfigProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
+//            refreshTokenCookie.setSecure(true); TODO: 개발 환경 아닌 경우 해제
+            refreshTokenCookie.setSecure(false);
+            refreshTokenCookie.setMaxAge((int) (jwtConfigProperties.getRefreshExpirationTime() / 1000));
         } else {
             refreshTokenCookie.setMaxAge(0);
         }

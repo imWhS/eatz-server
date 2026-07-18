@@ -8,19 +8,19 @@ import java.util.List;
 @Getter
 public class Paged<T> {
 
-    private List<T> content;
+    private final List<T> content;
 
-    private int page;
+    private final int page;
 
-    private int size;
+    private final int size;
 
-    private long totalElements;
+    private final long totalElements;
 
-    private int totalPages;
+    private final int totalPages;
 
-    private boolean hasPrevious;
+    private final boolean hasPrevious;
 
-    private boolean hasNext;
+    private final boolean hasNext;
 
     public Paged(Page<T> page) {
         this.content = page.getContent();

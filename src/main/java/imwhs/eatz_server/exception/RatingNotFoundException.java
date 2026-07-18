@@ -1,21 +1,14 @@
 package imwhs.eatz_server.exception;
 
-public class RatingNotFoundException extends RuntimeException {
+import imwhs.eatz_server.common.error.EatzRatingErrorType;
+import imwhs.eatz_server.exception.base.BaseException;
 
-    public RatingNotFoundException() {
-        super();
-    }
+public class RatingNotFoundException extends BaseException {
 
-    public RatingNotFoundException(String message) {
-        super(message);
-    }
+    public RatingNotFoundException() { super(EatzRatingErrorType.NOT_FOUND); }
 
-    public RatingNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public RatingNotFoundException(Throwable cause) {
-        super(cause);
+    public RatingNotFoundException(Long id) {
+        super(EatzRatingErrorType.NOT_FOUND, "ID가 " + id + "인 평가를 찾을 수 없어요.");
     }
 
 }

@@ -8,8 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * SignInResponseDto 클래스입니다.<br/>
- * 현재 사용자의 로그인 관련 정보를 전달하기 위해 사용합니다.
+ * 현재 사용자의 로그인 관련 정보를 전달할 때 사용합니다.
  */
 @Data
 @Builder

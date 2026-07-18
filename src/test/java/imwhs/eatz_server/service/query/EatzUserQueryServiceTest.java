@@ -1,18 +1,10 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import imwhs.eatz_server.repository.EatzUserRepository;
+import imwhs.eatz_server.service.eatzuser.EatzUserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)

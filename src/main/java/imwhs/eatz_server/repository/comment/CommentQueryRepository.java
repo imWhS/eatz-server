@@ -1,173 +1,23 @@
 package imwhs.eatz_server.repository.comment;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import imwhs.eatz_server.domain.recipe.QComment;
-import imwhs.eatz_server.domain.eatzuser.QEatzUser;
-import imwhs.eatz_server.domain.recipe.QRecipe;
-import imwhs.eatz_server.dto.comment.*;
-import imwhs.eatz_server.dto.eatzuser.EatzUserBasicDto;
-import imwhs.eatz_server.dto.eatzuser.EatzUserSummaryDto;
-import imwhs.eatz_server.dto.recipe.RecipeBasicDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import imwhs.eatz_server.dto.comment.CommentBasicDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
-
-/**
- * CommentQueryRepository 클래스입니다.
- * <p>
- *     Comment 엔티티의 복잡한 조회 쿼리를 처리하는 리포지토리입니다.
- *     QueryDSL을 기반으로 조회 쿼리를 생성, 실행합니다.
- * </p>
- */
-@Repository
-@RequiredArgsConstructor
-public class CommentQueryRepository {
-
-    private final JPAQueryFactory queryFactory;
+public interface CommentQueryRepository {
 
     /**
-     * 식별자에 해당하는 댓글의 기본 정보 및 댓글을 등록한 사용자와 레시피 부가 정보를 함께 조회합니다.<br/>
-     * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
-     * @param id 댓글 식별자
-     * @return Optional로 wrapping된 CommentDto. 댓글의 상세 정보를 담은 DTO입니다.
+     * 레시피에 달린 모든 댓글의 기본 정보 목록을 조회합니다.
+     * <ul>
+     *     <li> 최근에 등록된 댓글부터 정렬합니다. </li>
+     *     <li> 회원 탈퇴한 사용자의 댓글도 목록에 포함합니다. </li>
+     *     <li> 숨김 처리된 댓글은 조회 대상에서 제외합니다. </li>
+     *     <li> 사용자의 ID를 전달받으면, 해당 사용자가 차단한 사용자의 댓글은 조회 대상에서 제외합니다. </li>
+     * </ul>
+     * @param id 레시피의 ID
+     * @param userId 사용자의 ID
+     * @return 조회된 댓글의 기본 정보 목록 및 페이징 정보
      */
-    public Optional<CommentDto> findCommentDetailById(Long id) {
-        QComment comment = QComment.comment;
-        QEatzUser user = QEatzUser.eatzUser;
-        QRecipe recipe = QRecipe.recipe;
-
-        return Optional.ofNullable(queryFactory
-                .select(
-                        Projections.constructor(CommentDto.class,
-                                comment.id,
-                                Projections.constructor(EatzUserSummaryDto.class,
-                                        user.id,
-                                        user.username,
-                                        JPAExpressions
-                                                .select(recipe.count().intValue())
-                                                .from(recipe)
-                                                .where(recipe.author.eq(user))),
-                                Projections.constructor(imwhs.eatz_server.dto.recipe.RecipeBasicDto.class,
-                                        recipe.id,
-                                        recipe.title,
-                                        recipe.imageUrl),
-                                comment.content)
-                )
-                .from(comment)
-                .leftJoin(comment.author, user)
-                .leftJoin(comment.recipe, recipe)
-                .where(comment.id.eq(id)
-                        .and(comment.deletedAt.isNull()))
-                .fetchOne()
-        );
-    }
-
-    /**
-     * 특정 레시피에 달린 모든 댓글을 조회합니다.<br/>
-     * 댓글 별 기본 정보 뿐 아니라 해당 댓글을 등록한 사용자의 부가 정보를 함께 조회합니다.<br/>
-     * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
-     * @param id 레시피 식별자.
-     * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
-     * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
-     */
-    public List<CommentItemDto> findCommentsByRecipe(Long id, int page, int size) {
-        QComment comment = QComment.comment;
-        QEatzUser user = QEatzUser.eatzUser;
-
-        return queryFactory
-                .select(
-                        Projections.constructor(CommentItemDto.class,
-                                comment.id,
-                                Projections.constructor(EatzUserBasicDto.class,
-                                        user.id,
-                                        user.username,
-                                        user.imageUrl
-                                ),
-                                comment.content,
-                                comment.isHidden,
-                                comment.createdAt,
-                                comment.updatedAt
-                        )
-                )
-                .from(comment)
-                .leftJoin(comment.author, user)
-                .where(comment.recipe.id.eq(id)
-                        .and(comment.deletedAt.isNull())
-                )
-                .offset((long) page * size)
-                .limit(size)
-                .fetch();
-    }
-
-    /**
-     * 특정 레시피에 달린 총 댓글 수를 조회합니다.<br/>
-     * 삭제 처리된 댓글은 조회 대상에서 제외합니다.
-     * @param id 레시피 식별자
-     * @return 총 댓글 수
-     */
-    public Long countCommentsByRecipe(Long id) {
-        QComment comment = QComment.comment;
-
-        return queryFactory.select(comment.count())
-                .from(comment)
-                .where(comment.recipe.id.eq(id)
-                        .and(comment.deletedAt.isNull()))
-                .fetchOne();
-    }
-
-    /**
-     * 특정 사용자가 등록한 모든 댓글을 조회합니다.<br/>
-     * 댓글 별 기본 정보 뿐 아니라 해당 댓글을 등록한 사용자의 부가 정보를 함께 조회합니다.<br/>
-     * 삭제 처리된 댓글은 조회 대상에서 제외됩니다.
-     * @param id 사용자 식별자
-     * @param page 페이징 처리 시, 조회할 페이지 인덱스. 0부터 시작하며 선택 사항입니다.
-     * @param size 페이징 처리 시, 하나의 페이지에 포함할 레시피 수. 선택 사항입니다.
-     */
-    public List<CommentByUserDtoOld> findCommentsByUser(Long id, int page, int size) {
-        QComment comment = QComment.comment;
-        QRecipe recipe = QRecipe.recipe;
-
-        return queryFactory
-                .select(
-                        Projections.constructor(CommentByUserDtoOld.class,
-                                comment.id,
-                                Projections.constructor(RecipeBasicDto.class,
-                                        recipe.id,
-                                        recipe.title,
-                                        recipe.imageUrl
-                                ),
-                                comment.content,
-                                comment.isHidden,
-                                comment.createdAt,
-                                comment.updatedAt
-                        )
-                )
-                .from(comment)
-                .leftJoin(comment.recipe, recipe)
-                .where(comment.author.id.eq(id))
-                .offset((long) page * size)
-                .limit(size)
-                .fetch();
-    }
-
-    /**
-     * 특정 사용자가 등록한 총 댓글 수를 조회합니다.<br/>
-     * 삭제 처리된 댓글은 조회 대상에서 제외합니다.
-     * @param id 사용자 식별자
-     * @return 총 댓글 수
-     */
-    public Long countCommentsByUser(Long id) {
-        QComment comment = QComment.comment;
-
-        return queryFactory.select(comment.count())
-                .from(comment)
-                .where(comment.author.id.eq(id)
-                        .and(comment.deletedAt.isNull()))
-                .fetchOne();
-    }
+    Page<CommentBasicDto> findAllBasicsByRecipeId(Long id, Long userId, Pageable pageable);
 
 }

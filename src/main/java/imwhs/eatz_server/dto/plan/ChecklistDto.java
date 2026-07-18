@@ -1,20 +1,18 @@
 package imwhs.eatz_server.dto.plan;
 
-import imwhs.eatz_server.dto.ingredient.IngredientDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
 public class ChecklistDto {
 
-    private final List<Long> cookable;
+    private final ChecklistCookabilityDto uncookable;
 
-    private final List<Long> uncookable;
+    private final ChecklistCookabilityDto cookable;
 
-    private final Set<IngredientDto> missingIngredients;
+    private final long missingIngredientCount;
+
+    private final long missingKitchenwareCount;
 
 }

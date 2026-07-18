@@ -1,24 +1,18 @@
 package imwhs.eatz_server.exception;
 
-public class ReportNotFoundException extends RuntimeException {
+import imwhs.eatz_server.common.error.EatzCommonErrorType;
+import imwhs.eatz_server.exception.base.BaseException;
+
+public class ReportNotFoundException extends BaseException {
 
     private static final String MESSAGE_TEMPLATE_INVALID_REPORT_ID = "ID가 %s인 신고를 찾을 수 없어요.";
 
-
     public ReportNotFoundException() {
-        super();
+        super(EatzCommonErrorType.REPORT_NOT_FOUND);
     }
 
     public ReportNotFoundException(Long id) {
-        super(String.format(MESSAGE_TEMPLATE_INVALID_REPORT_ID, id));
-    }
-
-    public ReportNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ReportNotFoundException(Throwable cause) {
-        super(cause);
+        super(EatzCommonErrorType.REPORT_NOT_FOUND, String.format(MESSAGE_TEMPLATE_INVALID_REPORT_ID, id));
     }
 
 }

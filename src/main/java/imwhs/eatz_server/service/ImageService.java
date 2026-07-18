@@ -1,72 +1,66 @@
 package imwhs.eatz_server.service;
 
-import imwhs.eatz_server.auth.EatzUserAuthUtil;
-import imwhs.eatz_server.common.storage.ImageStorage;
+import imwhs.eatz_server.ImageCategory;
+import imwhs.eatz_server.storage.FileStorage;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
-@Service
+import java.util.UUID;
+
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Service
 public class ImageService {
 
-    private final ImageStorage imageStorage;
+    private final FileStorage fileStorage;
 
     /**
-     * 파일을 프로필 이미지로 업로드합니다.
-     * @param file 업로드하려는 파일.
-     * @return 업로드된 파일의 경로.
+     * 이미지를 업로드합니다.
+     * @param image 이미지
+     * @param category 이미지 카테고리
+     * @return 업로드된 이미지의 URI(URL).
+     *         Ex. "uploads/images/users/profiles/profile_123.png"
      */
-    public String uploadProfileImage(MultipartFile file) {
-        log.info("HTTP 요청 데이터로 전송 받은 이미지({})를 저장합니다.", file.getOriginalFilename());
-        return imageStorage.save(
-                "profiles",
-                EatzUserAuthUtil.getUsername() + getExtension(file),
-                file);
-    }
+    public String upload(MultipartFile image, ImageCategory category) {
+        String contentType = image.getContentType();
 
-    /**
-     * 파일을 프로필 이미지로 업로드합니다.
-     * @param username 프로필 이미지를 업데이트할 사용자의 사용자 이름.
-     * @param file 업로드하려는 파일.
-     * @return 업로드된 파일의 경로.
-     */
-    public String uploadProfileImage(String username, MultipartFile file) {
-        log.info("이미지({})를 {} 사용자의 프로필 이미지로 저장합니다.", file.getOriginalFilename(), username);
-        return imageStorage.save(
-                "profiles",
-                username + getExtension(file),
-                file);
-    }
-
-    /**
-     * 이미지 베이스 디렉터리 하위 계층에 저장된 이미지를 삭제합니다.
-     * @param filePath 삭제할 이미지가 저장되어 있는 경로. 일반적으로 uploads/images/로 시작합니다.
-     */
-    public void deleteImage(String filePath) {
-        imageStorage.delete(filePath);
-    }
-
-    /**
-     * 파일의 확장자를 가져옵니다.
-     * @param file 확장자를 추출할 파일.
-     * @return 파일의 확장자.
-     * @throws RuntimeException 파일 이름이 유효하지 않거나 확장자가 없는 경우.
-     */
-    private String getExtension(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || originalFilename.trim().isEmpty()) {
-            throw new RuntimeException("파일 이름이 유효하지 않아요.");
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("파일의 유형이 " + contentType + "이에요. 이미지 파일만 업로드할 수 있어요. ");
         }
 
-        int dotIndex = originalFilename.lastIndexOf(".");
-        if (dotIndex == -1 || dotIndex == originalFilename.length() - 1) {
-            throw new RuntimeException("파일 확장자가 유효하지 않아요.");
+        if (image.isEmpty() || image.getSize() == 0) {
+            throw new IllegalArgumentException("업로드하려는 이미지가 유효하지 않아요.");
         }
 
-        return originalFilename.substring(dotIndex);
+        String imageName = image.getOriginalFilename();
+        String imagePath = category.getPath() + generateAnonymisedImageName(imageName);
+        return fileStorage.save(imagePath, image);
+    }
+
+    /**
+     * URI에 해당하는 이미지를 삭제합니다.
+     * @param imageUri 삭제할 이미지의 URI(URL).
+     *                  Ex. "uploads/images/users/profiles/profile_123.png"
+     */
+    public void delete(String imageUri) {
+        if (imageUri.isBlank()) { throw new IllegalArgumentException("삭제하려는 이미지의 URI(URL)이 유효하지 않아요."); }
+        fileStorage.deleteByUri(imageUri);
+    }
+
+    private String generateAnonymisedImageName(String imageName) {
+        String anonymisedImageName = UUID.randomUUID().toString();
+        int extensionIndex = imageName.lastIndexOf(".");
+        String extension;
+        if (extensionIndex == -1) {
+            // 확장자가 없는 경우
+            return anonymisedImageName;
+        }
+        else {
+            extension = imageName.substring(extensionIndex);
+            return anonymisedImageName + extension;
+        }
     }
 
 }

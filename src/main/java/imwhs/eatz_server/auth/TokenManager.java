@@ -44,6 +44,7 @@ public class TokenManager {
     }
 
     public LocalDateTime getExpiration(String token) {
+        System.out.println("TokenManager.getExpiration");
         Date expiration = Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload()
                 .getExpiration();
         return expiration.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -67,6 +68,7 @@ public class TokenManager {
      * 리프레시 토큰을 생성합니다.
      */
     public String createRefreshToken(String username, String role) {
+        System.out.println("TokenManager.createRefreshToken");
         return Jwts.builder()
                 .subject(username)
                 .claim("type", "refresh")

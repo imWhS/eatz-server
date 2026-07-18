@@ -1,20 +1,12 @@
 package imwhs.eatz_server.service.query;
 
-import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.recipe.Rating;
-import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.PagedApiResponse;
-import imwhs.eatz_server.dto.rating.*;
-import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
+import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import imwhs.eatz_server.service.rating.RatingQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Transactional(readOnly = true)
 @SpringBootTest

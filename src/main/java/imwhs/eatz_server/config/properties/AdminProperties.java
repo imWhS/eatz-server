@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 public class AdminProperties {
 
     private String email;
-
     private String password;
 
 }

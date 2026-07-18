@@ -8,8 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * SignUpRequestDto 클래스입니다.<br/>
- * 회원 등록(사용자 생성)에 필요한 정보를 전달하기 위해 사용합니다.
+ * 회원 등록(사용자 생성)에 필요한 정보를 전달할 때 사용합니다.
  */
 @Data
 @Builder
@@ -24,7 +23,7 @@ public class SignUpRequestDto {
     @Email(message = "이메일 주소 형식이 올바르지 않습니다.")
     private String email;
 
-    @NotBlank(message = "비밀 번호는 필수 항목입니다.")
+    @NotBlank(message = "암호는 필수 항목입니다.")
     private String password;
 
 }

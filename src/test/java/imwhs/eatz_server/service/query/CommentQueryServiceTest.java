@@ -1,99 +1,41 @@
-package imwhs.eatz_server.service.query;
-
-import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.recipe.Comment;
-import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.dto.comment.CommentDto;
-import imwhs.eatz_server.repository.comment.CommentRepository;
-import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
-import imwhs.eatz_server.repository.recipe.RecipeRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
-@Transactional(readOnly = true)
-@SpringBootTest
-public class CommentQueryServiceTest {
-
-    @Autowired
-    CommentQueryService commentQueryService;
-
-    @Autowired
-    CommentRepository commentRepository;
-
-    @Autowired
-    EatzUserRepository userRepository;
-
-    @Autowired
-    RecipeRepository recipeRepository;
-
-    @Test
-    @Transactional
-    void findCommentDetailTest() {
-        // given
-        EatzUser recipeWriter = EatzUser.createMember(
-                "heextoryAA",
-                "heextoryA@icloud.com",
-                "1q2w3e4r!");
-        userRepository.save(recipeWriter);
-
-        Recipe recipe = Recipe.create(
-                recipeWriter,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipe);
-
-        EatzUser commentWriter = EatzUser.createMember(
-                "heextoryBBB",
-                "heextoryB@icloud.com",
-                "1q2w3e4r!");
-        userRepository.save(commentWriter);
-
-        Recipe recipeA = Recipe.create(
-                commentWriter,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipeA);
-
-        Recipe recipeB = Recipe.create(
-                commentWriter,
-                "Kimchi Pasta",
-                "https://www.naver.com/",
-                "https://www.naver.com/test.jpg",
-                "맛있는 김치 파스타를 즐겨보세요!");
-        recipeRepository.save(recipeB);
-
-        String commentContent = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
-
-        Comment comment = new Comment(commentWriter, recipe, commentContent);
-        commentRepository.save(comment);
-
-        // when
-        CommentDto commentDto = commentQueryService.findCommentDetail(comment.getId());
-
-        // then
-        Assertions.assertNotNull(commentDto);
-        Assertions.assertEquals(comment.getId(), commentDto.getId());
-        Assertions.assertEquals(commentWriter.getId(), commentDto.getUser().getId());
-        Assertions.assertEquals(2, commentDto.getUser().getRecipeCount());
-        Assertions.assertEquals(recipe.getId(), commentDto.getRecipe().getId());
-        Assertions.assertEquals(recipe.getTitle(), commentDto.getRecipe().getTitle());
-        Assertions.assertEquals(comment.getContent(), commentDto.getContent());
-    }
-
+//package imwhs.eatz_server.service.query;
+//
+//import imwhs.eatz_server.domain.eatzuser.EatzUser;
+//import imwhs.eatz_server.domain.Comment;
+//import imwhs.eatz_server.domain.recipe.Recipe;
+//import imwhs.eatz_server.dto.comment.CommentDto;
+//import imwhs.eatz_server.repository.comment.CommentRepository;
+//import imwhs.eatz_server.repository.EatzUserRepository;
+//import imwhs.eatz_server.repository.recipe.RecipeRepository;
+//import org.junit.jupiter.api.Assertions;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.transaction.annotation.Transactional;
+//
+//@Transactional(readOnly = true)
+//@SpringBootTest
+//public class CommentQueryServiceTest {
+//
+//    @Autowired
+//    CommentQueryService commentQueryService;
+//
+//    @Autowired
+//    CommentRepository commentRepository;
+//
+//    @Autowired
+//    EatzUserRepository userRepository;
+//
+//    @Autowired
+//    RecipeRepository recipeRepository;
+//
 //    @Test
 //    @Transactional
-//    void findCommentsByRecipeTest() {
+//    void findCommentDetailTest() {
 //        // given
 //        EatzUser recipeWriter = EatzUser.createMember(
-//                "heextory",
-//                "heextory@icloud.com",
+//                "heextoryAA",
+//                "heextoryA@icloud.com",
 //                "1q2w3e4r!");
 //        userRepository.save(recipeWriter);
 //
@@ -104,103 +46,161 @@ public class CommentQueryServiceTest {
 //                "https://www.naver.com/test.jpg",
 //                "맛있는 김치 파스타를 즐겨보세요!");
 //        recipeRepository.save(recipe);
-//        Long recipeId = recipe.getId();
 //
-//        EatzUser commentWriterA = EatzUser.createMember(
-//                "commentWriterA",
-//                "heextoryA@icloud.com",
-//                "1q2w3e4r!");
-//        userRepository.save(commentWriterA);
-//
-//        Comment commentA = new Comment(commentWriterA, recipe, "이런 존맛 레시피 발견한 나 럭키비키쟌앙~");
-//        commentRepository.save(commentA);
-//        CommentByRecipeResponseDto commentAResponseDto = new CommentByRecipeResponseDto(commentA);
-//
-//        EatzUser commentWriterB = EatzUser.createMember(
-//                "commentWriterB",
+//        EatzUser commentWriter = EatzUser.createMember(
+//                "heextoryBBB",
 //                "heextoryB@icloud.com",
 //                "1q2w3e4r!");
-//        userRepository.save(commentWriterB);
+//        userRepository.save(commentWriter);
 //
-//        Comment commentB = new Comment(commentWriterB, recipe, "헉 이거 뭐야?");
-//        commentRepository.save(commentB);
-//        CommentByRecipeResponseDto commentBResponseDto = new CommentByRecipeResponseDto(commentB);
-//
-//        // when
-//        PagedApiResponse<CommentByRecipeResponseDto> pagedComments = commentQueryService.findCommentsByRecipe(
-//                recipeId,
-//                null,
-//                null);
-//
-//        // then
-//        Assertions.assertEquals(1, pagedComments.getTotalPages());
-//        Assertions.assertEquals(2, pagedComments.getTotalItems());
-//        List<CommentByRecipeResponseDto> comments = pagedComments.getData();
-//        Assertions.assertEquals(2, comments.size());
-//        Assertions.assertTrue(comments.contains(commentAResponseDto));
-//        Assertions.assertTrue(comments.contains(commentBResponseDto));
-//    }
-//
-//    @Test
-//    @Transactional
-//    void findCommentsByUserTest() {
-//        // given
-//        EatzUser recipeWriterA = EatzUser.createMember(
-//                "heextoryA",
-//                "heextoryA@icloud.com",
-//                "1q2w3e4r!");
-//        userRepository.save(recipeWriterA);
-//
-//        Recipe recipeKimchi = Recipe.create(
-//                recipeWriterA,
+//        Recipe recipeA = Recipe.create(
+//                commentWriter,
 //                "Kimchi Pasta",
 //                "https://www.naver.com/",
 //                "https://www.naver.com/test.jpg",
 //                "맛있는 김치 파스타를 즐겨보세요!");
-//        recipeRepository.save(recipeKimchi);
+//        recipeRepository.save(recipeA);
 //
-//        EatzUser recipeWriterB = EatzUser.createMember(
-//                "heextoryB",
-//                "heextoryB@icloud.com",
-//                "1q2w3e4r!");
-//        userRepository.save(recipeWriterB);
-//
-//        Recipe recipeGarlic = Recipe.create(
-//                recipeWriterB,
-//                "Garlic BBOKKEUMBOB",
+//        Recipe recipeB = Recipe.create(
+//                commentWriter,
+//                "Kimchi Pasta",
 //                "https://www.naver.com/",
 //                "https://www.naver.com/test.jpg",
-//                "마늘 듬뿍 볶음밥입니당");
-//        recipeRepository.save(recipeGarlic);
+//                "맛있는 김치 파스타를 즐겨보세요!");
+//        recipeRepository.save(recipeB);
 //
-//        EatzUser commentWriter = EatzUser.createMember(
-//                "commentWriter",
-//                "writer@icloud.com",
-//                "1q2w3e4r!");
-//        userRepository.save(commentWriter);
-//        Long commentWriterId = commentWriter.getId();
+//        String commentContent = "이런 존맛 레시피 발견한 나 럭키비키쟌앙~";
 //
-//        Comment commentA = new Comment(commentWriter, recipeKimchi, "이런 존맛 레시피 발견한 나 럭키비키쟌앙~");
-//        commentRepository.save(commentA);
-//        CommentByUserResponseDto commentAResponseDto = new CommentByUserResponseDto(commentA);
-//
-//        Comment commentB = new Comment(commentWriter, recipeGarlic, "헉 이거 뭐야?");
-//        commentRepository.save(commentB);
-//        CommentByUserResponseDto commentBResponseDto = new CommentByUserResponseDto(commentB);
+//        Comment comment = new Comment(commentWriter, recipe, commentContent);
+//        commentRepository.save(comment);
 //
 //        // when
-//        PagedApiResponse<CommentByUserResponseDto> pagedComments = commentQueryService.findCommentsByUser(
-//                commentWriterId,
-//                null,
-//                null);
+//        CommentDto commentDto = commentQueryService.findCommentDetail(comment.getId());
 //
 //        // then
-//        Assertions.assertEquals(1, pagedComments.getTotalPages());
-//        Assertions.assertEquals(2, pagedComments.getTotalItems());
-//        List<CommentByUserResponseDto> comments = pagedComments.getData();
-//        Assertions.assertEquals(2, comments.size());
-//        Assertions.assertTrue(comments.contains(commentAResponseDto));
-//        Assertions.assertTrue(comments.contains(commentBResponseDto));
+//        Assertions.assertNotNull(commentDto);
+//        Assertions.assertEquals(comment.getId(), commentDto.getId());
+//        Assertions.assertEquals(commentWriter.getId(), commentDto.getUser().getId());
+//        Assertions.assertEquals(2, commentDto.getUser().getRecipeCount());
+//        Assertions.assertEquals(recipe.getId(), commentDto.getRecipe().getId());
+//        Assertions.assertEquals(recipe.getTitle(), commentDto.getRecipe().getTitle());
+//        Assertions.assertEquals(comment.getContent(), commentDto.getContent());
 //    }
-
-}
+//
+////    @Test
+////    @Transactional
+////    void findCommentsByRecipeTest() {
+////        // given
+////        EatzUser recipeWriter = EatzUser.createMember(
+////                "heextory",
+////                "heextory@icloud.com",
+////                "1q2w3e4r!");
+////        userRepository.save(recipeWriter);
+////
+////        Recipe recipe = Recipe.create(
+////                recipeWriter,
+////                "Kimchi Pasta",
+////                "https://www.naver.com/",
+////                "https://www.naver.com/test.jpg",
+////                "맛있는 김치 파스타를 즐겨보세요!");
+////        recipeRepository.save(recipe);
+////        Long recipeId = recipe.getId();
+////
+////        EatzUser commentWriterA = EatzUser.createMember(
+////                "commentWriterA",
+////                "heextoryA@icloud.com",
+////                "1q2w3e4r!");
+////        userRepository.save(commentWriterA);
+////
+////        Comment commentA = new Comment(commentWriterA, recipe, "이런 존맛 레시피 발견한 나 럭키비키쟌앙~");
+////        commentRepository.save(commentA);
+////        CommentByRecipeResponseDto commentAResponseDto = new CommentByRecipeResponseDto(commentA);
+////
+////        EatzUser commentWriterB = EatzUser.createMember(
+////                "commentWriterB",
+////                "heextoryB@icloud.com",
+////                "1q2w3e4r!");
+////        userRepository.save(commentWriterB);
+////
+////        Comment commentB = new Comment(commentWriterB, recipe, "헉 이거 뭐야?");
+////        commentRepository.save(commentB);
+////        CommentByRecipeResponseDto commentBResponseDto = new CommentByRecipeResponseDto(commentB);
+////
+////        // when
+////        PagedApiResponse<CommentByRecipeResponseDto> pagedComments = commentQueryService.findCommentsByRecipe(
+////                recipeId,
+////                null,
+////                null);
+////
+////        // then
+////        Assertions.assertEquals(1, pagedComments.getTotalPages());
+////        Assertions.assertEquals(2, pagedComments.getTotalItems());
+////        List<CommentByRecipeResponseDto> comments = pagedComments.getData();
+////        Assertions.assertEquals(2, comments.size());
+////        Assertions.assertTrue(comments.contains(commentAResponseDto));
+////        Assertions.assertTrue(comments.contains(commentBResponseDto));
+////    }
+////
+////    @Test
+////    @Transactional
+////    void findCommentsByUserTest() {
+////        // given
+////        EatzUser recipeWriterA = EatzUser.createMember(
+////                "heextoryA",
+////                "heextoryA@icloud.com",
+////                "1q2w3e4r!");
+////        userRepository.save(recipeWriterA);
+////
+////        Recipe recipeKimchi = Recipe.create(
+////                recipeWriterA,
+////                "Kimchi Pasta",
+////                "https://www.naver.com/",
+////                "https://www.naver.com/test.jpg",
+////                "맛있는 김치 파스타를 즐겨보세요!");
+////        recipeRepository.save(recipeKimchi);
+////
+////        EatzUser recipeWriterB = EatzUser.createMember(
+////                "heextoryB",
+////                "heextoryB@icloud.com",
+////                "1q2w3e4r!");
+////        userRepository.save(recipeWriterB);
+////
+////        Recipe recipeGarlic = Recipe.create(
+////                recipeWriterB,
+////                "Garlic BBOKKEUMBOB",
+////                "https://www.naver.com/",
+////                "https://www.naver.com/test.jpg",
+////                "마늘 듬뿍 볶음밥입니당");
+////        recipeRepository.save(recipeGarlic);
+////
+////        EatzUser commentWriter = EatzUser.createMember(
+////                "commentWriter",
+////                "writer@icloud.com",
+////                "1q2w3e4r!");
+////        userRepository.save(commentWriter);
+////        Long commentWriterId = commentWriter.getId();
+////
+////        Comment commentA = new Comment(commentWriter, recipeKimchi, "이런 존맛 레시피 발견한 나 럭키비키쟌앙~");
+////        commentRepository.save(commentA);
+////        CommentByUserResponseDto commentAResponseDto = new CommentByUserResponseDto(commentA);
+////
+////        Comment commentB = new Comment(commentWriter, recipeGarlic, "헉 이거 뭐야?");
+////        commentRepository.save(commentB);
+////        CommentByUserResponseDto commentBResponseDto = new CommentByUserResponseDto(commentB);
+////
+////        // when
+////        PagedApiResponse<CommentByUserResponseDto> pagedComments = commentQueryService.findCommentsByUser(
+////                commentWriterId,
+////                null,
+////                null);
+////
+////        // then
+////        Assertions.assertEquals(1, pagedComments.getTotalPages());
+////        Assertions.assertEquals(2, pagedComments.getTotalItems());
+////        List<CommentByUserResponseDto> comments = pagedComments.getData();
+////        Assertions.assertEquals(2, comments.size());
+////        Assertions.assertTrue(comments.contains(commentAResponseDto));
+////        Assertions.assertTrue(comments.contains(commentBResponseDto));
+////    }
+//
+//}

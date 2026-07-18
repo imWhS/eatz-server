@@ -2,8 +2,7 @@ package imwhs.eatz_server.config;
 
 import imwhs.eatz_server.config.properties.AdminConfigProperties;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
-import imwhs.eatz_server.repository.eatzuser.EatzUserRepository;
+import imwhs.eatz_server.repository.EatzUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -28,11 +27,11 @@ public class AdminInitializer {
             String email = adminConfigProperties.getEmail();
             String password = adminConfigProperties.getPassword();
 
-            if (userRepository.findByEmail(email).isEmpty()) {
-                EatzUser admin = new EatzUser("admin", email, passwordEncoder.encode(password), EatzUserRole.ROLE_ADMIN);
+            if (userRepository.findByEmailAndDeletedAtIsNull(email).isEmpty()) {
+                EatzUser admin = EatzUser.createAdmin("admin", email, passwordEncoder.encode(password));
                 userRepository.save(admin);
                 log.info("관리자 계정을 생성했어요!");
             }
         };
     }
-    }
+}
