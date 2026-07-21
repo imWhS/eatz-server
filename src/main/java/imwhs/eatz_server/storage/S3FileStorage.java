@@ -51,6 +51,7 @@ public class S3FileStorage implements FileStorage {
     @Override
     public void deleteByUri(String accessUri) {
         if (accessUri == null || accessUri.isBlank()) { return; }
+        log.info("S3에서 {} 파일을 삭제해볼게요.", accessUri);
 
         String uri = removeLeadingSlash(accessUri);
         String s3Key = extractS3Key(uri);

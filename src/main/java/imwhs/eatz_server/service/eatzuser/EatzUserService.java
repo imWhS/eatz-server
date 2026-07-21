@@ -119,13 +119,12 @@ public class EatzUserService {
     public void removeImage(Long id, Long requesterId) {
         EatzUser user = userRepository.get(id);
         EatzUser requester = getRequester(id, requesterId, user);
-        user.deleteImageUrl(requester);
-        log.info("사용자 {}의 프로필 이미지 URL을 제거했어요.", user.getUsername());
-
         String existingImageUrl = user.getImageUrl();
+        user.deleteImageUrl(requester);
         if (Objects.nonNull(existingImageUrl) && !existingImageUrl.isBlank()) {
             try {
                 imageService.delete(existingImageUrl);
+                log.info("사용자 {}의 프로필 이미지 URL을 제거했어요.", user.getUsername());
             } catch (Exception e) {
                 log.error("사용자 {}의 프로필 이미지를 삭제하지 못했어요.", user.getUsername());
             }
