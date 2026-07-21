@@ -40,6 +40,8 @@ public class LocalFileStorage implements FileStorage {
 
     @Override
     public String save(String logicalPath, MultipartFile file) {
+        if (logicalPath == null ||  logicalPath.isBlank() || file == null) { throw new IllegalArgumentException(); }
+
         String path = removeLeadingSlash(logicalPath);
 
         // 파일이 저장될 로컬 저장소의 절대 경로를 정의합니다.
@@ -57,16 +59,20 @@ public class LocalFileStorage implements FileStorage {
 
             // 메모리에 임시 저장된 파일을 부모 디렉토리로 이동(복사)합니다.
             file.transferTo(storagePath);
-            return createAccessUri(logicalPath);
+            String accessUri = createAccessUri(logicalPath);
+            log.info("파일을 로컬 저장소에 저장했어요. | {}", accessUri);
+            return accessUri;
         } catch (IOException e) {
             log.error("{} 파일을 로컬 저장소의 {}에 저장할 수 없어요: {}",
                     storagePath.getFileName(), storagePath, e.getMessage());
-            throw new RuntimeException("파일을 저장하지 못했어요. " + e.getLocalizedMessage());
+            throw new RuntimeException("파일을 로컬 저장소에 저장하지 못했어요. " + e.getLocalizedMessage());
         }
     }
 
     @Override
     public void deleteByUri(String accessUri) {
+        if (accessUri == null || accessUri.isBlank()) { return; }
+
         String uri = removeLeadingSlash(accessUri);
 
         // 삭제할 파일이 위치한 로컬 저장소의 절대 경로를 정의합니다.
