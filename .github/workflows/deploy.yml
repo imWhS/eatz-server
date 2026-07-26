@@ -22,12 +22,18 @@ jobs:
       - name: Gradle 실행 권한을 부여합니다.
         run: chmod +x gradlew
 
-      - name: 관리자 계정을 구성하는 admin-config 설정 파일을 생성합니다.
+      - name: 실행에 필요한 모든 환경 설정 파일을 생성합니다.
         env:
+          APPLICATION_SECRET: ${{ secrets.APPLICATION }}
           ADMIN_CONFIG_SECRET: ${{ secrets.ADMIN_CONFIG }}
+          JWT_CONFIG_SECRET: ${{ secrets.JWT_CONFIG }}
+          MAIL_CONFIG_SECRET: ${{ secrets.MAIL_CONFIG }}
         run: |
           mkdir -p src/main/resources
+          echo "$APPLICATION_SECRET" > src/main/resources/application.yml
           echo "$ADMIN_CONFIG_SECRET" > src/main/resources/admin-config.yml
+          echo "$JWT_CONFIG_SECRET" > src/main/resources/jwt-config.yml
+          echo "$MAIL_CONFIG_SECRET" > src/main/resources/mail-config.yml
 
       - name: Gradle로 빌드합니다. 테스트는 제외합니다.
         run: ./gradlew clean build -x test
