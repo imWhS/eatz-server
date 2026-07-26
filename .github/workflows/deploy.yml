@@ -22,6 +22,11 @@ jobs:
       - name: Gradle 실행 권한을 부여합니다.
         run: chmod +x gradlew
 
+      - name: 관리자 계정을 구성하는 admin-config 설정 파일을 생성합니다.
+        run: |
+          mkdir -p src/main/resources
+          echo ${{ secrets.ADMIN_CONFIG }} > src/main/resources/admin-config.yml
+
       - name: Gradle로 빌드합니다. 테스트는 제외합니다.
         run: ./gradlew clean build -x test
 
