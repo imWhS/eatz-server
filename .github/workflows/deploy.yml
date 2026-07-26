@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "build/libs/*SNAPSHOT.jar"
-          target: "/home/ec2-user/"
+          target: "/home/ec2-user/eatz-server"
           strip_components: 2
 
       - name: EC2에서의 deploy 스크립트를 실행합니다.
@@ -55,4 +55,4 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            /home/ec2-user/deploy.sh
+            /home/ec2-user/eatz-server/deploy.sh
