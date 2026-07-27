@@ -151,6 +151,7 @@ public class PantryService {
     /**
      * 체크리스트가 요구하는 모둔 준비물을 사용자의 보관함에 추가합니다.
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addAllChecklistRequirementsToPantry(ChecklistRequirementsDto dto, Long userId) {
         EatzUser user = userRepository.getReference(userId);
 
@@ -168,6 +169,7 @@ public class PantryService {
      * @param recipeId 레시피의 ID
      * @param userId 사용자의 ID
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addAllRecipeRequirementsToPantry(Long recipeId, Long userId) {
         EatzUser user = userRepository.getReference(userId);
 
