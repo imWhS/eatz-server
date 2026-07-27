@@ -75,9 +75,7 @@ public class AuthController {
 
             String newRefreshToken = authService.reissueRefreshToken(refreshToken, email, role);
             addRefreshTokenToCookie(response, newRefreshToken);
-            log.info("토큰 재발급을 완료했어요.");
-            log.info(" - 액세스 토큰: {}", accessToken);
-            log.info(" - 리프레시 토큰: {}", newRefreshToken);
+            log.info("액세스 토큰, 리프레시 토큰 재발급을 완료했어요.");
         } catch (BaseAuthenticationException e) {
             throw e;
         }  catch (AuthenticationException e) {
@@ -105,7 +103,7 @@ public class AuthController {
 
         for (Cookie cookie : cookies) {
             if (Objects.equals(cookie.getName(), "RefreshToken")) {
-                log.info("쿠키에서 리프레시 토큰을 성공적으로 추출했어요. | 리프레시 토큰: {}", cookie.getValue() );
+                log.info("쿠키에서 리프레시 토큰을 성공적으로 추출했어요.");
                 return cookie.getValue();
             }
         }
@@ -119,8 +117,8 @@ public class AuthController {
 
         if (refreshToken != null) {
             refreshTokenCookie.setHttpOnly(true);
-//            refreshTokenCookie.setSecure(true); TODO: 개발 환경 아닌 경우 해제
-            refreshTokenCookie.setSecure(false);
+            refreshTokenCookie.setSecure(true);
+//            refreshTokenCookie.setSecure(false);
             refreshTokenCookie.setMaxAge((int) (jwtConfigProperties.getRefreshExpirationTime() / 1000));
         } else {
             refreshTokenCookie.setMaxAge(0);

@@ -109,7 +109,7 @@ public class AuthService {
         LocalDateTime expiration = tokenManager.getExpiration(newRefreshToken);
         RefreshToken refreshTokenEntity = new RefreshToken(email, expiration, newRefreshToken);
         refreshTokenRepository.save(refreshTokenEntity);
-        log.info("{} 이메일 주소를 사용 중인 계정의 리프레시 토큰을 재발급했어요: {}", email, newRefreshToken);
+        log.info("{} 이메일 주소를 사용 중인 계정의 리프레시 토큰을 재발급했어요.", email);
         return newRefreshToken;
     }
 
