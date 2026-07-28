@@ -143,7 +143,7 @@ public class AuthService {
         EatzUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        return new VerifyResetTokenResponse(user.getEmail());
+        return new VerifyResetTokenResponse("", user.getEmail());
     }
 
     public void requestPasswordReset(String email) {

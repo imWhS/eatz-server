@@ -1,6 +1,7 @@
 package imwhs.eatz_server.domain.eatzuser;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.common.util.EmailUtil;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -153,7 +154,7 @@ public class EatzUser extends BaseEntity {
     }
 
     public void updateEmail(String email) {
-        validateEmail(email);
+        EmailUtil.validateEmail(email);
         this.email = email;
     }
 
@@ -176,15 +177,6 @@ public class EatzUser extends BaseEntity {
     public static void validateUsername(String username) {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("필수 항목인 사용자 이름이 비어 있어요.");
-        }
-    }
-
-    public static void validateEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 이메일 주소가 비어 있어요.");
-        }
-        if (!Pattern.matches(EMAIL_REGEX, email)) {
-            throw new IllegalArgumentException("이메일 주소(" + email + ")가 올바른 형식이 아니에요.");
         }
     }
 
@@ -241,7 +233,7 @@ public class EatzUser extends BaseEntity {
             String email,
             String password) {
         validateUsername(username);
-        validateEmail(email);
+        EmailUtil.validateEmail(email);
         validatePassword(password);
         return new EatzUser(username, email, password, EatzUserRole.ROLE_MEMBER);
     }
@@ -259,7 +251,7 @@ public class EatzUser extends BaseEntity {
             String password,
             String imageUrl) {
         validateUsername(username);
-        validateEmail(email);
+        EmailUtil.validateEmail(email);
         validatePassword(password);
         validateImageUrl(imageUrl);
         EatzUser user = new EatzUser(username, email, password, EatzUserRole.ROLE_MEMBER);
@@ -279,7 +271,7 @@ public class EatzUser extends BaseEntity {
             String email,
             String password) {
         validateUsername(username);
-        validateEmail(email);
+        EmailUtil.validateEmail(email);
         validatePassword(password);
         return new EatzUser(username, email, password, EatzUserRole.ROLE_ADMIN);
     }
@@ -297,7 +289,7 @@ public class EatzUser extends BaseEntity {
             String password,
             String imageUrl) {
         validateUsername(username);
-        validateEmail(email);
+        EmailUtil.validateEmail(email);
         validatePassword(password);
         validateImageUrl(imageUrl);
         EatzUser user = new EatzUser(username, email, password, EatzUserRole.ROLE_ADMIN);

@@ -8,8 +8,13 @@ import lombok.Data;
 public class VerifyResetTokenResponse {
 
     /**
-     * 암호 초기화 토큰
+     * 암호 초기화 권한 부여 토큰
      */
-    private String resetToken;
+    private String authorizedToken;
+
+    /**
+     * 계정의 마스킹 처리된 이메일 주소
+     */
+    private String maskedEmail;
 
 }

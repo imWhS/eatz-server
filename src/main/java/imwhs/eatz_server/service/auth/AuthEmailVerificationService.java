@@ -1,5 +1,6 @@
 package imwhs.eatz_server.service.auth;
 
+import imwhs.eatz_server.common.util.EmailUtil;
 import imwhs.eatz_server.dto.auth.EmailVerificationCodeResponse;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.repository.EatzUserRepository;
@@ -22,8 +23,6 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Service
 public class AuthEmailVerificationService {
-
-    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
     /**
      * 이메일 주소 인증 코드의 재발급 대기 시간입니다. 이메일 주소를 다시 인증할 수 있는 시간에 해당합니다.
@@ -151,7 +150,7 @@ public class AuthEmailVerificationService {
     }
 
     private void validateEmailWithUser(String email) {
-        validateEmail(email);
+        EmailUtil.validateEmail(email);
         boolean isEmailDuplicated = userRepository.existsByEmailAndDeletedAtIsNull(email);
         if (isEmailDuplicated) { throw new EatzUserDuplicatedEmailException(); }
     }
@@ -194,15 +193,6 @@ public class AuthEmailVerificationService {
     @NonNull
     private static String generateRedisCodeCreationCountKey(String email, String nowDate) {
         return "auth:email_verification_code:" + email + ":creation_count:" + nowDate;
-    }
-
-    private static void validateEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 이메일 주소가 비어 있어요.");
-        }
-        if (!Pattern.matches(EMAIL_REGEX, email)) {
-            throw new IllegalArgumentException("이메일 주소(" + email + ")가 올바른 형식이 아니에요.");
-        }
     }
 
 }
