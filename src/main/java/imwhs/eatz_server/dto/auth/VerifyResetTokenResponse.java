@@ -8,7 +8,7 @@ import lombok.Data;
 public class VerifyResetTokenResponse {
 
     /**
-     * 암호 초기화 권한 부여 토큰
+     * 암호 설정 토큰
      */
     private String authorizedToken;
 
