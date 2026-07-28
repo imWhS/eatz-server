@@ -8,7 +8,7 @@ import lombok.Data;
 public class ConfirmPasswordResetRequest {
 
     @NotBlank
-    private String token;
+    private String authorizedToken;
 
     @NotBlank
     @Size(min = 8, message = "암호는 8자리 이상의 길이여야 합니다.")
