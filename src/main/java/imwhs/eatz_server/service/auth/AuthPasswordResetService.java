@@ -1,5 +1,6 @@
 package imwhs.eatz_server.service.auth;
 
+import imwhs.eatz_server.common.util.EmailUtil;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.auth.VerifyResetTokenResponse;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
@@ -24,8 +25,6 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Service
 public class AuthPasswordResetService {
-
-    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
     /**
      * 이메일 인증 토큰의 유효 시간입니다.
@@ -104,7 +103,7 @@ public class AuthPasswordResetService {
      *     <li> 이메일 인증 토큰은 진위 여부 판별 직후에 Redis에서 삭제됩니다. </li>
      * </ul>
      * @param emailToken 이메일 인증 토큰
-     * @return 암호 초기화 토큰을 담은 DTO
+     * @return 암호 초기화 권한 부여 토큰과 이메일 주소를 담은 DTO
      */
     @Transactional(rollbackFor = Exception.class)
     public VerifyResetTokenResponse authorizePasswordReset(String emailToken) {
@@ -126,17 +125,17 @@ public class AuthPasswordResetService {
         // 암호 초기화 토큰을 key로, 이메일 주소를 값으로 매핑한 데이터로 저장합니다.
         redisService.setForValue(authorizedTokenKey, email, Duration.ofMinutes(AUTHORIZED_TOKEN_EXPIRATION_MINUTES));
 
-        // 암호 초기화 토큰을 반환합니다.
-        return new VerifyResetTokenResponse(authorizedToken);
+        // 암호 초기화 토큰과 마스킹 처리된 이메일 주소를 반환합니다.
+        return new VerifyResetTokenResponse(authorizedToken, EmailUtil.maskEmail(email));
     }
 
     /**
      * 이메일 주소에 해당하는 계정의 암호를 재설정합니다.
      * <ul>
-     *     <li> 암호 초기화 토큰이 필요합니다. </li>
-     *     <li> 암호 초기화 토큰은 계정의 암호를 새 암호로 업데이트 직후에 Redis에서 삭제됩니다. </li>
+     *     <li> 암호 초기화 권한 부여 토큰이 필요합니다. </li>
+     *     <li> 암호 초기화 권한 부여 토큰은 계정의 암호를 새 암호로 업데이트한 직후에 Redis에서 삭제됩니다. </li>
      * </ul>
-     * @param authorizedToken 암호 초기화 토큰. 중간 침입자에 의한 hijacking 공격을 방지하기 위해 사용합니다.
+     * @param authorizedToken 암호 초기화 권한 부여 토큰. 중간 침입자에 의한 hijacking 공격을 방지하기 위해 사용합니다.
      * @param newPassword 새 암호
      */
     @Transactional(rollbackFor = Exception.class)
@@ -172,7 +171,7 @@ public class AuthPasswordResetService {
     }
 
     private void validateEmailWithUser(String email) {
-        validateEmail(email);
+        EmailUtil.validateEmail(email);
         boolean isUserExists = userRepository.existsByEmailAndDeletedAtIsNull(email);
         if (!isUserExists) { throw new EatzUserNotFoundException(email, true); }
     }
@@ -190,14 +189,5 @@ public class AuthPasswordResetService {
     @NonNull
     private static String generateRedisAuthorizedTokenKey(String token) {
         return "auth:password_reset:authorized_token:" + token;
-    }
-
-    private static void validateEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 이메일 주소가 비어 있어요.");
-        }
-        if (!Pattern.matches(EMAIL_REGEX, email)) {
-            throw new IllegalArgumentException("이메일 주소(" + email + ")가 올바른 형식이 아니에요.");
-        }
     }
 }

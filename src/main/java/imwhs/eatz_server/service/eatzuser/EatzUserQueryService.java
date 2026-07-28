@@ -1,5 +1,6 @@
 package imwhs.eatz_server.service.eatzuser;
 
+import imwhs.eatz_server.common.util.EmailUtil;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.dto.auth.EmailAvailability;
 import imwhs.eatz_server.dto.auth.EmailAvailabilityResponse;
@@ -57,7 +58,7 @@ public class EatzUserQueryService {
      * @return 사용자의 상세한 정보
      */
     public EatzUserDetailDto getDetailByEmail(String email) {
-        EatzUser.validateEmail(email);
+        EmailUtil.validateEmail(email);
         EatzUser user = userRepository.getByEmail(email);
         return new EatzUserDetailDto(user);
     }
@@ -69,7 +70,7 @@ public class EatzUserQueryService {
      */
     @Transactional(rollbackFor = Exception.class)
     public EmailAvailabilityResponse getEmailStatus(String email) {
-        EatzUser.validateEmail(email);
+        EmailUtil.validateEmail(email);
         Optional<EatzUser> userOpt = userRepository.findByEmail(email);
 
         // A. 이메일 주소로 사용자 조회했는데 안 찾아지면 한 번도 쓰지 않은 이메일 주소거나,
@@ -136,12 +137,6 @@ public class EatzUserQueryService {
     public Page<EatzUserDetailDto> getAllDetails(Pageable pageable) {
         Page<EatzUser> users = userRepository.findAllByDeletedAtIsNull(pageable);
         return users.map(EatzUserDetailDto::new);
-    }
-
-    private static void validateEmail(String email) {
-        if (!Pattern.matches(EMAIL_REGEX, email)) {
-            throw new IllegalArgumentException("이메일 주소(" + email + ")가 올바른 형식이 아니에요.");
-        }
     }
 
 }
