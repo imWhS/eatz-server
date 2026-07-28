@@ -59,7 +59,7 @@ public class AuthController {
     @PostMapping("/auth/reset-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void resetPassword(@Valid @RequestBody ConfirmPasswordResetRequest request) {
-        passwordResetService.reset(request.getToken(), request.getNewPassword());
+        passwordResetService.reset(request.getAuthorizedToken(), request.getNewPassword());
     }
 
     @PostMapping("/reissue-token")
