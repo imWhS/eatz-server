@@ -52,8 +52,8 @@ public class AuthController {
 
     @GetMapping("/auth/reset-password/authorize-token")
     @ResponseStatus(HttpStatus.OK)
-    public VerifyResetTokenResponse authorizePasswordReset(@RequestParam String token) {
-        return passwordResetService.authorizePasswordReset(token);
+    public VerifyResetTokenResponse authorizePasswordReset(@RequestParam String emailToken) {
+        return passwordResetService.authorizePasswordReset(emailToken);
     }
 
     @PostMapping("/auth/reset-password")
