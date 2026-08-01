@@ -34,7 +34,7 @@ public class AuthController {
     private final JwtConfigProperties jwtConfigProperties;
 
     @PostMapping("/sign-up")
-    public Long registerUser(@RequestBody @Valid CreateEatzUserRequest request) {
+    public Long registerUser(@Valid @RequestBody CreateEatzUserRequest request) {
         return authService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
     }
 

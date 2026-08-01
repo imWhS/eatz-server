@@ -33,10 +33,12 @@ public class RecipeIngredientQueryRepositoryImpl implements RecipeIngredientQuer
 
         QRecipeIngredient recipeIngredient = QRecipeIngredient.recipeIngredient;
         QIngredient ingredient = QIngredient.ingredient;
+        QIngredient parent = new QIngredient("parent");
 
         return queryFactory
                 .from(recipeIngredient)
                 .innerJoin(recipeIngredient.ingredient, ingredient).on(ingredient.deletedAt.isNull())
+                .leftJoin(ingredient.parent, parent)
                 .where(
                         recipeIngredient.recipe.id.in(recipeIds),
                         recipeIngredient.deletedAt.isNull(),
@@ -46,6 +48,8 @@ public class RecipeIngredientQueryRepositoryImpl implements RecipeIngredientQuer
                                 GroupBy.list(
                                         Projections.constructor(IngredientEssentialDto.class,
                                                 ingredient.id,
+                                                ingredient.isParentCoupled,
+                                                parent.name,
                                                 ingredient.name))));
     }
 
@@ -55,10 +59,12 @@ public class RecipeIngredientQueryRepositoryImpl implements RecipeIngredientQuer
 
         QRecipeIngredient ingredientRecipe = QRecipeIngredient.recipeIngredient;
         QIngredient ingredient = QIngredient.ingredient;
+        QIngredient parent = new QIngredient("parent");
 
         return queryFactory
                 .from(ingredientRecipe)
                 .innerJoin(ingredientRecipe.ingredient, ingredient).on(ingredient.deletedAt.isNull())
+                .leftJoin(ingredient.parent, parent)
                 .where(
                         ingredientRecipe.recipe.id.in(ids),
                         ingredientRecipe.deletedAt.isNull())
@@ -67,6 +73,8 @@ public class RecipeIngredientQueryRepositoryImpl implements RecipeIngredientQuer
                                 GroupBy.list(
                                         Projections.constructor(IngredientEssentialDto.class,
                                                 ingredient.id,
+                                                ingredient.isParentCoupled,
+                                                parent.name,
                                                 ingredient.name))));
     }
 
@@ -74,15 +82,19 @@ public class RecipeIngredientQueryRepositoryImpl implements RecipeIngredientQuer
     public List<IngredientRequirementDto> findAllIngredientRequirementsByRecipeId(Long id, Long userId) {
         QRecipeIngredient ingredientRecipe = QRecipeIngredient.recipeIngredient;
         QIngredient ingredient = QIngredient.ingredient;
+        QIngredient parent = new QIngredient("parent");
 
         return queryFactory
                 .select(Projections.constructor(IngredientRequirementDto.class,
                         ingredient.id,
+                        ingredient.isParentCoupled,
+                        parent.name,
                         ingredient.name,
                         IngredientQueryUtil.createIsOwnedExpression(ingredient, userId),
                         IngredientQueryUtil.createIsLikedExpression(ingredient, userId)))
                 .from(ingredientRecipe)
                 .innerJoin(ingredientRecipe.ingredient, ingredient).on(ingredient.deletedAt.isNull())
+                .leftJoin(ingredient.parent, parent)
                 .where(
                         ingredientRecipe.recipe.id.eq(id),
                         ingredientRecipe.deletedAt.isNull()

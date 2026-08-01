@@ -14,10 +14,42 @@ import lombok.Data;
 @AllArgsConstructor
 public class IngredientBasicDto {
 
+    /**
+     * 재료의 ID
+     */
     private Long id;
+
+    /**
+     * 상위 재료와의 커플링 여부
+     */
+    private boolean isParentCoupled;
+
+    /**
+     * 커플링된 상위 재료 이름
+     * <ul>
+     *     <li> 조회 대상 재료의 이름과 함께 접두어로 사용됩니다. </li>
+     * </ul>
+     */
+    private String coupledParentName;
+
+    /**
+     * 조회 대상 재료의 이름
+     */
     private String name;
+
+    /**
+     * 하위 재료 존재 여부
+     */
     private boolean hasChildren;
+
+    /**
+     * 조회 대상 재료의 보관함 추가 여부
+     */
     private boolean isOwnedByUser;
+
+    /**
+     * 조회 대상 재료를 좋아하는 사람 여부
+     */
     private boolean isLikedByUser;
 
 }

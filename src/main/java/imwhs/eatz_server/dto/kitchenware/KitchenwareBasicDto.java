@@ -17,13 +17,25 @@ import lombok.EqualsAndHashCode;
 @Data
 public class KitchenwareBasicDto {
 
+    /**
+     * 도구의 ID
+     */
     @EqualsAndHashCode.Include
     private Long id;
 
+    /**
+     * 도구의 이름
+     */
     private String name;
 
+    /**
+     * 도구의 이미지 URL
+     */
     private String imageUrl;
 
+    /**
+     * 도구의 보관함 추가 여부
+     */
     private boolean isOwnedByUser;
 
     public KitchenwareBasicDto(Long id, String name, String imageUrl) {

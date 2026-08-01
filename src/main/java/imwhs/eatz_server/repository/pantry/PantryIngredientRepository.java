@@ -70,39 +70,39 @@ public interface PantryIngredientRepository
             "   pi.deletedAt IS null ")
     long countIngredientUserByUser(@Param("user") EatzUser user);
 
-    /**
-     * 사용자가 보관함에 추가한 모든 재료의 기본 정보 목록을 조회합니다.
-     * @param user 사용자의 EatzUser 엔티티
-     * @param pageable 페이징 정보
-     * @return 모든 재료의 기본 정보 목록과 페이징 정보
-     */
-    @Query(value =
-            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
-                    "i.id, " +
-                    "i.name, " +
-                    "(CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
-                    "true, " +
-                    "(CASE WHEN count(l.id) > 0 THEN true ELSE false END)) " +
-            "FROM PantryIngredient pi " +
-            "JOIN pi.ingredient i ON " +
-                    "i.deletedAt IS null " +
-            "LEFT JOIN i.children c ON " +
-                    "c.deletedAt IS null " +
-            "LEFT JOIN LikedIngredient l ON " +
-                    "l.ingredient = i AND " +
-                    "l.isLiked = true AND " +
-                    "l.deletedAt IS null AND " +
-                    "l.user = :user " +
-            "WHERE pi.user = :user AND " +
-                    "pi.deletedAt IS null " +
-            "GROUP BY i.id, i.name",
-            countQuery = 
-                    "SELECT count(pi) " +
-                    "FROM PantryIngredient pi " +
-                    "WHERE " +
-                            "pi.user = :user AND " +
-                            "pi.deletedAt IS null")
-    Page<IngredientBasicDto> findAllByUserOld(@Param("user") EatzUser user, Pageable pageable);
+//    /**
+//     * 사용자가 보관함에 추가한 모든 재료의 기본 정보 목록을 조회합니다.
+//     * @param user 사용자의 EatzUser 엔티티
+//     * @param pageable 페이징 정보
+//     * @return 모든 재료의 기본 정보 목록과 페이징 정보
+//     */
+//    @Query(value =
+//            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
+//                    "i.id, " +
+//                    "i.name, " +
+//                    "(CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
+//                    "true, " +
+//                    "(CASE WHEN count(l.id) > 0 THEN true ELSE false END)) " +
+//            "FROM PantryIngredient pi " +
+//            "JOIN pi.ingredient i ON " +
+//                    "i.deletedAt IS null " +
+//            "LEFT JOIN i.children c ON " +
+//                    "c.deletedAt IS null " +
+//            "LEFT JOIN LikedIngredient l ON " +
+//                    "l.ingredient = i AND " +
+//                    "l.isLiked = true AND " +
+//                    "l.deletedAt IS null AND " +
+//                    "l.user = :user " +
+//            "WHERE pi.user = :user AND " +
+//                    "pi.deletedAt IS null " +
+//            "GROUP BY i.id, i.name",
+//            countQuery =
+//                    "SELECT count(pi) " +
+//                    "FROM PantryIngredient pi " +
+//                    "WHERE " +
+//                            "pi.user = :user AND " +
+//                            "pi.deletedAt IS null")
+//    Page<IngredientBasicDto> findAllByUserOld(@Param("user") EatzUser user, Pageable pageable);
 
     /**
      * 특정 재료들을 사용자의 보관함에서 제거합니다.

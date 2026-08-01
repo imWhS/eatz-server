@@ -27,16 +27,20 @@ public class PantryIngredientQueryRepositoryImpl implements PantryIngredientQuer
     public Page<IngredientBasicDto> findAllByUser(EatzUser user, Pageable pageable) {
         QPantryIngredient pantryIngredient = QPantryIngredient.pantryIngredient;
         QIngredient ingredient = QIngredient.ingredient;
+        QIngredient parent = new QIngredient("parent");
 
         JPAQuery<IngredientBasicDto> mainQuery = queryFactory
                 .select(Projections.constructor(IngredientBasicDto.class,
                         ingredient.id,
+                        ingredient.isParentCoupled,
+                        parent.name,
                         ingredient.name,
                         IngredientQueryUtil.createHasChildrenExpression(ingredient),
                         Expressions.asBoolean(true),
                         IngredientQueryUtil.createIsLikedExpression(ingredient, user.getId())))
                 .from(pantryIngredient)
                 .innerJoin(pantryIngredient.ingredient, ingredient).on(ingredient.deletedAt.isNull())
+                .leftJoin(ingredient.parent, parent)
                 .where(
                         pantryIngredient.user.eq(user),
                         pantryIngredient.deletedAt.isNull());

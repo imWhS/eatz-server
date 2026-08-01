@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class IngredientCreateRequest {
+public class IngredientUpdateRequest {
 
     @NotBlank
     private String name;
@@ -22,27 +22,27 @@ public class IngredientCreateRequest {
 
     private List<Long> childIds = new ArrayList<>();
 
-    public IngredientCreateRequest(String name) {
+    public IngredientUpdateRequest(String name) {
         this.name = name;
     }
 
-    public IngredientCreateRequest(String name, Long parentId) {
+    public IngredientUpdateRequest(String name, Long parentId) {
         this.name = name;
         this.parentId = parentId;
     }
 
-    public IngredientCreateRequest(String name, List<Long> childIds) {
+    public IngredientUpdateRequest(String name, List<Long> childIds) {
         this.name = name;
         this.childIds = childIds;
     }
 
-    public IngredientCreateRequest(String name, Long parentId, List<Long> childIds) {
+    public IngredientUpdateRequest(String name, Long parentId, List<Long> childIds) {
         this.name = name;
         this.parentId = parentId;
         this.childIds = childIds;
     }
 
-    public IngredientCreateRequest(String name, Long parentId, Boolean isParentCoupled, List<Long> childIds) {
+    public IngredientUpdateRequest(String name, Long parentId, Boolean isParentCoupled, List<Long> childIds) {
         this.name = name;
         this.parentId = parentId;
         this.isParentCoupled = isParentCoupled;

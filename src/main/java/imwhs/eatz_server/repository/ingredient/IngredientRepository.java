@@ -112,57 +112,57 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, I
             "   i.deletedAt IS null")
     Optional<Ingredient> findWithParentById(@Param("id") Long id);
 
-    @Query(value = 
-            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
-            "i.id, " +
-            "i.name, " +
-            "(CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
-            "false, " +
-            "false)" +
-            "FROM Ingredient i " +
-            "LEFT JOIN i.children c ON " +
-                "c.deletedAt IS null " +
-            "WHERE " +
-            "   i.parent IS null AND " +
-            "   i.deletedAt IS null " +
-            "GROUP BY i.id, i.name",
-            countQuery = 
-                    "SELECT count(i) " +
-                    "FROM Ingredient i " +
-                    "WHERE " +
-                    "   i.parent IS null AND " +
-                    "   i.deletedAt IS null")
-    Page<IngredientBasicDto> findRootsOld(Pageable pageable);
+//    @Query(value =
+//            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
+//            "i.id, " +
+//            "i.name, " +
+//            "(CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
+//            "false, " +
+//            "false)" +
+//            "FROM Ingredient i " +
+//            "LEFT JOIN i.children c ON " +
+//                "c.deletedAt IS null " +
+//            "WHERE " +
+//            "   i.parent IS null AND " +
+//            "   i.deletedAt IS null " +
+//            "GROUP BY i.id, i.name",
+//            countQuery =
+//                    "SELECT count(i) " +
+//                    "FROM Ingredient i " +
+//                    "WHERE " +
+//                    "   i.parent IS null AND " +
+//                    "   i.deletedAt IS null")
+//    Page<IngredientBasicDto> findRootsOld(Pageable pageable);
 
-    @Query(value =
-            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
-            "   i.id, " +
-            "   i.name, " +
-            "   (CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
-            "   (CASE WHEN count(iu.id) > 0 THEN true ELSE false END), " +
-            "   (CASE WHEN count(l.id) > 0 THEN true ELSE false END)) " +
-            "FROM Ingredient i " +
-            "LEFT JOIN i.children c ON " +
-                "c.deletedAt IS null " +
-            "LEFT JOIN PantryIngredient iu ON " +
-                "iu.user.id = :userId AND " +
-                "iu.ingredient = i AND " +
-                "iu.deletedAt IS null " +
-            "LEFT JOIN LikedIngredient l ON " +
-                "l.ingredient = i AND " +
-                "l.user.id = :userId AND " +
-                "l.isLiked = true AND " +
-                "l.deletedAt IS null " +
-            "WHERE " +
-            "   i.parent IS null AND " +
-            "   i.deletedAt IS null " +
-            "GROUP BY i.id, i.name",
-            countQuery =
-                    "SELECT count(i) " +
-                    "FROM Ingredient i " +
-                    "WHERE i.parent IS null AND " +
-                    "   i.deletedAt IS null")
-    Page<IngredientBasicDto> findRootsForUserOld(@Param("userId") Long userId, Pageable pageable);
+//    @Query(value =
+//            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
+//            "   i.id, " +
+//            "   i.name, " +
+//            "   (CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
+//            "   (CASE WHEN count(iu.id) > 0 THEN true ELSE false END), " +
+//            "   (CASE WHEN count(l.id) > 0 THEN true ELSE false END)) " +
+//            "FROM Ingredient i " +
+//            "LEFT JOIN i.children c ON " +
+//                "c.deletedAt IS null " +
+//            "LEFT JOIN PantryIngredient iu ON " +
+//                "iu.user.id = :userId AND " +
+//                "iu.ingredient = i AND " +
+//                "iu.deletedAt IS null " +
+//            "LEFT JOIN LikedIngredient l ON " +
+//                "l.ingredient = i AND " +
+//                "l.user.id = :userId AND " +
+//                "l.isLiked = true AND " +
+//                "l.deletedAt IS null " +
+//            "WHERE " +
+//            "   i.parent IS null AND " +
+//            "   i.deletedAt IS null " +
+//            "GROUP BY i.id, i.name",
+//            countQuery =
+//                    "SELECT count(i) " +
+//                    "FROM Ingredient i " +
+//                    "WHERE i.parent IS null AND " +
+//                    "   i.deletedAt IS null")
+//    Page<IngredientBasicDto> findRootsForUserOld(@Param("userId") Long userId, Pageable pageable);
 
     @Query(value = """
     WITH RECURSIVE
@@ -241,60 +241,60 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, I
             "WHERE i.name = :name")
     Optional<Ingredient> findByName(@Param("name") String name);
 
-    @Query(value =
-            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
-            "   i.id, " +
-            "   i.name, " +
-            "   (CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
-            "   (CASE WHEN count(iu.id) > 0 THEN true ELSE false END), " +
-            "   (CASE WHEN count(l.id) > 0 THEN true ELSE false END)) " +
-            "FROM Ingredient i " +
-            "LEFT JOIN i.children c ON " +
-                "c.deletedAt IS null " +
-            "LEFT JOIN PantryIngredient iu ON " +
-            "   iu.ingredient = i AND " +
-            "   iu.user.id = :userId AND " +
-            "   iu.deletedAt IS null " +
-            "LEFT JOIN LikedIngredient l ON " +
-            "   l.ingredient = i AND " +
-            "   l.user.id = :userId AND " +
-            "   l.isLiked = true AND " +
-            "   l.deletedAt IS null " +
-            "WHERE " +
-            "   replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
-            "   i.deletedAt IS null " +
-            "GROUP BY i.id, i.name ",
-            countQuery =
-                    "SELECT count(i) " +
-                    "FROM Ingredient i " +
-                    "WHERE " +
-                        "replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
-                        "i.deletedAt IS null ")
-    Page<IngredientBasicDto> searchIngredientItemsForUser(
-            @Param("keyword") String keyword,
-            @Param("userId") Long userId,
-            Pageable pageable);
+//    @Query(value =
+//            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
+//            "   i.id, " +
+//            "   i.name, " +
+//            "   (CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
+//            "   (CASE WHEN count(iu.id) > 0 THEN true ELSE false END), " +
+//            "   (CASE WHEN count(l.id) > 0 THEN true ELSE false END)) " +
+//            "FROM Ingredient i " +
+//            "LEFT JOIN i.children c ON " +
+//                "c.deletedAt IS null " +
+//            "LEFT JOIN PantryIngredient iu ON " +
+//            "   iu.ingredient = i AND " +
+//            "   iu.user.id = :userId AND " +
+//            "   iu.deletedAt IS null " +
+//            "LEFT JOIN LikedIngredient l ON " +
+//            "   l.ingredient = i AND " +
+//            "   l.user.id = :userId AND " +
+//            "   l.isLiked = true AND " +
+//            "   l.deletedAt IS null " +
+//            "WHERE " +
+//            "   replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
+//            "   i.deletedAt IS null " +
+//            "GROUP BY i.id, i.name ",
+//            countQuery =
+//                    "SELECT count(i) " +
+//                    "FROM Ingredient i " +
+//                    "WHERE " +
+//                        "replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
+//                        "i.deletedAt IS null ")
+//    Page<IngredientBasicDto> searchIngredientItemsForUser(
+//            @Param("keyword") String keyword,
+//            @Param("userId") Long userId,
+//            Pageable pageable);
 
-    @Query(value =
-            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
-            "   i.id, " +
-            "   i.name, " +
-            "   (CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
-            "   false, " +
-            "   false) " +
-            "FROM Ingredient i " +
-            "LEFT JOIN i.children c ON " +
-                "c.deletedAt IS null " +
-            "WHERE " +
-            "   replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
-            "   i.deletedAt IS null " +
-            "GROUP BY i.id, i.name",
-            countQuery =
-                    "SELECT count(i) " +
-                    "FROM Ingredient i " +
-                    "WHERE " +
-                        "replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
-                        "i.deletedAt IS null ")
-    Page<IngredientBasicDto> searchIngredientItems(@Param("keyword") String keyword, Pageable pageable);
+//    @Query(value =
+//            "SELECT new imwhs.eatz_server.dto.ingredient.IngredientBasicDto(" +
+//            "   i.id, " +
+//            "   i.name, " +
+//            "   (CASE WHEN count(c.id) > 0 THEN true ELSE false END), " +
+//            "   false, " +
+//            "   false) " +
+//            "FROM Ingredient i " +
+//            "LEFT JOIN i.children c ON " +
+//                "c.deletedAt IS null " +
+//            "WHERE " +
+//            "   replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
+//            "   i.deletedAt IS null " +
+//            "GROUP BY i.id, i.name",
+//            countQuery =
+//                    "SELECT count(i) " +
+//                    "FROM Ingredient i " +
+//                    "WHERE " +
+//                        "replace(lower(i.name), ' ', '') LIKE lower(concat('%', :keyword, '%')) AND " +
+//                        "i.deletedAt IS null ")
+//    Page<IngredientBasicDto> searchIngredientItems(@Param("keyword") String keyword, Pageable pageable);
 
 }

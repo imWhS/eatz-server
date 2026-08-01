@@ -9,6 +9,7 @@ import imwhs.eatz_server.dto.tag.TagUpdateRequest;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.tag.TagService;
 import imwhs.eatz_server.service.tag.ThemeTagQueryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ public class TagController {
      * @return 생성된 태그 관련 정보
      */
     @PostMapping
-    public TagDetailDto registerTag(@RequestBody TagCreateRequest request) {
+    public TagDetailDto registerTag(@Valid @RequestBody TagCreateRequest request) {
         Long recipeId = request.getRecipeId();
         Tag tag;
 
@@ -51,7 +52,7 @@ public class TagController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateTag(
             @PathVariable Long id,
-            @RequestBody TagUpdateRequest request,
+            @Valid @RequestBody TagUpdateRequest request,
             @AuthenticatedEatzUserId Long userId) {
         tagService.update(
                 id,
@@ -74,7 +75,7 @@ public class TagController {
     }
 
     @PostMapping("/{id}/recipes")
-    public void addRecipes(@PathVariable Long id, @RequestBody AddRecipesToTagRequest request) {
+    public void addRecipes(@PathVariable Long id, @Valid @RequestBody AddRecipesToTagRequest request) {
         tagService.addRecipes(id, request.getRecipeIds());
     }
 

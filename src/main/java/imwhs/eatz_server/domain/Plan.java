@@ -62,6 +62,7 @@ public class Plan extends BaseEntity {
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private LocalDateTime scheduledAt;
 
     /**

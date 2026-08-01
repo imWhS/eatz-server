@@ -6,6 +6,7 @@ import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.ingredient.IngredientQueryService;
 import imwhs.eatz_server.service.ingredient.IngredientService;
 import imwhs.eatz_server.service.liked.LikedIngredientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +31,59 @@ public class IngredientController {
     @ResponseStatus(HttpStatus.CREATED)
     public IngredientCreationInfoResponse registerIngredient(
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody IngredientCreateRequest request) {
-        return ingredientService.register(userId, request.getName(), request.getParentId(), request.getChildIds());
+            @Valid @RequestBody IngredientCreateRequest request) {
+        return ingredientService.register(
+                userId,
+                request.getName(),
+                request.getParentId(),
+                request.getIsParentCoupled(),
+                request.getChildIds());
+    }
+
+    /**
+     * 재료를 업데이트합니다.
+     * @param id 업데이트할 재료의 ID
+     * @param request 재료 업데이트를 요청하기 위해 필요한 정보
+     */
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateIngredient(
+            @AuthenticatedEatzUserId Long userId,
+            @PathVariable Long id,
+            @Valid @RequestBody IngredientUpdateRequest request) {
+        ingredientService.update(
+                userId,
+                id,
+                request.getName(),
+                request.getParentId(),
+                request.getIsParentCoupled(),
+                request.getChildIds());
+    }
+
+    /**
+     * 재료의 상위 재료 설정을 해제합니다.
+     * <ul>
+     *     <li> 상위 재료와의 커플링 여부가 해제됩니다. </li>
+     * </ul>
+     * @param id 재료의 ID
+     */
+    @DeleteMapping("/{id}/parent")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeParentFromIngredient(@AuthenticatedEatzUserId Long userId, @PathVariable Long id) {
+        ingredientService.removeParent(userId, id);
+    }
+
+    /**
+     * 재료를 삭제합니다.
+     * <ul>
+     *     <li> 하위 재료와의 커플링 여부가 해제됩니다. </li>
+     * </ul>
+     * @param id 재료의 ID
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteIngredient(@AuthenticatedEatzUserId Long userId, @PathVariable Long id) {
+        ingredientService.delete(userId, id);
     }
 
     @PostMapping("/{id}/likeds")
@@ -54,7 +106,7 @@ public class IngredientController {
      */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public IngredientBasicsInParentDto getIngredientBasicsInParent(
+    public IngredientEssentialWithChildrenBasicsDto getIngredientBasicsInParent(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId) {
         return ingredientQueryService.getAllBasicsInParent(id, userId);

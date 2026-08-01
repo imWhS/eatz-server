@@ -4,6 +4,7 @@ import imwhs.eatz_server.domain.ReportResourceType;
 import imwhs.eatz_server.dto.report.*;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.ReportService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public class ReportController {
     @ResponseStatus(HttpStatus.OK)
     public ReportCreationInfoResponse registerReport(
             @AuthenticatedEatzUserId(required = false) Long userId,
-            @RequestBody ReportCreateRequest request) {
+            @Valid @RequestBody ReportCreateRequest request) {
         return reportService.register(
                 userId,
                 request.getResourceId(),
@@ -43,7 +44,7 @@ public class ReportController {
     @ResponseStatus(HttpStatus.OK)
     public ReportCategoryCreationInfoResponse registerReportCategory(
             @AuthenticatedEatzUserId Long adminId,
-            @RequestBody ReportCategoryCreateRequest request) {
+            @Valid @RequestBody ReportCategoryCreateRequest request) {
         return reportService.registerReason(adminId, request.getCode(), request.getDescription());
     }
 
@@ -52,7 +53,7 @@ public class ReportController {
     public void updateCategory(
             @AuthenticatedEatzUserId Long adminId,
             @PathVariable Long id,
-            @RequestBody ReportCategoryUpdateRequest request) {
+            @Valid @RequestBody ReportCategoryUpdateRequest request) {
         reportService.updateCategory(adminId, id, request.getCode(), request.getDescription());
     }
 

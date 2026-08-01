@@ -203,8 +203,7 @@ public class RecipeController {
     public List<IngredientRequirementDto> getIngredientRequirements(
             @PathVariable Long id,
             @AuthenticatedEatzUserId(required = false) Long userId) {
-        return ingredientQueryService
-                .getIngredientRequirementsByRecipeId(id, userId);
+        return ingredientQueryService.getIngredientRequirementsByRecipeId(id, userId);
     }
 
     @GetMapping("/{id}/kitchenwares")

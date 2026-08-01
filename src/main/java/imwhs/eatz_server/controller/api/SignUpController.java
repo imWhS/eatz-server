@@ -5,6 +5,7 @@ import imwhs.eatz_server.dto.auth.EmailVerificationRequest;
 import imwhs.eatz_server.dto.auth.EmailZonedVerificationCodeRequest;
 import imwhs.eatz_server.service.auth.AuthEmailVerificationService;
 import imwhs.eatz_server.service.auth.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,13 +29,13 @@ public class SignUpController {
     @PostMapping("/email-validation")
     @ResponseStatus(HttpStatus.OK)
     public EmailVerificationCodeResponse sendVerificationCodeViaEmail(
-            @RequestBody EmailZonedVerificationCodeRequest request) {
+            @Valid @RequestBody EmailZonedVerificationCodeRequest request) {
         return emailVerificationService.sendCode(request.getEmail(), request.getTimeZoneId());
     }
 
     @PostMapping("/email-validation/verify")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void verifyEmail(@RequestBody EmailVerificationRequest request) {
+    public void verifyEmail(@Valid @RequestBody EmailVerificationRequest request) {
         emailVerificationService.verifyEmail(request.getEmail(), request.getCode());
     }
 

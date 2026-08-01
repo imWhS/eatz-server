@@ -4,6 +4,7 @@ import imwhs.eatz_server.dto.rating.*;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.rating.RatingQueryService;
 import imwhs.eatz_server.service.rating.RatingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,7 @@ public class RecipeRatingController {
     public RatingCreationInfoResponse registerRating(
             @PathVariable Long recipeId,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody RatingCreateRequest request) {
+            @Valid @RequestBody RatingCreateRequest request) {
         return ratingService.register(
                 recipeId,
                 userId,
@@ -54,7 +55,7 @@ public class RecipeRatingController {
     public void updateRatingByRecipeId(
             @PathVariable Long recipeId,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody RatingUpdateRequest request) {
+            @Valid @RequestBody RatingUpdateRequest request) {
         ratingService.updateByRecipeId(recipeId, userId, request.getScore(), request.getContent());
     }
 

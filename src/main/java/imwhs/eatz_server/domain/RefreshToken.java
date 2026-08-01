@@ -1,9 +1,6 @@
 package imwhs.eatz_server.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -23,12 +20,15 @@ public class RefreshToken {
     private Long id;
 
     @NotNull
+    @Column(nullable = false)
     private String email;
 
     @NotNull
+    @Column(nullable = false)
     private LocalDateTime expiration;
 
     @NotNull
+    @Column(nullable = false)
     private String token;
 
     public RefreshToken(String email, LocalDateTime expiration, String token) {

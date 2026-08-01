@@ -91,7 +91,7 @@ public class RecipeQueryService {
         List<IngredientEssentialDto> ingredients = ingredientQueryService
                 .getIngredientRequirementsByRecipeId(id, authorId).stream()
                 .map(dto ->
-                        new IngredientEssentialDto(dto.getId(), dto.getName())).toList();
+                        new IngredientEssentialDto(dto.getId(), dto.isParentCoupled(), dto.getName())).toList();
         draftDto.setIngredients(ingredients);
 
         List<KitchenwareEssentialDto> kitchenwares = kitchenwareQueryService

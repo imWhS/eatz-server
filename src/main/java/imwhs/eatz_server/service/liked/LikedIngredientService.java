@@ -67,7 +67,7 @@ public class LikedIngredientService {
      * @param ingredientId 재료의 ID
      * @param userId 사용자의 ID
      * @return 재료 좋아요 기본 정보.
-     * 해당 재료에 한 번도 좋아요를 표시 또는 취소한 적 없는 사용자인 경우 DTO에 해당 재료의 좋아요 수만 포함합니다.
+     *         해당 재료에 한 번도 좋아요를 표시 또는 취소한 적 없는 사용자인 경우 DTO에 해당 재료의 좋아요 수만 포함합니다.
      */
     @Transactional(rollbackFor = Exception.class)
     public LikedIngredientBasicDto unlike(Long ingredientId, Long userId) {

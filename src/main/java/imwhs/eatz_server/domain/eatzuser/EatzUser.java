@@ -60,6 +60,7 @@ public class EatzUser extends BaseEntity {
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private String password;
 
     /**

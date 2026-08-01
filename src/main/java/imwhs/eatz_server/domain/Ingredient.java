@@ -61,7 +61,23 @@ public class Ingredient extends BaseEntity {
     @NotNull
     @OneToMany(mappedBy = "parent")
     @BatchSize(size = 30)
+    @Column(nullable = false)
     private List<Ingredient> children = new ArrayList<>();
+
+    /**
+     * 상위 재료와의 커플링 여부
+     * <ul>
+     *     <li> 필수 항목입니다. </li>
+     *     <li> 재료 이름의 접두어로 상위 재료 이름을 함께 표기해야 할 경우 true로 설정합니다.  </li>
+     *     <li> 별도의 setter를 이용해 값을 설정해야 합니다.
+     *          유효한 값을 명시적으로 설정하지 않을 경우, 기본 값인 false로 설정합니다. </li>
+     *     <li> 데이터 누락(null)을 감지해 예외를 발생시키고, 데이터 누락 시 원시 타입인 boolean의 기본 값(false)에 의해
+     *          의도치 않은 상태가 되는 것을 막기 위해 wrapping 타입인 Boolean 래퍼 타입을 사용합니다. </li>
+     * </ul>
+     */
+    @NotNull
+    @Column(nullable = false)
+    private Boolean isParentCoupled;
 
     private Ingredient(String name) {
         this.name = name;
@@ -77,6 +93,16 @@ public class Ingredient extends BaseEntity {
        }
 
        this.name = name;
+    }
+
+    /**
+     * 상위 재료와의 커플링 여부를 업데이트합니다.
+     * <ul>
+     *     <li> 상위 재료가 없으면, 업데이트하려는 커플링 여부와 상관 없이 false로 설정됩니다.  </li>
+     * </ul>
+     */
+    public void updateIsParentCoupled(Boolean isParentCoupled) {
+        this.isParentCoupled = Objects.nonNull(isParentCoupled) && Objects.nonNull(this.parent) && isParentCoupled;
     }
 
     /**
@@ -121,6 +147,7 @@ public class Ingredient extends BaseEntity {
     public void removeParent() {
         if (parent == null) return;
         parent.children.remove(this);
+        parent.updateIsParentCoupled(false);
         parent = null;
     }
 
@@ -189,6 +216,7 @@ public class Ingredient extends BaseEntity {
         }
 
         child.parent = null;
+        child.updateIsParentCoupled(false);
         children.remove(child);
     }
 
@@ -198,7 +226,7 @@ public class Ingredient extends BaseEntity {
     public void clearChildren() {
         // 하위 재료 제거 시, removeChild에 의해 원본 컬렉션 필드 children이 직접 수정됩니다.
         // children을 for로 순회하다가, children 컬렉션 구성 변경이 발생하면, ConcurrentModificationException이 발생할 수 있기 떄문에
-        // children의 복사본을 사용해 순회합니다.
+        // children의 복사본을 사용해 순회합니다. // TODO
         List<Ingredient> tmpChildren = new ArrayList<>(children);
 
         for (Ingredient child : tmpChildren) {
@@ -255,6 +283,19 @@ public class Ingredient extends BaseEntity {
     public static Ingredient create(String name) {
         validateName(name);
         return new Ingredient(name);
+    }
+
+    @PrePersist
+    @PreUpdate
+    protected void ensureCouplingConsistency() {
+        // 상위 재료가 없을 때 상위 재료와의 커플링 여부가 설정되어 있으면, 상위 재료와의 커플링 여부를 해제합니다.
+        if (this.parent == null && Boolean.TRUE.equals(this.isParentCoupled)) {
+            this.isParentCoupled = false;
+        }
+
+        if (this.isParentCoupled == null) {
+            this.isParentCoupled = false;
+        }
     }
 
 }

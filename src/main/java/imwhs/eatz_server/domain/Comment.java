@@ -59,6 +59,7 @@ public class Comment extends BaseEntity {
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private String content;
 
     /**
@@ -67,11 +68,12 @@ public class Comment extends BaseEntity {
      *     <li> 필수 항목입니다. </li>
      *     <li> 별도의 setter를 이용해 값을 설정해야 합니다.
      *          유효한 값을 명시적으로 설정하지 않을 경우, 기본 값인 false로 설정합니다. </li>
-     *     <li> 데이터 누락(null)를 감지해 예외를 발생시키고, 데이터 누락 시 원시 타입인 boolean의 기본 값(false)에 의해
+     *     <li> 데이터 누락(null)을 감지해 예외를 발생시키고, 데이터 누락 시 원시 타입인 boolean의 기본 값(false)에 의해
      *          의도치 않은 상태가 되는 것을 막기 위해 wrapping 타입인 Boolean 래퍼 타입을 사용합니다. </li>
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private Boolean isHidden;
 
     /**
