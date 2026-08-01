@@ -5,6 +5,7 @@ import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.PantryService;
 import imwhs.eatz_server.service.eatzuser.EatzUserPlanQueryService;
 import imwhs.eatz_server.service.eatzuser.EatzUserPlanService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class EatzUserPlanController {
     public void updatePlan(
             @PathVariable Long planId,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody PlanUpdateRequest request) {
+            @Valid @RequestBody PlanUpdateRequest request) {
         eatzUserPlanService.update(planId, userId, request.getDate(), request.getPriority());
     }
 

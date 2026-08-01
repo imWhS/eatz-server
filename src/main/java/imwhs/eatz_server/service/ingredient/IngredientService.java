@@ -30,11 +30,17 @@ public class IngredientService {
      * @param adminId 관리자의 ID
      * @param name 재료의 이름
      * @param parentId 재료를 포함시킬 상위 재료의 ID
+     * @param isParentCoupled 상위 재료와의 커플링 여부. 상위 재료의 ID가 null이면 false로 설정됩니다.
      * @param childIds 하위에 포함시킬 재료들의 ID 목록
      * @return 등록 완료된 재료의 생성 정보를 담은 응답 DTO
      */
     @Transactional(rollbackFor = Exception.class)
-    public IngredientCreationInfoResponse register(Long adminId, String name, Long parentId, List<Long> childIds) {
+    public IngredientCreationInfoResponse register(
+            Long adminId,
+            String name,
+            Long parentId,
+            Boolean isParentCoupled,
+            List<Long> childIds) {
         userRepository.validateExistsAsAdmin(adminId);
 
         // 사용하려는 재료 이름의 유효성을 검증합니다.
@@ -53,6 +59,9 @@ public class IngredientService {
             // 재료와 상위 재료 간 양방향 연관 관계를 설정합니다.
             Ingredient parent = ingredientRepository.getReference(parentId);
             ingredient.setParent(parent);
+
+            // 재료와 상위 재료와의 커플링 여부를 설정합니다.
+            ingredient.updateIsParentCoupled(isParentCoupled);
         }
 
         // 재료에 설정할 하위 재료 정보가 DTO에 포함되어 있는 경우: 하위 재료를 추가합니다.
@@ -73,14 +82,21 @@ public class IngredientService {
      * @param adminId 관리자의 ID
      * @param id 재료의 ID
      * @param name 재료의 새 이름. 필수 항목입니다.
-     * @param parentId 재료를 포함시킬 새 상위 재료의 ID.
-     *                 null이면 아무 것도 업데이트하지 않습니다.
+     * @param parentId 재료를 포함시킬 새 상위 재료의 ID. null이면 아무 것도 업데이트하지 않습니다.
+     * @param isParentCoupled 상위 재료와의 커플링 여부. null이면 아무 것도 업데이트하지 않습니다.
+     *                        상위 재료의 ID가 null이면 false로 설정됩니다.
      * @param childIds 하위에 포함시킬 새 하위 재료 ID 목록.
      *                 빈 컬렉션이면 재료의 모든 기존 하위 재료가 지워집니다. null이면 아무 것도 업데이트하지 않습니다.
      * @return 업데이트 완료된 재료의 ID
      */
     @Transactional(rollbackFor = Exception.class)
-    public void update(Long adminId, long id, String name, Long parentId, List<Long> childIds) {
+    public void update(
+            Long adminId,
+            long id,
+            String name,
+            Long parentId,
+            Boolean isParentCoupled,
+            List<Long> childIds) {
         userRepository.validateExistsAsAdmin(adminId);
 
         // ID로 업데이트할 재료의 엔티티를 조회합니다.
@@ -98,6 +114,9 @@ public class IngredientService {
 
             // 새 상위 재료로 이동합니다.
             ingredient.setParent(parent);
+
+            // 재료와 상위 재료와의 커플링 여부를 설정합니다.
+            ingredient.updateIsParentCoupled(isParentCoupled);
         }
 
         // 하위로 포함시킬 모든 재료 목록을 조회합니다.
@@ -112,22 +131,28 @@ public class IngredientService {
     }
 
     /**
-     * 상위 재료를 해제합니다.
+     * 상위 재료 설정을 해제합니다.
+     * <ul>
+     *     <li> 상위 재료와의 커플링 여부가 해제됩니다. </li>
+     * </ul>
      * @param adminId 관리자의 ID
      * @param id 재료의 ID
      */
     @Transactional(rollbackFor = Exception.class)
-    public void removeFromParent(Long adminId, long id) {
+    public void removeParent(Long adminId, long id) {
         userRepository.validateExistsAsAdmin(adminId);
 
         // ID로 재료의 엔티티를 조회합니다.
         Ingredient ingredient = ingredientRepository.get(id);
-
         ingredient.removeParent();
+        ingredient.updateIsParentCoupled(false);
     }
 
     /**
      * 재료를 삭제합니다.
+     * <ul>
+     *     <li> 하위 재료와의 커플링 여부가 해제됩니다. </li>
+     * </ul>
      * @param adminId 관리자의 ID
      * @param id 재료의 ID
      */
@@ -141,7 +166,7 @@ public class IngredientService {
         // 재료에 설정된 상위 재료를 해제합니다.
         ingredient.removeParent();
 
-        // 재료의 하위 재료를 모두 제거합니다.
+        // 하위 재료와의 의존성을 모두 제거합니다.
         ingredient.clearChildren();
 
         // 엔티티를 삭제합니다.

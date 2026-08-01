@@ -72,7 +72,7 @@ public class EatzUserController {
     public void updateUserPassword(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody @Valid UpdateEatzUserPasswordRequest request) {
+            @Valid @RequestBody UpdateEatzUserPasswordRequest request) {
         userService.updatePassword(id, userId, request.getExistingPassword(), request.getNewPassword());
     }
 
@@ -81,7 +81,7 @@ public class EatzUserController {
     public void updateUserUsername(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody @Valid UpdateEatzUserUsernameRequest request) {
+            @Valid @RequestBody UpdateEatzUserUsernameRequest request) {
         userService.updateUsername(id, userId, request.getUsername());
     }
 
@@ -95,7 +95,7 @@ public class EatzUserController {
     public void markUserAsDeleted(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody @Valid EatzUserMarkAsDeletedRequest request) {
+            @Valid @RequestBody EatzUserMarkAsDeletedRequest request) {
         userService.markAsDeleted(id, userId, request.getExistingPassword());
     }
 
@@ -109,7 +109,7 @@ public class EatzUserController {
     public void deleteUser(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody @Valid EatzUserMarkAsDeletedRequest request) {
+            @Valid @RequestBody EatzUserMarkAsDeletedRequest request) {
         userService.delete(id, userId, request.getExistingPassword());
     }
 

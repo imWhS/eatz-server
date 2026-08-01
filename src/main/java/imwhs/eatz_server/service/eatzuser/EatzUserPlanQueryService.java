@@ -159,6 +159,8 @@ public class EatzUserPlanQueryService {
                 boolean isMissing = !(ingredientIdsByUserId.contains(ingredient.getId()));
                 ChecklistIngredientDto checklistIngredient = new ChecklistIngredientDto(
                         ingredient.getId(),
+                        ingredient.isParentCoupled(),
+                        ingredient.getCoupledParentName(),
                         ingredient.getName(),
                         isMissing,
                         likedIngredientIdsByUserId.contains(ingredient.getId())
@@ -190,6 +192,8 @@ public class EatzUserPlanQueryService {
             for (IngredientEssentialDto ingredient : cookableRecipeIngredients) {
                 ChecklistIngredientDto checklistIngredient = new ChecklistIngredientDto(
                         ingredient.getId(),
+                        ingredient.isParentCoupled(),
+                        ingredient.getCoupledParentName(),
                         ingredient.getName(),
                         false,
                         likedIngredientIdsByUserId.contains(ingredient.getId())

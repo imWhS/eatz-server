@@ -5,6 +5,7 @@ import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.comment.CommentService;
 import imwhs.eatz_server.service.ReportService;
 import imwhs.eatz_server.service.comment.CommentQueryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,7 @@ public class RecipeCommentController {
     public CommentBasicDto registerComment(
             @PathVariable Long recipeId,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody CreateCommentRequest request) {
+            @Valid @RequestBody CreateCommentRequest request) {
         return commentService.register(recipeId, userId, request.getContent());
     }
 
@@ -49,7 +50,7 @@ public class RecipeCommentController {
             @PathVariable Long recipeId,
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody UpdateCommentRequest request) {
+            @Valid @RequestBody UpdateCommentRequest request) {
         return commentService.update(recipeId, id, userId, request.getContent());
     }
 

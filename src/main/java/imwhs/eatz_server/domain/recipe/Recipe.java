@@ -67,6 +67,7 @@ public class Recipe extends BaseEntity {
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private String imageUrl;
 
     /**
@@ -78,6 +79,7 @@ public class Recipe extends BaseEntity {
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private Integer cookingTime;
 
     /**
@@ -89,6 +91,7 @@ public class Recipe extends BaseEntity {
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private Integer servings;
 
     /**
@@ -97,12 +100,13 @@ public class Recipe extends BaseEntity {
      *     <li> 필수 항목입니다. </li>
      *     <li> 별도의 setter를 이용해 값을 설정해야 합니다.
      *          유효한 값을 명시적으로 설정하지 않을 경우, 기본 값인 true로 설정합니다. </li>
-     *     <li> 데이터 누락(null)를 감지해 예외를 발생시키고, 데이터 누락 시 기본 값인 true가 아닌,
+     *     <li> 데이터 누락(null)을 감지해 예외를 발생시키고, 데이터 누락 시 기본 값인 true가 아닌,
      *          원시 타입인 boolean의 기본 값인 false으로 왜곡되어 의도치 않게 댓글 기능이 미사용 상태가 되는 것을 막기 위해
      *          wrapping 타입인 Boolean 래퍼 타입을 사용합니다. </li>
      * </ul>
      */
     @NotNull
+    @Column(nullable = false)
     private Boolean isCommentEnabled;
 
     /**

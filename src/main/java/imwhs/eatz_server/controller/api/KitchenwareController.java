@@ -7,6 +7,7 @@ import imwhs.eatz_server.dto.kitchenware.KitchenwareBasicDto;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.kitchenware.KitchenwareQueryService;
 import imwhs.eatz_server.service.kitchenware.KitchenwareService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,7 @@ public class KitchenwareController {
     @ResponseStatus(HttpStatus.CREATED)
     public KitchenwareCreationInfoResponse registerKitchenware(
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody KitchenwareCreateRequest request) {
+            @Valid @RequestBody KitchenwareCreateRequest request) {
         return kitchenwareService.register(userId, request.getName());
     }
 

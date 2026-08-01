@@ -50,39 +50,39 @@ public interface RecipeIngredientRepository extends
             "   ri.deletedAt IS null")
     List<RecipeIngredient> findAllByRecipeIdsOld(@Param("ids") List<Long> ids);
 
-    @Query("SELECT new imwhs.eatz_server.dto.recipe.ingredient.IngredientRequirementDto(" +
-            "   i.id, " +
-            "   i.name, " +
-            "   (SELECT 0 < count(pi.id) " +
-            "       FROM PantryIngredient pi " +
-            "       WHERE pi.user.id = :userId " +
-            "           AND pi.ingredient = i " +
-            "           AND pi.deletedAt IS null), " +
-            "   (SELECT 0 < count(l.id) " +
-            "       FROM LikedIngredient l " +
-            "       WHERE l.user.id = :userId " +
-            "           AND l.ingredient = i " +
-            "           AND l.isLiked = true " +
-            "           AND l.deletedAt IS null)) " +
-            "FROM RecipeIngredient ir " +
-            "JOIN ir.ingredient i " +
-            "WHERE " +
-            "   ir.recipe.id = :recipeId AND " +
-            "   ir.deletedAt IS null")
-    List<IngredientRequirementDto> findAllRecipeIngredientsByRecipeIdAndUserId(
-            @Param("recipeId") Long recipeId,
-            @Param("userId") Long userId);
+//    @Query("SELECT new imwhs.eatz_server.dto.recipe.ingredient.IngredientRequirementDto(" +
+//            "   i.id, " +
+//            "   i.name, " +
+//            "   (SELECT 0 < count(pi.id) " +
+//            "       FROM PantryIngredient pi " +
+//            "       WHERE pi.user.id = :userId " +
+//            "           AND pi.ingredient = i " +
+//            "           AND pi.deletedAt IS null), " +
+//            "   (SELECT 0 < count(l.id) " +
+//            "       FROM LikedIngredient l " +
+//            "       WHERE l.user.id = :userId " +
+//            "           AND l.ingredient = i " +
+//            "           AND l.isLiked = true " +
+//            "           AND l.deletedAt IS null)) " +
+//            "FROM RecipeIngredient ir " +
+//            "JOIN ir.ingredient i " +
+//            "WHERE " +
+//            "   ir.recipe.id = :recipeId AND " +
+//            "   ir.deletedAt IS null")
+//    List<IngredientRequirementDto> findAllRecipeIngredientsByRecipeIdAndUserId(
+//            @Param("recipeId") Long recipeId,
+//            @Param("userId") Long userId);
 
-    @Query("SELECT new imwhs.eatz_server.dto.recipe.ingredient.IngredientRequirementDto(" +
-            "   i.id, " +
-            "   i.name, " +
-            "   false, " +
-            "   false)" +
-            "FROM RecipeIngredient ri " +
-            "JOIN ri.ingredient i " +
-            "WHERE " +
-            "   ri.recipe.id = :id AND " +
-            "   ri.deletedAt IS null")
-    List<IngredientRequirementDto> findAllRecipeIngredientsByRecipeId(@Param("id") Long id);
+//    @Query("SELECT new imwhs.eatz_server.dto.recipe.ingredient.IngredientRequirementDto(" +
+//            "   i.id, " +
+//            "   i.name, " +
+//            "   false, " +
+//            "   false)" +
+//            "FROM RecipeIngredient ri " +
+//            "JOIN ri.ingredient i " +
+//            "WHERE " +
+//            "   ri.recipe.id = :id AND " +
+//            "   ri.deletedAt IS null")
+//    List<IngredientRequirementDto> findAllRecipeIngredientsByRecipeId(@Param("id") Long id);
 
 }

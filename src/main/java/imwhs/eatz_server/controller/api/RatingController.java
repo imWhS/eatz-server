@@ -3,6 +3,7 @@ package imwhs.eatz_server.controller.api;
 import imwhs.eatz_server.dto.rating.RatingUpdateRequest;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserId;
 import imwhs.eatz_server.service.rating.RatingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class RatingController {
     public void update(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId,
-            @RequestBody RatingUpdateRequest request) {
+            @Valid @RequestBody RatingUpdateRequest request) {
         ratingService.update(id, userId, request.getScore(), request.getContent());
     }
 

@@ -33,26 +33,26 @@ public class IngredientQueryService {
     private final EatzUserRepository userRepository;
 
     /**
-     * 특정 상위 재료의 기본 정보와 해당 상위 재료에 포함되어 있는 모든 재료의 기본 정보 목록을 가져옵니다.
+     * 조회 대상 재료의 기본 정보와 모든 하위 재료의 기본 정보 목록을 가져옵니다.
      * <ul>
-     *     <li> 사용자의 ID를 전달받으면, 상위 재료에 포함되어 있는 모든 재료에 대한 해당 사용자의 context를 포함합니다. </li>
-     *     <li> 조회 대상 상위 재료에 해당하는 Ingredient 및 이와 연관 관계인 Ingredient.parent를 페치 조인하여 조회합니다. </li>
+     *     <li> 사용자의 ID를 전달받으면, 조회 대상 재료에 포함되어 있는 모든 하위 재료에 대한 해당 사용자의 context를 포함합니다. </li>
+     *     <li> 조회 대상 재료에 해당하는 Ingredient 및 이와 연관 관계인 Ingredient.parent를 페치 조인하여 조회합니다. </li>
      *     <li> Ingredient.children은 DTO 생성자에서 지연 로딩(Lazy Loading)으로 처리됩니다. </li>
      * </ul>
-     * @param id 재료의 ID
+     * @param id 조회 대상 재료의 ID
      * @param userId 사용자의 ID (게스트일 경우 null)
      * @return 특정 상위 재료의 기본 정보와 해당 상위 재료에 포함되어 있는 모든 재료의 기본 정보 목록
      */
-    public IngredientBasicsInParentDto getAllBasicsInParent(Long id, Long userId) {
-        // 상위 재료(재료)와 상위 재료가 포함되어 있는 더 상위의 상위 재료만 먼저 페치 조인으로 함께 가져옵니다.
-        Ingredient parent = ingredientRepository.getWithParent(id);
+    public IngredientEssentialWithChildrenBasicsDto getAllBasicsInParent(Long id, Long userId) {
+        // 재료와 상위 재료만 먼저 페치 조인으로 함께 가져옵니다.
+        Ingredient ingredient = ingredientRepository.getWithParent(id);
 
-        // 상위 재료(재료) 및 상위 재료가 포함되어 있는 더 상위의 상위 재료만 DTO에 먼저 초기화합니다.
-        IngredientBasicsInParentDto dto = new IngredientBasicsInParentDto(parent);
+        // 재료와 상위 재료만 DTO에 먼저 초기화합니다.
+        IngredientEssentialWithChildrenBasicsDto dto = new IngredientEssentialWithChildrenBasicsDto(ingredient);
 
-        // 상위 재료(재료)에 포함되어 있는 모든 재료 목록을 가져온 후, DTO의 해당 필드에 초기화합니다.
+        // 재료에 포함되어 있는 모든 하위 재료 목록을 가져온 후, DTO의 해당 필드에 초기화합니다.
         List<IngredientBasicDto> ingredients = ingredientRepository.findAllBasicsByParentId(id, userId);
-        dto.setIngredients(ingredients);
+        dto.setChildren(ingredients);
 
         return dto;
     }
@@ -148,7 +148,6 @@ public class IngredientQueryService {
      * @param userId 사용자의 ID
      * @return 레시피를 요리하기 위해 준비해야 할 재료 정보 목록
      */
-    @Transactional(rollbackFor = Exception.class)
     public List<IngredientRequirementDto> getIngredientRequirementsByRecipeId(Long id, Long userId) {
         return recipeIngredientRepository.findAllIngredientRequirementsByRecipeId(id, userId);
     }

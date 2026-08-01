@@ -31,6 +31,8 @@ public class IngredientQueryRepositoryImpl implements IngredientQueryRepository 
         return queryFactory
                 .select(Projections.constructor(IngredientBasicDto.class,
                         ingredient.id,
+                        ingredient.isParentCoupled,
+                        parent.name,
                         ingredient.name,
                         IngredientQueryUtil.createHasChildrenExpression(ingredient),
                         IngredientQueryUtil.createIsOwnedExpression(ingredient, userId),
@@ -48,11 +50,14 @@ public class IngredientQueryRepositoryImpl implements IngredientQueryRepository 
     @Override
     public Page<IngredientBasicDto> findAllIngredientsByLikedUserId(Long userId, Pageable pageable) {
         QIngredient ingredient = QIngredient.ingredient;
+        QIngredient parent = new QIngredient("parent");
         QLikedIngredient likedIngredient = QLikedIngredient.likedIngredient;
 
         JPAQuery<IngredientBasicDto> mainQuery = queryFactory
                 .select(Projections.constructor(IngredientBasicDto.class,
                         ingredient.id,
+                        ingredient.isParentCoupled,
+                        parent.name,
                         ingredient.name,
                         IngredientQueryUtil.createHasChildrenExpression(ingredient),
                         IngredientQueryUtil.createIsOwnedExpression(ingredient, userId),
@@ -64,6 +69,7 @@ public class IngredientQueryRepositoryImpl implements IngredientQueryRepository 
                                 .and(likedIngredient.isLiked.isTrue())
                                 .and(likedIngredient.deletedAt.isNull())
                 )
+                .leftJoin(ingredient.parent, parent)
                 .where(
                         ingredient.deletedAt.isNull()
                 )
@@ -95,6 +101,8 @@ public class IngredientQueryRepositoryImpl implements IngredientQueryRepository 
 
         JPAQuery<IngredientBasicDto> mainQuery = queryFactory.select(Projections.constructor(IngredientBasicDto.class,
                         ingredient.id,
+                        ingredient.isParentCoupled,
+                        Expressions.nullExpression(String.class),
                         ingredient.name,
                         IngredientQueryUtil.createHasChildrenExpression(ingredient),
                         IngredientQueryUtil.createIsOwnedExpression(ingredient, userId),
@@ -102,7 +110,7 @@ public class IngredientQueryRepositoryImpl implements IngredientQueryRepository 
                 .from(ingredient)
                 .where(
                         ingredient.parent.isNull(),
-                        ingredient.deletedBy.isNull()
+                        ingredient.deletedAt.isNull()
                 )
                 .orderBy(ingredient.name.asc());
 
@@ -124,6 +132,7 @@ public class IngredientQueryRepositoryImpl implements IngredientQueryRepository 
     @Override
     public Page<IngredientBasicDto> searchBasics(String keyword, Long userId, Pageable pageable) {
         QIngredient ingredient = QIngredient.ingredient;
+        QIngredient parent = new QIngredient("parent");
 
         StringTemplate ingredientNameIgnoredBlanks = Expressions.stringTemplate(
                 "replace({0}, {1}, {2})", ingredient.name, " ", "");
@@ -131,11 +140,14 @@ public class IngredientQueryRepositoryImpl implements IngredientQueryRepository 
         JPAQuery<IngredientBasicDto> mainQuery = queryFactory
                 .select(Projections.constructor(IngredientBasicDto.class,
                         ingredient.id,
+                        ingredient.isParentCoupled,
+                        parent.name,
                         ingredient.name,
                         IngredientQueryUtil.createHasChildrenExpression(ingredient),
                         IngredientQueryUtil.createIsOwnedExpression(ingredient, userId),
                         IngredientQueryUtil.createIsLikedExpression(ingredient, userId)))
                 .from(ingredient)
+                .leftJoin(ingredient.parent, parent)
                 .where(
                         ingredientNameIgnoredBlanks.containsIgnoreCase(keyword),
                         ingredient.deletedAt.isNull()

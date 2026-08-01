@@ -328,17 +328,52 @@ public class DataSeeder {
     }
 
     private List<Ingredient> createIngredients() {
-        List<String> ingredientNames = List.of(
-                "닭 다리살", "닭 가슴살", "돼지 목살", "돼지 앞다리살", "삼겹살", "소 등심", "소 안창살", "차돌박이", "오징어", "새우", "조개", "참치캔", "스팸",
+        List<Ingredient> ingredients = new ArrayList<>();
+
+        // 1. 최상위(Root) 계층 재료 생성 (고기류)
+        Ingredient pork = ingredientRepository.save(Ingredient.create("돼지고기"));
+        Ingredient beef = ingredientRepository.save(Ingredient.create("소고기"));
+        Ingredient chicken = ingredientRepository.save(Ingredient.create("닭고기"));
+        ingredients.addAll(List.of(pork, beef, chicken));
+
+        // 2. 하위 계층 재료 생성 및 커플링 (True) 설정 테스트
+        // 돼지고기 하위
+        ingredients.add(createChildIngredient("목살", pork, true));
+        ingredients.add(createChildIngredient("앞다리살", pork, true));
+        ingredients.add(createChildIngredient("삼겹살", pork, false)); // 삼겹살은 "돼지고기 삼겹살"보다 보통 그냥 "삼겹살"로 쓰니 false로 테스트!
+
+        // 소고기 하위
+        ingredients.add(createChildIngredient("등심", beef, true));     // "소고기 등심"
+        ingredients.add(createChildIngredient("안창살", beef, true));    // "소고기 안창살"
+        ingredients.add(createChildIngredient("차돌박이", beef, true));   // "소고기 차돌박이"
+
+        // 닭고기 하위
+        ingredients.add(createChildIngredient("가슴살", chicken, true));   // "닭고기 가슴살"
+        ingredients.add(createChildIngredient("다리살", chicken, true));   // "닭고기 다리살"
+
+        // 3. 커플링하지 않는 일반/단일 계층 재료들
+        List<String> normalNames = List.of(
+                "오징어", "새우", "조개", "참치캔", "스팸",
                 "양파", "대파", "쪽파", "마늘", "당근", "감자", "고구마", "애호박", "오이", "청양고추", "콩나물", "숙주", "배추", "무", "양배추", "상추", "깻잎", "토마토",
                 "두부", "순두부", "계란", "우유", "체다 치즈", "모짜렐라 치즈", "버터",
                 "고추장", "된장", "간장", "설탕", "소금", "후추", "고춧가루", "다진마늘", "참기름", "식용유", "밀가루", "부침 가루", "김치", "밥", "라면 사리", "떡국 떡"
         );
-        List<Ingredient> ingredients = new ArrayList<>();
-        for (String name : ingredientNames) {
+
+        for (String name : normalNames) {
             ingredients.add(ingredientRepository.save(Ingredient.create(name)));
         }
+
         return ingredients;
+    }
+
+    /**
+     * 하위 재료를 생성하고 부모와 연관 관계 및 커플링 옵션을 설정한 뒤 저장하는 헬퍼 메서드
+     */
+    private Ingredient createChildIngredient(String name, Ingredient parent, boolean isCoupled) {
+        Ingredient child = Ingredient.create(name);
+        child.setParent(parent);
+        child.updateIsParentCoupled(isCoupled);
+        return ingredientRepository.save(child);
     }
 
     private List<Kitchenware> createKitchenwares() {
