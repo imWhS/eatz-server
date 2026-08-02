@@ -13,13 +13,25 @@ import lombok.NoArgsConstructor;
 @Data
 public class ChecklistKitchenwareDto {
 
+    /**
+     * 도구의 ID
+     */
     @EqualsAndHashCode.Include
     private Long id;
 
+    /**
+     * 도구의 이름
+     */
     private String name;
 
+    /**
+     * 도구의 이미지 URL
+     */
     private String imageUrl;
 
+    /**
+     * 도구가 보관함에 추가되어 있지 않은지 여부
+     */
     private boolean isMissing;
 
     public ChecklistKitchenwareDto(Kitchenware kitchenware, boolean isMissing) {

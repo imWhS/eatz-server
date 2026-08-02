@@ -16,6 +16,7 @@ public class ChecklistIngredientDto {
     /**
      * 재료의 ID
      */
+    @EqualsAndHashCode.Include
     private Long id;
 
     /**
@@ -37,7 +38,7 @@ public class ChecklistIngredientDto {
     private String name;
 
     /**
-     * 재료 보유 여부
+     * 재료가 보관함에 추가되어 있지 않은지 여부
      */
     private boolean isMissing;
 

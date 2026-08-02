@@ -4,6 +4,7 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.pantry.PantryKitchenware;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.dto.kitchenware.KitchenwareBasicDto;
+import imwhs.eatz_server.repository.pantry.kitchenware.PantryKitchenwareQueryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +20,8 @@ import java.util.Set;
  * PantryKitchenware 엔티티의 기본적인 조회를 포함한 CRUD 쿼리 작업을 처리하는 Spring Data JPA 리포지토리입니다.
  */
 @Repository
-public interface PantryKitchenwareRepository extends JpaRepository<PantryKitchenware, Long> {
+public interface PantryKitchenwareRepository
+        extends JpaRepository<PantryKitchenware, Long>, PantryKitchenwareQueryRepository {
 
     boolean existsByKitchenwareAndUser(Kitchenware kitchenware, EatzUser user);
 
@@ -35,28 +37,6 @@ public interface PantryKitchenwareRepository extends JpaRepository<PantryKitchen
             "   pk.user = :user AND " +
             "   pk.deletedAt IS null")
     List<Long> findAllKitchenwareIdsByUser(@Param("user") EatzUser user);
-
-    /**
-     * ID에 해당하는 사용자가 보관함에 추가한 도구의 ID 집합을 조회합니다.
-     * @param id 사용자의 ID
-     * @return 사용자가 보관함에 추가한 도구의 ID 집합
-     */
-    @Query("SELECT k.id " +
-            "FROM PantryKitchenware pk " +
-            "JOIN pk.kitchenware k ON k.deletedAt IS null " +
-            "WHERE " +
-            "   pk.user.id = :id AND " +
-            "   pk.deletedAt IS null")
-    Set<Long> findAllKitchenwareIdsByUserId(@Param("id") Long id);
-
-    @Query("SELECT k.id " +
-            "FROM PantryKitchenware pk " +
-            "JOIN pk.kitchenware k ON k.deletedAt IS null " +
-            "WHERE " +
-            "   pk.kitchenware.id IN :kitchenwareIds AND" +
-            "   pk.deletedAt IS null AND " +
-            "   pk.user.id = :id")
-    Set<Long> findExistingKitchenwareIdsByUserId(@Param("id") Long id, @Param("kitchenwareIds") List<Long> kitchenwareIds);
 
     /**
      * 사용자가 보관함에 추가한 모든 도구의 기본 정보 목록을 조회합니다.

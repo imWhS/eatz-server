@@ -2,10 +2,7 @@ package imwhs.eatz_server.repository.pantry;
 
 import imwhs.eatz_server.domain.pantry.PantryIngredient;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.dto.ingredient.IngredientBasicDto;
 import imwhs.eatz_server.repository.pantry.ingredient.PantryIngredientQueryRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,28 +31,6 @@ public interface PantryIngredientRepository
             "   pi.user = :user AND " +
             "   pi.deletedAt IS null")
     List<Long> findAllIngredientIdsByUser(@Param("user") EatzUser user);
-
-    /**
-     * ID에 해당하는 사용자가 보관함에 추가한 재료의 ID 목록을 조회합니다.
-     * @param id 사용자의 ID
-     * @return 사용자가 보관함에 추가한 재료의 ID 집합
-     */
-    @Query("SELECT i.id " +
-            "FROM PantryIngredient pi " +
-            "JOIN pi.ingredient i ON i.deletedAt IS null " +
-            "WHERE " +
-            "   pi.user.id = :id AND " +
-            "   pi.deletedAt IS null")
-    Set<Long> findAllIngredientIdsByUserId(@Param("id") Long id);
-
-    @Query("SELECT i.id " +
-            "FROM PantryIngredient pi " +
-            "JOIN pi.ingredient i ON i.deletedAt IS null " +
-            "WHERE " +
-            "   pi.ingredient.id IN :ingredientIds AND" +
-            "   pi.deletedAt IS null AND " +
-            "   pi.user.id = :id")
-    Set<Long> findExistingIngredientIdsByUserId(@Param("id") Long id, @Param("ingredientIds") List<Long> ingredientIds);
 
     /**
      * 사용자가 보관함에 추가한 재료의 수를 집계합니다.
