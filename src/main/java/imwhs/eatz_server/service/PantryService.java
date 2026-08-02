@@ -184,10 +184,10 @@ public class PantryService {
         // 사용자가 보관함에 추가한 재료, 도구 ID 목록 -> 모두 불러오지 말고, 레시피가 요구하는 재료, 도구에 대해서만 가져오기
         Set<Long> ingredientIdsInPantry = ingredientIds.isEmpty()
                 ? Collections.emptySet()
-                : pantryIngredientRepository.findExistingIngredientIdsByUserId(user.getId(), ingredientIds);
+                : pantryIngredientRepository.findAllIngredientIdsByUserId(user.getId(), ingredientIds);
         Set<Long> kitchenwareIdsInPantry = kitchenwareIds.isEmpty()
                 ? Collections.emptySet()
-                : pantryKitchenwareRepository.findExistingKitchenwareIdsByUserId(user.getId(), kitchenwareIds);
+                : pantryKitchenwareRepository.findAllKitchenwareIdsByUserId(user.getId(), kitchenwareIds);
 
         List<PantryIngredient> ingredients = ingredientIds.stream()
                 .filter(ingredientId -> !ingredientIdsInPantry.contains(ingredientId))

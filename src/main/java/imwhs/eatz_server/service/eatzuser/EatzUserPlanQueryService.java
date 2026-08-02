@@ -112,19 +112,19 @@ public class EatzUserPlanQueryService {
         // 체크리스트 조회 대상 플랜 목록에서 레시피의 ID만 추출합니다.
         List<Long> recipeIds = plans.stream().map(PlanBasicDto::getRecipeId).toList();
 
-        // 레시피 ID 별 요구 재료, 도구 목록을 조회합니다.
+        // 레시피 ID 별 요구 재료 및 도구 목록을 각각 조회합니다.
         Map<Long, List<IngredientEssentialDto>> ingredientsByRecipeId =
                 recipeIngredientRepository.findAllEssentialsByRecipeIds(recipeIds);
         Map<Long, List<KitchenwareEssentialDto>> kitchenwaresByRecipeId =
                 recipeKitchenwareRepository.findAllEssentialsByRecipeIds(recipeIds);
 
         // 사용자가 보관함에 추가한 재료, 도구 ID 목록과 사용자가 좋아하는 재료 ID 목록을 조회합니다.
-        Set<Long> ingredientIdsByUserId = pantryIngredientRepository.findAllIngredientIdsByUserId(userId);
-        Set<Long> kitchenwareIdsByUserId = pantryKitchenwareRepository.findAllKitchenwareIdsByUserId(userId);
-        Set<Long> likedIngredientIdsByUserId = likedIngredientRepository.findAllIngredientIdsByUserIdAndIsLikedIsTrue(userId);
+        Set<Long> pantryIngredientIds = pantryIngredientRepository.findAllIngredientIdsByUserId(userId, null);
+        Set<Long> pantryKitchenwareIds = pantryKitchenwareRepository.findAllKitchenwareIdsByUserId(userId, null);
+        Set<Long> likedIngredientIds = likedIngredientRepository.findAllIngredientIdsByUserIdAndIsLikedIsTrue(userId);
 
-        List<PlanBasicDto> cookablePlans = new ArrayList<>();
-        List<PlanBasicDto> uncookablePlans = new ArrayList<>();
+        List<PlanBasicDto> cookables = new ArrayList<>();
+        List<PlanBasicDto> uncookables = new ArrayList<>();
 
         // 플랜으로 추가한 레시피 별 요구 재료, 도구와 사용자가 추가한 재료, 도구를 비교해 요리 가능, 불가능 플랜을 분류합니다.
         for (PlanBasicDto plan : plans) {
@@ -133,10 +133,10 @@ public class EatzUserPlanQueryService {
                     recipeId,
                     ingredientsByRecipeId,
                     kitchenwaresByRecipeId,
-                    ingredientIdsByUserId,
-                    kitchenwareIdsByUserId);
-            if (isCookable) { cookablePlans.add(plan); }
-            else { uncookablePlans.add(plan); }
+                    pantryIngredientIds,
+                    pantryKitchenwareIds);
+            if (isCookable) { cookables.add(plan); }
+            else { uncookables.add(plan); }
         }
 
         Set<ChecklistIngredientDto> uncookableRequirementsIngredients = new HashSet<>();
@@ -150,20 +150,20 @@ public class EatzUserPlanQueryService {
         // 요리 불가능한 플랜 별 요구 재료, 도구 목록을 순회하며 사용자의 보유 여부에 따라 누락 여부(isMissing)를 판별합니다.
         // 여러 레시피에서 공통으로 요구하는 항목이 체크리스트에 중복 표시되지 않도록 하기 위해, 중복이 제거된 준비물 집합으로 구성합니다.
         // 향후 재료 별 요구량 기능이 도입되면, 순회 시 중복를 제거하는 것 대신 요구량을 합산하는 흐름으로 확장할 수 있습니다.
-        for (PlanBasicDto uncookablePlan : uncookablePlans) {
-            Long uncookableRecipeId = uncookablePlan.getRecipeId();
+        for (PlanBasicDto uncookable : uncookables) {
+            Long uncookableRecipeId = uncookable.getRecipeId();
 
             List<IngredientEssentialDto> uncookableRecipeIngredients =
                     ingredientsByRecipeId.getOrDefault(uncookableRecipeId, Collections.emptyList());
             for (IngredientEssentialDto ingredient : uncookableRecipeIngredients) {
-                boolean isMissing = !(ingredientIdsByUserId.contains(ingredient.getId()));
+                boolean isMissing = !(pantryIngredientIds.contains(ingredient.getId()));
                 ChecklistIngredientDto checklistIngredient = new ChecklistIngredientDto(
                         ingredient.getId(),
                         ingredient.isParentCoupled(),
                         ingredient.getCoupledParentName(),
                         ingredient.getName(),
                         isMissing,
-                        likedIngredientIdsByUserId.contains(ingredient.getId())
+                        likedIngredientIds.contains(ingredient.getId())
                 );
                 uncookableRequirementsIngredients.add(checklistIngredient);
             }
@@ -171,7 +171,7 @@ public class EatzUserPlanQueryService {
             List<KitchenwareEssentialDto> uncookableRecipeKitchenwares =
                     kitchenwaresByRecipeId.getOrDefault(uncookableRecipeId, Collections.emptyList());
             for (KitchenwareEssentialDto kitchenware : uncookableRecipeKitchenwares) {
-                boolean isMissing = !(kitchenwareIdsByUserId.contains(kitchenware.getId()));
+                boolean isMissing = !(pantryKitchenwareIds.contains(kitchenware.getId()));
                 ChecklistKitchenwareDto checklistKitchenware = new ChecklistKitchenwareDto(
                         kitchenware.getId(),
                         kitchenware.getName(),
@@ -184,8 +184,8 @@ public class EatzUserPlanQueryService {
 
         // 요리 가능한 플랜 별 요구 재료, 도구 목록을 순회하며 사용자의 보유 여부에 따라 누락 여부(isMissing)를 판별합니다.
         // 여러 레시피에서 공통으로 요구하는 항목이 체크리스트에 중복 표시되지 않도록 하기 위해, 중복이 제거된 준비물 집합(Set) 컬렉션으로 구성합니다.
-        for (PlanBasicDto cookablePlan : cookablePlans) {
-            Long cookableRecipeId = cookablePlan.getRecipeId();
+        for (PlanBasicDto cookable : cookables) {
+            Long cookableRecipeId = cookable.getRecipeId();
 
             List<IngredientEssentialDto> cookableRecipeIngredients =
                     ingredientsByRecipeId.getOrDefault(cookableRecipeId, Collections.emptyList());
@@ -196,7 +196,7 @@ public class EatzUserPlanQueryService {
                         ingredient.getCoupledParentName(),
                         ingredient.getName(),
                         false,
-                        likedIngredientIdsByUserId.contains(ingredient.getId())
+                        likedIngredientIds.contains(ingredient.getId())
                 );
                 cookableRequirementsIngredients.add(checklistIngredient);
             }
@@ -228,14 +228,14 @@ public class EatzUserPlanQueryService {
 
         // 분류된 요리 불가능 플랜 목록과 각각의 준비물 목록을 취합하여 그룹 별 DTO를 생성합니다.
         ChecklistCookabilityDto uncookable = new ChecklistCookabilityDto(
-                uncookablePlans,
+                uncookables,
                 new ChecklistRequirementsDto(
                         uncookableRequirementsIngredients,
                         uncookableRequirementsKitchenwares));
 
         // 분류된 요리 가능 플랜 목록과 각각의 준비물 목록을 취합하여 그룹 별 DTO를 생성합니다.
         ChecklistCookabilityDto cookable = new ChecklistCookabilityDto(
-                cookablePlans,
+                cookables,
                 new ChecklistRequirementsDto(
                         cookableRequirementsIngredients,
                         cookableRequirementsKitchenwares));
@@ -391,13 +391,13 @@ public class EatzUserPlanQueryService {
     }
 
     /**
-     * 레시피의 요구 재료, 도구와 사용자가 추가한 재료, 도구를 비교해 해당 레시피의 요리 가능 여부를 확인합니다.
-     * @param recipeId
-     * @param ingredientsByRecipeId
-     * @param kitchenwaresByRecipeId
-     * @param ingredientIdsByUserId
-     * @param kitchenwareIdsByUserId
-     * @return
+     * 레시피 별 요구 재료 및 도구와 사용자가 추가한 재료 및 도구를 비교해 레시피의 요리 가능 여부를 확인합니다.
+     * @param recipeId 레시피의 ID
+     * @param ingredientsByRecipeId 레시피 ID 별 요구 재료 목록
+     * @param kitchenwaresByRecipeId 레시피 ID 별 요구 도구 목록
+     * @param ingredientIdsByUserId 사용자가 추가한 재료 ID 목록
+     * @param kitchenwareIdsByUserId 사용자가 추가한 도구 ID 목록
+     * @return 레시피의 요리 가능 여부
      */
     private boolean isCookableRecipe(
             long recipeId,
@@ -407,8 +407,6 @@ public class EatzUserPlanQueryService {
             Set<Long> kitchenwareIdsByUserId
     ) {
         // 플랜으로 추가한 레시피 별 요구 재료, 도구와 사용자가 추가한 재료, 도구를 비교해 요리 가능, 불가능 플랜을 분류합니다.
-        boolean isCookable;
-
         List<IngredientEssentialDto> requiredIngredients =
                 ingredientsByRecipeId.getOrDefault(recipeId, Collections.emptyList());
         List<KitchenwareEssentialDto> requiredKitchenwares =
