@@ -91,19 +91,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        JsonAuthenticationFilter jsonAuthenticationfilter = new JsonAuthenticationFilter(
-//                objectMapper,
-//                tokenManager,
-//                jwtConfigProperties,
-//                authenticationManager(authenticationConfiguration),
-//                refreshTokenRepository,
-//                handlerExceptionResolver);
-//
-//        AccessTokenFilter accessTokenFilter = new AccessTokenFilter(
-//                tokenManager,
-//                userDetailsService,
-//                handlerExceptionResolver);
-
         JsonAuthenticationFilter jsonAuthenticationfilter = new JsonAuthenticationFilter(
                 handlerExceptionResolver,
                 objectMapper,
@@ -136,8 +123,7 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        ;
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
