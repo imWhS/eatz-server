@@ -47,7 +47,6 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final ObjectMapper objectMapper;
     private final TokenManager tokenManager;
-    private final JwtConfigProperties jwtConfigProperties;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -121,10 +120,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     }
 
     private void createRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge((int) jwtConfigProperties.getRefreshExpirationTime()); // 리프레시 토큰 유효 시간과 동일하게 설정
-        refreshTokenCookie.setPath("/");
+        Cookie refreshTokenCookie = tokenManager.createRefreshTokenCookie(refreshToken);
         response.addCookie(refreshTokenCookie);
     }
 

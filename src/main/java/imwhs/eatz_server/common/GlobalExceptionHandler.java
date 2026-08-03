@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
@@ -31,6 +32,14 @@ import java.util.List;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException e) {
+        log.warn("없는 리소스를 요청했어요. | {}", e.getResourcePath());
+        return ResponseEntity
+                .status(e.getStatusCode())
+                .body(ErrorResponse.create("NO_RESOURCE_FOUND", e.getLocalizedMessage()));
+    }
 
     @ExceptionHandler(BaseAuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleBaseAuthenticationException(BaseAuthenticationException e) {

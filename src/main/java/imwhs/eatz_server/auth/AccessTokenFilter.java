@@ -57,7 +57,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
         // Authorization 헤더가 JWT 형식의 토큰을 담고 있는지 확인합니다.
         if (!hasBearerToken(authorizationHeader)) {
-            log.info("방금 받은 HTTP 요청에 JWT 토큰이 없어요. | HTTP 요청 URI: {}", requestUri);
+            log.info("방금 받은 HTTP 요청에 JWT 기반 토큰이 없어요. | HTTP 요청 URI: {}", requestUri);
             // 헤더가 토큰을 담고 있지 않거나, JWT 기반 토큰이 아닌 경우 요청을 필터 체인의 다음 필터로 넘겨
             // 토큰 유효성 검증을 더 이상 진행하지 않습니다. Spring Security는 해당 세션에 AnonymousAuthenticationToken를 설정한 후
             // 필터 체인의 마지막 부분인 AuthorizationFilter에서 URL(엔드포인트)에 따른 인가 과정을 진행합니다.
@@ -72,7 +72,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
         try {
             // 액세스 토큰 유형의 JWT 토큰이 아닌 경우, 토큰 유효성 검증을 더 이상 진행하지 않고 필터 체인을 끊습니다.
             if (!"access".equals(tokenManager.getType(accessToken))) {
-                log.warn("방금 받은 HTTP 요청의 JWT 토큰 유형이 올바르지 않아요. | HTTP 요청 URI: {}", requestUri);
+                log.warn("방금 받은 HTTP 요청의 JWT 기반 토큰 유형이 올바르지 않아요. | HTTP 요청 URI: {}", requestUri);
                 throw new TokenAccessInvalidException();
             }
 
@@ -85,17 +85,15 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            log.info("방금 받은 HTTP 요청의 세션에 사용자의 인증 정보를 성공적으로 설정했어요! | HTTP 요청 URI: {} | 사용자 이름: {}",
+            log.debug("방금 받은 HTTP 요청의 세션에 사용자의 인증 정보를 성공적으로 설정했어요! | HTTP 요청 URI: {} | 사용자 이름: {}",
                     requestUri, username);
         } catch (ExpiredJwtException e) {
-//            writeErrorResponse(response, EatzAuthErrorType.TOKEN_ACCESS_EXPIRED);
             log.info("액세스 토큰이 만료됐어요. | HTTP 요청 URI: {} | {}", requestUri, e.getMessage());
             handlerExceptionResolver.resolveException(request, response, null, new TokenAccessExpiredException());
             return;
         } catch (JwtException e) {
             log.warn("유효하지 않은 액세스 토큰을 포함하는 HTTP 요청이에요. | HTTP 요청 URI: {} | {} | {}",
                     requestUri, e.getClass().getSimpleName(), e.getMessage());
-//            writeErrorResponse(response, EatzAuthErrorType.TOKEN_ACCESS_INVALID);
             handlerExceptionResolver.resolveException(request, response, null, new TokenAccessInvalidException());
             return;
         }  catch (Exception e) {
