@@ -2,6 +2,7 @@ package imwhs.eatz_server.auth;
 
 import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -77,6 +78,25 @@ public class TokenManager {
                 .expiration(new Date(System.currentTimeMillis() + jwtConfigProperties.getRefreshExpirationTime()))
                 .signWith(getSecretKey())
                 .compact();
+    }
+
+    /**
+     * 리프레시 토큰 쿠키를 생성합니다.
+     */
+    public Cookie createRefreshTokenCookie(String refreshToken) {
+        Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
+
+        if (refreshToken != null) {
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setSecure(true);
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge((int) (jwtConfigProperties.getRefreshExpirationTime() / 1000));
+        } else {
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(0);
+        }
+
+        return refreshTokenCookie;
     }
 
 }

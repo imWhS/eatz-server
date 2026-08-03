@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -107,29 +109,27 @@ public class AuthController {
             throw new RefreshTokenMissingException();
         }
 
-        for (Cookie cookie : cookies) {
-            if (Objects.equals(cookie.getName(), "RefreshToken")) {
-                log.info("쿠키에서 리프레시 토큰을 성공적으로 추출했어요.");
-                return cookie.getValue();
-            }
+        List<Cookie> refreshTokenCookies = Arrays
+                .stream(cookies)
+                .filter(cookie -> cookie.getName().equals("RefreshToken"))
+                .toList();
+
+        if (refreshTokenCookies.isEmpty()) {
+            log.info("HTTP 요청의 쿠키에 리프레시 토큰이 없어요.");
+            throw new RefreshTokenMissingException();
         }
 
-        log.info("쿠키에 리프레시 토큰이 없어요.");
-        throw new RefreshTokenMissingException();
+        if (1 < refreshTokenCookies.size()) {
+            log.info("HTTP 요청의 쿠키에 리프레시 토큰(RefreshToken) 쿠키가 2개 이상 중복돼요.");
+            throw new RefreshTokenMissingException();
+        }
+
+        log.info("쿠키에서 리프레시 토큰을 성공적으로 추출했어요.");
+        return refreshTokenCookies.get(0).getValue();
     }
 
     private void addRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
-        Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
-
-        if (refreshToken != null) {
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setSecure(true);
-//            refreshTokenCookie.setSecure(false);
-            refreshTokenCookie.setMaxAge((int) (jwtConfigProperties.getRefreshExpirationTime() / 1000));
-        } else {
-            refreshTokenCookie.setMaxAge(0);
-        }
-
+        Cookie refreshTokenCookie = tokenManager.createRefreshTokenCookie(refreshToken);
         response.addCookie(refreshTokenCookie);
     }
 

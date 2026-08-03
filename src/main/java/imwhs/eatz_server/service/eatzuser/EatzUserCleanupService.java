@@ -26,7 +26,7 @@ public class EatzUserCleanupService {
         String formatted = cleanupDate.format(formatter);
         List<EatzUser> targetUsers = userRepository.findByDeletedAtBeforeAndNotAnonymised(cleanupDate);
         if (targetUsers.isEmpty()) {
-            log.info("cleanup 대상 계정이 없어요. | 대상: 삭제 시점이 {} 이전인 모든 계정", formatted);
+            log.info("Cleanup 대상 계정이 없어요. | 대상: 삭제 시점이 {} 이전인 모든 계정", formatted);
             return;
         }
         log.info("계정 삭제 사용자 별 cleanup을 시작할게요. | 대상: 삭제 시점이 {} 이전인 계정 {}개", formatted, targetUsers.size());

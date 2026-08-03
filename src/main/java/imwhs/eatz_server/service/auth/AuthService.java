@@ -82,6 +82,7 @@ public class AuthService {
         return member.getId();
     }
 
+    @Transactional
     public String reissueAccessToken(String refreshToken, String email, String role) {
         try {
             refreshTokenRepository.findByToken(refreshToken).orElseThrow(InvalidRefreshTokenException::new);
@@ -271,7 +272,6 @@ public class AuthService {
     }
 
     private void deleteRefreshToken(String refreshTokenValue) {
-        log.info("서버 데이터베이스의 리프레시 토큰을 삭제할게요.");
         RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenValue).orElseThrow(
                 InvalidRefreshTokenException::new);
 

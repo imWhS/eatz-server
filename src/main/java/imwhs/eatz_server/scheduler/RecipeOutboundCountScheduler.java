@@ -13,7 +13,7 @@ public class RecipeOutboundCountScheduler {
 
     private final RecipeOutboundCountService recipeOutboundCountService;
 
-    // 매일 매시간마다, 3분(정시)부터 시작해서 5분 간격으로 0초가 될 때 실행합니다.
+    // 매년 매월 매일 매시간마다, 3분부터 시작해서 5분 간격으로 0초가 될 때 실행합니다.
     @Scheduled(cron = "0 3/5 * * * *", zone = "Asia/Seoul")
     public void flushRecipeOutboundCount() {
         recipeOutboundCountService.flushOutboundCountIncrements();
