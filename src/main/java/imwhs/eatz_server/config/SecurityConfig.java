@@ -95,7 +95,6 @@ public class SecurityConfig {
                 handlerExceptionResolver,
                 objectMapper,
                 tokenManager,
-                jwtConfigProperties,
                 authenticationManager(authenticationConfiguration),
                 refreshTokenRepository);
 
