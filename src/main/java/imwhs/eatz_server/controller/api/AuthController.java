@@ -77,11 +77,17 @@ public class AuthController {
             addRefreshTokenToCookie(response, newRefreshToken);
             log.info("액세스 토큰, 리프레시 토큰 재발급을 완료했어요.");
         } catch (BaseAuthenticationException e) {
+            log.warn("토큰 재발급 처리 중 BaseAuthenticationException이 발생했어요: {}", e.getMessage());
             throw e;
         }  catch (AuthenticationException e) {
+            log.warn("토큰 재발급 처리 중 AuthenticationException 발생했어요: {}", e.getMessage());
             throw new UnauthorizedEatzUserException();
         } catch (ExpiredJwtException e) {
+            log.warn("토큰 재발급 처리 중 ExpiredJwtException이 발생했어요: {}", e.getMessage());
             throw new RefreshTokenExpiredException();
+        } catch (Exception e) {
+            log.error("토큰 재발급 처리 중 예상하지 못한 오류가 발생했어요.", e);
+            throw new InternalServerErrorException();
         }
     }
 
