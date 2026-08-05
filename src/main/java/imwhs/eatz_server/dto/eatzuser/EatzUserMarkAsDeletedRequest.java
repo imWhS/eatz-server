@@ -1,6 +1,7 @@
 package imwhs.eatz_server.dto.eatzuser;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class EatzUserMarkAsDeletedRequest {
 
     @NotBlank
+    @Size(min = 8, max = 64, message = "암호는 최소 8자리부터 최대 64자까지 입력할 수 있어요.")
     private String existingPassword;
 
 }

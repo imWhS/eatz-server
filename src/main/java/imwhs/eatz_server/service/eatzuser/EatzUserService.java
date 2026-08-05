@@ -23,7 +23,6 @@ public class EatzUserService {
 
     private final EatzUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ImageServiceOld imageServiceV1;
     private final ImageService imageService;
 
     /**
@@ -133,7 +132,7 @@ public class EatzUserService {
 
     @Transactional(rollbackFor = Exception.class)
     public void updateUsername(Long id, Long requesterId, String username) {
-        EatzUser user = userRepository.get(id);
+        EatzUser user = userRepository.getAdmin(id);
         EatzUser requester = getRequester(id, requesterId, user);
         user.updateUsername(requester, username);
     }

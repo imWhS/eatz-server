@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,6 +55,13 @@ public class EatzUserController {
     @ResponseStatus(HttpStatus.OK)
     public EatzUserDetailDto getUserByEmail(@RequestParam String email) {
         return userQueryService.getDetailByEmail(email);
+    }
+
+    @GetMapping("/check-username/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<EatzUserUsernameDuplicationResponse> checkUsernameDuplication(@RequestParam String username) {
+        boolean isDuplicated = userQueryService.checkUsernameDuplication(username);
+        return ResponseEntity.ok(new EatzUserUsernameDuplicationResponse(isDuplicated));
     }
 
     @GetMapping("/{id}")
@@ -163,7 +171,6 @@ public class EatzUserController {
     public void removeMyBio(@AuthenticatedEatzUserId Long userId) {
         userService.removeBio(userId, userId);
     }
-
 
     @PutMapping("/me/username")
     @ResponseStatus(HttpStatus.NO_CONTENT)

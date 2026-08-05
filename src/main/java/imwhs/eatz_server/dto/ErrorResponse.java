@@ -55,8 +55,4 @@ public class ErrorResponse {
         return new ErrorResponse(errorCode, message);
     }
 
-//    public static ErrorResponse create(String message) {
-//        return new ErrorResponse(message);
-//    }
-
 }

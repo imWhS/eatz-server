@@ -6,6 +6,7 @@ import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.regex.Pattern;
@@ -23,8 +24,6 @@ import java.util.regex.Pattern;
 @Entity
 public class EatzUser extends BaseEntity {
 
-    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-
     @EqualsAndHashCode.Include
     @Column(name = "eatz_user_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +37,8 @@ public class EatzUser extends BaseEntity {
      * TODO: 데이터베이스에 인덱스 추가 고려
      */
     @NotNull
-    @Column(nullable = false, unique = true)
+    @Column(length = 20, nullable = false, unique = true)
+    @Size(min = 4, max = 20)
     private String username;
 
     /**
@@ -61,6 +61,7 @@ public class EatzUser extends BaseEntity {
      */
     @NotNull
     @Column(nullable = false)
+    @Size(min = 8, max = 64)
     private String password;
 
     /**
@@ -83,6 +84,7 @@ public class EatzUser extends BaseEntity {
     /**
      * 소개
      */
+    @Size(max = 200)
     private String bio;
 
     private EatzUser(String username, String email, String password, EatzUserRole eatzUserRole) {
@@ -179,6 +181,10 @@ public class EatzUser extends BaseEntity {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("필수 항목인 사용자 이름이 비어 있어요.");
         }
+
+        if (username.length() < 4 || 20 < username.length()) {
+            throw new IllegalArgumentException("사용자 이름은 최소 4자부터 최대 20자까지의 길이로 사용할 수 있어요.");
+        }
     }
 
     public static void validatePassword(String password) {
@@ -191,6 +197,7 @@ public class EatzUser extends BaseEntity {
 
     public static void validateBio(String bio) {
         if (bio == null || bio.isBlank()) { throw new IllegalArgumentException("소개가 비어 있어요."); }
+        if (200 < bio.length()) { throw new IllegalArgumentException("소개는 최대 200자까지의 길이로 사용할 수 있어요."); }
     }
 
     /**
@@ -217,8 +224,8 @@ public class EatzUser extends BaseEntity {
         if (rawPassword == null || rawPassword.isBlank()) {
             throw new IllegalArgumentException("암호가 비어있어요.");
         }
-        if (rawPassword.length() < 8) {
-            throw new IllegalArgumentException("암호는 8자리 이상의 길이여야 해요.");
+        if (rawPassword.length() < 8 || 64 < rawPassword.length()) {
+            throw new IllegalArgumentException("암호는 최소 8자부터 최대 64자 사이의 길이여야 해요.");
         }
     }
 

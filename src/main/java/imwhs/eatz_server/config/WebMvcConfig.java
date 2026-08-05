@@ -1,5 +1,6 @@
 package imwhs.eatz_server.config;
 
+import imwhs.eatz_server.AuthRateLimitInterceptor;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserIdArgumentResolver;
 import imwhs.eatz_server.resolver.PageableValidationHandlerMethodArgumentResolver;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -20,6 +22,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthenticatedEatzUserIdArgumentResolver authenticatedEatzUserIdArgumentResolver;
     private final PageableValidationHandlerMethodArgumentResolver pageableValidationHandlerMethodArgumentResolver;
+    private final AuthRateLimitInterceptor rateLimitInterceptor;
+
 
     /**
      * 서버가 위치한 환경의 로컬 저장소(storage) 디렉토리의 절대 경로. 루트를 포함해야 합니다.
@@ -55,5 +59,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolvers.add(0, pageableValidationHandlerMethodArgumentResolver);
 
         resolvers.add(authenticatedEatzUserIdArgumentResolver);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 회원가입 API에만 IP 제한 인터셉터 적용
+        registry.addInterceptor(rateLimitInterceptor)
+                .addPathPatterns("/api/v0/sign-up");
     }
 }

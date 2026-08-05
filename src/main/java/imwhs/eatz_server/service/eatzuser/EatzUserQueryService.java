@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * 사용자(EatzUser) 관련 정보를 조회하는 EatzUserQueryService 클래스입니다.
@@ -61,6 +60,14 @@ public class EatzUserQueryService {
         EmailUtil.validateEmail(email);
         EatzUser user = userRepository.getByEmail(email);
         return new EatzUserDetailDto(user);
+    }
+
+    /**
+     * 사용자 이름의 중복 여부를 확인합니다.
+     * @param username 사용자 이름
+     */
+    public boolean checkUsernameDuplication(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     /**
