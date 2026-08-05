@@ -41,7 +41,7 @@ public class AuthController {
         return authService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
     }
 
-    @GetMapping("/auth/check-username/{username}")
+    @GetMapping("/auth/check-username}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<EatzUserUsernameDuplicationResponse> checkUsernameDuplication(@RequestParam String username) {
         boolean isDuplicated = userQueryService.checkUsernameDuplication(username);
