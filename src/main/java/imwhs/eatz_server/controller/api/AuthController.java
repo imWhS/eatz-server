@@ -3,6 +3,7 @@ package imwhs.eatz_server.controller.api;
 import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.dto.auth.*;
+import imwhs.eatz_server.dto.eatzuser.EatzUserUsernameDuplicationResponse;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.exception.base.BaseAuthenticationException;
 import imwhs.eatz_server.service.auth.AuthService;
@@ -16,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,11 +35,17 @@ public class AuthController {
     private final EatzUserQueryService userQueryService;
     private final AuthPasswordResetService passwordResetService;
     private final TokenManager tokenManager;
-    private final JwtConfigProperties jwtConfigProperties;
 
     @PostMapping("/sign-up")
     public Long registerUser(@Valid @RequestBody CreateEatzUserRequest request) {
         return authService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
+    }
+
+    @GetMapping("/auth/check-username/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<EatzUserUsernameDuplicationResponse> checkUsernameDuplication(@RequestParam String username) {
+        boolean isDuplicated = userQueryService.checkUsernameDuplication(username);
+        return ResponseEntity.ok(new EatzUserUsernameDuplicationResponse(isDuplicated));
     }
 
     @GetMapping("/auth/email-status")
