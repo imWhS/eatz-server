@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class UpdateEatzUserBioRequest {
 
     @NotBlank
-    @Size(max = 150, message = "소개는 150자까지 입력할 수 있어요.")
+    @Size(max = 200, message = "소개는 최대 200자까지 입력할 수 있어요.")
     private String bio;
 
 }

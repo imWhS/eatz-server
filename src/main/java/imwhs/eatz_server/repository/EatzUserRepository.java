@@ -57,6 +57,11 @@ public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
         if (!existsByIdAndDeletedAtIsNull(id)) { throw new EatzUserNotFoundException(id); }
     }
 
+    default void validateExistsByUsername(String username) {
+        if (username == null || username.isBlank()) { throw new IllegalArgumentException("사용자의 사용자 이름이 필요해요."); }
+        if (!existsByUsername(username)) { throw new EatzUserNotFoundException(username); }
+    }
+
     default void validateExistsAsAdmin(Long id) {
         if (id == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
         if (!existsByIdAndEatzUserRoleAndDeletedAtIsNull(id, EatzUserRole.ROLE_ADMIN)) {
@@ -109,6 +114,13 @@ public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
      * @return 사용자의 존재 여부
      */
     boolean existsByEmailAndDeletedAtIsNull(String email);
+
+    /**
+     * 사용자 이름에 해당하는 사용자의 존재 여부를 조회합니다.
+     * @param username 사용자 이름
+     * @return 사용자의 존재 여부
+     */
+    boolean existsByUsername(String username);
 
     /**
      * 특정 역할을 가진 사용자를 조회합니다.
