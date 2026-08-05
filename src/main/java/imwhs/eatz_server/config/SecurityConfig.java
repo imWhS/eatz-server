@@ -30,7 +30,6 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final TokenManager tokenManager;
-    private final JwtConfigProperties jwtConfigProperties;
     private final EatzUserDetailsService userDetailsService;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -40,7 +39,6 @@ public class SecurityConfig {
             ObjectMapper objectMapper,
             AuthenticationConfiguration authenticationConfiguration,
             TokenManager tokenManager,
-            JwtConfigProperties jwtConfigProperties,
             EatzUserDetailsService userDetailsService,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
             RefreshTokenRepository refreshTokenRepository,
@@ -50,7 +48,6 @@ public class SecurityConfig {
         this.objectMapper = objectMapper;
         this.authenticationConfiguration = authenticationConfiguration;
         this.tokenManager = tokenManager;
-        this.jwtConfigProperties = jwtConfigProperties;
         this.userDetailsService = userDetailsService;
         this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
         this.refreshTokenRepository = refreshTokenRepository;

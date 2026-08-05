@@ -57,13 +57,6 @@ public class EatzUserController {
         return userQueryService.getDetailByEmail(email);
     }
 
-    @GetMapping("/check-username/{username}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<EatzUserUsernameDuplicationResponse> checkUsernameDuplication(@RequestParam String username) {
-        boolean isDuplicated = userQueryService.checkUsernameDuplication(username);
-        return ResponseEntity.ok(new EatzUserUsernameDuplicationResponse(isDuplicated));
-    }
-
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public EatzUserDetailDto getUserById(@PathVariable Long id) {
