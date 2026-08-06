@@ -35,6 +35,7 @@ public class TagController {
      * @return 생성된 태그 관련 정보
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public TagDetailDto registerTag(@Valid @RequestBody TagCreateRequest request) {
         Long recipeId = request.getRecipeId();
         Tag tag;

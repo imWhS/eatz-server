@@ -45,7 +45,6 @@ public class RecipeCommentController {
      * @param request 댓글 업데이트 요청 정보
      */
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public CommentBasicDto updateComment(
             @PathVariable Long recipeId,
             @PathVariable Long id,
@@ -75,7 +74,6 @@ public class RecipeCommentController {
      * @return 댓글 목록
      */
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Page<CommentBasicDto> getAllComments(
             @PathVariable Long recipeId,
             @AuthenticatedEatzUserId(required = false) Long userId,

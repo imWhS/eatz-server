@@ -50,6 +50,7 @@ public class RecipeController {
      * @return 등록 완료된 레시피의 생성 정보
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public RecipeCreationInfoDto registerRecipe(
             @RequestBody RecipeCreateDto dto,
             @AuthenticatedEatzUserId Long userId) {
@@ -75,7 +76,6 @@ public class RecipeController {
     }
 
     @PostMapping("/images")
-    @ResponseStatus(HttpStatus.OK)
     public UploadedImageInfoResponse uploadRecipeImage(
             @RequestParam("image") MultipartFile image,
             @AuthenticatedEatzUserId Long userId) {
@@ -122,7 +122,6 @@ public class RecipeController {
      * @return 좋아요 표시한 레시피의 정보
      */
     @PostMapping("/{id}/likeds")
-    @ResponseStatus(HttpStatus.OK)
     public LikedRecipeBasicDto likeRecipe(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
         return likedRecipeService.like(id, userId);
     }
@@ -133,31 +132,9 @@ public class RecipeController {
      * @return 좋아요 표시 취소한 레시피의 정보
      */
     @DeleteMapping("/{id}/likeds")
-    @ResponseStatus(HttpStatus.OK)
     public LikedRecipeBasicDto unlikeRecipe(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
         return likedRecipeService.unlike(id, userId);
     }
-
-//    /**
-//     * 레시피를 신고합니다.
-//     * @param id 레시피의 ID
-//     * @param request 신고 정보
-//     * @return 신고 생성 정보를 담은 DTO
-//     */
-//    @PostMapping("/{id}/report")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public ReportCreationInfoResponse reportRecipe(
-//            @PathVariable Long id,
-//            @RequestBody ReportBasicCreateRequest request,
-//            @AuthenticatedEatzUserId Long userId) {
-//        return reportService.register(
-//                userId,
-//                id,
-//                ReportResource.RECIPE,
-//                request.getCategoryId(),
-//                request.getResourceContent(),
-//                request.getDescription());
-//    }
 
     /**
      * 레시피의 상세 정보를 가져오고, 해당 레시피의 조회 수를 증가시킵니다.
@@ -165,7 +142,6 @@ public class RecipeController {
      * @return 레시피의 상세 정보
      */
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public RecipeDetailDto getRecipeDetailAndIncreaseViewCount(
             @PathVariable Long id,
             @AuthenticatedEatzUserId(required = false) Long userId,
@@ -179,13 +155,11 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}/editable")
-    @ResponseStatus(HttpStatus.OK)
     public RecipeEditableDto getRecipeEditable(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
         return recipeQueryService.getEditable(id, userId);
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Page<RecipeBasicDto> getAllRecipeBasicsByAuthorId(
             @RequestParam Long authorId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -193,13 +167,11 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}/essential")
-    @ResponseStatus(HttpStatus.OK)
     public RecipeEssentialWithAuthorDto getRecipeEssential(@PathVariable Long id) {
         return recipeQueryService.getEssentialWithAuthor(id);
     }
 
     @GetMapping("/{id}/ingredients")
-    @ResponseStatus(HttpStatus.OK)
     public List<IngredientRequirementDto> getIngredientRequirements(
             @PathVariable Long id,
             @AuthenticatedEatzUserId(required = false) Long userId) {
@@ -207,7 +179,6 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}/kitchenwares")
-    @ResponseStatus(HttpStatus.OK)
     public List<KitchenwareRequirementDto> getKitchenwareRequirements(
             @PathVariable Long id, @AuthenticatedEatzUserId(required = false) Long userId) {
         List<KitchenwareRequirementDto> kitchenwares = kitchenwareQueryService.getKitchenwareRequirementsByRecipeId(
@@ -216,7 +187,6 @@ public class RecipeController {
     }
 
     @GetMapping("/search")
-    @ResponseStatus(HttpStatus.OK)
     public Page<RecipeBasicDto> searchRecipes(
             @RequestParam(name = "keyword", required = false) String keyword,
             @AuthenticatedEatzUserId(required = false) Long userId,
@@ -225,7 +195,6 @@ public class RecipeController {
     }
 
     @GetMapping("/explore")
-    @ResponseStatus(HttpStatus.OK)
     public Page<ExploreRecipeDto> getExploreRecipes(
             ExploreRecipesRequest request,
             @AuthenticatedEatzUserId(required = false) Long userId,
@@ -234,7 +203,6 @@ public class RecipeController {
     }
 
     @GetMapping("/cookable")
-    @ResponseStatus(HttpStatus.OK)
     public Page<CookableRecipeDto> getCookableRecipes(
             CookableRecipesRequest request,
             @AuthenticatedEatzUserId(required = false) Long userId,
