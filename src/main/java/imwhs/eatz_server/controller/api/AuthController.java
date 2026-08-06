@@ -1,6 +1,5 @@
 package imwhs.eatz_server.controller.api;
 
-import imwhs.eatz_server.config.properties.JwtConfigProperties;
 import imwhs.eatz_server.auth.TokenManager;
 import imwhs.eatz_server.dto.auth.*;
 import imwhs.eatz_server.dto.eatzuser.EatzUserUsernameDuplicationResponse;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,9 +41,9 @@ public class AuthController {
 
     @GetMapping("/auth/check-username")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<EatzUserUsernameDuplicationResponse> checkUsernameDuplication(@RequestParam String username) {
+    public EatzUserUsernameDuplicationResponse checkUsernameDuplication(@RequestParam String username) {
         boolean isDuplicated = userQueryService.checkUsernameDuplication(username);
-        return ResponseEntity.ok(new EatzUserUsernameDuplicationResponse(isDuplicated));
+        return new EatzUserUsernameDuplicationResponse(isDuplicated);
     }
 
     @GetMapping("/auth/email-status")
