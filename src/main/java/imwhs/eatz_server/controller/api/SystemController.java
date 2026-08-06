@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class SystemController {
 
     @GetMapping("/client/version/ios")
-    @ResponseStatus(HttpStatus.OK)
     public ClientVersionResponse getIOSClientVersion() {
         return new ClientVersionResponse("1.0.0", "1.0.0", null);
     }
 
     @GetMapping("/client/notice/launch")
-    @ResponseStatus(HttpStatus.OK)
     public ClientLaunchNoticeResponse getLatestClientLaunchNotice() {
         return new ClientLaunchNoticeResponse(
                 1L,
@@ -41,7 +39,7 @@ public class SystemController {
                        2. 화면 상단 우측의 **'설정 및 정보'** 탭하기
                        3. **'개발자에게 편지 쓰기'** 탭하기
 
-                       남겨주신 의견을 최대한 반영해, 이를 바탕으로 더 나은 EATZ를 만들어가겠습니다! 감사합니다!
+                       남겨주신 의견을 최대한 반영해, 이를 바탕으로 더 나은 EATZ를 만들어가겠습니다!
                        """
         );
     }
