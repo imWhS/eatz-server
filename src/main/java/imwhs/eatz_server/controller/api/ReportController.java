@@ -21,7 +21,7 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public ReportCreationInfoResponse registerReport(
             @AuthenticatedEatzUserId(required = false) Long userId,
             @Valid @RequestBody ReportCreateRequest request) {
@@ -41,7 +41,7 @@ public class ReportController {
     }
 
     @PostMapping("/categories")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public ReportCategoryCreationInfoResponse registerReportCategory(
             @AuthenticatedEatzUserId Long adminId,
             @Valid @RequestBody ReportCategoryCreateRequest request) {
@@ -49,7 +49,6 @@ public class ReportController {
     }
 
     @PutMapping("/categories/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public void updateCategory(
             @AuthenticatedEatzUserId Long adminId,
             @PathVariable Long id,
@@ -58,7 +57,6 @@ public class ReportController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Page<ReportDto> getAllReportsByResource(
             @RequestParam ReportResourceType resource,
             boolean resolved,
@@ -67,7 +65,6 @@ public class ReportController {
     }
 
     @GetMapping("/categories")
-    @ResponseStatus(HttpStatus.OK)
     public List<ReportCategoryDto> getAllCategories() {
         return reportService.getAllCategories();
     }

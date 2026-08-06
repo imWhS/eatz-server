@@ -27,7 +27,6 @@ public class SignUpController {
     }
 
     @PostMapping("/email-validation")
-    @ResponseStatus(HttpStatus.OK)
     public EmailVerificationCodeResponse sendVerificationCodeViaEmail(
             @Valid @RequestBody EmailZonedVerificationCodeRequest request) {
         return emailVerificationService.sendCode(request.getEmail(), request.getTimeZoneId());

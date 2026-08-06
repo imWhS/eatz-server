@@ -25,7 +25,6 @@ private final SavedRecipeQueryService savedRecipeQueryService;
      * @return 레시피를 저장한 모든 사용자 목록
      */
     @GetMapping("/recipes")
-    @ResponseStatus(HttpStatus.OK)
     public List<EatzUserEssentialDto> getSavedUsers(@PathVariable Long id) {
         return savedRecipeQueryService.getSavedUserEssentialsByRecipe(id);
     }
@@ -36,7 +35,6 @@ private final SavedRecipeQueryService savedRecipeQueryService;
      * @return 레시피를 저장한 사용자 수를 담은 응답 DTO
      */
     @GetMapping("/recipes/r/count")
-    @ResponseStatus(HttpStatus.OK)
     public CountResponse getSavedUserCount(@PathVariable Long id) {
         return savedRecipeQueryService.countSaveds(id);
     }

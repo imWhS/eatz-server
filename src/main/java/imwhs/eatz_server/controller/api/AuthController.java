@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,31 +34,28 @@ public class AuthController {
     private final TokenManager tokenManager;
 
     @PostMapping("/sign-up")
+    @ResponseStatus(HttpStatus.CREATED)
     public Long registerUser(@Valid @RequestBody CreateEatzUserRequest request) {
         return authService.signUp(request.getUsername(), request.getEmail(), request.getPassword());
     }
 
     @GetMapping("/auth/check-username")
-    @ResponseStatus(HttpStatus.OK)
     public EatzUserUsernameDuplicationResponse checkUsernameDuplication(@RequestParam String username) {
         boolean isDuplicated = userQueryService.checkUsernameDuplication(username);
         return new EatzUserUsernameDuplicationResponse(isDuplicated);
     }
 
     @GetMapping("/auth/email-status")
-    @ResponseStatus(HttpStatus.OK)
     public EmailAvailabilityResponse getUserEmailStatus(@RequestParam String email) {
         return userQueryService.getEmailStatus(email);
     }
 
     @PostMapping("/auth/reset-password/request")
-    @ResponseStatus(HttpStatus.OK)
     public void requestPasswordReset(@Valid @RequestBody EmailVerificationCodeRequest request) {
         passwordResetService.requestEmailVerification(request.getEmail());
     }
 
     @GetMapping("/auth/reset-password/authorize-token")
-    @ResponseStatus(HttpStatus.OK)
     public VerifyResetTokenResponse authorizePasswordReset(@RequestParam String emailVerificationToken) {
         return passwordResetService.authorizePasswordReset(emailVerificationToken);
     }

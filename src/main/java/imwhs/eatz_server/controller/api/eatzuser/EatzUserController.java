@@ -46,19 +46,16 @@ public class EatzUserController {
     private final IngredientQueryService ingredientQueryService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Page<EatzUserDetailDto> getAllUsers(@PageableDefault(page = 0, size = 10) Pageable pageable) {
         return userQueryService.getAllDetails(pageable);
     }
 
     @GetMapping("/search")
-    @ResponseStatus(HttpStatus.OK)
     public EatzUserDetailDto getUserByEmail(@RequestParam String email) {
         return userQueryService.getDetailByEmail(email);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public EatzUserDetailDto getUserById(@PathVariable Long id) {
         return userQueryService.getDetail(id);
     }
@@ -141,7 +138,6 @@ public class EatzUserController {
     }
 
     @GetMapping("/me")
-    @ResponseStatus(HttpStatus.OK)
     public EatzUserBasicDto getCurrentUser(@AuthenticatedEatzUserId Long userId) {
         return userQueryService.getBasic(userId);
     }
@@ -174,7 +170,6 @@ public class EatzUserController {
     }
 
     @PutMapping("/me/image")
-    @ResponseStatus(HttpStatus.OK)
     public UploadedImageInfoResponse updateMyImage(
             @RequestParam("image") MultipartFile image,
             @AuthenticatedEatzUserId Long userId) {
@@ -203,7 +198,6 @@ public class EatzUserController {
     }
 
     @GetMapping("/me/recipes")
-    @ResponseStatus(HttpStatus.OK)
     public Page<RecipeBasicDto> getAllMyRecipes(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -211,7 +205,6 @@ public class EatzUserController {
     }
 
     @GetMapping("/me/saveds/recipes")
-    @ResponseStatus(HttpStatus.OK)
     public Page<RecipeBasicDto> getAllMySavedRecipes(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -219,7 +212,6 @@ public class EatzUserController {
     }
 
     @GetMapping("/me/rateds/recipes")
-    @ResponseStatus(HttpStatus.OK)
     public Page<RecipeBasicDto> getAllMyRatedRecipes(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -232,7 +224,6 @@ public class EatzUserController {
      * @return 조회된 레시피의 기본 정보 목록과 페이징 정보
      */
     @GetMapping("/me/likeds/recipes")
-    @ResponseStatus(HttpStatus.OK)
     public Page<RecipeBasicDto> getAllMyLikedRecipes(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -245,7 +236,6 @@ public class EatzUserController {
      * @return 조회된 재료의 기본 정보 목록과 페이징 정보
      */
     @GetMapping("/me/likeds/ingredients")
-    @ResponseStatus(HttpStatus.OK)
     public Page<IngredientBasicDto> getAllMyLikedIngredients(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -253,7 +243,6 @@ public class EatzUserController {
     }
 
     @GetMapping("/me/comments")
-    @ResponseStatus(HttpStatus.OK)
     public Page<CommentEssentialWithRecipeDto> getAllMyComments(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -261,7 +250,6 @@ public class EatzUserController {
     }
 
     @GetMapping("/me/ratings")
-    @ResponseStatus(HttpStatus.OK)
     public Page<RatingEssentialWithRecipeDto> getAllMyRatings(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -269,13 +257,11 @@ public class EatzUserController {
     }
 
     @GetMapping("/me/likeds/recipes/count")
-    @ResponseStatus(HttpStatus.OK)
     public CountResponse getMyLikedRecipeCount(@AuthenticatedEatzUserId Long userId) {
         return likedRecipeService.countByUserId(userId);
     }
 
     @GetMapping("/me/rateds/count")
-    @ResponseStatus(HttpStatus.OK)
     public CountResponse getRatedRecipeCount(@AuthenticatedEatzUserId Long userId) {
         return ratingQueryService.countAllRatedRecipesByAuthorId(userId);
     }

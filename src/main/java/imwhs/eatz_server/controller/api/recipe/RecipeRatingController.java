@@ -90,7 +90,6 @@ public class RecipeRatingController {
      * @return 평가의 기본 정보 목록과 페이징 정보를 담고 있는 DTO
      */
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Page<RatingBasicDto> getRatingsByRecipeId(
             @PathVariable Long recipeId,
             @AuthenticatedEatzUserId(required = false) Long userId,
@@ -99,7 +98,6 @@ public class RecipeRatingController {
     }
 
     @GetMapping("/me")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<RatingBasicDto> getRating(
             @PathVariable Long recipeId,
             @AuthenticatedEatzUserId Long authorId) {
@@ -109,7 +107,6 @@ public class RecipeRatingController {
     }
 
     @GetMapping("/indicator")
-    @ResponseStatus(HttpStatus.OK)
     public RatingIndicatorDto getIndicator(@PathVariable Long recipeId) {
        return ratingQueryService.getIndicatorByRecipeId(recipeId);
     }

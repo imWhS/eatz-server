@@ -34,7 +34,6 @@ public class KitchenwareController {
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public UploadedImageInfoResponse updateKitchenwareImage(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long adminId,
@@ -60,7 +59,6 @@ public class KitchenwareController {
      * </ul>
      */
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> getKitchenwares(
             @RequestParam(required = false) String name,
             @AuthenticatedEatzUserId Long userId,
@@ -78,13 +76,11 @@ public class KitchenwareController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public KitchenwareBasicDto getKitchenware(@PathVariable Long id) {
         return kitchenwareQueryService.get(id);
     }
 
     @GetMapping("/search")
-    @ResponseStatus(HttpStatus.OK)
     public Page<KitchenwareBasicDto> searchKitchenwares(
             @RequestParam("name") String keyword,
             @AuthenticatedEatzUserId Long userId,

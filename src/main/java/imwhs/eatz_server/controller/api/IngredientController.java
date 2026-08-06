@@ -46,7 +46,6 @@ public class IngredientController {
      * @param request 재료 업데이트를 요청하기 위해 필요한 정보
      */
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public void updateIngredient(
             @AuthenticatedEatzUserId Long userId,
             @PathVariable Long id,
@@ -87,13 +86,11 @@ public class IngredientController {
     }
 
     @PostMapping("/{id}/likeds")
-    @ResponseStatus(HttpStatus.OK)
     public LikedIngredientBasicDto likeIngredient(@PathVariable Long id, @AuthenticatedEatzUserId Long userId) {
         return likedIngredientService.like(id, userId);
     }
 
     @DeleteMapping("/{id}/likeds")
-    @ResponseStatus(HttpStatus.OK)
     public LikedIngredientBasicDto unlikeIngredient(@AuthenticatedEatzUserId Long userId, @PathVariable Long id) {
         return likedIngredientService.unlike(id, userId);
     }
@@ -105,7 +102,6 @@ public class IngredientController {
      * @return 특정 상위 재료의 기본 정보와 해당 상위 재료에 포함되어 있는 모든 재료의 기본 정보 목록
      */
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public IngredientEssentialWithChildrenBasicsDto getIngredientBasicsInParent(
             @PathVariable Long id,
             @AuthenticatedEatzUserId Long userId) {
@@ -130,7 +126,6 @@ public class IngredientController {
      * @return 최상위 계층(Root)의 재료 목록과 페이징 정보
      */
     @GetMapping("/roots")
-    @ResponseStatus(HttpStatus.OK)
     public Page<IngredientBasicDto> getAllRootBasics(@AuthenticatedEatzUserId Long userId, Pageable pageable) {
         return ingredientQueryService.getAllRootBasics(userId, pageable);
     }
@@ -141,7 +136,6 @@ public class IngredientController {
      * @return 재료 및 재료의 모든 하위 계층(hierarchy) 재료 정보
      */
     @GetMapping("/{id}/tree")
-    @ResponseStatus(HttpStatus.OK)
     public IngredientHierarchyDto getHierarchy(@PathVariable Long id) {
         return ingredientQueryService.getHierarchy(id);
     }
@@ -153,7 +147,6 @@ public class IngredientController {
      * @return 검색된 재료의 기본 정보 목록과 페이징 정보
      */
     @GetMapping("/search")
-    @ResponseStatus(HttpStatus.OK)
     public Page<IngredientBasicDto> searchIngredients(
             @AuthenticatedEatzUserId Long userId,
             @RequestParam("keyword") String keyword, Pageable pageable) {

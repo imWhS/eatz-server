@@ -78,7 +78,6 @@ public class EatzUserPantryController {
     }
 
     @GetMapping("/ingredients")
-    @ResponseStatus(HttpStatus.OK)
     public Page<IngredientBasicDto> getIngredientsFromPantry(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -86,7 +85,6 @@ public class EatzUserPantryController {
     }
 
     @GetMapping("/ingredients/count")
-    @ResponseStatus(HttpStatus.OK)
     public CountResponse getIngredientCountFromPantry(@AuthenticatedEatzUserId Long userId) {
         return ingredientQueryService.getAllIngredientCountByUserId(userId);
     }
@@ -122,7 +120,6 @@ public class EatzUserPantryController {
     }
 
     @GetMapping("/kitchenwares")
-    @ResponseStatus(HttpStatus.OK)
     public Page<KitchenwareBasicDto> getKitchenwaresFromPantry(
             @AuthenticatedEatzUserId Long userId,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -130,7 +127,6 @@ public class EatzUserPantryController {
     }
 
     @GetMapping("/kitchenwares/count")
-    @ResponseStatus(HttpStatus.OK)
     public CountResponse getKitchenwareCountFromPantry(@AuthenticatedEatzUserId Long userId) {
         return kitchenwareQueryService.getAllKitchenwareCount(userId);
     }
