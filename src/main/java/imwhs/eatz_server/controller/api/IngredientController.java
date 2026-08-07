@@ -149,7 +149,8 @@ public class IngredientController {
     @GetMapping("/search")
     public Page<IngredientBasicDto> searchIngredients(
             @AuthenticatedEatzUserId Long userId,
-            @RequestParam("keyword") String keyword, Pageable pageable) {
+            @RequestParam("keyword") String keyword,
+            Pageable pageable) {
         return ingredientQueryService.searchBasics(keyword, userId, pageable);
     }
 

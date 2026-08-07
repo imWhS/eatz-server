@@ -45,11 +45,11 @@ public class DataInitRunner implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        initKitchenwares();
+        initIngredients();
         initRecipes();
         initReportReasons();
         initThemesAndTags();
-        initKitchenwares();
-        initIngredients();
     }
 
     private void initRecipes() {

@@ -43,11 +43,6 @@ public class RecipeDetailDto {
      */
     private String imageUrl;
 
-//    /**
-//     * 레시피의 URL
-//     */
-//    private String url;
-
     /**
      * 레시피의 요리 시간
      * 시간 단위로 '초'를 사용합니다.

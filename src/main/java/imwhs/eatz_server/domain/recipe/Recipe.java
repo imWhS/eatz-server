@@ -154,6 +154,7 @@ public class Recipe extends BaseEntity {
     /**
      * 설명
      */
+    @NotNull
     private String description;
 
     /**
