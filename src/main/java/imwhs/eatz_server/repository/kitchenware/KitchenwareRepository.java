@@ -62,6 +62,8 @@ public interface KitchenwareRepository extends JpaRepository<Kitchenware, Long>,
 
     Boolean existsByNameAndDeletedAtIsNull(String name);
 
+    Optional<Kitchenware> findFirstByNameAndDeletedAtIsNull(String name);
+
     @Query("SELECT k " +
             "FROM Kitchenware k " +
             "WHERE " +

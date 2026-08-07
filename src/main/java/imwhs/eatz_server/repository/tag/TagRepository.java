@@ -48,4 +48,6 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     Optional<Tag> findByNameAndDeletedAtIsNull(String name);
 
+    Optional<Tag> findFirstByNameAndDeletedAtIsNull(String name);
+
 }

@@ -85,7 +85,7 @@ public class DataInitRunner implements ApplicationRunner {
                 // 재료 매핑
                 if (dto.getIngredientNames() != null) {
                     for (String ingName : dto.getIngredientNames()) {
-                        ingredientRepository.findByNameAndDeletedAtIsNull(ingName)
+                        ingredientRepository.findFirstByNameAndDeletedAtIsNull(ingName)
                                 .ifPresent(recipe::addIngredient);
                     }
                 }
@@ -93,7 +93,7 @@ public class DataInitRunner implements ApplicationRunner {
                 // 도구 매핑
                 if (dto.getKitchenwareNames() != null) {
                     for (String kitName : dto.getKitchenwareNames()) {
-                        kitchenwareRepository.findByNameAndDeletedAtIsNull(kitName)
+                        kitchenwareRepository.findFirstByNameAndDeletedAtIsNull(kitName)
                                 .ifPresent(recipe::addKitchenware);
                     }
                 }
@@ -101,7 +101,7 @@ public class DataInitRunner implements ApplicationRunner {
                 // 태그 매핑
                 if (dto.getTagNames() != null) {
                     for (String tagName : dto.getTagNames()) {
-                        tagRepository.findByNameAndDeletedAtIsNull(tagName)
+                        tagRepository.findFirstByNameAndDeletedAtIsNull(tagName)
                                 .ifPresent(recipe::addTag);
                     }
                 }
