@@ -57,7 +57,7 @@ public class Recipe extends BaseEntity {
      * </ul>
      */
     @NotNull
-    @Column(length = 1000)
+    @Column(length = 2000, nullable = false)
     private String url;
 
     /**
@@ -67,7 +67,7 @@ public class Recipe extends BaseEntity {
      * </ul>
      */
     @NotNull
-    @Column(nullable = false)
+    @Column(length = 2000, nullable = false)
     private String imageUrl;
 
     /**
@@ -172,6 +172,7 @@ public class Recipe extends BaseEntity {
     /**
      * 창작자 관련 URL
      */
+    @Column(length = 2000)
     private String creatorUrl;
 
     /**
