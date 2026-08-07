@@ -188,7 +188,7 @@ public class DataInitRunner implements ApplicationRunner {
         themeC.addTag(tagRepository.save(Tag.create("덮밥", "빠른 요리", "🍳")));
         themeC.addTag(tagRepository.save(Tag.create("국/탕", "속까지 따뜻하게 데워주는 요리", "🥘")));
         themeC.addTag(tagRepository.save(Tag.create("찌개", "속까지 따뜻하게 데워주는 요리", "🥘")));
-        themeC.addTag(tagRepository.save(Tag.create("파스타", "", "🍝")));
+        themeC.addTag(tagRepository.save(Tag.create("파스타", "이탈리아를 대표하는 요리", "🍝")));
         themeC.addTag(tagRepository.save(Tag.create("무침", "신선한 재료를 맛있게 버무린 요리", "🥗")));
         themeC.addTag(tagRepository.save(Tag.create("부침/전", "노릇노릇한 요리", "🥞")));
         themeC.addTag(tagRepository.save(Tag.create("베이킹", "오븐을 활용한 요리", "🍞")));
