@@ -82,6 +82,10 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, I
 
     Boolean existsByNameAndParentIdAndDeletedAtIsNull(String name, Long parentId);
 
+    Optional<Ingredient> findByNameAndParentIdIsNullAndDeletedAtIsNull(String name);
+
+    Optional<Ingredient> findByNameAndParentIdAndDeletedAtIsNull(String name, Long parentId);
+
     /**
      * ID로 Ingredient 엔티티를 조회하고, 연관 관계인 Ingredient.parent, Ingredient.children도 페치 조인으로 함께 조회합니다.<br/>
      * <ul>
@@ -232,7 +236,6 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, I
         SELECT * FROM IngredientTree
     """, nativeQuery = true)
     List<Ingredient> findAllAsHierarchy(@Param("id") Long id);
-
 
     // TODO: N + 1 이슈
     @Query("SELECT i " +
