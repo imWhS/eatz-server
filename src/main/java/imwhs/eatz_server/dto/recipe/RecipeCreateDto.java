@@ -41,7 +41,7 @@ public class RecipeCreateDto {
     private String imageUrl;
 
     /**
-     * 레시피의 요리 시간. '분' 단위를 사용합니다.
+     * 레시피의 요리 시간. '초' 단위를 사용합니다.
      */
     @NotNull
     private Integer cookingTime;
@@ -64,7 +64,7 @@ public class RecipeCreateDto {
     private String description;
 
     /**
-     * 레시피의 준비 시간. '분' 단위를 사용합니다.
+     * 레시피의 준비 시간. '초' 단위를 사용합니다.
      */
     private Integer prepTime;
 

@@ -1,13 +1,11 @@
-package imwhs.eatz_server.config;
+package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.domain.*;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.liked.LikedRecipe;
 import imwhs.eatz_server.domain.recipe.Recipe;
-import imwhs.eatz_server.repository.ReportCategoryRepository;
 import imwhs.eatz_server.repository.rating.RatingRepository;
 import imwhs.eatz_server.repository.tag.TagRepository;
-import imwhs.eatz_server.repository.tag.ThemeRepository;
 import imwhs.eatz_server.repository.comment.CommentRepository;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
@@ -18,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+@Profile("local")
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class DataSeeder {
+public class DummyDataSeeder {
 
     private final EatzUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -41,9 +41,7 @@ public class DataSeeder {
     private final IngredientRepository ingredientRepository;
     private final KitchenwareRepository kitchenwareRepository;
     private final LikedRecipeRepository likedRecipeRepository;
-    private final ThemeRepository themeRepository;
     private final TagRepository tagRepository;
-    private final ReportCategoryRepository reportCategoryRepository;
 
     @Bean
     public ApplicationRunner initSampleData() {
@@ -60,20 +58,12 @@ public class DataSeeder {
 
     @Transactional
     public void seedData() {
-        createReportReasons();
-
-        // 테마 & 태그
-        createThemesAndTags();
         List<Tag> allTags = tagRepository.findAll();
+        List<Ingredient> ingredients = ingredientRepository.findAll();
+        List<Kitchenware> kitchenwares = kitchenwareRepository.findAll();
 
         // 사용자
         List<EatzUser> users = createUsers();
-
-        // 재료
-        List<Ingredient> ingredients = createIngredients();
-
-        // 도구
-        List<Kitchenware> kitchenwares = createKitchenwares();
 
         // 레시피 (요리 가능/불가능 확인을 위한 초간단 레시피, 랜덤 레시피)
         List<Recipe> recipes = new ArrayList<>();
@@ -285,27 +275,6 @@ public class DataSeeder {
         }
     }
 
-    /**
-     *     SPAM("홍보성 스팸 정보가 포함됨"),
-     *     ABUSIVE_LANGUAGE("욕설, 비하, 혐오 표현이 포함됨"),
-     *     SENSITIVE_OR_INAPPROPRIATE_CONTENT("민감하거나 부적절한 콘텐츠가 포함됨"),
-     *     COPYRIGHT_INFRINGEMENT("저작권을 침해하는 콘텐츠가 포함됨"),
-     *     OTHER("기타");
-     */
-    private void createReportReasons() {
-        ReportCategory categorySpam = ReportCategory.create("SPAM", "홍보성 스팸 정보가 포함됨");
-        ReportCategory categoryAbusiveLanguage = ReportCategory.create("ABUSIVE_LANGUAGE", "욕설, 비하, 혐오 표현이 포함됨");
-        ReportCategory categorySensitiveOrInappropriateContent = ReportCategory.create("SENSITIVE_OR_INAPPROPRIATE_CONTENT", "민감하거나 부적절한 콘텐츠가 포함됨");
-        ReportCategory categoryCopyrightInfringement = ReportCategory.create("COPYRIGHT_INFRINGEMENT", "저작권을 침해하는 콘텐츠가 포함됨");
-        ReportCategory categoryOther = ReportCategory.create("OTHER", "기타");
-
-        reportCategoryRepository.save(categorySpam);
-        reportCategoryRepository.save(categoryAbusiveLanguage);
-        reportCategoryRepository.save(categorySensitiveOrInappropriateContent);
-        reportCategoryRepository.save(categoryCopyrightInfringement);
-        reportCategoryRepository.save(categoryOther);
-    }
-
     private List<EatzUser> createUsers() {
         List<EatzUser> users = new ArrayList<>();
         String password = passwordEncoder.encode("1q2w3e4r!");
@@ -324,87 +293,4 @@ public class DataSeeder {
 
         return users;
     }
-
-    private List<Ingredient> createIngredients() {
-        List<Ingredient> ingredients = new ArrayList<>();
-
-        Ingredient pork = ingredientRepository.save(Ingredient.create("돼지고기"));
-        Ingredient beef = ingredientRepository.save(Ingredient.create("소고기"));
-        Ingredient chicken = ingredientRepository.save(Ingredient.create("닭고기"));
-        ingredients.addAll(List.of(pork, beef, chicken));
-
-        ingredients.add(createChildIngredient("목살", pork, true));
-        ingredients.add(createChildIngredient("앞다리살", pork, true));
-        ingredients.add(createChildIngredient("삼겹살", pork, false));
-
-        ingredients.add(createChildIngredient("등심", beef, true));
-        ingredients.add(createChildIngredient("안창살", beef, true));
-        ingredients.add(createChildIngredient("차돌박이", beef, true));
-
-        ingredients.add(createChildIngredient("가슴살", chicken, true));
-        ingredients.add(createChildIngredient("다리살", chicken, true));
-
-        List<String> normalNames = List.of(
-                "오징어", "새우", "조개", "참치캔", "스팸",
-                "양파", "대파", "쪽파", "마늘", "당근", "감자", "고구마", "애호박", "오이", "청양고추", "콩나물", "숙주", "배추", "무", "양배추", "상추", "깻잎", "토마토",
-                "두부", "순두부", "계란", "우유", "체다 치즈", "모짜렐라 치즈", "버터",
-                "고추장", "된장", "간장", "설탕", "소금", "후추", "고춧가루", "다진마늘", "참기름", "식용유", "밀가루", "부침 가루", "김치", "밥", "라면 사리", "떡국 떡"
-        );
-
-        for (String name : normalNames) {
-            ingredients.add(ingredientRepository.save(Ingredient.create(name)));
-        }
-
-        return ingredients;
-    }
-
-    /**
-     * 하위 재료를 생성하고 부모와 연관 관계 및 커플링 옵션을 설정한 뒤 저장하는 헬퍼 메서드
-     */
-    private Ingredient createChildIngredient(String name, Ingredient parent, boolean isCoupled) {
-        Ingredient child = Ingredient.create(name);
-        child.setParent(parent);
-        child.updateIsParentCoupled(isCoupled);
-        return ingredientRepository.save(child);
-    }
-
-    private List<Kitchenware> createKitchenwares() {
-        List<String> kitchenwareNames = List.of("전자레인지", "에어프라이어", "프라이팬", "냄비", "가스레인지", "인덕션", "찜기", "믹서기", "오븐", "채반");
-        List<Kitchenware> kitchenwares = new ArrayList<>();
-        for (String name : kitchenwareNames) {
-            kitchenwares.add(kitchenwareRepository.save(Kitchenware.create(name)));
-        }
-        return kitchenwares;
-    }
-
-    private void createThemesAndTags() {
-        Theme themeA = Theme.create("나라 및 지역");
-        themeA.addTag(tagRepository.save(Tag.create("한식", "한국 요리", "🇰🇷")));
-        themeA.addTag(tagRepository.save(Tag.create("일식", "일본 요리", "🇯🇵")));
-        themeA.addTag(tagRepository.save(Tag.create("중식", "중국 요리", "🇨🇳")));
-        themeA.addTag(tagRepository.save(Tag.create("이탈리아", "이탈리아 요리", "🇮🇹")));
-        themeA.addTag(tagRepository.save(Tag.create("프랑스", "프랑스 요리", "🇫🇷")));
-        themeA.addTag(tagRepository.save(Tag.create("베트남", "베트남 요리", "🇻🇳")));
-        themeRepository.save(themeA);
-
-        Theme themeB = Theme.create("상황 및 목적");
-        themeB.addTag(tagRepository.save(Tag.create("반찬", "식탁을 풍성하게", "🍚")));
-        themeB.addTag(tagRepository.save(Tag.create("안주", "술과 곁들이는", "🍻")));
-        themeB.addTag(tagRepository.save(Tag.create("식이요법", "건강 관리", "🥗")));
-        themeB.addTag(tagRepository.save(Tag.create("야식", "밤에 즐기는 별미", "🌙")));
-        themeB.addTag(tagRepository.save(Tag.create("초간단", "빠르게 만드는", "⏱️")));
-        themeB.addTag(tagRepository.save(Tag.create("건강한", "영양 가득", "💪")));
-        themeRepository.save(themeB);
-
-        Theme themeC = Theme.create("요리 방법");
-        themeC.addTag(tagRepository.save(Tag.create("전자레인지", "간편한 조리", "♨️")));
-        themeC.addTag(tagRepository.save(Tag.create("에어프라이어", "바삭한 튀김", "🌬️")));
-        themeC.addTag(tagRepository.save(Tag.create("찜", "촉촉한 요리", "🍲")));
-        themeC.addTag(tagRepository.save(Tag.create("볶음", "빠른 요리", "🍳")));
-        themeC.addTag(tagRepository.save(Tag.create("조림", "깊은 맛", "🥘")));
-        themeC.addTag(tagRepository.save(Tag.create("튀김", "겉바속촉", "🍤")));
-        themeC.addTag(tagRepository.save(Tag.create("구이", "불맛", "🥩")));
-        themeRepository.save(themeC);
-    }
-
 }

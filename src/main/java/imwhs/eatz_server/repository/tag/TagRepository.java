@@ -46,4 +46,6 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             "   t.deletedAt IS null ")
     Page<Tag> searchByName(@Param("name") String name, Pageable pageable);
 
+    Optional<Tag> findByNameAndDeletedAtIsNull(String name);
+
 }
