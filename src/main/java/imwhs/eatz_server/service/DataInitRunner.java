@@ -59,7 +59,7 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         try {
-            // AdminInitializer가 생성해둔 관리자 계정을 작성자로 사용합니다.
+            // AdminInitializer가 생성해 둔 관리자 계정을 작성자로 사용합니다.
             EatzUser author = userRepository.findByEmailAndDeletedAtIsNull("heextory@eatz.io")
                     .orElseThrow(() -> new IllegalStateException("레시피 작성용 계정이 없어요. AdminInitializer가 먼저 실행되어야 해요."));
 
@@ -220,7 +220,6 @@ public class DataInitRunner implements ApplicationRunner {
         themeE.addTag(tagRepository.save(Tag.create("짭짤한 맛", "밥 도둑 혹은 안주로 제격인 맛", "🥨")));
         themeE.addTag(tagRepository.save(Tag.create("향신료", "이국적인 향이 매력적인 맛", "🌿")));
 
-        // 주의: 기존 코드에서 themeRepository.save(themeD); 로 되어 있던 부분 수정
         themeRepository.save(themeE);
     }
 
