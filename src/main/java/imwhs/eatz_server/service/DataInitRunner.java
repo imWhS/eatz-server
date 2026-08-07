@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
+@Order(2)
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -154,14 +156,14 @@ public class DataInitRunner implements ApplicationRunner {
         themeA.addTag(tagRepository.save(Tag.create("타이", "태국 요리", "🇹🇭")));
         themeA.addTag(tagRepository.save(Tag.create("멕시칸", "멕시코 요리", "🌮")));
         themeA.addTag(tagRepository.save(Tag.create("아메리칸", "미국 요리", "🍔")));
-        themeA.addTag(tagRepository.save(Tag.create("양식", "", "🍝")));
+        themeA.addTag(tagRepository.save(Tag.create("양식", "양식 요리", "🍝")));
         themeA.addTag(tagRepository.save(Tag.create("퓨전", "경계를 넘어 새로운 맛을 만들어낸 요리", "🛸")));
         themeRepository.save(themeA);
 
         Theme themeB = Theme.create("상황 및 목적");
         themeB.addTag(tagRepository.save(Tag.create("반찬", "식탁을 보다 풍성하게 만들어주는 요리", "🍚")));
         themeB.addTag(tagRepository.save(Tag.create("안주", "술과 곁들이기 좋은 요리", "🍻")));
-        themeB.addTag(tagRepository.save(Tag.create("간식", "", "🍰")));
+        themeB.addTag(tagRepository.save(Tag.create("간식", "끼니 사이에 간단하게 즐기기 좋은 요리", "🍰")));
         themeB.addTag(tagRepository.save(Tag.create("야식", "밤에 즐기는 별미", "🌙")));
         themeB.addTag(tagRepository.save(Tag.create("초간단", "빠르게 만드는 요리", "⏱️")));
         themeB.addTag(tagRepository.save(Tag.create("혼밥", "나를 위한 한 끼 요리", "🎧")));
@@ -179,8 +181,8 @@ public class DataInitRunner implements ApplicationRunner {
         themeC.addTag(tagRepository.save(Tag.create("찜", "촉촉한 요리", "🍲")));
         themeC.addTag(tagRepository.save(Tag.create("볶음", "빠른 요리", "🍳")));
         themeC.addTag(tagRepository.save(Tag.create("조림", "깊은 맛을 느낄 수 있는 요리", "🥘")));
-        themeC.addTag(tagRepository.save(Tag.create("국수", "", "🥘")));
-        themeC.addTag(tagRepository.save(Tag.create("국물", "", "🥘")));
+        themeC.addTag(tagRepository.save(Tag.create("국수", "목구멍으로 면을 후루룩 넘기는 맛을 즐길 수 있는 요리", "🥘")));
+        themeC.addTag(tagRepository.save(Tag.create("국물", "속을 따뜻하게 데워주는 요리", "🥘")));
         themeC.addTag(tagRepository.save(Tag.create("튀김", "바삭한 쾌감을 느낄 수 있는 요리", "🍤")));
         themeC.addTag(tagRepository.save(Tag.create("구이", "불맛을 느낄 수 있는 요리", "🥩")));
         themeC.addTag(tagRepository.save(Tag.create("덮밥", "빠른 요리", "🍳")));
@@ -190,7 +192,7 @@ public class DataInitRunner implements ApplicationRunner {
         themeC.addTag(tagRepository.save(Tag.create("무침", "신선한 재료를 맛있게 버무린 요리", "🥗")));
         themeC.addTag(tagRepository.save(Tag.create("부침/전", "노릇노릇한 요리", "🥞")));
         themeC.addTag(tagRepository.save(Tag.create("베이킹", "오븐을 활용한 요리", "🍞")));
-        themeC.addTag(tagRepository.save(Tag.create("스테이크", "", "🥩")));
+        themeC.addTag(tagRepository.save(Tag.create("스테이크", "육식파들이 환장할 요리", "🥩")));
         themeC.addTag(tagRepository.save(Tag.create("생식", "불을 쓰지 않는 요리", "🧊")));
         themeRepository.save(themeC);
 
