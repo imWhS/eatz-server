@@ -16,8 +16,8 @@ public class MailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.sender-email}")
-    private String senderEmail;
+//    @Value("${spring.mail.sender-email}")
+//    private String senderEmail;
 
     public void sendMail(String to, String subject, String content) {
         SimpleMailMessage message = createSimpleMailMessage(to, subject, content);
@@ -33,7 +33,7 @@ public class MailService {
 
     private SimpleMailMessage createSimpleMailMessage(String to, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(senderEmail);
+//        message.setFrom(senderEmail);
         message.setTo(to);
         message.setSubject(subject);
         message.setText(content);
