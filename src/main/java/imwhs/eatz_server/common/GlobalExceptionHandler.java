@@ -7,7 +7,9 @@ import imwhs.eatz_server.dto.ErrorResponse;
 import imwhs.eatz_server.exception.*;
 import imwhs.eatz_server.exception.base.BaseAuthenticationException;
 import imwhs.eatz_server.exception.base.BaseException;
+import imwhs.eatz_server.service.SlackAlertService;
 import imwhs.eatz_server.service.auth.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,12 @@ import java.util.List;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final SlackAlertService slackAlertService;
+
+    public GlobalExceptionHandler(SlackAlertService slackAlertService) {
+        this.slackAlertService = slackAlertService;
+    }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException e) {
@@ -139,7 +147,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
+        slackAlertService.sendErrorMessage(e, request);
         log.error("서버 내부에서 오류가 발생했어요.", e);
         return ResponseEntity
                 .status(EatzCommonErrorType.INTERNAL_SERVER_ERROR.getStatus())
