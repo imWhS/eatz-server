@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -86,6 +87,17 @@ public class EatzUser extends BaseEntity {
      */
     @Size(max = 200)
     private String bio;
+
+    /**
+     * 외부 공개 ID(UUID)
+     * <ul>
+     *     <li> 필수 항목입니다. </li>
+     *     <li> HTTP 통신 시 데이터베이스 내부에서 사용하는 사용자의 ID 노출을 방지하고, 외부(클라이언트)에서 사용자를 식별하기 위해 사용합니다. </li>
+     * </ul>
+     * TODO: 데이터베이스에 인덱스 추가 고려
+     */
+    @Column(nullable = false, unique = true, updatable = false, length = 36)
+    private String publicId = UUID.randomUUID().toString();
 
     private EatzUser(String username, String email, String password, EatzUserRole eatzUserRole) {
         this.username = username;
