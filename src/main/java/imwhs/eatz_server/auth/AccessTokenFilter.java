@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -78,8 +79,26 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
             // 액세스 토큰으로 사용자 정보를 조회하면서 유효성을 검증합니다. 액세스 토큰은 인증(로그인)을 성공한 경우에만 발급되기 떄문에,
             // 액세스 토큰이 만료 또는 유효하지 않은 상태가 아닌 경우 이전에 성공적으로 로그인한 사용자가 요청한 것으로 간주합니다.
-            // 그래서, 해당 클라이언트 요청에 대해서만 일시적으로 세션(현재 스레드)을 통해 사용자 정보를 관리하기 위해 인증 객체를 설정합니다.
             String username = tokenManager.getUsername(accessToken);
+
+            // 사용자 이름 정보를 MDC 로깅에 추가합니다.
+            MDC.put("username", username);
+
+            // 클라이언트의 IP 정보를 MDC 로깅에 추가합니다.
+            // 요청이 로드밸런서나 프록시를 거쳐 전달됐을 수 있기 때문에, 먼저 X-Forwarded-For HTTP 헤더를 확인해봅니다.
+            String clientIp = request.getHeader("X-Forwarded-For");
+            if (clientIp == null || clientIp.isBlank() || "unknown".equalsIgnoreCase(clientIp)) {
+                // X-Forwarded-For HTTP 헤더에 유효한 값이 없다면, 실제 요청을 보낸 원격 IP를 가져옵니다.
+                clientIp = request.getRemoteAddr();
+            }
+            MDC.put("clientIp", clientIp);
+
+            // 클라이언트의 실제 접속 기기, User-Agent정보를 MDC 로깅에 추가합니다.
+            String userAgent = request.getHeader("User-Agent");
+            MDC.put("userAgent", userAgent.isBlank() ? "unknown" : userAgent);
+
+            // 액세스 토큰을 통해 요청한 클라이언트의 사용자가 이전에 성공적으로 로그인했었음이 확인되면,
+            // 해당 요청에 대해서만 일시적으로 세션(현재 스레드)을 통해 사용자 정보를 관리하기 위해 인증 객체를 설정합니다.
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -98,22 +117,16 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             return;
         }  catch (Exception e) {
             log.warn("액세스 토큰 필터 처리 중 서버 내부 오류가 발생했어요: {}", e.getMessage());
-//            writeErrorResponse(response, EatzAuthErrorType.TOKEN_ACCESS_INVALID);
             handlerExceptionResolver.resolveException(request, response, null, e);
             return;
+        } finally {
+            // 스레드 풀의 스레드가 다시 사용됐을 때 이전 사용자/클라이언트의 정보가 남지 않게 하기 위해 MDC를 초기화합니다.
+            MDC.clear();
         }
 
         // 요청을 필터 체인의 다음 필터로 넘깁니다.
         filterChain.doFilter(request, response);
     }
-
-//    private void writeErrorResponse(HttpServletResponse response, EatzErrorType errorType) throws IOException {
-//        log.error("해당 HTTP 요청에 대한 액세스 토큰의 유효성 검증을 실패했어요. 요청 처리를 중단할게요. | {}", errorType.getMessage());
-//        response.setContentType("application/json");
-//        response.setStatus(errorType.getStatus().value());
-//        ErrorResponse body = ErrorResponse.create(errorType);
-//        response.getWriter().write(objectMapper.writeValueAsString(body));
-//    }
 
     private boolean hasBearerToken(String header) {
         return header != null && header.startsWith(BEARER_PREFIX);
