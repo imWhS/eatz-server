@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -86,6 +87,9 @@ public class EatzUser extends BaseEntity {
      */
     @Size(max = 200)
     private String bio;
+
+    @Column(nullable = false, unique = true, updatable = false, length = 36)
+    private String publicId = UUID.randomUUID().toString();
 
     private EatzUser(String username, String email, String password, EatzUserRole eatzUserRole) {
         this.username = username;
