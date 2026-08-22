@@ -107,7 +107,7 @@ public class RecipeController {
 
     /**
      * 레시피를 삭제 처리합니다.
-     * <p>레시피를 등록한 사용자만 접근 가능합니다.</p>
+     * <p> 레시피를 등록한 사용자만 접근 가능합니다. </p>
      * @param id 레시피의 ID
      */
     @DeleteMapping("/{id}")

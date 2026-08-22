@@ -7,6 +7,7 @@ import imwhs.eatz_server.service.tag.ThemeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,29 +23,34 @@ public class ThemeController {
     /**
      * 테마를 생성합니다.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void registerTheme(@Valid @RequestBody ThemeCreateRequest request) {
         themeService.register(request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ThemeDto updateThemeEssential(@PathVariable long id, @Valid @RequestBody ThemeUpdateRequest request) {
         return themeService.update(id, request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/tags")
     @ResponseStatus(HttpStatus.CREATED)
     public void addTagsToTheme(@PathVariable long id, @Valid @RequestBody AddTagsToThemeRequest request) {
         themeService.addTags(id, request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/tags")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void replaceThemeTags(@PathVariable long id, @Valid @RequestBody ThemeTagsReplaceRequest request) {
         themeService.replaceThemeTags(id, request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTheme(@PathVariable long id) {

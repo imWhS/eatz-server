@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v0/ingredients")
@@ -27,6 +28,7 @@ public class IngredientController {
      * @param request 재료 생성 및 등록을 요청하기 위해 필요한 정보
      * @return 등록 완료된 재료의 생성 정보를 담은 응답 DTO
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public IngredientCreationInfoResponse registerIngredient(
@@ -45,6 +47,7 @@ public class IngredientController {
      * @param id 업데이트할 재료의 ID
      * @param request 재료 업데이트를 요청하기 위해 필요한 정보
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public void updateIngredient(
             @AuthenticatedEatzUserId Long userId,
@@ -66,6 +69,7 @@ public class IngredientController {
      * </ul>
      * @param id 재료의 ID
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}/parent")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeParentFromIngredient(@AuthenticatedEatzUserId Long userId, @PathVariable Long id) {
@@ -79,6 +83,7 @@ public class IngredientController {
      * </ul>
      * @param id 재료의 ID
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteIngredient(@AuthenticatedEatzUserId Long userId, @PathVariable Long id) {

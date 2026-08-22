@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,12 +35,14 @@ public class ReportController {
                 request.getDescription());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/resolve")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void markReportAsResolved(@AuthenticatedEatzUserId Long adminId, @PathVariable Long id) {
         reportService.markAsResolved(adminId, id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public ReportCategoryCreationInfoResponse registerReportCategory(
@@ -48,6 +51,7 @@ public class ReportController {
         return reportService.registerReason(adminId, request.getCode(), request.getDescription());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/categories/{id}")
     public void updateCategory(
             @AuthenticatedEatzUserId Long adminId,

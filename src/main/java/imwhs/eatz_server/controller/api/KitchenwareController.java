@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ public class KitchenwareController {
     private final KitchenwareService kitchenwareService;
     private final KitchenwareQueryService kitchenwareQueryService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public KitchenwareCreationInfoResponse registerKitchenware(
@@ -33,6 +35,7 @@ public class KitchenwareController {
         return kitchenwareService.register(userId, request.getName());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public UploadedImageInfoResponse updateKitchenwareImage(
             @PathVariable Long id,
@@ -42,6 +45,7 @@ public class KitchenwareController {
         return new UploadedImageInfoResponse(imageUrl);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeKitchenwareImage(
