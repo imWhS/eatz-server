@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,6 +73,8 @@ public class DataInitRunner implements ApplicationRunner {
             List<RecipeInitDto> recipeInitDtos = objectMapper.readValue(
                     json.getInputStream(), new TypeReference<>() {});
 
+            List<Recipe> recipesToSave = new ArrayList<>();
+
             for (RecipeInitDto dto : recipeInitDtos) {
                 Recipe recipe = dto.toRecipe(author);
 
@@ -96,11 +99,11 @@ public class DataInitRunner implements ApplicationRunner {
                     tagService.addAllToRecipe(dto.getTagNames(), recipe);
                 }
 
-                recipeRepository.save(recipe);
+                recipesToSave.add(recipe);
             }
 
+            recipeRepository.saveAll(recipesToSave);
             log.info("EATZ 초기 레시피 {}개 일괄 초기화를 완료했어요!", recipeInitDtos.size());
-
         } catch (Exception e) {
             log.error("EATZ 레시피 일괄 초기화 중 오류가 발생했어요. | {}", e.getMessage(), e);
         }
