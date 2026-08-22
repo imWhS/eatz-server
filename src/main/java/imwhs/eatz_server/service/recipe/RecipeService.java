@@ -19,7 +19,6 @@ import imwhs.eatz_server.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -53,7 +52,7 @@ public class RecipeService {
     @Transactional(rollbackFor = Exception.class)
     public RecipeCreationInfoDto register(RecipeCreateDto dto, Long authorId) {
         EatzUser author = userRepository.getReference(authorId);
-        Recipe recipe = dto.toEntity(author);
+        Recipe recipe = dto.toRecipe(author);
 
         // 레시피에 재료를 추가합니다.
         List<Long> ingredientIds = dto.getIngredientIds();

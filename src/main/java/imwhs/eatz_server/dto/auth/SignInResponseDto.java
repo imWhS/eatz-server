@@ -1,7 +1,5 @@
 package imwhs.eatz_server.dto.auth;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +15,7 @@ import lombok.NoArgsConstructor;
 public class SignInResponseDto {
 
     private String email;
-
     private String role;
-
     private String token;
 
 }
