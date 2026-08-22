@@ -13,6 +13,7 @@ import imwhs.eatz_server.repository.kitchenware.KitchenwareRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.tag.TagRepository;
 import imwhs.eatz_server.repository.tag.ThemeRepository;
+import imwhs.eatz_server.service.tag.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -33,6 +34,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class DataInitRunner implements ApplicationRunner {
+
+    private final TagService tagService;
 
     private final EatzUserRepository userRepository;
     private final RecipeRepository recipeRepository;
@@ -65,7 +68,6 @@ public class DataInitRunner implements ApplicationRunner {
                 .orElseThrow(() -> new IllegalStateException("레시피 작성 계정이 없어요. AdminInitializer를 먼저 실행해야 해요."));
 
         try {
-
             ClassPathResource json = new ClassPathResource("EATZ-recipes.json");
             List<RecipeInitDto> recipeInitDtos = objectMapper.readValue(
                     json.getInputStream(), new TypeReference<>() {});
@@ -75,26 +77,23 @@ public class DataInitRunner implements ApplicationRunner {
 
                 // 재료 매핑
                 if (dto.getIngredientNames() != null) {
-                    for (String ingName : dto.getIngredientNames()) {
-                        ingredientRepository.findFirstByNameAndDeletedAtIsNull(ingName)
+                    for (String ingredientName : dto.getIngredientNames()) {
+                        ingredientRepository.findFirstByNameAndDeletedAtIsNull(ingredientName)
                                 .ifPresent(recipe::addIngredient);
                     }
                 }
 
                 // 도구 매핑
                 if (dto.getKitchenwareNames() != null) {
-                    for (String kitName : dto.getKitchenwareNames()) {
-                        kitchenwareRepository.findFirstByNameAndDeletedAtIsNull(kitName)
+                    for (String kitchenwareName : dto.getKitchenwareNames()) {
+                        kitchenwareRepository.findFirstByNameAndDeletedAtIsNull(kitchenwareName)
                                 .ifPresent(recipe::addKitchenware);
                     }
                 }
 
                 // 태그 매핑
                 if (dto.getTagNames() != null) {
-                    for (String tagName : dto.getTagNames()) {
-                        tagRepository.findFirstByNameAndDeletedAtIsNull(tagName)
-                                .ifPresent(recipe::addTag);
-                    }
+                    tagService.addAllToRecipe(dto.getTagNames(), recipe);
                 }
 
                 recipeRepository.save(recipe);

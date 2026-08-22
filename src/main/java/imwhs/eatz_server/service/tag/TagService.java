@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -133,11 +135,37 @@ public class TagService {
         tagRepository.deleteById(id);
     }
 
+    /**
+     * 이름에 해당하는 여러 태그들을 레시피에 추가합니다.
+     * <p>
+     *     이름에 해당하는 태그가 존재하지 않으면, 해당 태그의 Tag 엔티티를 생성한 후 레시피에 추가합니다.
+     * </p>
+     * @param names 레시피에 추가하려는 태그 이름 목록
+     * @param recipe 레시피의 Recipe 엔티티
+     */
     @Transactional(rollbackFor = Exception.class)
-    public void addRecipe(Long id, Long recipeId) {
-        Tag tag = tagRepository.get(id);
-        Recipe recipe = recipeRepository.get(recipeId);
-        recipe.addTag(tag);
+    public void addAllToRecipe(List<String> names, Recipe recipe) {
+        if (names == null || names.isEmpty()) { return; }
+
+        List<Tag> existingTags = tagRepository.findAllByNameIn(names);
+
+        Map<String, Tag> existingTagMap = existingTags.stream()
+                .collect(Collectors.toMap(Tag::getName, tag -> tag));
+
+        // 사용자가 태그를 추가한 순서를 보장하기 위해, names 목록을 순회하며 레시피에 태그를 추가합니다.
+        for (String name : names) {
+            Tag tag = existingTagMap.get(name);
+
+            // 해당 이름의 Tag가 없을 경우, 해당 이름으로 새 Tag 엔티티를 생성한 후 저장합니다.
+            // 이미 해당 이름의 Tag가 존재한다면 바로 RecipeTag 엔티티를 생성해서, Recipe와 연관 관계를 설정합니다.
+            if (tag == null) {
+                tag = Tag.create(name);
+                tagRepository.save(tag);
+            }
+
+            // Recipe를 저장할 때, RecipeTag도 함께 저장되도록 Recipe와 연관 관계를 설정합니다.
+            recipe.addTag(tag);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

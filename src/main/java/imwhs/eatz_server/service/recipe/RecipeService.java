@@ -16,13 +16,13 @@ import imwhs.eatz_server.repository.kitchenware.KitchenwareRepository;
 import imwhs.eatz_server.repository.tag.TagRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.service.ImageService;
+import imwhs.eatz_server.service.tag.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 레시피(Recipe) 상태를 변경할 수 있는 서비스를 제공합니다.
@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeService {
 
+    private final TagService tagService;
     private final RecipeRepository recipeRepository;
     private final EatzUserRepository userRepository;
     private final IngredientRepository ingredientRepository;
@@ -64,7 +65,7 @@ public class RecipeService {
 
         // 레시피에 태그를 추가합니다.
         List<String> tagNames = dto.getTagNames();
-        addTags(tagNames, recipe);
+        tagService.addAllToRecipe(tagNames, recipe);
 
         // 레시피를 저장합니다.
         recipeRepository.save(recipe);
@@ -112,7 +113,7 @@ public class RecipeService {
         recipe.clearAllRecipeTags();
         recipeRepository.flush();
         List<String> tagNames = dto.getTagNames();
-        addTags(tagNames, recipe);
+        tagService.addAllToRecipe(tagNames, recipe);
     }
 
     /**
@@ -176,38 +177,6 @@ public class RecipeService {
 
         for (Kitchenware existingKitchenware : existingKitchenwares) {
             recipe.addKitchenware(existingKitchenware);
-        }
-    }
-
-    /**
-     * 이름에 해당하는 여러 태그들을 레시피에 추가합니다.
-     * <p>
-     *     이름에 해당하는 태그가 존재하지 않으면, 해당 태그의 Tag 엔티티를 생성한 후 레시피에 추가합니다.
-     * </p>
-     * @param names 레시피에 추가하려는 태그 이름 목록
-     * @param recipe 레시피의 Recipe 엔티티
-     */
-    private void addTags(List<String> names, Recipe recipe) {
-        if (names == null || names.isEmpty()) { return; }
-
-        List<Tag> existingTags = tagRepository.findAllByNameIn(names);
-
-        Map<String, Tag> existingTagMap = existingTags.stream()
-                .collect(Collectors.toMap(Tag::getName, tag -> tag));
-
-        // 사용자가 태그를 추가한 순서를 보장하기 위해, names 목록을 순회하며 레시피에 태그를 추가합니다.
-        for (String name : names) {
-            Tag tag = existingTagMap.get(name);
-
-            // 해당 이름의 Tag가 없을 경우, 해당 이름으로 새 Tag 엔티티를 생성한 후 저장합니다.
-            // 이미 해당 이름의 Tag가 존재한다면 바로 RecipeTag 엔티티를 생성해서, Recipe와 연관 관계를 설정합니다.
-            if (tag == null) {
-                tag = Tag.create(name);
-                tagRepository.save(tag);
-            }
-
-            // Recipe를 저장할 때, RecipeTag도 함께 저장되도록 Recipe와 연관 관계를 설정합니다.
-            recipe.addTag(tag);
         }
     }
 
