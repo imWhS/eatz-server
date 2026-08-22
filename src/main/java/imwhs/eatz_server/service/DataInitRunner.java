@@ -47,9 +47,9 @@ public class DataInitRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         initKitchenwares();
         initIngredients();
+        initThemesAndTags();
         initRecipes();
         initReportReasons();
-        initThemesAndTags();
     }
 
     private void initRecipes() {
