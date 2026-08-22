@@ -5,7 +5,6 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.exception.InvalidPasswordException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.service.ImageService;
-import imwhs.eatz_server.service.ImageServiceOld;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

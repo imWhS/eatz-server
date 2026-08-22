@@ -99,7 +99,7 @@ public class RecipeCreateDto {
      * @param author 작성자의 EatzUser 엔티티
      * @return Recipe 엔티티
      */
-    public Recipe toEntity(EatzUser author) {
+    public Recipe toRecipe(EatzUser author) {
         return Recipe.create(
                 author,
                 title,

@@ -1,5 +1,7 @@
 package imwhs.eatz_server.dto.recipe;
 
+import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.domain.recipe.Recipe;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +24,19 @@ public class RecipeInitDto {
     private List<String> ingredientNames;
     private List<String> kitchenwareNames;
     private List<String> tagNames;
+
+    public Recipe toRecipe(EatzUser author) {
+        return Recipe.create(
+                author,
+                title,
+                url,
+                imageUrl,
+                cookingTime,
+                servings,
+                isCommentEnabled,
+                description,
+                prepTime,
+                creatorName,
+                creatorUrl);
+    }
 }

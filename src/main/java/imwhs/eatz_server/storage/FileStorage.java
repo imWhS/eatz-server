@@ -2,8 +2,6 @@ package imwhs.eatz_server.storage;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 /**
  * 파일 업로드 및 삭제 등 파일 저장소와 관련된 작업을 처리하는 인터페이스입니다.
  */

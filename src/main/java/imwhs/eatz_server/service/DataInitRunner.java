@@ -13,6 +13,7 @@ import imwhs.eatz_server.repository.kitchenware.KitchenwareRepository;
 import imwhs.eatz_server.repository.recipe.RecipeRepository;
 import imwhs.eatz_server.repository.tag.TagRepository;
 import imwhs.eatz_server.repository.tag.ThemeRepository;
+import imwhs.eatz_server.service.tag.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +36,8 @@ import java.util.Optional;
 @Component
 public class DataInitRunner implements ApplicationRunner {
 
+    private final TagService tagService;
+
     private final EatzUserRepository userRepository;
     private final RecipeRepository recipeRepository;
     private final ReportCategoryRepository reportCategoryRepository;
@@ -42,14 +46,16 @@ public class DataInitRunner implements ApplicationRunner {
     private final KitchenwareRepository kitchenwareRepository;
     private final IngredientRepository ingredientRepository;
 
+    private final ObjectMapper objectMapper;
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
         initKitchenwares();
         initIngredients();
+        initThemesAndTags();
         initRecipes();
         initReportReasons();
-        initThemesAndTags();
     }
 
     private void initRecipes() {
@@ -58,59 +64,46 @@ public class DataInitRunner implements ApplicationRunner {
             return;
         }
 
+        // AdminInitializer가 생성해 둔 관리자 계정을 작성자로 사용합니다.
+        EatzUser author = userRepository.findByEmailAndDeletedAtIsNull("heextory@eatz.io")
+                .orElseThrow(() -> new IllegalStateException("레시피 작성 계정이 없어요. AdminInitializer를 먼저 실행해야 해요."));
+
         try {
-            // AdminInitializer가 생성해 둔 관리자 계정을 작성자로 사용합니다.
-            EatzUser author = userRepository.findByEmailAndDeletedAtIsNull("heextory@eatz.io")
-                    .orElseThrow(() -> new IllegalStateException("레시피 작성용 계정이 없어요. AdminInitializer가 먼저 실행되어야 해요."));
+            ClassPathResource json = new ClassPathResource("EATZ-recipes.json");
+            List<RecipeInitDto> recipeInitDtos = objectMapper.readValue(
+                    json.getInputStream(), new TypeReference<>() {});
 
-            ClassPathResource resource = new ClassPathResource("EATZ-recipes.json");
-            ObjectMapper mapper = new ObjectMapper();
-            List<RecipeInitDto> recipeDtos = mapper.readValue(resource.getInputStream(), new TypeReference<>() {});
+            List<Recipe> recipesToSave = new ArrayList<>();
 
-            for (RecipeInitDto dto : recipeDtos) {
-                Recipe recipe = Recipe.create(
-                        author,
-                        dto.getTitle(),
-                        dto.getUrl(),
-                        dto.getImageUrl(),
-                        dto.getCookingTime(),
-                        dto.getServings(),
-                        dto.getIsCommentEnabled(),
-                        dto.getDescription(),
-                        dto.getPrepTime(),
-                        dto.getCreatorName(),
-                        dto.getCreatorUrl()
-                );
+            for (RecipeInitDto dto : recipeInitDtos) {
+                Recipe recipe = dto.toRecipe(author);
 
                 // 재료 매핑
                 if (dto.getIngredientNames() != null) {
-                    for (String ingName : dto.getIngredientNames()) {
-                        ingredientRepository.findFirstByNameAndDeletedAtIsNull(ingName)
+                    for (String ingredientName : dto.getIngredientNames()) {
+                        ingredientRepository.findFirstByNameAndDeletedAtIsNull(ingredientName)
                                 .ifPresent(recipe::addIngredient);
                     }
                 }
 
                 // 도구 매핑
                 if (dto.getKitchenwareNames() != null) {
-                    for (String kitName : dto.getKitchenwareNames()) {
-                        kitchenwareRepository.findFirstByNameAndDeletedAtIsNull(kitName)
+                    for (String kitchenwareName : dto.getKitchenwareNames()) {
+                        kitchenwareRepository.findFirstByNameAndDeletedAtIsNull(kitchenwareName)
                                 .ifPresent(recipe::addKitchenware);
                     }
                 }
 
                 // 태그 매핑
                 if (dto.getTagNames() != null) {
-                    for (String tagName : dto.getTagNames()) {
-                        tagRepository.findFirstByNameAndDeletedAtIsNull(tagName)
-                                .ifPresent(recipe::addTag);
-                    }
+                    tagService.addAllToRecipe(dto.getTagNames(), recipe);
                 }
 
-                recipeRepository.save(recipe);
+                recipesToSave.add(recipe);
             }
 
-            log.info("EATZ 초기 레시피 {}개 일괄 초기화를 완료했어요!", recipeDtos.size());
-
+            recipeRepository.saveAll(recipesToSave);
+            log.info("EATZ 초기 레시피 {}개 일괄 초기화를 완료했어요!", recipeInitDtos.size());
         } catch (Exception e) {
             log.error("EATZ 레시피 일괄 초기화 중 오류가 발생했어요. | {}", e.getMessage(), e);
         }
@@ -225,14 +218,14 @@ public class DataInitRunner implements ApplicationRunner {
 
     private void initKitchenwares() {
         if (kitchenwareRepository.count() > 0) {
-            log.info("도구 데이터가 이미 저장돼있어서, 재료 일괄 초기화를 진행하지 않아요.");
+            log.info("도구 데이터가 이미 저장돼있어서, 도구 일괄 초기화를 진행하지 않아요.");
             return;
         }
 
-        ClassPathResource resource = new ClassPathResource("EATZ-kitchenwares.csv");
+        ClassPathResource csv = new ClassPathResource("EATZ-kitchenwares.csv");
 
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)
+                new InputStreamReader(csv.getInputStream(), StandardCharsets.UTF_8)
         )) {
             String row;
             boolean isFirstRow = true;
@@ -245,7 +238,6 @@ public class DataInitRunner implements ApplicationRunner {
 
                 // 빈 행은 무시합니다.
                 if (row.trim().isEmpty()) continue;
-
 
                 // CSV 내 각 행의 ','를 기준으로 문자열을 나눠서, 개별 배열의 요소로 포함시킵니다.
                 String[] columns = row.split(",", -1);
@@ -282,10 +274,10 @@ public class DataInitRunner implements ApplicationRunner {
         }
 
         // 재료 목록을 포함하는 CSV 파일 resources/ingredients.csv를 읽어옵니다.
-        ClassPathResource resource = new ClassPathResource("EATZ-ingredients.csv");
+        ClassPathResource csv = new ClassPathResource("EATZ-ingredients.csv");
 
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)
+                new InputStreamReader(csv.getInputStream(), StandardCharsets.UTF_8)
         )) {
             String row;
             boolean isFirstRow = true;
