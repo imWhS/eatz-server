@@ -3,6 +3,7 @@ package imwhs.eatz_server.domain;
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -316,8 +317,8 @@ public class Rating extends BaseEntity {
      * @param score 평가 점수
      */
     public static void validateScore(Integer score) {
-        if (score == null) { throw new IllegalArgumentException("필수 항목인 평가 점수가 비어 있어요."); }
-        if (score < 1 || score > 5) { throw new IllegalArgumentException("평가 점수는 1부터 5 사이의 자연수여야 해요."); }
+        if (score == null) { throw new EatzInvalidRequestArgumentException("필수 항목인 평가 점수가 비어 있어요."); }
+        if (score < 1 || score > 5) { throw new EatzInvalidRequestArgumentException("평가 점수는 1부터 5 사이의 자연수여야 해요."); }
     }
 
 }

@@ -11,6 +11,7 @@ public enum EatzCommonErrorType implements EatzErrorType {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "서버 내부에서 오류가 발생했어요."),
     INVALID_REQUEST_ARGUMENTS(HttpStatus.BAD_REQUEST, "INVALID_REQUEST_ARGUMENTS", "요청으로 보낸 데이터의 2개 이상이 올바르지 않아요."),
     INVALID_REQUEST_ARGUMENT(HttpStatus.BAD_REQUEST, "INVALID_REQUEST_ARGUMENT", "요청으로 보낸 데이터가 올바르지 않아요."),
+    INVALID_RESOURCE_STATE(HttpStatus.CONFLICT, "INVALID_RESOURCE_STATE", "정책 및 데이터의 현재 상태와 충돌해서, 요청하신 작업을 처리할 수 없어요."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT_NOT_FOUND", "댓글을 찾을 수 없어요."),
     THEME_NOT_FOUND(HttpStatus.NOT_FOUND, "THEME_NOT_FOUND", "테마를 찾을 수 없어요."),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT_NOT_FOUND", "신고를 찾을 수 없어요."),

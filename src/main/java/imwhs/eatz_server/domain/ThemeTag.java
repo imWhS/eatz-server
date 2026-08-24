@@ -1,6 +1,7 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -74,13 +75,13 @@ public class ThemeTag extends BaseEntity {
 
     public static void validateTheme(Theme theme) {
         if (theme == null) {
-            throw new IllegalArgumentException("필수 항목인 테마가 비어 있어요."); // TODO: Assert.notNull
+            throw new EatzInvalidRequestArgumentException("필수 항목인 테마가 비어 있어요."); // TODO: Assert.notNull
         }
     }
 
     public static void validateTag(Tag tag) {
         if (tag == null) {
-            throw new IllegalArgumentException("필수 항목인 태그가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 태그가 비어 있어요.");
         }
     }
 

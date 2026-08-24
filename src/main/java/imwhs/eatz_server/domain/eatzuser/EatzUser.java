@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain.eatzuser;
 
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.common.util.EmailUtil;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -191,25 +192,25 @@ public class EatzUser extends BaseEntity {
 
     public static void validateUsername(String username) {
         if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 사용자 이름이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 사용자 이름이 비어 있어요.");
         }
 
         if (username.length() < 4 || 20 < username.length()) {
-            throw new IllegalArgumentException("사용자 이름은 최소 4자부터 최대 20자까지의 길이로 사용할 수 있어요.");
+            throw new EatzInvalidRequestArgumentException("사용자 이름은 최소 4자부터 최대 20자까지의 길이로 사용할 수 있어요.");
         }
     }
 
     public static void validatePassword(String password) {
-        if (password == null || password.isBlank()) { throw new IllegalArgumentException("필수 항목인 암호가 비어 있어요."); }
+        if (password == null || password.isBlank()) { throw new EatzInvalidRequestArgumentException("필수 항목인 암호가 비어 있어요."); }
     }
 
     public static void validateImageUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isBlank()) { throw new IllegalArgumentException("이미지가 비어 있어요."); }
+        if (imageUrl == null || imageUrl.isBlank()) { throw new EatzInvalidRequestArgumentException("이미지가 비어 있어요."); }
     }
 
     public static void validateBio(String bio) {
-        if (bio == null || bio.isBlank()) { throw new IllegalArgumentException("소개가 비어 있어요."); }
-        if (200 < bio.length()) { throw new IllegalArgumentException("소개는 최대 200자까지의 길이로 사용할 수 있어요."); }
+        if (bio == null || bio.isBlank()) { throw new EatzInvalidRequestArgumentException("소개가 비어 있어요."); }
+        if (200 < bio.length()) { throw new EatzInvalidRequestArgumentException("소개는 최대 200자까지의 길이로 사용할 수 있어요."); }
     }
 
     /**
@@ -234,10 +235,10 @@ public class EatzUser extends BaseEntity {
 
     public static void validateRawPassword(String rawPassword) {
         if (rawPassword == null || rawPassword.isBlank()) {
-            throw new IllegalArgumentException("암호가 비어있어요.");
+            throw new EatzInvalidRequestArgumentException("암호가 비어있어요.");
         }
         if (rawPassword.length() < 8 || 64 < rawPassword.length()) {
-            throw new IllegalArgumentException("암호는 최소 8자부터 최대 64자 사이의 길이여야 해요.");
+            throw new EatzInvalidRequestArgumentException("암호는 최소 8자부터 최대 64자 사이의 길이여야 해요.");
         }
     }
 

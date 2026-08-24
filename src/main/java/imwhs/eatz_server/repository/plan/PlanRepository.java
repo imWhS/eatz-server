@@ -1,15 +1,13 @@
 package imwhs.eatz_server.repository.plan;
 
 import imwhs.eatz_server.domain.Plan;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.PlanDuplicatedException;
 import imwhs.eatz_server.exception.PlanNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,13 +17,13 @@ import java.util.Optional;
 public interface PlanRepository extends JpaRepository<Plan, Long>, PlanQueryRepository {
 
     default Plan get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("플랜의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("플랜의 ID가 필요해요."); }
         return findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new PlanNotFoundException(id));
     }
 
     default void validateDuplicates(Long recipeId, Long userId, LocalDateTime date) {
-        if (recipeId == null) { throw new IllegalArgumentException("레시피의 ID가 필요해요."); }
-        if (userId == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
+        if (recipeId == null) { throw new EatzInvalidRequestArgumentException("레시피의 ID가 필요해요."); }
+        if (userId == null) { throw new EatzInvalidRequestArgumentException("사용자의 ID가 필요해요."); }
         if (existsByRecipeIdAndUserIdAndScheduledAtAndDeletedAtIsNull(recipeId, userId, date)) {
             throw new PlanDuplicatedException();
         }

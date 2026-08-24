@@ -1,6 +1,7 @@
 package imwhs.eatz_server.service;
 
 import imwhs.eatz_server.ImageCategory;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.storage.FileStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,11 @@ public class ImageService {
         String contentType = image.getContentType();
 
         if (contentType == null || !contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("파일의 유형이 " + contentType + "이에요. 이미지 파일만 업로드할 수 있어요. ");
+            throw new EatzInvalidRequestArgumentException("파일의 유형이 " + contentType + "이에요. 이미지 파일만 업로드할 수 있어요. ");
         }
 
         if (image.isEmpty() || image.getSize() == 0) {
-            throw new IllegalArgumentException("업로드하려는 이미지가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("업로드하려는 이미지가 유효하지 않아요.");
         }
 
         String imageName = image.getOriginalFilename();
@@ -45,7 +46,7 @@ public class ImageService {
      *                  Ex. "uploads/images/users/profiles/profile_123.png"
      */
     public void delete(String imageUri) {
-        if (imageUri.isBlank()) { throw new IllegalArgumentException("삭제하려는 이미지의 URI(URL)이 유효하지 않아요."); }
+        if (imageUri.isBlank()) { throw new EatzInvalidRequestArgumentException("삭제하려는 이미지의 URI(URL)이 유효하지 않아요."); }
         fileStorage.deleteByUri(imageUri);
     }
 

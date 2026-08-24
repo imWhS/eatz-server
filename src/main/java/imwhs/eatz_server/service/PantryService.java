@@ -6,6 +6,7 @@ import imwhs.eatz_server.domain.pantry.PantryIngredient;
 import imwhs.eatz_server.domain.pantry.PantryKitchenware;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.dto.plan.ChecklistRequirementsDto;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.pantry.PantryIngredientRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
@@ -68,7 +69,7 @@ public class PantryService {
 
         List<Ingredient> ingredients = ingredientRepository.findAllById(idSet);
         if (ingredients.size() != idSet.size()) {
-            throw new IllegalArgumentException("보관함에 추가하려는 재료 중 일부가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("보관함에 추가하려는 재료 중 일부가 유효하지 않아요.");
         }
 
         List<PantryIngredient> pantryIngredients = ingredients.stream()
@@ -94,7 +95,7 @@ public class PantryService {
 
         List<Kitchenware> kitchenwares = kitchenwareRepository.findAllById(idSet);
         if (kitchenwares.size() != idSet.size()) {
-            throw new IllegalArgumentException("보관함에 추가하려는 도구 중 일부가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("보관함에 추가하려는 도구 중 일부가 유효하지 않아요.");
         }
 
         List<PantryKitchenware> pantryKitchenwares = kitchenwares.stream()

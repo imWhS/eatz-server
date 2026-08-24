@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain.recipe;
 
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -60,13 +61,13 @@ public class SavedRecipe extends BaseEntity {
 
     public static void validateRecipe(Recipe recipe) {
         if (recipe == null) {
-            throw new IllegalArgumentException("필수 항목인 레시피가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 레시피가 비어 있어요.");
         }
     }
 
     public static void validateUser(EatzUser user) {
         if (user == null) {
-            throw new IllegalArgumentException("필수 항목인 사용자가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 사용자가 비어 있어요.");
         }
     }
 

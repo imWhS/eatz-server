@@ -3,6 +3,7 @@ package imwhs.eatz_server.domain;
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import imwhs.eatz_server.exception.UnauthorizedEatzUserException;
 import jakarta.persistence.*;
@@ -243,7 +244,7 @@ public class Comment extends BaseEntity {
      * @param content 내용
      */
     public static void validateContent(String content) {
-        if (content == null || content.isBlank()) { throw new IllegalArgumentException("필수 항목인 내용이 비어 있어요."); }
+        if (content == null || content.isBlank()) { throw new EatzInvalidRequestArgumentException("필수 항목인 내용이 비어 있어요."); }
     }
 
     /**

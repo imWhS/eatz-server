@@ -1,10 +1,9 @@
 package imwhs.eatz_server.repository.ingredient;
 
 import imwhs.eatz_server.domain.Ingredient;
-import imwhs.eatz_server.dto.ingredient.IngredientBasicDto;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
+import imwhs.eatz_server.exception.EatzInvalidResourceStateException;
 import imwhs.eatz_server.exception.IngredientNotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,12 +29,12 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, I
      * @return Ingredient 엔티티
      */
     default Ingredient get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("재료의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("재료의 ID가 필요해요."); }
         return findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new IngredientNotFoundException(id));
     }
 
     default Ingredient get(String name) {
-        if (name == null) { throw new IllegalArgumentException("재료의 이름이 필요해요."); }
+        if (name == null) { throw new EatzInvalidRequestArgumentException("재료의 이름이 필요해요."); }
         return findByNameAndDeletedAtIsNull(name).orElseThrow(() -> new IngredientNotFoundException(name));
     }
 
@@ -46,17 +45,17 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, I
      * @return Ingredient의 proxy 객체
      */
     default Ingredient getReference(Long id) {
-        if (id == null) { throw new IllegalArgumentException("재료의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("재료의 ID가 필요해요."); }
         return getReferenceByIdAndDeletedAtIsNull(id);
     }
 
     default Ingredient getWithParent(Long id) {
-        if (id == null) { throw new IllegalArgumentException("재료의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("재료의 ID가 필요해요."); }
         return findWithParentById(id).orElseThrow(() -> new IngredientNotFoundException(id));
     }
 
     default void validateExists(Long id) {
-        if (id == null) { throw new IllegalArgumentException("재료의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("재료의 ID가 필요해요."); }
         if (!existsByIdAndDeletedAtIsNull(id)) { throw new IngredientNotFoundException(id); }
     }
 
@@ -67,9 +66,9 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, I
      * @param parentId 재료의 상위 재료
      */
     default void validateDuplicates(String name, Long parentId) {
-        if (name == null) throw new IllegalArgumentException("재료의 이름이 필요해요.");
+        if (name == null) throw new EatzInvalidRequestArgumentException("재료의 이름이 필요해요.");
         if (parentId != null && (existsByNameAndParentIdAndDeletedAtIsNull(name, parentId)))
-            throw new IllegalArgumentException("동일한 이름을 가지고 있는 재료가 상위 재료에 이미 소속되어 있어요.");
+            throw new EatzInvalidResourceStateException("동일한 이름을 가지고 있는 재료가 상위 재료에 이미 소속되어 있어요.");
     }
 
     Optional<Ingredient> findByIdAndDeletedAtIsNull(Long id);

@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain.liked;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -43,7 +44,7 @@ public class LikedRecipe extends Liked {
     }
 
     public static void validateRecipe(Recipe recipe) {
-        if (recipe == null) { throw new IllegalArgumentException("필수 항목인 레시피가 비어 있어요."); }
+        if (recipe == null) { throw new EatzInvalidRequestArgumentException("필수 항목인 레시피가 비어 있어요."); }
     }
 
     /**

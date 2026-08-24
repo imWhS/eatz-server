@@ -15,6 +15,7 @@ import imwhs.eatz_server.dto.recipe.cookable.CookableRecipeDto;
 import imwhs.eatz_server.dto.recipe.cookable.CookableRecipesRequest;
 import imwhs.eatz_server.dto.recipe.explore.ExploreRecipeDto;
 import imwhs.eatz_server.dto.recipe.explore.ExploreRecipesRequest;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.repository.util.BlockedQueryUtil;
 import imwhs.eatz_server.repository.util.RecipeQueryUtil;
 import lombok.RequiredArgsConstructor;
@@ -530,7 +531,7 @@ public class RecipeQueryRepositoryImpl implements RecipeQueryRepository {
             }
         }
 
-        throw new IllegalArgumentException("올바르지 않은 정렬 조건이에요.");
+        throw new EatzInvalidRequestArgumentException("올바르지 않은 정렬 조건이에요.");
     }
 
     /**

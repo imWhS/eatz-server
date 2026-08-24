@@ -5,7 +5,7 @@ import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.domain.Tag;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
-import imwhs.eatz_server.domain.liked.LikedRecipe;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -479,43 +479,43 @@ public class Recipe extends BaseEntity {
 
     private static void validateServings(Integer servings) {
         if (Objects.isNull(servings) || servings < 1) {
-            throw new IllegalArgumentException("필수 항목인 1회 제공량이 비어 있거나, 올바르지 않아요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 1회 제공량이 비어 있거나, 올바르지 않아요.");
         }
     }
 
     private static void validateCookingTime(Integer cookingTime) {
         if (Objects.isNull(cookingTime) || cookingTime <= 0) {
-            throw new IllegalArgumentException("필수 항목인 요리 시간이 비어 있거나, 올바르지 않아요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 요리 시간이 비어 있거나, 올바르지 않아요.");
         }
     }
 
 //    private static void validatePrepTime(Integer prepTime) {
 //        if (prepTime != null && prepTime <= 0) {
-//            throw new IllegalArgumentException("준비 시간이 올바르지 않아요: " + prepTime);
+//            throw new EatzInvalidRequestArgumentException("준비 시간이 올바르지 않아요: " + prepTime);
 //        }
 //    }
 
     private static void validateImageUrl(String imageUrl) {
         if (Objects.isNull(imageUrl) || imageUrl.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 레시피 대표 이미지 URL이 없어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 레시피 대표 이미지 URL이 없어요.");
         }
     }
 
     private static void validateUrl(String url) {
         if (Objects.isNull(url) || url.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 레시피 URL이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 레시피 URL이 비어 있어요.");
         }
     }
 
     private static void validateTitle(String title) {
         if (Objects.isNull(title) || title.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 레시피 제목이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 레시피 제목이 비어 있어요.");
         }
     }
 
     private static void validateAuthor(EatzUser author) {
         if (Objects.isNull(author)) {
-            throw new IllegalArgumentException("필수 항목인 레시피 작성자 정보가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 레시피 작성자 정보가 비어 있어요.");
         }
     }
 

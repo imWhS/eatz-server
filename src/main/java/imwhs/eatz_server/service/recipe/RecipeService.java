@@ -1,7 +1,6 @@
 package imwhs.eatz_server.service.recipe;
 
 import imwhs.eatz_server.ImageCategory;
-import imwhs.eatz_server.domain.Tag;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.Kitchenware;
@@ -10,6 +9,7 @@ import imwhs.eatz_server.dto.RecipeOutboundResponse;
 import imwhs.eatz_server.dto.recipe.RecipeCreateDto;
 import imwhs.eatz_server.dto.recipe.RecipeCreationInfoDto;
 import imwhs.eatz_server.dto.recipe.RecipeUpdateDto;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
 import imwhs.eatz_server.repository.kitchenware.KitchenwareRepository;
@@ -156,7 +156,7 @@ public class RecipeService {
         Set<Long> idSet = new HashSet<>(ids);
         List<Ingredient> existingIngredients = ingredientRepository.findAllById(ids);
         if (idSet.size() != existingIngredients.size()) {
-            throw new IllegalArgumentException("레시피에 추가하려는 재료 중 일부가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("레시피에 추가하려는 재료 중 일부가 유효하지 않아요.");
         }
 
         for (Ingredient existingIngredient : existingIngredients) {
@@ -172,7 +172,7 @@ public class RecipeService {
         Set<Long> idSet = new HashSet<>(ids);
         List<Kitchenware> existingKitchenwares = kitchenwareRepository.findAllById(ids);
         if (idSet.size() != existingKitchenwares.size()) {
-            throw new IllegalArgumentException("레시피에 추가하려는 도구 중 일부가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("레시피에 추가하려는 도구 중 일부가 유효하지 않아요.");
         }
 
         for (Kitchenware existingKitchenware : existingKitchenwares) {

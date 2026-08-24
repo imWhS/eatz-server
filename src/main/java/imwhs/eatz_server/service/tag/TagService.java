@@ -3,6 +3,7 @@ package imwhs.eatz_server.service.tag;
 import imwhs.eatz_server.domain.Tag;
 import imwhs.eatz_server.domain.Theme;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.TagNotFoundException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.tag.TagRepository;
@@ -36,7 +37,7 @@ public class TagService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Tag register(String name, String emoji) {
-        if (name == null || name.isBlank()) { throw new IllegalArgumentException("태그 이름은 필수 항목이에요."); }
+        if (name == null || name.isBlank()) { throw new EatzInvalidRequestArgumentException("태그 이름은 필수 항목이에요."); }
         tagRepository.validateDuplicatesByName(name);
 
         Tag tag = Tag.create(name, emoji);

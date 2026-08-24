@@ -1,5 +1,6 @@
 package imwhs.eatz_server.storage;
 
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,8 @@ public class S3FileStorage implements FileStorage {
 
     @Override
     public String save(String logicalPath, MultipartFile file) {
-        if (logicalPath == null || logicalPath.isBlank() || file == null) { throw new IllegalArgumentException(); }
+        if (logicalPath == null || logicalPath.isBlank() || file == null) {
+            throw new EatzInvalidRequestArgumentException(); }
 
         String trimmedLogicalPath = removeLeadingSlash(logicalPath);
         Path path = Paths.get(trimmedLogicalPath);

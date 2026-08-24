@@ -2,6 +2,7 @@ package imwhs.eatz_server.repository;
 
 import imwhs.eatz_server.domain.ReportCategory;
 import imwhs.eatz_server.dto.report.ReportCategoryDto;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.ReportReasonIsNotActiveException;
 import imwhs.eatz_server.exception.ReportReasonNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +15,7 @@ import java.util.List;
 public interface ReportCategoryRepository extends JpaRepository<ReportCategory, Long> {
 
     default ReportCategory get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("신고 카테고리 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("신고 카테고리 ID가 필요해요."); }
         ReportCategory reason = findById(id).orElseThrow(() -> new ReportReasonNotFoundException(id));
         if (!reason.isActive()) { throw new ReportReasonIsNotActiveException(reason.getCode()); }
         return reason;

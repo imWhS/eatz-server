@@ -1,7 +1,7 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
-import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -57,7 +57,7 @@ public class Kitchenware extends BaseEntity {
      */
     public void updateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("변경하려는 도구의 이름이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("변경하려는 도구의 이름이 비어 있어요.");
         }
 
         this.name = name;
@@ -69,7 +69,7 @@ public class Kitchenware extends BaseEntity {
      */
     public void updateImageUrl(String imageUrl) {
         if (imageUrl == null || imageUrl.isBlank()) {
-            throw new IllegalArgumentException("변경하려는 도구의 대표 이미지 URL이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("변경하려는 도구의 대표 이미지 URL이 비어 있어요.");
         }
 
         this.imageUrl = imageUrl;
