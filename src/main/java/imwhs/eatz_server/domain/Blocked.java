@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -60,13 +61,13 @@ public class Blocked extends BaseEntity {
 
     private static void validateBlockedUser(EatzUser blockedUser) {
         if (blockedUser == null) {
-            throw new IllegalArgumentException("필수 항목인 차단된 사용자가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 차단된 사용자가 비어 있어요.");
         }
     }
 
     private static void validateBlocker(EatzUser blocker) {
         if (blocker == null) {
-            throw new IllegalArgumentException("필수 항목인 차단을 요청한 사용자가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 차단을 요청한 사용자가 비어 있어요.");
         }
     }
 

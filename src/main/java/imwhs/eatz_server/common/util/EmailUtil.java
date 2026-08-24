@@ -1,5 +1,7 @@
 package imwhs.eatz_server.common.util;
 
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
+
 import java.util.regex.Pattern;
 
 public final class EmailUtil {
@@ -8,10 +10,10 @@ public final class EmailUtil {
 
     public static void validateEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 이메일 주소가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 이메일 주소가 비어 있어요.");
         }
         if (!Pattern.matches(EMAIL_REGEX, email)) {
-            throw new IllegalArgumentException("이메일 주소(" + email + ")가 올바른 형식이 아니에요.");
+            throw new EatzInvalidRequestArgumentException("이메일 주소(" + email + ")가 올바른 형식이 아니에요.");
         }
     }
 

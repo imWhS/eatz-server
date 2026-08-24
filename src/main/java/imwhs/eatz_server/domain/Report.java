@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -83,7 +84,7 @@ public class Report extends BaseEntity {
 
     private static void validateResourceId(Long entityId) {
         if (entityId == null) {
-            throw new IllegalArgumentException("필수 항목인 자원의 ID가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 자원의 ID가 비어 있어요.");
         }
     }
 

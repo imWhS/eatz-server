@@ -187,7 +187,7 @@ public class AuthService {
         }
 
         if (newPassword == null || newPassword.length() < 8) {
-            throw new IllegalArgumentException("암호는 8자리 이상의 길이여야 해요.");
+            throw new EatzInvalidRequestArgumentException("암호는 8자리 이상의 길이여야 해요.");
         }
 
         Long userId = Long.parseLong(userIdStr);

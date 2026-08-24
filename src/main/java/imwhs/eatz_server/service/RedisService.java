@@ -1,5 +1,6 @@
 package imwhs.eatz_server.service;
 
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class RedisService {
         Long addedValueCount = redisTemplate.opsForSet().add(key, value);
         redisTemplate.expire(key, timeout);
         if (addedValueCount == null) {
-            throw new IllegalArgumentException("해당 key(" + key + ")에 매핑된 값이 없어요.");
+            throw new EatzInvalidRequestArgumentException("해당 key(" + key + ")에 매핑된 값이 없어요.");
         }
         return addedValueCount;
     }
@@ -72,7 +73,7 @@ public class RedisService {
     public long addElementToSet(String key, String value) {
         Long addedValueCount = redisTemplate.opsForSet().add(key, value);
         if (addedValueCount == null) {
-            throw new IllegalArgumentException("해당 key(" + key + ")에 매핑된 값이 없어요.");
+            throw new EatzInvalidRequestArgumentException("해당 key(" + key + ")에 매핑된 값이 없어요.");
         }
         return addedValueCount;
     }
@@ -181,7 +182,7 @@ public class RedisService {
      */
     public int getAsInt(String key) {
         String value = get(key);
-        if (value == null) { throw new IllegalArgumentException("해당 key(" + key + ")에 매핑된 값이 없어요."); }
+        if (value == null) { throw new EatzInvalidRequestArgumentException("해당 key(" + key + ")에 매핑된 값이 없어요."); }
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {

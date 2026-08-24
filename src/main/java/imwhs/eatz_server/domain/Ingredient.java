@@ -1,6 +1,8 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
+import imwhs.eatz_server.exception.EatzInvalidResourceStateException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -89,7 +91,7 @@ public class Ingredient extends BaseEntity {
      */
     public void updateName(String name) {
        if (name == null || name.isBlank()) {
-           throw new IllegalArgumentException("변경하려는 재료의 이름이 비어 있어요.");
+           throw new EatzInvalidRequestArgumentException("변경하려는 재료의 이름이 비어 있어요.");
        }
 
        this.name = name;
@@ -113,12 +115,12 @@ public class Ingredient extends BaseEntity {
      */
     public void setParent(Ingredient parent) {
         if (parent == null || parent.isMarkedAsDeleted()) {
-            throw new IllegalArgumentException("설정하려는 상위 재료가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("설정하려는 상위 재료가 유효하지 않아요.");
         }
 
         // 상위 재료로 설정할 재료의 유효성을 확인합니다.
         if (parent == this) {
-            throw new IllegalArgumentException("재료 자신을 상위 재료로 설정할 수 없어요.");
+            throw new EatzInvalidResourceStateException("재료 자신을 상위 재료로 설정할 수 없어요.");
         }
 
         // 상위 재료로 설정할 재료와 이미 연관 관계 설정이 되어 있는지 확인합니다.
@@ -128,7 +130,7 @@ public class Ingredient extends BaseEntity {
 
         // 상위 재료로 설정할 재료가 이미 하위 재료로 설정되어 있지는 않은지 확인합니다.
         if (hasChildAs(parent)) {
-            throw new IllegalArgumentException("이미 재료의 하위 계층에 존재하는 재료를 상위 재료로 설정할 수 없어요.");
+            throw new EatzInvalidResourceStateException("이미 재료의 하위 계층에 존재하는 재료를 상위 재료로 설정할 수 없어요.");
         }
 
         // 기존 상위 재료와의 연관 관계를 해제합니다.
@@ -160,11 +162,11 @@ public class Ingredient extends BaseEntity {
     public void addChild(Ingredient child) {
         // 하위로 추가할 재료의 유효성을 확인합니다.
         if (child == null || child.isMarkedAsDeleted()) {
-            throw new IllegalArgumentException("하위 계층에 추가할 새 재료가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("하위 계층에 추가할 새 재료가 유효하지 않아요.");
         }
 
         if (child == this) {
-            throw new IllegalArgumentException("자신을 하위 재료로 추가할 수 없어요.");
+            throw new EatzInvalidResourceStateException("자신을 하위 재료로 추가할 수 없어요.");
         }
 
         // 이미 현재 재료를 상위 재료로서, 하위 재료와 연관 관계가 맺어져있지는 않은지 확인합니다.
@@ -172,13 +174,14 @@ public class Ingredient extends BaseEntity {
 
         // 순환 참조 방지를 위해, 하위 계층에 둘 재료가 이미 현재 재료의 상위 재료로서 설정돼있지는 않은지 확인합니다.
         if (hasParentAs(child)) {
-            throw new IllegalArgumentException("현재 재료의 상위 재료로서 사용하고 있는 재료를 현재 재료의 하위 계층에 추가할 수 없어요.");
+            throw new EatzInvalidResourceStateException(
+                    "현재 재료의 상위 재료로서 사용하고 있는 재료를 현재 재료의 하위 계층에 추가할 수 없어요.");
         }
 
         // 하위 계층에 둘 재료가 이미 다른 상위 재료와 연관 관계를 갖고 있지 않은지 확인합니다.
         // 이미 다른 상위 재료와 연관 관계를 갖고 있다면, 해당 재료 엔티티를 통해 상위 재료 설정을 해제해야 합니다.
         if (child.parent != null && !Objects.equals(child.parent, this)) {
-            throw new IllegalArgumentException(
+            throw new EatzInvalidResourceStateException(
                     "하위 계층에 추가할 재료가 이미 " + child.parent.getName() + " 상위 재료에 포함되어 있어요.");
         }
 
@@ -203,15 +206,15 @@ public class Ingredient extends BaseEntity {
      */
     public void removeChild(Ingredient child) {
         if (child == null) {
-            throw new IllegalArgumentException("제거하려는 재료가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("제거하려는 재료가 유효하지 않아요.");
         }
 
         if (child.parent == null) {
-            throw new IllegalArgumentException("제거하려는 재료가 어떠한 상위 재료에도 포함되어 있지 않아요.");
+            throw new EatzInvalidResourceStateException("제거하려는 재료가 어떠한 상위 재료에도 포함되어 있지 않아요.");
         }
 
         if (child.parent != this) {
-            throw new IllegalArgumentException(
+            throw new EatzInvalidResourceStateException(
                     "제거하려는 재료가 다른 상위 재료(" + child.parent.getName() + ")에 포함되어 있어요.");
         }
 
@@ -271,7 +274,7 @@ public class Ingredient extends BaseEntity {
 
     public static void validateName(String name) {
         if (Objects.isNull(name) || name.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 재료의 이름이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 재료의 이름이 비어 있어요.");
         }
     }
 

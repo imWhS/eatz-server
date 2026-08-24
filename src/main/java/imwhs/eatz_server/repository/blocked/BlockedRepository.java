@@ -1,6 +1,7 @@
 package imwhs.eatz_server.repository.blocked;
 
 import imwhs.eatz_server.domain.Blocked;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,11 +15,13 @@ import org.springframework.stereotype.Repository;
 public interface BlockedRepository extends JpaRepository<Blocked, Long>, BlockedQueryRepository {
 
     default void validateNotExists(Long blockerId, Long blockedUserId) {
-        if (blockerId == null) { throw new IllegalArgumentException("특정 사용자의 차단 여부를 확인하려는 사용자의 ID가 필요해요."); }
-        if (blockedUserId == null) { throw new IllegalArgumentException("차단 여부를 확인하려는 사용자의 ID가 필요해요."); }
+        if (blockerId == null) {
+            throw new EatzInvalidRequestArgumentException("특정 사용자의 차단 여부를 확인하려는 사용자의 ID가 필요해요."); }
+        if (blockedUserId == null) {
+            throw new EatzInvalidRequestArgumentException("차단 여부를 확인하려는 사용자의 ID가 필요해요."); }
 
         if (existsByBlockerIdAndBlockedUserId(blockerId, blockedUserId)) {
-            throw new IllegalArgumentException("이미 차단한 사용자예요.");
+            throw new EatzInvalidRequestArgumentException("이미 차단한 사용자예요.");
         }
     }
 

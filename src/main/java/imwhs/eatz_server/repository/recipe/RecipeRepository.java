@@ -2,6 +2,7 @@ package imwhs.eatz_server.repository.recipe;
 
 import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.dto.recipe.*;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.RecipeNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeQueryRepository {
 
     default Recipe get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("레시피의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("레시피의 ID가 필요해요."); }
         return findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new RecipeNotFoundException(id));
     }
 
@@ -29,12 +30,12 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeQue
      * @return Recipe의 proxy 객체
      */
     default Recipe getReference(Long id) {
-        if (id == null) { throw new IllegalArgumentException("레시피의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("레시피의 ID가 필요해요."); }
         return getReferenceByIdAndDeletedAtIsNull(id);
     }
 
     default void validateExists(Long id) {
-        if (id == null) { throw new IllegalArgumentException("레시피의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("레시피의 ID가 필요해요."); }
         if (!existsByIdAndDeletedAtIsNull(id)) { throw new RecipeNotFoundException(id); }
     }
 

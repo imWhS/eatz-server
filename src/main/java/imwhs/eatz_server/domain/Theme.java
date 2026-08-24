@@ -1,6 +1,7 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -93,7 +94,7 @@ public class Theme extends BaseEntity {
      * @param name 이름
      */
     public static void validateName(String name) {
-        if (name != null && name.isBlank()) { throw new IllegalArgumentException("이름이 공백이에요."); }
+        if (name != null && name.isBlank()) { throw new EatzInvalidRequestArgumentException("이름이 비어 있어요."); }
     }
 
     /**
@@ -101,7 +102,8 @@ public class Theme extends BaseEntity {
      * @param description 설명
      */
     public static void validateDescription(String description) {
-        if (description != null && description.isBlank()) { throw new IllegalArgumentException("설명이 공백이에요."); }
+        if (description != null && description.isBlank()) {
+            throw new EatzInvalidRequestArgumentException("설명이 비어 있어요."); }
     }
 
     /**

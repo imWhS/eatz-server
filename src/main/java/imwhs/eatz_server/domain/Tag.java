@@ -1,8 +1,8 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
-import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.RecipeTag;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -122,18 +122,18 @@ public class Tag extends BaseEntity {
 
     private static void validateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("태그의 이름이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("태그의 이름이 비어 있어요.");
         }
     }
 
     private static void validateKeyword(String keyword) {
         if (keyword == null || keyword.isBlank()) {
-            throw new IllegalArgumentException("태그의 키워드가 비어 있어요."); }
+            throw new EatzInvalidRequestArgumentException("태그의 키워드가 비어 있어요."); }
     }
 
     private static void validateDescription(String description) {
         if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("태그의 설명이 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("태그의 설명이 비어 있어요.");
         }
     }
 

@@ -5,6 +5,8 @@ import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.dto.CountResponse;
 import imwhs.eatz_server.dto.ingredient.*;
 import imwhs.eatz_server.dto.recipe.ingredient.IngredientRequirementDto;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
+import imwhs.eatz_server.exception.EatzInvalidResourceStateException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
 import imwhs.eatz_server.repository.recipe.ingredient.RecipeIngredientRepository;
@@ -190,7 +192,7 @@ public class IngredientQueryService {
             } else if (root == null) {
                 root = current;
             } else {
-                throw new IllegalArgumentException("최상위 계층에 해당하는 재료가 2개 이상 있어요.");
+                throw new EatzInvalidResourceStateException("최상위 계층에 해당하는 재료가 2개 이상 있어요.");
             }
         }
 
@@ -228,7 +230,7 @@ public class IngredientQueryService {
                 // 현재 재료가 루트에 해당하는 재료인 경우: 먼저 최상위 계층에 해당하는 재료가 이미 존재하는지 확인합니다.
                 if (existsRoot) {
                     // 루트에 해당하는 재료가 2개 이상이면, 단일 트리로 변환할 수 없어 실행을 중단합니다.
-                    throw new IllegalArgumentException("루트에 해당하는 재료가 2개 이상이에요.");
+                    throw new EatzInvalidResourceStateException("최상위 계층에 해당하는 재료가 2개 이상 있어요.");
                 } else {
                     // 유일하게 최상위 계층에 해당하는 재료인 경우, 상위 재료가 지정돼있지 않기에 바로 목록의 다음 재료를 순회합니다.
                     existsRoot = true;

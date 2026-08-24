@@ -4,7 +4,7 @@ import imwhs.eatz_server.domain.Comment;
 import imwhs.eatz_server.dto.comment.CommentBasicDto;
 import imwhs.eatz_server.dto.comment.CommentEssentialWithRecipeDto;
 import imwhs.eatz_server.exception.CommentNotFoundException;
-import imwhs.eatz_server.exception.RecipeNotFoundException;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,7 +29,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
     }
 
     default void validateExists(Long id) {
-        if (id == null) { throw new IllegalArgumentException("댓글의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("댓글의 ID가 필요해요."); }
         if (!existsByIdAndDeletedAtIsNull(id)) { throw new CommentNotFoundException(id); }
     }
 

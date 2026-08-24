@@ -1,8 +1,8 @@
 package imwhs.eatz_server.repository.kitchenware;
 
-import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.dto.kitchenware.KitchenwareBasicDto;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.KitchenwareNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +20,12 @@ import java.util.Optional;
 public interface KitchenwareRepository extends JpaRepository<Kitchenware, Long>, KitchenwareQueryRepository {
 
     default Kitchenware get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("도구의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("도구의 ID가 필요해요."); }
         return findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new KitchenwareNotFoundException(id));
     }
 
     default Kitchenware get(String name) {
-        if (name == null || name.isBlank()) { throw new IllegalArgumentException("도구의 이름이 필요해요."); }
+        if (name == null || name.isBlank()) { throw new EatzInvalidRequestArgumentException("도구의 이름이 필요해요."); }
         return findByNameAndDeletedAtIsNull(name).orElseThrow(() -> new KitchenwareNotFoundException(name));
     }
 
@@ -36,19 +36,19 @@ public interface KitchenwareRepository extends JpaRepository<Kitchenware, Long>,
      * @return Ingredient의 proxy 객체
      */
     default Kitchenware getReference(Long id) {
-        if (id == null) { throw new IllegalArgumentException("도구의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("도구의 ID가 필요해요."); }
         return getReferenceByIdAndDeletedAtIsNull(id);
     }
 
     default void validateExists(Long id) {
-        if (id == null) { throw new IllegalArgumentException("도구의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("도구의 ID가 필요해요."); }
         if (!existsByIdAndDeletedAtIsNull(id)) { throw new KitchenwareNotFoundException(id); }
     }
 
     default void validateDuplicates(String name) {
-        if (name == null) throw new IllegalArgumentException("도구의 이름이 필요해요.");
+        if (name == null) throw new EatzInvalidRequestArgumentException("도구의 이름이 필요해요.");
         if (existsByNameAndDeletedAtIsNull(name)) {
-            throw new IllegalArgumentException("이미 동일한 이름을 가지고 있는 도구가 있어요.");
+            throw new EatzInvalidRequestArgumentException("이미 동일한 이름을 가지고 있는 도구가 있어요.");
         }
     }
 

@@ -1,6 +1,7 @@
 package imwhs.eatz_server.domain;
 
 import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,11 +41,11 @@ public class ReportCategory extends BaseEntity {
 
     public static void validateCode(String code) {
         if (code == null || code.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 코드가 비어 있어요."); }
+            throw new EatzInvalidRequestArgumentException("필수 항목인 코드가 비어 있어요."); }
     }
 
     public static void validateDescription(String description) {
         if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("필수 항목인 설명이 비어 있어요."); }
+            throw new EatzInvalidRequestArgumentException("필수 항목인 설명이 비어 있어요."); }
     }
 }

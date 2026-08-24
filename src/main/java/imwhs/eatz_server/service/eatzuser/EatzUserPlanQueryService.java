@@ -8,6 +8,7 @@ import imwhs.eatz_server.domain.recipe.RecipeKitchenware;
 import imwhs.eatz_server.dto.ingredient.IngredientEssentialDto;
 import imwhs.eatz_server.dto.kitchenware.KitchenwareEssentialDto;
 import imwhs.eatz_server.dto.plan.*;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.pantry.PantryIngredientRepository;
 import imwhs.eatz_server.repository.recipe.ingredient.RecipeIngredientRepository;
@@ -260,7 +261,7 @@ public class EatzUserPlanQueryService {
         List<PlanBasicDto> requiredRecipes = planRepository.findAllBasicsByUserId(userId, startDate, endDate);
 
         if (requiredRecipes.isEmpty()) {
-            throw new IllegalArgumentException("올바르지 않은 요청이에요.");
+            throw new EatzInvalidRequestArgumentException("올바르지 않은 요청이에요.");
         }
 
         // Plan × Recipe에서 모든 레시피의 ID들을 목록으로 추출합니다. 이후 레시피 별 연관 정보를 일괄 조회할 때 사용합니다.

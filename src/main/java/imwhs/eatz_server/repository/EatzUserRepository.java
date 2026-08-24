@@ -2,6 +2,7 @@ package imwhs.eatz_server.repository;
 
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.eatzuser.EatzUserRole;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.EatzUserNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,23 +22,23 @@ import java.util.Optional;
 public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
 
     default EatzUser get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("사용자의 ID가 필요해요."); }
         return findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new EatzUserNotFoundException(id));
     }
 
     default EatzUser getAdmin(Long id) {
-        if (id == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("사용자의 ID가 필요해요."); }
         return findByIdAndEatzUserRoleAndDeletedAtIsNull(id, EatzUserRole.ROLE_ADMIN).orElseThrow(
                 () -> new EatzUserNotFoundException(id, EatzUserRole.ROLE_ADMIN));
     }
 
     default EatzUser getByUsername(String username) {
-        if (username == null) { throw new IllegalArgumentException("사용자의 사용자 이름이 필요해요."); }
+        if (username == null) { throw new EatzInvalidRequestArgumentException("사용자의 사용자 이름이 필요해요."); }
         return findByUsernameAndDeletedAtIsNull(username).orElseThrow(() -> new EatzUserNotFoundException(username));
     }
 
     default EatzUser getByEmail(String email) {
-        if (email == null) { throw new IllegalArgumentException("사용자의 이메일 주소가 필요해요."); }
+        if (email == null) { throw new EatzInvalidRequestArgumentException("사용자의 이메일 주소가 필요해요."); }
         return findByEmailAndDeletedAtIsNull(email).orElseThrow(() -> new EatzUserNotFoundException(email, true));
     }
 
@@ -48,22 +49,23 @@ public interface EatzUserRepository extends JpaRepository<EatzUser, Long> {
      * @return EatzUser의 proxy 객체
      */
     default EatzUser getReference(Long id) {
-        if (id == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("사용자의 ID가 필요해요."); }
         return getReferenceById(id);
     }
 
     default void validateExists(Long id) {
-        if (id == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("사용자의 ID가 필요해요."); }
         if (!existsByIdAndDeletedAtIsNull(id)) { throw new EatzUserNotFoundException(id); }
     }
 
     default void validateExistsByUsername(String username) {
-        if (username == null || username.isBlank()) { throw new IllegalArgumentException("사용자의 사용자 이름이 필요해요."); }
+        if (username == null || username.isBlank()) {
+            throw new EatzInvalidRequestArgumentException("사용자의 사용자 이름이 필요해요."); }
         if (!existsByUsername(username)) { throw new EatzUserNotFoundException(username); }
     }
 
     default void validateExistsAsAdmin(Long id) {
-        if (id == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("사용자의 ID가 필요해요."); }
         if (!existsByIdAndEatzUserRoleAndDeletedAtIsNull(id, EatzUserRole.ROLE_ADMIN)) {
             throw new EatzUserNotFoundException(id); }
     }

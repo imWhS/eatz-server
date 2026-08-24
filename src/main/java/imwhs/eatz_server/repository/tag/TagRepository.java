@@ -1,6 +1,7 @@
 package imwhs.eatz_server.repository.tag;
 
 import imwhs.eatz_server.domain.Tag;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.TagNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,14 +16,14 @@ import java.util.Set;
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
     default Tag get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("태그의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("태그의 ID가 필요해요."); }
         return findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new TagNotFoundException(id));
     }
 
     default void validateDuplicatesByName(String name) {
-        if (name == null) { throw new IllegalArgumentException("태그의 이름이 필요해요."); }
+        if (name == null) { throw new EatzInvalidRequestArgumentException("태그의 이름이 필요해요."); }
         if (existsByNameAndDeletedAtIsNull(name)) {
-            throw new IllegalArgumentException("이미 '" + name + "' 이름을 가진 태그가 있어요.");
+            throw new EatzInvalidRequestArgumentException("이미 '" + name + "' 이름을 가진 태그가 있어요.");
         }
     }
 

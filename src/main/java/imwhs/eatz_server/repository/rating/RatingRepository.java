@@ -2,7 +2,7 @@ package imwhs.eatz_server.repository.rating;
 
 import imwhs.eatz_server.domain.Rating;
 import imwhs.eatz_server.dto.rating.*;
-import imwhs.eatz_server.exception.CommentNotFoundException;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.RatingDuplicatedException;
 import imwhs.eatz_server.exception.RatingNotFoundException;
 import org.springframework.data.domain.Page;
@@ -21,23 +21,23 @@ import java.util.Optional;
 public interface RatingRepository extends JpaRepository<Rating, Long>, RatingQueryRepository {
 
     default Rating get(Long id) {
-        if (id == null) { throw new IllegalArgumentException("평가의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("평가의 ID가 필요해요."); }
         return findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new RatingNotFoundException(id));
     }
 
     default Rating getWithRecipe(Long id) {
-        if (id == null) { throw new IllegalArgumentException("평가의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("평가의 ID가 필요해요."); }
         return findWithRecipeByRatingId(id).orElseThrow(() -> new RatingNotFoundException(id));
     }
 
     default void validateExists(Long id) {
-        if (id == null) { throw new IllegalArgumentException("평가의 ID가 필요해요."); }
+        if (id == null) { throw new EatzInvalidRequestArgumentException("평가의 ID가 필요해요."); }
         if (existsByIdAndDeletedAtIsNull(id))  { throw new RatingNotFoundException(id); }
     }
 
     default void validateDuplicates(Long recipeId, Long userId) {
-        if (recipeId == null) { throw new IllegalArgumentException("레시피의 ID가 필요해요."); }
-        if (userId == null) { throw new IllegalArgumentException("사용자의 ID가 필요해요."); }
+        if (recipeId == null) { throw new EatzInvalidRequestArgumentException("레시피의 ID가 필요해요."); }
+        if (userId == null) { throw new EatzInvalidRequestArgumentException("사용자의 ID가 필요해요."); }
         if (existsByRecipeIdAndAuthorIdAndDeletedAtIsNull(recipeId, userId)) {
             throw new RatingDuplicatedException();
         }

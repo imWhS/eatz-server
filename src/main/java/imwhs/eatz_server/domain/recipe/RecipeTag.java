@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain.recipe;
 
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.Tag;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -79,13 +80,13 @@ public class RecipeTag extends BaseEntity {
 
     public static void validateRecipe(Recipe recipe) {
         if (recipe == null) {
-            throw new IllegalArgumentException("필수 항목인 레시피가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 레시피가 비어 있어요.");
         }
     }
 
     public static void validateTag(Tag tag) {
         if (tag == null) {
-            throw new IllegalArgumentException("필수 항목인 태그가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 태그가 비어 있어요.");
         }
     }
 

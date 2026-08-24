@@ -1,5 +1,6 @@
 package imwhs.eatz_server.storage;
 
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -40,7 +41,7 @@ public class LocalFileStorage implements FileStorage {
 
     @Override
     public String save(String logicalPath, MultipartFile file) {
-        if (logicalPath == null ||  logicalPath.isBlank() || file == null) { throw new IllegalArgumentException(); }
+        if (logicalPath == null ||  logicalPath.isBlank() || file == null) { throw new EatzInvalidRequestArgumentException(); }
 
         String path = removeLeadingSlash(logicalPath);
 

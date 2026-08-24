@@ -2,6 +2,7 @@ package imwhs.eatz_server.domain.liked;
 
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -65,7 +66,7 @@ public abstract class Liked extends BaseEntity {
 
     public static void validateUser(EatzUser user) {
         if (user == null) {
-            throw new IllegalArgumentException("필수 항목인 사용자가 비어 있어요.");
+            throw new EatzInvalidRequestArgumentException("필수 항목인 사용자가 비어 있어요.");
         }
     }
 

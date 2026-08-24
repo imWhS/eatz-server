@@ -3,6 +3,7 @@ package imwhs.eatz_server.service.tag;
 import imwhs.eatz_server.domain.Tag;
 import imwhs.eatz_server.domain.Theme;
 import imwhs.eatz_server.dto.tag.theme.*;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.ThemeNotFoundException;
 import imwhs.eatz_server.repository.tag.TagRepository;
 import imwhs.eatz_server.repository.tag.ThemeRepository;
@@ -88,7 +89,7 @@ public class ThemeService {
 
         List<Tag> tags = tagRepository.findAllByIdInAndDeletedAtIsNull(ids);
         if (tags.size() != ids.size()) {
-            throw new IllegalArgumentException("테마에 추가하려는 태그 중 일부가 유효하지 않아요.");
+            throw new EatzInvalidRequestArgumentException("테마에 추가하려는 태그 중 일부가 유효하지 않아요.");
         }
 
         tags.forEach(theme::addTag);

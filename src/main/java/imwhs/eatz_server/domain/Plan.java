@@ -3,6 +3,7 @@ package imwhs.eatz_server.domain;
 import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.recipe.Recipe;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -137,16 +138,16 @@ public class Plan extends BaseEntity {
 
 
     public static void validateScheduledAt(LocalDateTime scheduledAt) {
-        if (scheduledAt == null) { throw new IllegalArgumentException("플래너의 날짜는 필수 항목이에요."); }
+        if (scheduledAt == null) { throw new EatzInvalidRequestArgumentException("플래너의 날짜는 필수 항목이에요."); }
 
         if (scheduledAt.toLocalDate().isBefore(LocalDateTime.now().toLocalDate())) {
-            throw new IllegalArgumentException("플래너의 날짜는 현재 이후의 시점이어야 해요.");
+            throw new EatzInvalidRequestArgumentException("플래너의 날짜는 현재 이후의 시점이어야 해요.");
         }
     }
 
     public static void validatePriority(Integer priority) {
         if (priority == null || priority < 0) {
-            throw new IllegalArgumentException("우선 순위는 0 이상의 정수여야 해요.");
+            throw new EatzInvalidRequestArgumentException("우선 순위는 0 이상의 정수여야 해요.");
         }
     }
 

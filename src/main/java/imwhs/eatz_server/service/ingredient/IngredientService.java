@@ -2,6 +2,8 @@ package imwhs.eatz_server.service.ingredient;
 
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.dto.ingredient.*;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
+import imwhs.eatz_server.exception.EatzInvalidResourceStateException;
 import imwhs.eatz_server.repository.EatzUserRepository;
 import imwhs.eatz_server.repository.ingredient.IngredientRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +55,7 @@ public class IngredientService {
         // 재료에 설정할 상위 재료 정보가 DTO에 포함되어 있는 경우: 상위 재료를 설정합니다.
         if (parentId != null) {
             if (Objects.equals(parentId, ingredient.getId())) {
-                throw new IllegalArgumentException("재료 자신을 상위 재료로 설정할 수 없어요.");
+                throw new EatzInvalidResourceStateException("재료 자신을 상위 재료로 설정할 수 없어요.");
             }
 
             // 재료와 상위 재료 간 양방향 연관 관계를 설정합니다.
