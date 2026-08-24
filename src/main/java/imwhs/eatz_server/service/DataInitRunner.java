@@ -55,7 +55,7 @@ public class DataInitRunner implements ApplicationRunner {
         initIngredients();
         initThemesAndTags();
         initRecipes();
-        initReportReasons();
+        initReportCategories();
     }
 
     private void initRecipes() {
@@ -109,7 +109,11 @@ public class DataInitRunner implements ApplicationRunner {
         }
     }
 
-    private void initReportReasons() {
+    private void initReportCategories() {
+        if (reportCategoryRepository.count() > 0) {
+            log.info("신고 카테고리가 이미 저장돼있어서, 신고 카테고리 초기화를 진행하지 않아요.");
+            return;
+        }
         ReportCategory categorySpam = ReportCategory.create(
                 "SPAM",
                 "홍보성 스팸 정보가 포함됨");
