@@ -14,7 +14,7 @@ public class SystemController {
 
     @GetMapping("/client/version/ios")
     public ClientVersionResponse getIOSClientVersion() {
-        return new ClientVersionResponse("1.0.0", "1.0.0", null);
+        return new ClientVersionResponse("1.0.3", "1.0.3", null);
     }
 
     @GetMapping("/client/notice/launch")
