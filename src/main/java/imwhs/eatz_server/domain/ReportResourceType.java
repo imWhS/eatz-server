@@ -1,10 +1,20 @@
 package imwhs.eatz_server.domain;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.RequiredArgsConstructor;
 
-@Getter
+@RequiredArgsConstructor
 public enum ReportResourceType {
-    RECIPE,
-    COMMENT,
-    RATING
+
+    RECIPE("recipe"),
+    COMMENT("comment"),
+    RATING("rating");
+
+    private final String code;
+
+    @JsonValue
+    public String getCode() {
+        return code;
+    }
+
 }

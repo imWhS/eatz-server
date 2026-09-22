@@ -63,7 +63,7 @@ public class ReportController {
     @GetMapping
     public Page<ReportDto> getAllReportsByResource(
             @RequestParam ReportResourceType resource,
-            boolean resolved,
+            @RequestParam boolean resolved,
             Pageable pageable) {
         return reportService.getAllByResourceType(resource, resolved, pageable);
     }
