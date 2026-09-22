@@ -1,4 +1,4 @@
-package imwhs.eatz_server.domain;
+package imwhs.eatz_server.domain.base;
 
 import jakarta.persistence.*;
 import lombok.Getter;

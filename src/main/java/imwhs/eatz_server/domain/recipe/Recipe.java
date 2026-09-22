@@ -1,6 +1,6 @@
 package imwhs.eatz_server.domain.recipe;
 
-import imwhs.eatz_server.domain.BaseEntity;
+import imwhs.eatz_server.domain.base.BaseEntity;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.domain.Tag;

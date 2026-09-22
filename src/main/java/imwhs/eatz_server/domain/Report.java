@@ -1,5 +1,6 @@
 package imwhs.eatz_server.domain;
 
+import imwhs.eatz_server.domain.base.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
