@@ -64,6 +64,7 @@ public class SecurityConfig {
             "/api/v0/reissue-token",
             "/api/v0/sign-out",
             "/api/v0/recipes/urls/**",
+            "/api/v0/affiliates",
             "/hello-admin",
             "/css/**",
             "/js/**",
