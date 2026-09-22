@@ -1,6 +1,7 @@
 package imwhs.eatz_server.domain.converter;
 
 import imwhs.eatz_server.domain.ReportResourceType;
+import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class StringToReportResourceTypeConverter implements Converter<String, Re
             }
         }
 
-        return null;
+        throw new EatzInvalidRequestArgumentException("올바르지 않은 요청 파라미터 값이에요: " + source);
     }
 
 }
