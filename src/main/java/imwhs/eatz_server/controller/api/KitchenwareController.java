@@ -58,8 +58,8 @@ public class KitchenwareController {
      * 도구 목록을 가져옵니다.
      * 이름 파라미터가 있으면 이름으로 필터링 된 도구 목록을, 없으면 전체 도구 목록을 가져옵니다.
      * <ul>
-     *     <li> Ex. GET /api/v0/kitchenwares — 전체 도구 목록 </li>
-     *     <li> Ex. GET /api/v0/kitchenwares?name=프라이팬 — '프라이팬'으로 이름이 필터링 된 도구 목록 </li>
+     *     <li> Ex: GET /api/v0/kitchenwares — 전체 도구 목록 </li>
+     *     <li> Ex: GET /api/v0/kitchenwares?name=프라이팬 — '프라이팬'으로 이름이 필터링 된 도구 목록 </li>
      * </ul>
      */
     @GetMapping

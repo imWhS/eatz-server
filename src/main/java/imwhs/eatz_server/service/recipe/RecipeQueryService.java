@@ -47,7 +47,6 @@ public class RecipeQueryService {
     private final EatzUserRepository userRepository;
     private final IngredientQueryService ingredientQueryService;
     private final KitchenwareQueryService kitchenwareQueryService;
-    private final BlockedRepository blockedRepository;
 
     /**
      * 레시피의 ID로 레시피의 상세한 정보와 연관 관계 정보를 가져옵니다.
@@ -158,6 +157,24 @@ public class RecipeQueryService {
         userRepository.validateExists(id);
         return recipeRepository.findAllLikedBasicsByUserId(id, pageable);
     }
+
+
+    /**
+     * '둘러보기(Explore)'에서 사용할 레시피 목록을 조건에 맞춰 가져옵니다.
+     * <ul>
+     *     <li> 사용자의 ID를 전달받으면, 조회하려는 레시피에 대한 해당 사용자의 context를 포함합니다. </li>
+     *     <li> 차단한 사용자의 레시피는 조회 대상에서 제외합니다. </li>
+     * </ul>
+     * @param request 검색 키워드, 필터링 등의 선택 조건, 정렬 조건을 포함하는 요청 DTO
+     * @param userId 사용자의 ID. 게스트 사용자일 경우 null을 전달합니다.
+     * @param pageable 페이징 정보
+     * @return '둘러보기(Explore)'에서 사용할 레시피 기본 정보 목록과 페이징 정보
+     */
+    public Page<ExploreRecipeDto> getExploreRecipesV2(ExploreRecipesRequest request, Long userId, Pageable pageable) {
+        return recipeRepository.findAllExploreRecipes(request, userId, pageable);
+    }
+
+
 
     /**
      * '둘러보기(Explore)'에서 사용할 레시피 목록을 조건에 맞춰 가져옵니다.

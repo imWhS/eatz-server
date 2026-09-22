@@ -11,7 +11,7 @@ public interface ImageStorage {
     /**
      * 이미지를 저장합니다.
      * @param filePath 저장할 파일의 확장자를 포함한 상대 디렉터리.
-     *                 Ex. "image/users/profiles/profile_123.png"
+     *                 Ex: "image/users/profiles/profile_123.png"
      * @param file 저장하려는 파일
      * @return 파일이 저장된 상대 디렉터리. 클라이언트 요청용 URL 경로입니다.
      */

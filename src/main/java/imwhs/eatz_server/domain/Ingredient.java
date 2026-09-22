@@ -20,7 +20,7 @@ import java.util.Objects;
  * <ul>
  *      <li> 재료는 상위 재료에 속할 수 있고, 하위 재료를 가질 수도 있습니다. </li>
  *      <li> 이때, 해당 재료가 속해있는 상위 재료 또는, 하위 재료를 가지고 있는 재료는 상위 재료(parent)로서의 역할을 합니다.
- *           — Ex. apple이라는 재료가 fruit라는 상위 재료에 속한다면, fruit는 apple의 상위 재료이자 apple이 속한 상위 재료가 됩니다. </li>
+ *           — Ex: apple이라는 재료가 fruit라는 상위 재료에 속한다면, fruit는 apple의 상위 재료이자 apple이 속한 상위 재료가 됩니다. </li>
  * </ul>
  */
 @Getter

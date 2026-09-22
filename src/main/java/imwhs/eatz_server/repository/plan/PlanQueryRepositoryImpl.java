@@ -61,7 +61,7 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
                         createScheduledAtFilter(plan, startDate, endDate));
 
         mainQuery.orderBy(
-                plan.priority.asc(), // 우선 순위가 높은 플랜부터 정렬합니다. Ex. 0, 1...
+                plan.priority.asc(), // 우선 순위가 높은 플랜부터 정렬합니다. Ex: 0, 1...
                 plan.updatedAt.asc() // 플래너에 먼저 추가된 플랜부터 표시합니다.
         );
 
@@ -131,7 +131,7 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
 //        if (endDate != null) { mainQuery.where(plan.scheduledAt.loe(endDate)); }
 
         mainQuery.orderBy(
-                plan.priority.asc(), // 우선 순위가 높은 플랜부터 정렬합니다. Ex. 0, 1...
+                plan.priority.asc(), // 우선 순위가 높은 플랜부터 정렬합니다. Ex: 0, 1...
                 plan.updatedAt.asc() // 플래너에 먼저 추가된 플랜부터 표시합니다.
         );
 

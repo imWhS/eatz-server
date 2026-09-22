@@ -22,7 +22,7 @@ public class ImageService {
      * @param image 이미지
      * @param category 이미지 카테고리
      * @return 업로드된 이미지의 URI(URL).
-     *         Ex. "uploads/images/users/profiles/profile_123.png"
+     *         Ex: "uploads/images/users/profiles/profile_123.png"
      */
     public String upload(MultipartFile image, ImageCategory category) {
         String contentType = image.getContentType();
@@ -43,7 +43,7 @@ public class ImageService {
     /**
      * URI에 해당하는 이미지를 삭제합니다.
      * @param imageUri 삭제할 이미지의 URI(URL).
-     *                  Ex. "uploads/images/users/profiles/profile_123.png"
+     *                  Ex: "uploads/images/users/profiles/profile_123.png"
      */
     public void delete(String imageUri) {
         if (imageUri.isBlank()) { throw new EatzInvalidRequestArgumentException("삭제하려는 이미지의 URI(URL)이 유효하지 않아요."); }

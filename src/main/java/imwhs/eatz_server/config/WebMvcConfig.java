@@ -1,12 +1,15 @@
 package imwhs.eatz_server.config;
 
 import imwhs.eatz_server.AuthRateLimitInterceptor;
+import imwhs.eatz_server.domain.converter.StringToCookableRecipesSortConverter;
+import imwhs.eatz_server.domain.converter.StringToExploreRecipesSortConverter;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserIdArgumentResolver;
 import imwhs.eatz_server.resolver.PageableValidationHandlerMethodArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -23,18 +26,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final AuthenticatedEatzUserIdArgumentResolver authenticatedEatzUserIdArgumentResolver;
     private final PageableValidationHandlerMethodArgumentResolver pageableValidationHandlerMethodArgumentResolver;
     private final AuthRateLimitInterceptor rateLimitInterceptor;
-
+    private final StringToExploreRecipesSortConverter stringToExploreRecipesSortConverter;
+    private final StringToCookableRecipesSortConverter stringToCookableRecipesSortConverter;
 
     /**
      * 서버가 위치한 환경의 로컬 저장소(storage) 디렉토리의 절대 경로. 루트를 포함해야 합니다.
-     * Ex. /Users/wonhee/eatz_workspace/
+     * Ex: /Users/wonhee/eatz_workspace/
      */
     @Value("${eatz.storage.root-directory-path}")
     private String storageRootDirectoryPath;
 
     /**
      * 서버가 위치한 환경의 로컬 저장소(storage)에 업로드된 파일이 저장될 디렉토리의 이름
-     * Ex. uploads
+     * Ex: uploads
      */
     @Value("${eatz.storage.base-directory}")
     private String storageBaseDirectory;
@@ -44,7 +48,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 서버가 위치한 로컬 저장소에 저장된 정적 리소스를 요청받았을 때, 리소스로서 serving 할 파일이 위치한 로컬 저장소의 절대 경로로
         // 연결(mapping)할 Resource Handler를 설정 및 추가합니다.
         // 서버가 실행 중인 로컬 또는 물리 서버의 로컬 저장소 디렉토리에 위치한 파일을 serving할 때만 사용됩니다.
-        // Ex. 클라이언트가 "http://localhost:8080/uploads/어쩌구저쩌구" URI로 정적 리소스를 GET 요청하면,
+        // Ex: 클라이언트가 "http://localhost:8080/uploads/어쩌구저쩌구" URI로 정적 리소스를 GET 요청하면,
         //     Resource Handler가 "file:///Users/wonhee/eatz_workspace/uploads/" 디렉토리에서
         //     바로 정적 리소스를 serving 할 수 있게 연결합니다.
         String locationUri = Paths.get(storageRootDirectoryPath, storageBaseDirectory).toUri().toString();
@@ -67,4 +71,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(rateLimitInterceptor)
                 .addPathPatterns("/api/v0/sign-up");
     }
+
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(stringToExploreRecipesSortConverter);
+        registry.addConverter(stringToCookableRecipesSortConverter);
+    }
+
 }
