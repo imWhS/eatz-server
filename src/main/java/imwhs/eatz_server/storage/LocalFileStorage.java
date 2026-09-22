@@ -23,7 +23,7 @@ public class LocalFileStorage implements FileStorage {
      * 서버가 위치한 환경의 로컬 저장소(storage) 디렉토리의 절대 경로
      * <ul>
      *     <li> 절대 경로를 사용해야 하기 때문에 루트를 포함합니다. </li>
-     *     <li> Ex. /Users/wonhee/eatz_workspace/ </li>
+     *     <li> Ex: /Users/wonhee/eatz_workspace/ </li>
      * </ul>
      */
     @Value("${eatz.storage.root-directory-path}")
@@ -33,7 +33,7 @@ public class LocalFileStorage implements FileStorage {
      * 서버가 위치한 환경의 로컬 저장소(storage)에 '업로드된 파일'이 저장될 디렉토리의 이름
      * <ul>
      *     <li> 파일 리소스 serving을 요청할 때의 URI 접두어로도 사용합니다. </li>
-     *     <li> Ex. uploads </li>
+     *     <li> Ex: uploads </li>
      * </ul>
      */
     @Value("${eatz.storage.base-directory}")
@@ -110,7 +110,7 @@ public class LocalFileStorage implements FileStorage {
 
     /**
      * 외부에서 로컬 저장소에 위치한 파일에 바로 접근할 수 있는 URI 경로를 생성합니다.
-     * Ex. /uploads/images/users/profiles/profile_123.png
+     * Ex: /uploads/images/users/profiles/profile_123.png
      */
     @NonNull
     private String createAccessUri(String fileDirectory) {

@@ -130,7 +130,6 @@ public class DummyDataSeeder {
             List<Tag> allTags,
             List<Recipe> recipes) {
         Recipe recipe = Recipe.create(author, title, url, imageUrl, 600, 2, true, title + " 설명", 300, null, null);
-        recipe.setCreatedAt(LocalDateTime.now());
 
         for (String name : targetIngredientNames) {
             Ingredient ingredient = allIngredients.stream().filter(i -> i.getName().equals(name)).findFirst().orElse(allIngredients.get(0));

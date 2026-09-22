@@ -1,6 +1,6 @@
 package imwhs.eatz_server.domain.recipe;
 
-import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.base.BaseEntity;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.domain.Tag;
@@ -8,7 +8,6 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,7 +32,6 @@ public class Recipe extends BaseEntity {
     /**
      * 작성자
      */
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private EatzUser author;
@@ -45,7 +43,6 @@ public class Recipe extends BaseEntity {
      *     <li> 최대 100자 길이의 문장까지 저장할 수 있습니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(length = 100, nullable = false)
     private String title;
 
@@ -53,10 +50,9 @@ public class Recipe extends BaseEntity {
      * URL
      * <ul>
      *     <li> 필수 항목입니다. </li>
-     *     <li> 최대 1000자 길이의 문장까지 저장할 수 있습니다. </li>
+     *     <li> 최대 2000자 길이의 문장까지 저장할 수 있습니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(length = 2000, nullable = false)
     private String url;
 
@@ -66,7 +62,6 @@ public class Recipe extends BaseEntity {
      *     <li> 필수 항목입니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(length = 2000, nullable = false)
     private String imageUrl;
 
@@ -75,10 +70,8 @@ public class Recipe extends BaseEntity {
      * <ul>
      *     <li> 시간 단위로 '초'를 사용합니다. </li>
      *     <li> 필수 항목입니다. </li>
-     *     <li> 의도된 값과 단순 누락(null)을 구분하기 위해, 필수 항목이지만 wrapper 타입을 사용해 @NotNull을 통해 유효성을 검증합니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
     private Integer cookingTime;
 
@@ -86,11 +79,8 @@ public class Recipe extends BaseEntity {
      * 1회 제공량
      * <ul>
      *     <li> 필수 항목입니다. </li>
-     *     <li> 의도된 값과 단순 데이터 누락(null)을 구분하기 위해,
-     *          필수 항목이지만 wrapper 타입을 사용해 @NotNull을 통해 유효성을 검증합니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
     private Integer servings;
 
@@ -105,7 +95,6 @@ public class Recipe extends BaseEntity {
      *          wrapping 타입인 Boolean 래퍼 타입을 사용합니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
     private Boolean isCommentEnabled;
 
@@ -154,7 +143,7 @@ public class Recipe extends BaseEntity {
     /**
      * 설명
      */
-    @NotNull
+    @Column(nullable = false)
     private String description;
 
     /**

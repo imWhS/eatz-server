@@ -1,6 +1,6 @@
 package imwhs.eatz_server.domain;
 
-import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.base.BaseEntity;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
 import lombok.*;

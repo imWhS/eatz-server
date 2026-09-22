@@ -1,9 +1,8 @@
 package imwhs.eatz_server.domain;
 
-import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.base.BaseEntity;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,13 +25,13 @@ public class Kitchenware extends BaseEntity {
      * 이름
      * <p> 필수 항목입니다. </p>
      */
-    @NotNull
     @Column(nullable = false)
     private String name;
 
     /**
      * 대표 이미지 URL
      */
+    @Column(length = 2000)
     private String imageUrl;
 
     private Kitchenware(String name) {

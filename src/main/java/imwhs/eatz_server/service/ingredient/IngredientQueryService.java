@@ -151,6 +151,7 @@ public class IngredientQueryService {
      * @return 레시피를 요리하기 위해 준비해야 할 재료 정보 목록
      */
     public List<IngredientRequirementDto> getIngredientRequirementsByRecipeId(Long id, Long userId) {
+        // TODO: id에 해당하는 상위 리소스가 없으면 RESTful하게 404 코드를 응답하도록 변경
         return recipeIngredientRepository.findAllIngredientRequirementsByRecipeId(id, userId);
     }
 

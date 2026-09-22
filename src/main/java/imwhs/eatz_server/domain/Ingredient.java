@@ -1,10 +1,9 @@
 package imwhs.eatz_server.domain;
 
-import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.base.BaseEntity;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.EatzInvalidResourceStateException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,7 +19,7 @@ import java.util.Objects;
  * <ul>
  *      <li> 재료는 상위 재료에 속할 수 있고, 하위 재료를 가질 수도 있습니다. </li>
  *      <li> 이때, 해당 재료가 속해있는 상위 재료 또는, 하위 재료를 가지고 있는 재료는 상위 재료(parent)로서의 역할을 합니다.
- *           — Ex. apple이라는 재료가 fruit라는 상위 재료에 속한다면, fruit는 apple의 상위 재료이자 apple이 속한 상위 재료가 됩니다. </li>
+ *           — Ex: apple이라는 재료가 fruit라는 상위 재료에 속한다면, fruit는 apple의 상위 재료이자 apple이 속한 상위 재료가 됩니다. </li>
  * </ul>
  */
 @Getter
@@ -37,7 +36,6 @@ public class Ingredient extends BaseEntity {
      * 이름
      * <p> 필수 항목입니다. </p>
      */
-    @NotNull
     @Column(nullable = false)
     private String name;
 
@@ -60,7 +58,6 @@ public class Ingredient extends BaseEntity {
      *          지연 로딩 시점에 조회 범위 내 최대 30개 단위로 batch fetching 처리합니다. </li>
      * </ul>
      */
-    @NotNull
     @OneToMany(mappedBy = "parent")
     @BatchSize(size = 30)
     @Column(nullable = false)
@@ -77,7 +74,6 @@ public class Ingredient extends BaseEntity {
      *          의도치 않은 상태가 되는 것을 막기 위해 wrapping 타입인 Boolean 래퍼 타입을 사용합니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
     private Boolean isParentCoupled;
 

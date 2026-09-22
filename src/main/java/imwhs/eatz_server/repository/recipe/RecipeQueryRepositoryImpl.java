@@ -41,7 +41,7 @@ public class RecipeQueryRepositoryImpl implements RecipeQueryRepository {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser author = QEatzUser.eatzUser;
 
-        // Recipe 시작점인 메인 쿼리를 생성합니다.
+        // Recipe가 시작점인 메인 쿼리를 생성합니다.
         Predicate[] filters = {
                 recipe.deletedAt.isNull(),
                 // Recipe 레코드 별 필터를 적용하기 위해 메인 쿼리에 where 절을 추가합니다.
@@ -151,7 +151,7 @@ public class RecipeQueryRepositoryImpl implements RecipeQueryRepository {
         QRecipe recipe = QRecipe.recipe;
         QEatzUser author = QEatzUser.eatzUser;
 
-        // Recipe 시작점인 메인 쿼리를 생성합니다.
+        // Recipe가 시작점인 메인 쿼리를 생성합니다.
         JPAQuery<RecipeBasicDto> mainQuery = queryFactory
                 .select(Projections.constructor(RecipeBasicDto.class,
                         recipe.id,

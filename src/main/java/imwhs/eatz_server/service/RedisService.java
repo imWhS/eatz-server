@@ -158,7 +158,7 @@ public class RedisService {
     /**
      * 주어진 패턴과 일치하는 모든 Key의 집합을 조회합니다.
      * <p> O(N)으로 동작하므로, "*"와 같이 넓은 범위의 패턴 사용은 권장하지 않습니다.</p>
-     * @param pattern 조회할 key의 패턴 (Ex. "email:*")
+     * @param pattern 조회할 key의 패턴 (Ex: "email:*")
      * @return 패턴과 일치하는 key들의 집합. 일치하는 결과가 없으면 빈 집합을 반환합니다.
      */
     public Set<String> getKeysByPattern(String pattern) {
