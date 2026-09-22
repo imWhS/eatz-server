@@ -2,6 +2,7 @@ package imwhs.eatz_server.config;
 
 import imwhs.eatz_server.AuthRateLimitInterceptor;
 import imwhs.eatz_server.domain.converter.StringToCookableRecipesSortConverter;
+import imwhs.eatz_server.domain.converter.StringToEatzUserRoleConverter;
 import imwhs.eatz_server.domain.converter.StringToExploreRecipesSortConverter;
 import imwhs.eatz_server.domain.converter.StringToReportResourceTypeConverter;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserIdArgumentResolver;
@@ -30,6 +31,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final StringToExploreRecipesSortConverter stringToExploreRecipesSortConverter;
     private final StringToCookableRecipesSortConverter stringToCookableRecipesSortConverter;
     private final StringToReportResourceTypeConverter stringToReportResourceTypeConverter;
+    private final StringToEatzUserRoleConverter stringToEatzUserRoleConverter;
 
     /**
      * 서버가 위치한 환경의 로컬 저장소(storage) 디렉토리의 절대 경로. 루트를 포함해야 합니다.
@@ -78,6 +80,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addConverter(stringToExploreRecipesSortConverter);
         registry.addConverter(stringToCookableRecipesSortConverter);
         registry.addConverter(stringToReportResourceTypeConverter);
+        registry.addConverter(stringToEatzUserRoleConverter);
     }
 
 }
