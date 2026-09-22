@@ -1,10 +1,10 @@
 package imwhs.eatz_server.config;
 
 import imwhs.eatz_server.AuthRateLimitInterceptor;
-import imwhs.eatz_server.domain.converter.StringToCookableRecipesSortConverter;
-import imwhs.eatz_server.domain.converter.StringToEatzUserRoleConverter;
-import imwhs.eatz_server.domain.converter.StringToExploreRecipesSortConverter;
-import imwhs.eatz_server.domain.converter.StringToReportResourceTypeConverter;
+import imwhs.eatz_server.converter.StringToCookableRecipesSortConverter;
+import imwhs.eatz_server.converter.StringToEatzUserRoleConverter;
+import imwhs.eatz_server.converter.StringToExploreRecipesSortConverter;
+import imwhs.eatz_server.converter.StringToReportResourceTypeConverter;
 import imwhs.eatz_server.resolver.AuthenticatedEatzUserIdArgumentResolver;
 import imwhs.eatz_server.resolver.PageableValidationHandlerMethodArgumentResolver;
 import lombok.RequiredArgsConstructor;

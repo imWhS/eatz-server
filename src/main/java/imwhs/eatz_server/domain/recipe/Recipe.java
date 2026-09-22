@@ -50,7 +50,7 @@ public class Recipe extends BaseEntity {
      * URL
      * <ul>
      *     <li> 필수 항목입니다. </li>
-     *     <li> 최대 1000자 길이의 문장까지 저장할 수 있습니다. </li>
+     *     <li> 최대 2000자 길이의 문장까지 저장할 수 있습니다. </li>
      * </ul>
      */
     @Column(length = 2000, nullable = false)

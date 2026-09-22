@@ -1,4 +1,4 @@
-package imwhs.eatz_server.domain.converter;
+package imwhs.eatz_server.converter;
 
 import imwhs.eatz_server.domain.recipe.CookableRecipesSort;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;

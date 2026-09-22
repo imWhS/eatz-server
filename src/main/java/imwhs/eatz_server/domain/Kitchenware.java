@@ -31,6 +31,7 @@ public class Kitchenware extends BaseEntity {
     /**
      * 대표 이미지 URL
      */
+    @Column(length = 2000)
     private String imageUrl;
 
     private Kitchenware(String name) {

@@ -71,6 +71,7 @@ public class EatzUser extends BaseEntity {
      * 대표(프로필) 이미지 URL
      */
     @Setter
+    @Column(length = 2000)
     private String imageUrl;
 
     /**
