@@ -35,12 +35,15 @@ public class EatzUserBasicDto {
      */
     private EatzUserRole role;
 
+    private String publicId;
+
     public EatzUserBasicDto(EatzUser user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.imageUrl = user.getImageUrl();
         this.role = user.getEatzUserRole();
+        this.publicId = user.getPublicId();
     }
 
 }
