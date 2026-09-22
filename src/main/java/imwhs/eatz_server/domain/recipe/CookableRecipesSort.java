@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum CookableRecipesSort implements RecipeSort {
 
-    FEWEST_MISSING_REQUIREMENTS("fewestMissingItems"),
+    FEWEST_MISSING_REQUIREMENTS("fewestMissingRequirements"),
     LATEST("latest"),
     HIGHEST_RATED("highestRated"),
     MOST_LIKED("mostLiked"),
