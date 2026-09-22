@@ -25,15 +25,34 @@ public class AffiliateService {
     private String affiliateDefaultProvider;
 
     public AffiliateDto get(RequirementType requirementType, Long requirementId) {
+        if (requirementType == null && requirementId == null) {
+            return new AffiliateDto(
+                    null,
+                    null,
+                    affiliateDefaultUrl,
+                    affiliateDefaultProvider
+            );
+        }
+
+        if (requirementType == null || requirementId == null) {
+            throw new EatzInvalidRequestArgumentException(
+                    "준비물 타입(재료/도구 여부)과 ID가 함께 전달돼야 해요."
+            );
+        }
+
          return affiliateRepository.findByRequirementTypeAndRequirementId(requirementType, requirementId)
-                 .map(affiliate -> {
-                     return new AffiliateDto(
+                 .map(affiliate ->
+                         new AffiliateDto(
                              affiliate.getRequirementType(),
                              affiliate.getRequirementId(),
                              affiliate.getUrl(),
-                             affiliate.getProvider());
-                 })
-                 .orElseGet(() -> new AffiliateDto(requirementType, requirementId, affiliateDefaultUrl, affiliateDefaultProvider));
+                             affiliate.getProvider()))
+                 .orElseGet(() ->
+                         new AffiliateDto(
+                                 requirementType,
+                                 requirementId,
+                                 affiliateDefaultUrl,
+                                 affiliateDefaultProvider));
     }
 
     @Transactional(rollbackFor = Exception.class)

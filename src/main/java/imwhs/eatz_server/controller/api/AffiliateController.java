@@ -28,8 +28,8 @@ public class AffiliateController {
 
     @GetMapping
     public AffiliateDto getAffiliate(
-            @RequestParam RequirementType requirementType,
-            @RequestParam Long requirementId
+            @RequestParam(required = false) RequirementType requirementType,
+            @RequestParam(required = false) Long requirementId
     ) {
         return affiliateService.get(requirementType, requirementId);
     }
