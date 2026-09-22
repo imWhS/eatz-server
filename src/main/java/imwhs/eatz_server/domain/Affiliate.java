@@ -33,20 +33,41 @@ public class Affiliate {
     @Column(nullable = false, length = 2000)
     private String url;
 
-    public static Affiliate create(RequirementType requirementType, Long requirementId, String url) {
+    @Column(nullable = false)
+    private String provider;
+
+    public static Affiliate create(RequirementType requirementType, Long requirementId, String url, String provider) {
+        validateUrl(url);
+        validateProvider(provider);
+
         Affiliate affiliate = new Affiliate();
         affiliate.requirementType = requirementType;
         affiliate.requirementId = requirementId;
         affiliate.url = url;
+        affiliate.provider = provider;
         return affiliate;
     }
 
     public void updateUrl(String url) {
+        validateUrl(url);
+        this.url = url;
+    }
+
+    public void updateProvider(String provider) {
+        validateProvider(provider);
+        this.provider = provider;
+    }
+
+    private static void validateUrl(String url) {
         if (Objects.isNull(url) || url.isBlank()) {
             throw new EatzInvalidRequestArgumentException("URL이 비어 있거나, 올바르지 않아요.");
         }
+    }
 
-        this.url = url;
+    private static void validateProvider(String provider) {
+        if (Objects.isNull(provider) || provider.isBlank()) {
+            throw new EatzInvalidRequestArgumentException("제공자가 비어 있거나, 올바르지 않아요.");
+        }
     }
 
 }

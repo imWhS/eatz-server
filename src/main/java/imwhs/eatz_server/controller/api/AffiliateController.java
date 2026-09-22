@@ -1,6 +1,5 @@
 package imwhs.eatz_server.controller.api;
 
-import imwhs.eatz_server.domain.Affiliate;
 import imwhs.eatz_server.domain.RequirementType;
 import imwhs.eatz_server.dto.affiliate.AffiliateCreateRequest;
 import imwhs.eatz_server.dto.affiliate.AffiliateDto;
@@ -24,7 +23,7 @@ public class AffiliateController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void registerAffiliate(@Valid @RequestBody AffiliateCreateRequest request) {
-        affiliateService.register(request.getRequirementType(), request.getRequirementId(), request.getUrl());
+        affiliateService.register(request.getRequirementType(), request.getRequirementId(), request.getUrl(), request.getProvider());
     }
 
     @GetMapping
@@ -32,22 +31,25 @@ public class AffiliateController {
             @RequestParam RequirementType requirementType,
             @RequestParam Long requirementId
     ) {
-        Affiliate affiliate = affiliateService.get(requirementType, requirementId);
-        return AffiliateDto.from(affiliate);
+        return affiliateService.get(requirementType, requirementId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public void updateAffiliateById(@PathVariable Long id, @Valid @RequestBody AffiliateUpdateByIdRequest request) {
-        affiliateService.updateById(id, request.getUrl());
+        affiliateService.updateUrlById(id, request.getUrl());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping
     public void updateAffiliate(@Valid @RequestBody AffiliateUpdateRequest request) {
-        affiliateService.update(request.getRequirementType(), request.getRequirementId(), request.getUrl());
+        affiliateService.update(
+                request.getRequirementType(),
+                request.getRequirementId(),
+                request.getUrl(),
+                request.getProvider());
     }
 
     @PreAuthorize("hasRole('ADMIN')")

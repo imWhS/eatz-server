@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.URL;
 @Getter
 public class AffiliateUpdateByIdRequest {
 
+    @NotBlank
     @URL
     private String url;
 
