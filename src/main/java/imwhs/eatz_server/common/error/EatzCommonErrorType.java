@@ -19,6 +19,7 @@ public enum EatzCommonErrorType implements EatzErrorType {
     REPORT_REASON_IS_NOT_ACTIVE(HttpStatus.BAD_REQUEST, "REPORT_REASON_IS_NOT_ACTIVE", "비활성화된 신고 이유예요."),
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "TAG_NOT_FOUND", "태그를 찾을 수 없어요."),
     INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "INGREDIENT_NOT_FOUND", "재료를 찾을 수 없어요."),
+    AFFILIATE_LINK_NOT_FOUND(HttpStatus.NOT_FOUND, "AFFILIATE_LINK_NOT_FOUND", "제휴 주소 정보를 찾을 수 없어요."),
     KITCHENWARE_NOT_FOUND(HttpStatus.NOT_FOUND, "KITCHENWARE_NOT_FOUND", "도구를 찾을 수 없어요."),
     LIKED_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKED_NOT_FOUND", "좋아요를 찾을 수 없어요.");
 
