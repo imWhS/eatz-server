@@ -12,11 +12,11 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "affiliate_link", uniqueConstraints = {
+@Table(name = "affiliate", uniqueConstraints = {
         @UniqueConstraint(name = "uk_requirement_type_requirement_id", columnNames = {"requirement_type", "requirement_id"})
 })
 @Entity
-public class AffiliateLink {
+public class Affiliate {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,12 +33,12 @@ public class AffiliateLink {
     @Column(nullable = false, length = 2000)
     private String url;
 
-    public static AffiliateLink create(RequirementType requirementType, Long requirementId, String url) {
-        AffiliateLink link = new AffiliateLink();
-        link.requirementType = requirementType;
-        link.requirementId = requirementId;
-        link.url = url;
-        return link;
+    public static Affiliate create(RequirementType requirementType, Long requirementId, String url) {
+        Affiliate affiliate = new Affiliate();
+        affiliate.requirementType = requirementType;
+        affiliate.requirementId = requirementId;
+        affiliate.url = url;
+        return affiliate;
     }
 
     public void updateUrl(String url) {
