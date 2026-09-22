@@ -1,7 +1,6 @@
 package imwhs.eatz_server.dto.plan;
 
 import imwhs.eatz_server.domain.Ingredient;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

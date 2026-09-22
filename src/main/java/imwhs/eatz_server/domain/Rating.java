@@ -6,7 +6,6 @@ import imwhs.eatz_server.domain.recipe.Recipe;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -34,7 +33,6 @@ public class Rating extends BaseEntity {
      *     <li> 필수 항목입니다. </li>
      * </ul>
      */
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private EatzUser author;
@@ -46,7 +44,6 @@ public class Rating extends BaseEntity {
      *     <li> 연관 관계인 레시피 레코드가 삭제되면, 해당 Recipe의 ID가 외래 키인 Rating 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
@@ -59,7 +56,6 @@ public class Rating extends BaseEntity {
      *     <li> 1부터 5 사이의 자연수로만 설정할 수 있습니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
     private Integer score;
 
@@ -73,7 +69,6 @@ public class Rating extends BaseEntity {
      *          의도치 않은 상태가 되는 것을 막기 위해 wrapping 타입인 Boolean 래퍼 타입을 사용합니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
     private Boolean isHidden;
 

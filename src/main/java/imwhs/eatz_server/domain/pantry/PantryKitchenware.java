@@ -4,7 +4,6 @@ import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
@@ -36,7 +35,6 @@ public class PantryKitchenware extends BaseEntity {
      *          데이터베이스를 통해 해당 Kitchenware의 ID가 외래 키인 PantryKitchenware 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kitchenware_id", nullable = false)
     @EqualsAndHashCode.Include
@@ -52,7 +50,6 @@ public class PantryKitchenware extends BaseEntity {
      *          PantryKitchenware 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @EqualsAndHashCode.Include

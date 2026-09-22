@@ -4,7 +4,6 @@ import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,7 +37,6 @@ public class PantryIngredient extends BaseEntity {
      *          데이터베이스를 통해 해당 Ingredient의 ID가 외래 키인 PantryIngredient 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", nullable = false)
@@ -55,7 +53,6 @@ public class PantryIngredient extends BaseEntity {
      *          PantryIngredient 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

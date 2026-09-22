@@ -4,7 +4,6 @@ import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.Tag;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -37,7 +36,6 @@ public class RecipeTag extends BaseEntity {
      *          데이터베이스를 통해 해당 Recipe의 ID가 외래 키인 RecipeTag 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
@@ -53,9 +51,8 @@ public class RecipeTag extends BaseEntity {
      *          데이터베이스를 통해 해당 Recipe의 ID가 외래 키인 RecipeTag 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Setter
+//    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", nullable = false)
     @EqualsAndHashCode.Include

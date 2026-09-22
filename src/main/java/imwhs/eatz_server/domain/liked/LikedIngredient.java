@@ -4,7 +4,6 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.domain.Ingredient;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,7 +30,6 @@ public class LikedIngredient extends Liked {
      *     <li> 연관 관계인 Ingredient 레코드가 삭제되면, 해당 Ingredient의 ID가 외래 키인 LikedIngredient 레코드도 일괄 삭제합니다. </li>
      * </ul>
      */
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id",  nullable = false)

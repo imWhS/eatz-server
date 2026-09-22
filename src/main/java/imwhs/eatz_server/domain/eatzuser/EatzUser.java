@@ -5,13 +5,9 @@ import imwhs.eatz_server.common.util.EmailUtil;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * 서비스에 가입한 사용자의 정보를 정의하는 EatzUser 엔티티입니다.
@@ -38,9 +34,7 @@ public class EatzUser extends BaseEntity {
      * </ul>
      * TODO: 데이터베이스에 인덱스 추가 고려
      */
-    @NotNull
     @Column(length = 20, nullable = false, unique = true)
-    @Size(min = 4, max = 20)
     private String username;
 
     /**
@@ -50,8 +44,6 @@ public class EatzUser extends BaseEntity {
      * </ul>
      * TODO: 데이터베이스에 인덱스 추가 고려
      */
-    @NotNull
-    @Email(message = "유효한 이메일 주소가 아니에요.")
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -61,9 +53,7 @@ public class EatzUser extends BaseEntity {
      *     <li> 필수 항목입니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
-    @Size(min = 8, max = 64)
     private String password;
 
     /**
@@ -86,7 +76,7 @@ public class EatzUser extends BaseEntity {
     /**
      * 소개
      */
-    @Size(max = 200)
+    @Column(length = 200)
     private String bio;
 
     /**

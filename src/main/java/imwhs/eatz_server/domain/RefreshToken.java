@@ -1,7 +1,6 @@
 package imwhs.eatz_server.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,15 +18,12 @@ public class RefreshToken {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Column(nullable = false)
     private String email;
 
-    @NotNull
     @Column(nullable = false)
     private LocalDateTime expiration;
 
-    @NotNull
     @Column(nullable = false)
     private String token;
 

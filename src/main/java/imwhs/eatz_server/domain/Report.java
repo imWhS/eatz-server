@@ -5,7 +5,6 @@ import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
@@ -25,7 +24,6 @@ public class Report extends BaseEntity {
     /**
      * 신고를 접수한 사용자 (신고자)
      */
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id", nullable = false)
     private EatzUser reporter;
@@ -33,14 +31,12 @@ public class Report extends BaseEntity {
     /**
      * 신고가 접수된 자원의 ID
      */
-    @NotNull
     @Column(nullable = false)
     private Long resourceId;
 
     /**
      * 신고가 접수된 자원의 유형
      */
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReportResourceType resourceType;
@@ -48,7 +44,6 @@ public class Report extends BaseEntity {
     /**
      * 신고 사유 카테고리
      */
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_category_id", nullable = false)
     private ReportCategory category;

@@ -4,7 +4,6 @@ import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,7 +27,6 @@ public abstract class Liked extends BaseEntity {
      *     <li> 필수 항목입니다. </li>
      * </ul>
      */
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @EqualsAndHashCode.Include

@@ -4,7 +4,6 @@ import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.recipe.RecipeTag;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
@@ -33,7 +32,7 @@ public class Tag extends BaseEntity {
      *     <li> 필수 항목입니다. </li>
      * </ul>
      */
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String name;
 
     /**

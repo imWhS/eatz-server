@@ -4,7 +4,6 @@ import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.EatzInvalidResourceStateException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,7 +36,6 @@ public class Ingredient extends BaseEntity {
      * 이름
      * <p> 필수 항목입니다. </p>
      */
-    @NotNull
     @Column(nullable = false)
     private String name;
 
@@ -60,7 +58,6 @@ public class Ingredient extends BaseEntity {
      *          지연 로딩 시점에 조회 범위 내 최대 30개 단위로 batch fetching 처리합니다. </li>
      * </ul>
      */
-    @NotNull
     @OneToMany(mappedBy = "parent")
     @BatchSize(size = 30)
     @Column(nullable = false)
@@ -77,7 +74,6 @@ public class Ingredient extends BaseEntity {
      *          의도치 않은 상태가 되는 것을 막기 위해 wrapping 타입인 Boolean 래퍼 타입을 사용합니다. </li>
      * </ul>
      */
-    @NotNull
     @Column(nullable = false)
     private Boolean isParentCoupled;
 
