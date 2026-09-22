@@ -1,6 +1,6 @@
 package imwhs.eatz_server.domain.recipe;
 
-import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.BaseEntity;
 import imwhs.eatz_server.domain.Kitchenware;
 import jakarta.persistence.*;
 import lombok.*;

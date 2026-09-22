@@ -1,6 +1,6 @@
 package imwhs.eatz_server.domain.pantry;
 
-import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.BaseEntity;
 import imwhs.eatz_server.domain.Kitchenware;
 import imwhs.eatz_server.domain.eatzuser.EatzUser;
 import jakarta.persistence.*;

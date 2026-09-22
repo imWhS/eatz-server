@@ -1,6 +1,5 @@
 package imwhs.eatz_server.domain;
 
-import imwhs.eatz_server.common.BaseEntity;
 import imwhs.eatz_server.domain.recipe.RecipeTag;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import jakarta.persistence.*;

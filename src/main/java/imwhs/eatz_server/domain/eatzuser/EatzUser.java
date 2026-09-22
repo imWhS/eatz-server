@@ -1,6 +1,6 @@
 package imwhs.eatz_server.domain.eatzuser;
 
-import imwhs.eatz_server.common.BaseEntity;
+import imwhs.eatz_server.domain.BaseEntity;
 import imwhs.eatz_server.common.util.EmailUtil;
 import imwhs.eatz_server.exception.EatzInvalidRequestArgumentException;
 import imwhs.eatz_server.exception.UnauthorizedAccessException;
