@@ -1,4 +1,4 @@
-EATZ - API 웹 서버
+# EATZ - API 웹 서버
 
 ![EATZ](./images/eatz-main.png)
 
