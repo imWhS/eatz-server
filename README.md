@@ -3,7 +3,7 @@ EATZ - API 웹 서버
 ![EATZ](./images/eatz-main.png)
 
 사용자가 현재 보유한 재료와 도구를 기반으로 즉시 요리할 수 있는 레시피를 찾아주는 소셜 레시피 플랫폼 EATZ의 백엔드 RESTful API 서버입니다. 
-EATZ iOS 클라이언트와 [EATZ-Client-AppleSilicon](https://github.com/imWhS/EATZ-Client-AppleSilicon)와 통신하는 서버이기도 합니다.
+EATZ iOS 클라이언트 [EATZ-Client-AppleSilicon](https://github.com/imWhS/EATZ-Client-AppleSilicon)과 통신하는 서버이기도 합니다.
 
 | 카테고리 | 스택 및 기술 |
 | --- | --- |
